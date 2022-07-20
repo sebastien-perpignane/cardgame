@@ -1,9 +1,10 @@
 package sebastien.perpignane.cardgame.game.war;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import sebastien.perpignane.cardgame.card.Card;
+import sebastien.perpignane.cardgame.game.GameEventSender;
 import sebastien.perpignane.cardgame.game.PlayedCard;
 import sebastien.perpignane.cardgame.game.WarTrick;
 import sebastien.perpignane.cardgame.game.WarTrickObserver;
@@ -13,7 +14,7 @@ import sebastien.perpignane.cardgame.player.WarBotPlayer;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class WarTrickTest {
@@ -28,7 +29,7 @@ public class WarTrickTest {
         player1.receiveHand(new ArrayList<>(List.of(Card.SIX_CLUB)));
         player2.receiveHand(new ArrayList<>(List.of(Card.SIX_DIAMOND)));
 
-        WarTrick trick = new WarTrick("test", List.of(player1, player2), new ArrayList<>());
+        WarTrick trick = new WarTrick("test", List.of(player1, player2), new GameEventSender());
         trick.playerPlay(new PlayedCard(player1, Card.SIX_CLUB));
 
         assertFalse(trick.isEndOfTrick());
@@ -41,19 +42,21 @@ public class WarTrickTest {
     @DisplayName("End of trick when two players play 1 card, if no war situation")
     public void testPlayEndOfTrick_no_war_condition() {
 
-        Player player1 = new WarBotPlayer();
-        Player player2 = new WarBotPlayer();
+        final int nbTurns = 1;
 
-        player1.receiveHand(new ArrayList<>(List.of(Card.SIX_CLUB)));
-        player2.receiveHand(new ArrayList<>(List.of(Card.TEN_DIAMOND)));
+        Player mockPlayer1 = Mockito.mock(Player.class);
+        Mockito.when(mockPlayer1.play()).thenReturn(Card.SIX_CLUB);
+        Mockito.when(mockPlayer1.hasNoMoreCard()).thenReturn(false);
 
-        WarTrick trick = new WarTrick("test", List.of(player1, player2), new ArrayList<>());
-        trick.playerPlay(new PlayedCard(player1, Card.SIX_CLUB));
-        trick.playerPlay(new PlayedCard(player2, Card.TEN_DIAMOND));
+        Player mockPlayer2 = Mockito.mock(Player.class);
+        Mockito.when(mockPlayer2.play()).thenReturn(Card.TEN_DIAMOND);
+        Mockito.when(mockPlayer2.hasNoMoreCard()).thenReturn(false);
+
+        var trick = initAndPlayOnTrick(mockPlayer1, mockPlayer2, nbTurns);
 
         assertTrue(trick.isEndOfTrick());
 
-        assertEquals(player2, trick.getWinner());
+        assertEquals(mockPlayer2, trick.getWinner());
 
     }
 
@@ -61,27 +64,20 @@ public class WarTrickTest {
     @DisplayName("End of trick when 2 players play 3 cards in simple war condition")
     public void testPlayEndOfTrick_war_condition() {
 
-        Player player1 = new WarBotPlayer();
-        Player player2 = new WarBotPlayer();
+        final int nbTurns = 3;
 
-        player1.receiveHand(new ArrayList<>(Arrays.asList(Card.SIX_CLUB, Card.ACE_CLUB, Card.ACE_SPADE)));
-        player2.receiveHand(new ArrayList<>(Arrays.asList(Card.SIX_DIAMOND, Card.TEN_DIAMOND, Card.TEN_SPADE)));
+        Player mockPlayer1 = Mockito.mock(Player.class);
+        Mockito.when(mockPlayer1.play()).thenReturn(Card.SIX_CLUB, Card.ACE_CLUB, Card.ACE_SPADE);
+        Mockito.when(mockPlayer1.hasNoMoreCard()).thenReturn(false);
 
-        WarTrick trick = new WarTrick("test", List.of(player1, player2), new ArrayList<>());
-        trick.playerPlay(new PlayedCard(player1, Card.SIX_CLUB));
-        trick.playerPlay(new PlayedCard(player2, Card.SIX_DIAMOND));
+        Player mockPlayer2 = Mockito.mock(Player.class);
+        Mockito.when(mockPlayer2.play()).thenReturn(Card.SIX_DIAMOND, Card.TEN_DIAMOND, Card.TEN_SPADE);
+        Mockito.when(mockPlayer2.hasNoMoreCard()).thenReturn(false);
 
-        assertFalse(trick.isEndOfTrick());
-
-        trick.playerPlay(new PlayedCard(player1, Card.ACE_CLUB));
-        trick.playerPlay(new PlayedCard(player2, Card.TEN_DIAMOND));
-
-        trick.playerPlay(new PlayedCard(player1, Card.ACE_SPADE));
-        trick.playerPlay(new PlayedCard(player2, Card.TEN_SPADE));
+        WarTrick trick = initAndPlayOnTrick(mockPlayer1, mockPlayer2, nbTurns);
 
         assertTrue(trick.isEndOfTrick());
-
-        assertSame(player1, trick.getWinner());
+        assertSame(mockPlayer1, trick.getWinner());
 
     }
 
@@ -89,36 +85,33 @@ public class WarTrickTest {
     @DisplayName("End of trick when 2 players play 5 cards in 2 successive war conditions")
     public void testPlayEndOfTrick_successive_war_conditions() {
 
-        Player player1 = new WarBotPlayer();
-        Player player2 = new WarBotPlayer();
+        final int nbTurns = 5;
 
-        player1.receiveHand(new ArrayList<>(Arrays.asList(Card.SIX_CLUB, Card.ACE_CLUB, Card.ACE_SPADE, Card.EIGHT_CLUB, Card.NINE_CLUB)));
-        player2.receiveHand(new ArrayList<>(Arrays.asList(Card.SIX_DIAMOND, Card.TEN_DIAMOND, Card.ACE_DIAMOND, Card.EIGHT_HEART, Card.TEN_HEART)));
+        Player mockPlayer1 = Mockito.mock(Player.class);
+        Mockito.when(mockPlayer1.play()).thenReturn(Card.SIX_CLUB, Card.ACE_CLUB, Card.ACE_SPADE, Card.EIGHT_CLUB, Card.NINE_CLUB);
+        Mockito.when(mockPlayer1.hasNoMoreCard()).thenReturn(false);
+        Mockito.doReturn(false).when(mockPlayer1).hasNoMoreCard();
 
-        WarTrick trick = new WarTrick("test", List.of(player1, player2), new ArrayList<>());
-        trick.playerPlay(new PlayedCard(player1, Card.SIX_CLUB));
-        trick.playerPlay(new PlayedCard(player2, Card.SIX_DIAMOND));
+        Player mockPlayer2 = Mockito.mock(Player.class);
+        Mockito.when(mockPlayer2.play()).thenReturn(Card.SIX_DIAMOND, Card.TEN_DIAMOND, Card.ACE_DIAMOND, Card.EIGHT_HEART, Card.TEN_HEART);
+        Mockito.doReturn(false).when(mockPlayer2).hasNoMoreCard();
 
-        assertFalse(trick.isEndOfTrick());
-
-        trick.playerPlay(new PlayedCard(player1, Card.ACE_CLUB));
-        trick.playerPlay(new PlayedCard(player2, Card.TEN_DIAMOND));
-
-        trick.playerPlay(new PlayedCard(player1, Card.ACE_SPADE));
-        trick.playerPlay(new PlayedCard(player2, Card.ACE_DIAMOND));
-
-        assertFalse(trick.isEndOfTrick());
-
-        trick.playerPlay(new PlayedCard(player1, Card.EIGHT_CLUB));
-        trick.playerPlay(new PlayedCard(player2, Card.EIGHT_HEART));
-
-        trick.playerPlay(new PlayedCard(player1, Card.NINE_CLUB));
-        trick.playerPlay(new PlayedCard(player2, Card.TEN_HEART));
+        WarTrick trick = initAndPlayOnTrick(mockPlayer1, mockPlayer2, nbTurns);
 
         assertTrue(trick.isEndOfTrick());
 
-        assertSame(player2, trick.getWinner());
+        assertSame(mockPlayer2, trick.getWinner());
 
+    }
+
+    private WarTrick initAndPlayOnTrick(Player player1, Player player2, int nbTurns) {
+        WarTrick trick = new WarTrick("test", List.of(player1, player2), dummyEventSender());
+
+        for (int i = 0; i < nbTurns;i++) {
+            trick.playerPlay(new PlayedCard(player1, player1.play()));
+            trick.playerPlay(new PlayedCard(player2, player2.play()));
+        }
+        return trick;
     }
 
     @Test
@@ -131,7 +124,7 @@ public class WarTrickTest {
         player1.receiveHand(new ArrayList<>(List.of(Card.SIX_CLUB)));
         player2.receiveHand(new ArrayList<>(List.of(Card.TEN_DIAMOND)));
 
-        WarTrick trick = new WarTrick("test", List.of(player1, player2), new ArrayList<>());
+        WarTrick trick = new WarTrick("test", List.of(player1, player2), dummyEventSender());
         trick.playerPlay(new PlayedCard(player1, Card.SIX_CLUB));
         trick.playerPlay(new PlayedCard(player2, Card.TEN_DIAMOND));
 
@@ -161,12 +154,12 @@ public class WarTrickTest {
         final boolean[] warHappened = new boolean[1];
         WarTrickObserver observer = new WarTrickObserver() {
             @Override
-            public void onWar(List<PlayedCard> cards) {
+            public void onWar(List<PlayedCard> cardsTriggeringWar) {
                 warHappened[0] = true;
             }
         };
 
-        WarTrick trick = new WarTrick("test", List.of(player1, player2), List.of(observer));
+        WarTrick trick = new WarTrick("test", List.of(player1, player2), new GameEventSender(observer));
         trick.playerPlay(new PlayedCard(player1, player1.play()));
         trick.playerPlay(new PlayedCard(player2, player2.play()));
         // WAR
@@ -177,11 +170,15 @@ public class WarTrickTest {
         trick.playerPlay(new PlayedCard(player2, player2.play()));
         // Player 2 has no more card to play
 
-        Assertions.assertTrue(player2.hasNoMoreCard());
-        Assertions.assertTrue(trick.isEndOfTrick());
-        Assertions.assertTrue(trick.isPrematureEndOfTrick());
-        Assertions.assertSame(player1, trick.getWinner());
+        assertTrue(player2.hasNoMoreCard());
+        assertTrue(trick.isEndOfTrick());
+        assertTrue(trick.isPrematureEndOfTrick());
+        assertSame(player1, trick.getWinner());
 
+    }
+
+    private GameEventSender dummyEventSender() {
+        return new GameEventSender();
     }
 
 }

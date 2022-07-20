@@ -2,7 +2,7 @@ package sebastien.perpignane.cardgame.game;
 
 import sebastien.perpignane.cardgame.player.Player;
 
-public interface GameObserver {
+public interface GameObserver extends CardGameObserver {
 
     void onStateUpdated(GameState oldState, GameState newState);
 

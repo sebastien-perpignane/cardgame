@@ -9,8 +9,6 @@ public interface Player {
 
     void receiveHand(Collection<Card> cards);
 
-    Collection<Card> getHand();
-
     void onUpdatedGame();
 
     void setGame(Game game);

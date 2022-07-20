@@ -39,10 +39,10 @@ public class GameTextDisplayer implements GameObserver, WarTrickObserver {
     }
 
     @Override
-    public void onWar(List<PlayedCard> cards) {
+    public void onWar(List<PlayedCard> cardsTriggeringWar) {
 
         System.out.println(" !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  WAR !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        for (var pc: cards) {
+        for (var pc: cardsTriggeringWar) {
             System.out.printf("Player %s : %s ; ", pc.player(), pc.card());
         }
         System.out.println();

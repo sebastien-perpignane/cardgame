@@ -3,54 +3,42 @@ package sebastien.perpignane.cardgame.game;
 import org.apache.commons.collections4.iterators.LoopingListIterator;
 import org.springframework.stereotype.Component;
 import sebastien.perpignane.cardgame.card.Card;
-import sebastien.perpignane.cardgame.card.CardSet;
-import sebastien.perpignane.cardgame.card.CardSetShuffler;
 import sebastien.perpignane.cardgame.player.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * TODO Refactoring needed, too much responsabilities in the same class.
+ * TODO Refactoring needed, too much responsibilities in the same class.
  */
 @Component
 public class Game {
 
-    //We use CopyOnWriteArrayList to allow addition of observers while the game is running.
-    private final List<GameObserver> gameObservers = new CopyOnWriteArrayList<>();
-    private final List<WarTrickObserver> trickObservers = new CopyOnWriteArrayList<>();
+    private final String gameId;
+    private GameState state;
+
 
     //We use CopyOnWriteArrayList to allow player registration while game is running,
     //for example to replace a bot player with a human one.
     private final List<Player> players = new CopyOnWriteArrayList<>();
-
     private Player currentPlayer = null;
-
-    private final List<Card> cards;
-
-    private final String gameId;
-
-    private GameState state;
-
+    private final LoopingListIterator<Player> playerIterator = new LoopingListIterator<>(players);
     private Player winner = null;
 
-    private final List<Trick> tricks = new ArrayList<>();
+
     private Trick currentTrick = null;
+    private final List<Trick> tricks = new ArrayList<>();
 
-    private final LoopingListIterator<Player> playerIterator = new LoopingListIterator<>(players);
+    private final GameEventSender gameEventSender;
 
-    public Game(CardSet cardSet, CardSetShuffler shuffler, List<GameObserver> gameObservers, List<WarTrickObserver> trickObservers) {
-        this.gameObservers.addAll(gameObservers);
-        this.trickObservers.addAll(trickObservers);
+    public Game(GameEventSender gameEventSender) {
+        this.gameEventSender = gameEventSender;
         gameId = UUID.randomUUID().toString();
         updateState(GameState.NOT_INITIALIZED);
-        cards = shuffler.shuffle(cardSet);
         updateState(GameState.INITIALIZED);
     }
 
-    public void startGame() {
+    public void startGame(List<Card> shuffledCards) {
 
         if (players.size() != 2) {
             throw new IllegalStateException("2 players are required");
@@ -58,15 +46,28 @@ public class Game {
 
         updateState(GameState.STARTING);
 
+        distributeCardsToPlayers(shuffledCards);
+        currentPlayer = playerIterator.next();
+
+        currentTrick = new WarTrick(trickId(), players, gameEventSender);
+
+        updateState(GameState.STARTED);
+        letKnowPlayers();
+    }
+
+    private void distributeCardsToPlayers(List<Card> cards) {
+
         if (cards.size() % players.size() != 0) {
             throw new IllegalStateException("The cards cannot be equally distributed to all players");
         }
 
-        distributeCardsToPlayers(cards.size() / players.size());
-        currentPlayer = playerIterator.next();
-        currentTrick = new WarTrick(trickId(), players, trickObservers);
-        updateState(GameState.STARTED);
-        letKnowPlayers();
+        var nbCards = cards.size() / players.size();
+        int playerIdx = 0;
+        for (Player player : players) {
+            int offset = playerIdx * nbCards;
+            player.receiveHand(cards.subList(offset, offset + nbCards));
+            playerIdx++;
+        }
     }
 
     private String trickId() {
@@ -87,21 +88,21 @@ public class Game {
 
         if (isInvalidPlay(pc)) return;
 
-        sendPlayedCardEvent(pc);
+        gameEventSender.sendPlayedCardEvent(pc);
 
         currentTrick.playerPlay(pc);
         if (currentTrick.isEndOfTrick()) {
-            sendWonTrickEvent(currentTrick);
+            gameEventSender.sendWonTrickEvent(currentTrick);
             currentTrick.getWinner().receiveNewCards(currentTrick.getAllCards());
 
             tricks.add(currentTrick);
             if (endOfGameCondition()) {
                 updateState(GameState.OVER);
                 computeWinner();
-                sendEndOfGameEvent();
+                gameEventSender.sendEndOfGameEvent(this);
                 return;
             }
-            currentTrick = new WarTrick(trickId(), players, trickObservers);
+            currentTrick = new WarTrick(trickId(), players, gameEventSender);
         }
         updateToNextPlayer();
 
@@ -128,7 +129,16 @@ public class Game {
         return invalidPlay;
     }
 
-    public boolean endOfGameCondition() {
+    private void computeWinner() {
+        for (var p: players) {
+            if (!p.hasNoMoreCard()) {
+                winner = p;
+                break;
+            }
+        }
+    }
+
+    private boolean endOfGameCondition() {
         int nbPlayersWithCards = 0;
         for (var player: players) {
             if (!player.hasNoMoreCard()) {
@@ -147,22 +157,12 @@ public class Game {
 
     private void updateToNextPlayer() {
         currentPlayer = playerIterator.next();
-        sendNextPlayerEvent();
+        gameEventSender.sendNextPlayerEvent(currentPlayer);
         letKnowPlayers();
-
     }
 
     public Player getCurrentPlayer() {
         return currentPlayer;
-    }
-
-    private void distributeCardsToPlayers(int nbCards) {
-        int playerIdx = 0;
-        for (Player player : players) {
-            int offset = playerIdx * nbCards;
-            player.receiveHand(cards.subList(offset, offset + nbCards));
-            playerIdx++;
-        }
     }
 
     public GameState getState() {
@@ -176,15 +176,9 @@ public class Game {
     private void updateState(GameState newState) {
         var oldState = state;
         state = newState;
-        sendStateEvent(oldState, state);
-    }
-
-    void computeWinner() {
-        for (var p: players) {
-            if (!p.hasNoMoreCard()) {
-                winner = p;
-                break;
-            }
+        gameEventSender.sendStateEvent(oldState, state);
+        if (newState == GameState.STARTED) {
+            gameEventSender.sendGameStartedEvent(players);
         }
     }
 
@@ -193,50 +187,11 @@ public class Game {
     }
 
     public void registerAsGameObserver(GameObserver observer) {
-        if (observer == null) {
-            throw new IllegalArgumentException("observer cannot be null");
-        }
-        gameObservers.add(observer);
+        gameEventSender.registerAsGameObserver(observer);
     }
 
     public void registerAsTrickObserver(WarTrickObserver observer) {
-        if (observer == null) {
-            throw new IllegalArgumentException("observer cannot be null");
-        }
-        trickObservers.add(observer);
-    }
-
-    void sendStateEvent(GameState oldState, GameState newState) {
-        for (GameObserver observer : gameObservers) {
-            observer.onStateUpdated(oldState, newState);
-        }
-        if (newState == GameState.STARTED) {
-            players.forEach(Player::onGameStarted);
-        }
-    }
-
-    void sendPlayedCardEvent(PlayedCard pc) {
-        for (GameObserver observer : gameObservers) {
-            observer.onCardPlayed(pc);
-        }
-    }
-
-    void sendNextPlayerEvent() {
-        for (GameObserver observer : gameObservers) {
-            observer.onNextPlayer(getCurrentPlayer());
-        }
-        //getCurrentPlayer().onPlayerTurn();
-    }
-
-    void sendEndOfGameEvent() {
-        gameObservers.forEach(go -> go.onEndOfGame(this));
-        players.forEach(Player::onGameOver);
-    }
-
-    void sendWonTrickEvent(Trick trick) {
-        for (GameObserver observer : gameObservers) {
-            observer.onWonTrick(trick);
-        }
+        gameEventSender.registerAsTrickObserver(observer);
     }
 
     @Override
@@ -246,8 +201,8 @@ public class Game {
                 '}';
     }
 
-    List<Card> getCards() {
-        return cards;
+    List<Player> getPlayers() {
+        return Collections.unmodifiableList(players);
     }
 
 }

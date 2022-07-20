@@ -10,7 +10,7 @@ import java.util.List;
 
 public class WarPlayer1WinShuffler implements CardSetShuffler {
 
-    public final static List<CardValue> bestCardValues = List.of(CardValue.TEN, CardValue.JACK, CardValue.QUEEN, CardValue.KING);
+    public final static List<CardValue> bestCardValues = List.of(CardValue.JACK, CardValue.QUEEN, CardValue.KING, CardValue.ACE);
     public final static List<CardValue> worstCardValues = List.of(CardValue.SIX, CardValue.SEVEN, CardValue.EIGHT, CardValue.NINE);
 
     @Override

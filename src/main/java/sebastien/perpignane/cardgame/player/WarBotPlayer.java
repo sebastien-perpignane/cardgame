@@ -58,11 +58,6 @@ public class WarBotPlayer extends AbstractPlayer implements Runnable {
 
     }
 
-    @Override
-    public Collection<Card> getHand() {
-        return hand;
-    }
-
     public Card play() {
         manageEmptyHandIfRelevant();
         return hand.pop();

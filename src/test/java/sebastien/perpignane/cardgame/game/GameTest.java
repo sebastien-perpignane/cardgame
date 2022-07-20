@@ -4,15 +4,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import sebastien.perpignane.cardgame.card.Card;
 import sebastien.perpignane.cardgame.card.CardSet;
 import sebastien.perpignane.cardgame.player.Player;
 import sebastien.perpignane.cardgame.player.WarBotPlayer;
 
+import java.util.Arrays;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-
-import static sebastien.perpignane.cardgame.game.WarPlayer1WinShuffler.bestCardValues;
-import static java.util.Collections.emptyList;
 
 public class GameTest {
 
@@ -23,16 +22,15 @@ public class GameTest {
         Player player1 = new WarBotPlayer();
         Player player2 = new WarBotPlayer();
 
-        Game game = new Game(CardSet.GAME_32, new WarPlayer1WinShuffler(), emptyList(), emptyList());
+        Game game = new Game(new GameEventSender());
         game.joinGame(player1);
         game.joinGame(player2);
 
         Assertions.assertEquals(GameState.INITIALIZED, game.getState());
 
-        Assertions.assertEquals(32, game.getCards().size());
-        Assertions.assertTrue(bestCardValues.contains(game.getCards().get(1).getValue()));
-
-        game.startGame();
+        var shuffler = new WarPlayer1WinShuffler();
+        var cards = shuffler.shuffle(CardSet.GAME_32);
+        game.startGame(cards);
 
         boolean endOfGame = waitForEndOfGameEvent(game);
 
@@ -48,7 +46,7 @@ public class GameTest {
         Player player1 = new WarBotPlayer();
         Player player2 = new WarBotPlayer();
 
-        Game game = new Game(CardSet.GAME_32, new WarPlayer2WinButLosesOneTrickShuffler(), emptyList(), emptyList());
+        Game game = new Game(new GameEventSender());
         game.joinGame(player1);
         game.joinGame(player2);
 
@@ -57,7 +55,20 @@ public class GameTest {
         game.registerAsGameObserver(observer);
         game.registerAsTrickObserver(observer);
 
-        game.startGame();
+        var cards = Arrays.asList(
+                Card.SEVEN_DIAMOND,
+                Card.SEVEN_CLUB,
+                Card.SEVEN_HEART,
+                Card.EIGHT_SPADE,
+                Card.EIGHT_CLUB,
+                Card.SIX_CLUB,
+                Card.KING_CLUB,
+                Card.KING_DIAMOND,
+                Card.KING_HEART,
+                Card.KING_SPADE
+        );
+
+        game.startGame(cards);
 
         boolean endOfGame = waitForEndOfGameEvent(game);
         Assertions.assertTrue(endOfGame);

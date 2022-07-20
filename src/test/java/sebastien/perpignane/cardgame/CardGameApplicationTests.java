@@ -10,16 +10,11 @@ import sebastien.perpignane.cardgame.card.CardSet;
 // TODO write integration tests
 
 @SpringBootTest()
-class CardgameApplicationTests {
-
-	@Autowired
-	private CardSet cardSet;
+class CardGameApplicationTests {
 
 	@Test
 	@DisplayName("Spring app context loading")
 	void contextLoads() {
-
-		Assertions.assertNotNull(cardSet);
 
 	}
 

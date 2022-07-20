@@ -25,19 +25,19 @@ public class WarTrick implements Trick {
 
     private final String trickId;
 
-    private final List<WarTrickObserver> observers;
+    private final GameEventSender gameEventSender;
 
-    public WarTrick(String trickId, List<Player> players, List<WarTrickObserver> observers) {
+    public WarTrick(String trickId, List<Player> players, GameEventSender gameEventSender) {
         if (players.size() != 2) {
             throw new IllegalArgumentException("Only 2 players are allowed");
         }
         this.trickId = trickId;
         this.players = players;
-        this.observers = observers;
         for (Player p: players) {
             nbPlayedCardsByPlayer.put(p, 0);
             playedCardsByPlayer.put(p, new ArrayList<>());
         }
+        this.gameEventSender = gameEventSender;
     }
 
     @Override
@@ -51,7 +51,7 @@ public class WarTrick implements Trick {
         incrementPlayedCards(pc);
 
         if (isWarCondition()) {
-            sendWarEvent();
+            gameEventSender.sendWarEvent(collectLastPlayedCards());
             cardLimit += 2;
         }
 
@@ -70,10 +70,10 @@ public class WarTrick implements Trick {
     }
 
     private void computeEndOfTrick() {
-        if (allPlayerReachedCardLimit() || onePlayerHasNoMoreCardsAndCardsToPlay() ) {
+        this.prematureEndOfTrick = onePlayerHasNoMoreCardsAndCardsToPlay();
+        if (allPlayerReachedCardLimit() || this.prematureEndOfTrick ) {
             endOfTrick = true;
         }
-        this.prematureEndOfTrick = onePlayerHasNoMoreCardsAndCardsToPlay();
     }
 
     private void computeWinnerIfRelevant() {
@@ -159,30 +159,13 @@ public class WarTrick implements Trick {
         return playedCardsByPlayer.values().stream().flatMap(Collection::stream).map(PlayedCard::card).toList();
     }
 
-    private void sendWarEvent() {
-        observers.forEach(o -> o.onWar(collectLastPlayedCards()));
-    }
-
-    List<PlayedCard> collectLastPlayedCards() {
+    private List<PlayedCard> collectLastPlayedCards() {
         return playedCardsByPlayer.values().stream()
                 .filter(cards -> !cards.isEmpty())
                 .map(cards -> {
                     var lastCardIdx = cards.size() - 1;
                     return cards.get(lastCardIdx);
                 }).toList();
-    }
-
-    private boolean endOfTurn() {
-        Integer nbPlayedCards = null;
-        for(int nb : nbPlayedCardsByPlayer.values()) {
-            if (nbPlayedCards == null) {
-                nbPlayedCards = nb;
-            }
-            if (nbPlayedCards != nb) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private boolean onePlayerHasNoMoreCardsAndCardsToPlay() {
