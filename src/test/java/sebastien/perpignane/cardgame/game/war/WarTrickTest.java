@@ -2,7 +2,6 @@ package sebastien.perpignane.cardgame.game.war;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import sebastien.perpignane.cardgame.card.Card;
 import sebastien.perpignane.cardgame.game.GameEventSender;
 import sebastien.perpignane.cardgame.game.PlayedCard;
@@ -12,9 +11,9 @@ import sebastien.perpignane.cardgame.player.Player;
 import sebastien.perpignane.cardgame.player.WarBotPlayer;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class WarTrickTest {
@@ -44,13 +43,13 @@ public class WarTrickTest {
 
         final int nbTurns = 1;
 
-        Player mockPlayer1 = Mockito.mock(Player.class);
-        Mockito.when(mockPlayer1.play()).thenReturn(Card.SIX_CLUB);
-        Mockito.when(mockPlayer1.hasNoMoreCard()).thenReturn(false);
+        Player mockPlayer1 = mock(Player.class);
+        when(mockPlayer1.play()).thenReturn(Card.SIX_CLUB);
+        when(mockPlayer1.hasNoMoreCard()).thenReturn(false);
 
-        Player mockPlayer2 = Mockito.mock(Player.class);
-        Mockito.when(mockPlayer2.play()).thenReturn(Card.TEN_DIAMOND);
-        Mockito.when(mockPlayer2.hasNoMoreCard()).thenReturn(false);
+        Player mockPlayer2 = mock(Player.class);
+        when(mockPlayer2.play()).thenReturn(Card.TEN_DIAMOND);
+        when(mockPlayer2.hasNoMoreCard()).thenReturn(false);
 
         var trick = initAndPlayOnTrick(mockPlayer1, mockPlayer2, nbTurns);
 
@@ -66,13 +65,13 @@ public class WarTrickTest {
 
         final int nbTurns = 3;
 
-        Player mockPlayer1 = Mockito.mock(Player.class);
-        Mockito.when(mockPlayer1.play()).thenReturn(Card.SIX_CLUB, Card.ACE_CLUB, Card.ACE_SPADE);
-        Mockito.when(mockPlayer1.hasNoMoreCard()).thenReturn(false);
+        Player mockPlayer1 = mock(Player.class);
+        when(mockPlayer1.play()).thenReturn(Card.SIX_CLUB, Card.ACE_CLUB, Card.ACE_SPADE);
+        when(mockPlayer1.hasNoMoreCard()).thenReturn(false);
 
-        Player mockPlayer2 = Mockito.mock(Player.class);
-        Mockito.when(mockPlayer2.play()).thenReturn(Card.SIX_DIAMOND, Card.TEN_DIAMOND, Card.TEN_SPADE);
-        Mockito.when(mockPlayer2.hasNoMoreCard()).thenReturn(false);
+        Player mockPlayer2 = mock(Player.class);
+        when(mockPlayer2.play()).thenReturn(Card.SIX_DIAMOND, Card.TEN_DIAMOND, Card.TEN_SPADE);
+        when(mockPlayer2.hasNoMoreCard()).thenReturn(false);
 
         WarTrick trick = initAndPlayOnTrick(mockPlayer1, mockPlayer2, nbTurns);
 
@@ -87,14 +86,13 @@ public class WarTrickTest {
 
         final int nbTurns = 5;
 
-        Player mockPlayer1 = Mockito.mock(Player.class);
-        Mockito.when(mockPlayer1.play()).thenReturn(Card.SIX_CLUB, Card.ACE_CLUB, Card.ACE_SPADE, Card.EIGHT_CLUB, Card.NINE_CLUB);
-        Mockito.when(mockPlayer1.hasNoMoreCard()).thenReturn(false);
-        Mockito.doReturn(false).when(mockPlayer1).hasNoMoreCard();
+        Player mockPlayer1 = mock(Player.class);
+        when(mockPlayer1.play()).thenReturn(Card.SIX_CLUB, Card.ACE_CLUB, Card.ACE_SPADE, Card.EIGHT_CLUB, Card.NINE_CLUB);
+        when(mockPlayer1.hasNoMoreCard()).thenReturn(false);
 
-        Player mockPlayer2 = Mockito.mock(Player.class);
-        Mockito.when(mockPlayer2.play()).thenReturn(Card.SIX_DIAMOND, Card.TEN_DIAMOND, Card.ACE_DIAMOND, Card.EIGHT_HEART, Card.TEN_HEART);
-        Mockito.doReturn(false).when(mockPlayer2).hasNoMoreCard();
+        Player mockPlayer2 = mock(Player.class);
+        when(mockPlayer2.play()).thenReturn(Card.SIX_DIAMOND, Card.TEN_DIAMOND, Card.ACE_DIAMOND, Card.EIGHT_HEART, Card.TEN_HEART);
+        when(mockPlayer2.hasNoMoreCard()).thenReturn(false);
 
         WarTrick trick = initAndPlayOnTrick(mockPlayer1, mockPlayer2, nbTurns);
 
