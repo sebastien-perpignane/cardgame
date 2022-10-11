@@ -85,10 +85,6 @@ public class ContreeGame extends AbstractGame {
         return getState() == GameState.OVER;
     }
 
-    public boolean isStarted() {
-        return getState() == GameState.STARTED;
-    }
-
     @Override
     public String toString() {
         return "ContreeGame{" +

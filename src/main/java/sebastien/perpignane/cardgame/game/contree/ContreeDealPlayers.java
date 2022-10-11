@@ -1,6 +1,5 @@
 package sebastien.perpignane.cardgame.game.contree;
 
-import org.apache.commons.collections4.iterators.LoopingListIterator;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;

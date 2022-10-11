@@ -54,7 +54,7 @@ public class ContreeDealTest {
         var deal = new ContreeDeal("test", players, new ContreeGameEventSender());
         deal.startDeal();
 
-        assertSame(DealStep.BID, deal.getDealStep());
+        assertTrue(deal.isBidStep());
 
         assertThrows(
                 IllegalStateException.class,
@@ -71,7 +71,7 @@ public class ContreeDealTest {
 
         placeBidsWithPlayer1BiddingForHeartAndOthersPass(deal, players);
 
-        assertSame(DealStep.PLAY, deal.getDealStep());
+        assertTrue( deal.isPlayStep() );
 
         assertThrows(
                 IllegalStateException.class,
@@ -88,7 +88,7 @@ public class ContreeDealTest {
 
         placeBidsWithPlayer1BiddingForHeartAndOthersPass(deal, players);
 
-        assertSame(DealStep.PLAY, deal.getDealStep());
+        assertTrue( deal.isPlayStep() );
 
         assertThrows(
             IllegalArgumentException.class,
@@ -159,7 +159,7 @@ public class ContreeDealTest {
 
         placeBidsWithPlayer1BiddingForHeartAndOthersPass(deal, players);
 
-        assertSame(DealStep.PLAY, deal.getDealStep());
+        assertTrue( deal.isPlayStep() );
 
         while (!deal.isOver()) {
             deal.playerPlays(players.get(0), hand1.pop());

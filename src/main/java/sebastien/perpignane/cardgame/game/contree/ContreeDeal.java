@@ -101,7 +101,7 @@ class ContreeDeal {
 
     }
 
-    public synchronized void placeBid(ContreeBid bid) {
+    public void placeBid(ContreeBid bid) {
 
         eventSender.sendPlacedBidEvent(dealId, bid);
         dealBids.placeBid(bid);
@@ -214,7 +214,7 @@ class ContreeDeal {
         currentTrick.startTrick();
     }
 
-    public synchronized void playerPlays(ContreePlayer player, ClassicalCard card) {
+    public void playerPlays(ContreePlayer player, ClassicalCard card) {
 
         if (!isPlayStep()) {
             throw new IllegalStateException(String.format("Cheater detected : %s is trying to play a card on a deal not in PLAY step", player));
@@ -262,11 +262,6 @@ class ContreeDeal {
         }
         tricks.add(currentTrick);
     }
-
-    DealStep getDealStep() {
-        return dealStep;
-    }
-
 
     public List<ContreeTrick> getTricks() {
         return tricks;

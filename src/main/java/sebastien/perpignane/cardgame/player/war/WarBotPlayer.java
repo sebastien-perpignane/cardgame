@@ -98,14 +98,6 @@ public class WarBotPlayer extends AbstractPlayer implements Runnable {
         return cardStock.size() + (hand == null ? 0 : hand.size());
     }
 
-    public int nbCardsInHand() {
-        return hand == null ? 0 : hand.size();
-    }
-
-    public int nbCardsInStock() {
-        return cardStock.size();
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

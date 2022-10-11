@@ -20,7 +20,7 @@ public abstract class AbstractPlayer implements Player {
     }
 
     // FIXME -> send precise events to players, not a global "the game is updated"
-    public synchronized void onUpdatedGame() {
+    public void onUpdatedGame() {
         if (warGame.getCurrentPlayer() == this && state != PlayerState.PLAYING) {
             state = PlayerState.PLAYING;
             onPlayerTurn();

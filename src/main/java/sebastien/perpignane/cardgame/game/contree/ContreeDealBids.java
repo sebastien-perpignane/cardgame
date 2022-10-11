@@ -27,7 +27,7 @@ public class ContreeDealBids {
         bidPlayers.onCurrentBidderTurnToBid();
     }
 
-    public synchronized void placeBid(ContreeBid bid) {
+    public void placeBid(ContreeBid bid) {
 
         // FIXME find a way to share event sender
         // eventSender.sendPlacedBidEvent(dealId, bid);
@@ -51,7 +51,7 @@ public class ContreeDealBids {
 
     }
 
-    public synchronized boolean bidsAreOver() {
+    public boolean bidsAreOver() {
         return bids.size() == maxBids || bids.stream().anyMatch(ContreeBid::isRedouble);
     }
 

@@ -23,24 +23,9 @@ public class ContreeBotPlayer extends AbstractThreadBotPlayer<ContreeBotPlayer.P
         END_OF_GAME
     }
 
-    public static class PlayerMessage {
-
-        private final MessageType messageType;
-
-        private final Collection<ClassicalCard> allowedCards;
-
-        public PlayerMessage(MessageType messageType, Collection<ClassicalCard> allowedCards) {
-            this.messageType = messageType;
-            this.allowedCards = allowedCards;
-        }
-
-        public Collection<ClassicalCard> getAllowedCards() {
-            return allowedCards;
-        }
-
-        public MessageType getMessageType() {
-            return messageType;
-        }
+    public record PlayerMessage(
+            MessageType messageType,
+            Collection<ClassicalCard> allowedCards) {
     }
 
     private static final Deque<String> fakeNames = new LinkedList<>();
@@ -170,10 +155,10 @@ public class ContreeBotPlayer extends AbstractThreadBotPlayer<ContreeBotPlayer.P
 
     @Override
     protected void handleMessage(PlayerMessage playerMessage) {
-        switch (playerMessage.getMessageType()) {
+        switch (playerMessage.messageType()) {
             case PLAY -> {
-                System.out.printf("Allowed cards : %s%n", playerMessage.getAllowedCards().stream().map(ClassicalCard::toString).collect(Collectors.joining(",")));
-                var playedCard = playerMessage.getAllowedCards().iterator().next();
+                System.out.printf("Allowed cards : %s%n", playerMessage.allowedCards().stream().map(ClassicalCard::toString).collect(Collectors.joining(",")));
+                var playedCard = playerMessage.allowedCards().iterator().next();
                 hand.remove(playedCard);
                 contreeGame.playCard(this, playedCard);
             }

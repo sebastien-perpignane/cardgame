@@ -75,6 +75,7 @@ public class ContreeGameEventSender extends AbstractGameEventSender {
         dealObservers.forEach(cdo -> cdo.onPlayStepEnded(dealId));
     }
 
+    // FIXME Manage this event in trick management code
     void sendTrumpedTrickEvent(String trickId) {
         trickObservers.forEach(to -> to.onTrumpedTrick(trickId));
     }

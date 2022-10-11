@@ -99,10 +99,12 @@ public class WarGame extends AbstractGame {
         });
     }
 
+    // TODO to be tested
     public boolean isWarInProgress() {
         return currentTrick.isWarInProgress();
     }
 
+    // TODO to be tested
     public int currentTrickTurn() {
         return currentTrick.getTrickTurn();
     }
@@ -187,6 +189,7 @@ public class WarGame extends AbstractGame {
         warGameEventSender.registerAsTrickObserver(observer);
     }
 
+    // TODO to be tested
     public int nbTricks() {
         return tricks.size();
     }
