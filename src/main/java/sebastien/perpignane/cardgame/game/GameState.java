@@ -1,10 +1,11 @@
 package sebastien.perpignane.cardgame.game;
 
-enum GameState {
+public enum GameState {
     NOT_INITIALIZED(false),
     INITIALIZED(false),
     STARTING(false),
     STARTED(true),
+    WAITING_FOR_PLAYERS(false),
     OVER(false);
 
     private final boolean playable;

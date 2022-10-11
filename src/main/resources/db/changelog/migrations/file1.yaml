@@ -1,6 +1,0 @@
-databaseChangeLog:
-  - changeSet:
-      id: "1"
-      author: seb
-      changes:
-        - empty: { }

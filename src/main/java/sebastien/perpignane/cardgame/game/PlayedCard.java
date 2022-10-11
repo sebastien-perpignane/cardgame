@@ -1,10 +1,9 @@
 package sebastien.perpignane.cardgame.game;
 
-import sebastien.perpignane.cardgame.card.Card;
+import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.player.Player;
 
-public record PlayedCard(Player player, Card card) {
-
+public record PlayedCard(Player player, ClassicalCard card) {
     public PlayedCard {
         if (player == null) {
             throw new IllegalArgumentException("player cannot be null");
@@ -13,5 +12,4 @@ public record PlayedCard(Player player, Card card) {
             throw new IllegalArgumentException("card cannot be null");
         }
     }
-
 }

@@ -1,5 +1,8 @@
 package sebastien.perpignane.cardgame.game;
 
+import sebastien.perpignane.cardgame.card.ClassicalCard;
+import sebastien.perpignane.cardgame.game.contree.ContreeGame;
+import sebastien.perpignane.cardgame.game.war.WarGame;
 import sebastien.perpignane.cardgame.player.Player;
 
 import java.util.concurrent.BlockingQueue;
@@ -28,12 +31,17 @@ public class BlockingQueueGameObserver implements GameObserver {
     }
 
     @Override
-    public void onEndOfGame(Game game) {
+    public void onEndOfGame(WarGame warGame) {
         gameMessage.add("END_OF_GAME");
     }
 
     @Override
-    public void onCardPlayed(PlayedCard pc) {
+    public void onEndOfGame(ContreeGame contreeGame) {
+        gameMessage.add("END_OF_GAME");
+    }
+
+    @Override
+    public void onCardPlayed(Player player, ClassicalCard card) {
 
     }
 }

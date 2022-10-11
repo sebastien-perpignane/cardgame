@@ -1,30 +1,31 @@
 package sebastien.perpignane.cardgame.game;
 
-import sebastien.perpignane.cardgame.card.Card;
+import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.card.CardSet;
 import sebastien.perpignane.cardgame.card.CardSetShuffler;
-import sebastien.perpignane.cardgame.card.CardValue;
+import sebastien.perpignane.cardgame.card.CardRank;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class WarPlayer1WinShuffler implements CardSetShuffler {
 
-    public final static List<CardValue> bestCardValues = List.of(CardValue.JACK, CardValue.QUEEN, CardValue.KING, CardValue.ACE);
-    public final static List<CardValue> worstCardValues = List.of(CardValue.SIX, CardValue.SEVEN, CardValue.EIGHT, CardValue.NINE);
+    public final static List<CardRank> BEST_CARD_RANKS = Arrays.asList(CardRank.JACK, CardRank.QUEEN, CardRank.KING, CardRank.ACE);
+    public final static List<CardRank> WORST_CARD_RANKS =Arrays.asList(CardRank.SIX, CardRank.SEVEN, CardRank.EIGHT, CardRank.NINE);
 
     @Override
-    public List<Card> shuffle(CardSet cSet) {
-        List<Card> bestCards = new ArrayList<>();
-        List<Card> worstCards = new ArrayList<>();
+    public List<ClassicalCard> shuffle(CardSet cSet) {
+        List<ClassicalCard> bestCards = new ArrayList<>();
+        List<ClassicalCard> worstCards = new ArrayList<>();
 
 
-        for (Card card : Card.values()) {
+        for (ClassicalCard card : ClassicalCard.values()) {
 
-            if (bestCardValues.contains(card.getValue())) {
+            if (BEST_CARD_RANKS.contains(card.getRank())) {
                 bestCards.add(card);
             }
-            else if (worstCardValues.contains(card.getValue())) {
+            else if (WORST_CARD_RANKS.contains(card.getRank())) {
                 worstCards.add(card);
             }
 

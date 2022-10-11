@@ -1,15 +1,18 @@
 package sebastien.perpignane.cardgame.player;
 
-import sebastien.perpignane.cardgame.game.Game;
-import sebastien.perpignane.cardgame.game.PlayedCard;
+import sebastien.perpignane.cardgame.card.ClassicalCard;
+import sebastien.perpignane.cardgame.game.AbstractGame;
+import sebastien.perpignane.cardgame.game.war.WarGame;
 
 import java.util.Objects;
 
 
-
+/**
+ * FIXME WarGame cannot be referenced in AbstractPlayer
+ */
 public abstract class AbstractPlayer implements Player {
 
-    private Game game;
+    private WarGame warGame;
     private PlayerState state;
 
     public AbstractPlayer() {
@@ -18,7 +21,7 @@ public abstract class AbstractPlayer implements Player {
 
     // FIXME -> send precise events to players, not a global "the game is updated"
     public synchronized void onUpdatedGame() {
-        if (game.getCurrentPlayer() == this && state != PlayerState.PLAYING) {
+        if (warGame.getCurrentPlayer() == this && state != PlayerState.PLAYING) {
             state = PlayerState.PLAYING;
             onPlayerTurn();
         }
@@ -28,32 +31,33 @@ public abstract class AbstractPlayer implements Player {
     }
 
     @Override
-    public void setGame(Game game) {
-        this.game = game;
+    public void setGame(AbstractGame game) {
+        this.warGame = (WarGame) game;
     }
 
-    protected void play(PlayedCard pc) {
-        game.play(pc);
+
+    protected void play(ClassicalCard card) {
+        warGame.play(this, card);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof AbstractPlayer that)) return false;
-        return Objects.equals(game, that.game);
+        if (!(o instanceof AbstractPlayer)) return false;
+        return Objects.equals(warGame, ((AbstractPlayer)o).warGame);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(game);
+        return Objects.hash(warGame);
     }
 
-    boolean gameIsOver() {
-        return game.isOver();
+    protected boolean gameIsOver() {
+        return warGame.isOver();
     }
 
-    boolean isCurrentPlayer() {
-        return game.getCurrentPlayer() == this;
+    protected boolean isCurrentPlayer() {
+        return warGame.getCurrentPlayer() == this;
     }
 
 }

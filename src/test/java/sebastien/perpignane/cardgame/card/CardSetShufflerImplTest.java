@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
+import java.util.List;
 
 public class CardSetShufflerImplTest {
 
@@ -13,7 +14,7 @@ public class CardSetShufflerImplTest {
     @Test
     @DisplayName("Shuffle of a 32 card set")
     public void testShuffle_32cards() {
-        var result = cardSetShuffler.shuffle(CardSet.GAME_32);
+        List<ClassicalCard> result = cardSetShuffler.shuffle(CardSet.GAME_32);
 
         Assertions.assertEquals(32, result.size());
         Assertions.assertEquals(32, new HashSet<>(result).size());
@@ -23,7 +24,7 @@ public class CardSetShufflerImplTest {
     @Test
     @DisplayName("Shuffle of a 52 card set")
     public void testShuffle_52cards() {
-        var result = cardSetShuffler.shuffle(CardSet.GAME_52);
+        List<ClassicalCard> result = cardSetShuffler.shuffle(CardSet.GAME_52);
 
         Assertions.assertEquals(52, result.size());
         Assertions.assertEquals(52, new HashSet<>(result).size());
@@ -33,7 +34,7 @@ public class CardSetShufflerImplTest {
     @Test
     @DisplayName("Shuffle of a 54 card set")
     public void testShuffle_54cards() {
-        var result = cardSetShuffler.shuffle(CardSet.GAME_54);
+        List<ClassicalCard> result = cardSetShuffler.shuffle(CardSet.GAME_54);
 
         Assertions.assertEquals(54, result.size());
         Assertions.assertEquals(54, new HashSet<>(result).size());
