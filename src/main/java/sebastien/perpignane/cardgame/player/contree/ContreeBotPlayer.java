@@ -158,12 +158,18 @@ public class ContreeBotPlayer extends AbstractThreadBotPlayer<ContreeBotPlayer.P
         switch (playerMessage.messageType()) {
             case PLAY -> {
                 System.out.printf("Allowed cards : %s%n", playerMessage.allowedCards().stream().map(ClassicalCard::toString).collect(Collectors.joining(",")));
-                var playedCard = playerMessage.allowedCards().iterator().next();
+                int cardIndex = new Random().nextInt(playerMessage.allowedCards().size());
+                Iterator<ClassicalCard> cardIterator = playerMessage.allowedCards.iterator();
+                ClassicalCard playedCard = null;
+                int i = 0;
+                while (i < (cardIndex == 0 ? 1 : cardIndex)) {
+                    playedCard = cardIterator.next();
+                    i++;
+                }
                 hand.remove(playedCard);
                 contreeGame.playCard(this, playedCard);
             }
             case BID -> {
-                System.out.printf("%s reacting to BID event%n", this);
                 placeBid();
             }
             case END_OF_GAME -> System.out.printf("%s reacting to END_OF_GAME event%n", this);
@@ -172,7 +178,7 @@ public class ContreeBotPlayer extends AbstractThreadBotPlayer<ContreeBotPlayer.P
 
     @Override
     public String toString() {
-        return "ContreeBotPlayer{name=" + name + "-BOT, " +
+        return "{name=" + name + "-BOT, " +
                 "team=" + team +'}';
     }
 
