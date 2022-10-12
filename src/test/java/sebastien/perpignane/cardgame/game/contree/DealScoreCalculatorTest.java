@@ -1,5 +1,6 @@
 package sebastien.perpignane.cardgame.game.contree;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import sebastien.perpignane.cardgame.card.CardSet;
 import sebastien.perpignane.cardgame.card.CardSuit;
@@ -10,9 +11,10 @@ import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
 import java.util.*;
 
-import static org.mockito.Mockito.*;
-import static sebastien.perpignane.cardgame.game.contree.ContreeTestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static sebastien.perpignane.cardgame.game.contree.ContreeTestUtils.buildPlayers;
 
 public class DealScoreCalculatorTest {
 
@@ -284,6 +286,74 @@ public class DealScoreCalculatorTest {
         // 88 + dix de der, rounded
         assertEquals(500, scoreByTeam.get(contractPlayer.getTeam().orElseThrow()));
         assertEquals(0, scoreByTeam.get(ContreeTeam.TEAM2));
+    }
+
+    private Collection<ContreeCard> buildContreeCards(CardSuit trump, Set<ClassicalCard> cards) {
+        return ContreeCard.of(trump, cards);
+    }
+
+    @DisplayName("Count points for standard and trump cards")
+    @Test
+    public void testCountStandardAndTrumpCards() {
+
+        Collection<ContreeCard> dealCards = buildContreeCards(
+                CardSuit.HEARTS,
+                Set.of(
+                        ClassicalCard.ACE_SPADE,
+                        ClassicalCard.TEN_SPADE,
+                        ClassicalCard.EIGHT_SPADE,
+                        ClassicalCard.SEVEN_DIAMOND
+                )
+        );
+
+        ContreeDeal deal = mock(ContreeDeal.class);
+
+        DealScoreCalculator dealPointComputer = new DealScoreCalculator(deal);
+        var dealPoints = dealPointComputer.computeCardPoints(dealCards);
+
+        assertEquals(21, dealPoints);
+
+    }
+
+    @DisplayName("Count points for trump cards only")
+    @Test
+    public void testCountTrumpCards() {
+
+        Collection<ContreeCard> dealCards = buildContreeCards(
+                CardSuit.DIAMONDS,
+                Set.of(
+                        ClassicalCard.ACE_DIAMOND,
+                        ClassicalCard.JACK_DIAMOND,
+                        ClassicalCard.NINE_DIAMOND,
+                        ClassicalCard.SEVEN_DIAMOND
+                )
+        );
+
+        ContreeDeal deal = mock(ContreeDeal.class);
+
+        DealScoreCalculator dealPointComputer = new DealScoreCalculator(deal);
+        var dealPoints = dealPointComputer.computeCardPoints(dealCards);
+
+        assertEquals(45, dealPoints);
+
+    }
+
+    @DisplayName("A full card set contains 152 points (162 when we count the 10 bonus points for the last trick)")
+    @Test
+    public void testCountPointsForAllCards() {
+
+        Collection<ContreeCard> dealCards = buildContreeCards(
+                CardSuit.CLUBS,
+                CardSet.GAME_32.getGameCards()
+        );
+
+        ContreeDeal deal = mock(ContreeDeal.class);
+
+        DealScoreCalculator dealPointComputer = new DealScoreCalculator(deal);
+        var dealPoints = dealPointComputer.computeCardPoints(dealCards);
+
+        assertEquals(152, dealPoints);
+
     }
 
 }

@@ -24,7 +24,7 @@ public class ContreeTrickWinnerTest {
         when(players.get(2).getHand()).thenReturn(List.of(ClassicalCard.TEN_CLUB));
         when(players.get(3).getHand()).thenReturn(List.of(ClassicalCard.JACK_CLUB));
 
-        ContreeTrick trick = new ContreeTrick(players, CardSuit.DIAMONDS);
+        ContreeTrick trick = new ContreeTrick("TEST", players, CardSuit.DIAMONDS, new ContreeGameEventSender());
         trick.startTrick();
 
         trick.playerPlays(players.get(0), ClassicalCard.ACE_CLUB);
@@ -49,7 +49,7 @@ public class ContreeTrickWinnerTest {
         when(players.get(2).getHand()).thenReturn(List.of(ClassicalCard.EIGHT_CLUB));
         when(players.get(3).getHand()).thenReturn(List.of(ClassicalCard.JACK_CLUB));
 
-        ContreeTrick trick = new ContreeTrick(players, CardSuit.DIAMONDS);
+        ContreeTrick trick = new ContreeTrick("TEST", players, CardSuit.DIAMONDS, new ContreeGameEventSender());
         trick.startTrick();
 
         trick.playerPlays(players.get(0), ClassicalCard.TEN_CLUB);
@@ -74,7 +74,7 @@ public class ContreeTrickWinnerTest {
         when(players.get(2).getHand()).thenReturn(List.of(ClassicalCard.TEN_CLUB));
         when(players.get(3).getHand()).thenReturn(List.of(ClassicalCard.JACK_CLUB));
 
-        ContreeTrick trick = new ContreeTrick(players, CardSuit.CLUBS);
+        ContreeTrick trick = new ContreeTrick("TEST", players, CardSuit.CLUBS, new ContreeGameEventSender());
         trick.startTrick();
 
         trick.playerPlays(players.get(0), ClassicalCard.ACE_CLUB);
@@ -99,7 +99,7 @@ public class ContreeTrickWinnerTest {
         when(players.get(2).getHand()).thenReturn(List.of(ClassicalCard.TEN_CLUB));
         when(players.get(3).getHand()).thenReturn(List.of(ClassicalCard.NINE_CLUB));
 
-        ContreeTrick trick = new ContreeTrick(players, CardSuit.CLUBS);
+        ContreeTrick trick = new ContreeTrick("TEST", players, CardSuit.CLUBS, new ContreeGameEventSender());
         trick.startTrick();
 
         trick.playerPlays(players.get(0), ClassicalCard.ACE_CLUB);
@@ -124,7 +124,7 @@ public class ContreeTrickWinnerTest {
         when(players.get(2).getHand()).thenReturn(List.of(ClassicalCard.TEN_CLUB));
         when(players.get(3).getHand()).thenReturn(List.of(ClassicalCard.EIGHT_CLUB));
 
-        ContreeTrick trick = new ContreeTrick(players, CardSuit.CLUBS);
+        ContreeTrick trick = new ContreeTrick("TEST", players, CardSuit.CLUBS, new ContreeGameEventSender());
         trick.startTrick();
 
         trick.playerPlays(players.get(0), ClassicalCard.ACE_CLUB);
@@ -149,7 +149,7 @@ public class ContreeTrickWinnerTest {
         when(players.get(2).getHand()).thenReturn(List.of(ClassicalCard.TEN_CLUB));
         when(players.get(3).getHand()).thenReturn(List.of(ClassicalCard.EIGHT_CLUB));
 
-        ContreeTrick trick = new ContreeTrick(players, CardSuit.CLUBS);
+        ContreeTrick trick = new ContreeTrick("TEST", players, CardSuit.CLUBS, new ContreeGameEventSender());
         trick.startTrick();
 
         trick.playerPlays(players.get(0), ClassicalCard.QUEEN_CLUB);
@@ -174,7 +174,7 @@ public class ContreeTrickWinnerTest {
         when(players.get(2).getHand()).thenReturn(List.of(ClassicalCard.KING_CLUB));
         when(players.get(3).getHand()).thenReturn(List.of(ClassicalCard.EIGHT_CLUB));
 
-        ContreeTrick trick = new ContreeTrick(players, CardSuit.CLUBS);
+        ContreeTrick trick = new ContreeTrick("TEST", players, CardSuit.CLUBS, new ContreeGameEventSender());
         trick.startTrick();
 
         trick.playerPlays(players.get(0), ClassicalCard.QUEEN_CLUB);
@@ -199,7 +199,7 @@ public class ContreeTrickWinnerTest {
         when(players.get(2).getHand()).thenReturn(List.of(ClassicalCard.TEN_DIAMOND));
         when(players.get(3).getHand()).thenReturn(List.of(ClassicalCard.JACK_CLUB));
 
-        ContreeTrick trick = new ContreeTrick(players, CardSuit.DIAMONDS);
+        ContreeTrick trick = new ContreeTrick("TEST", players, CardSuit.DIAMONDS, new ContreeGameEventSender());
         trick.startTrick();
 
         trick.playerPlays(players.get(0), ClassicalCard.ACE_CLUB);
@@ -224,7 +224,7 @@ public class ContreeTrickWinnerTest {
         when(players.get(2).getHand()).thenReturn(List.of(ClassicalCard.TEN_DIAMOND));
         when(players.get(3).getHand()).thenReturn(List.of(ClassicalCard.ACE_DIAMOND));
 
-        ContreeTrick trick = new ContreeTrick(players, CardSuit.DIAMONDS);
+        ContreeTrick trick = new ContreeTrick("TEST", players, CardSuit.DIAMONDS, new ContreeGameEventSender());
         trick.startTrick();
 
         trick.playerPlays(players.get(0), ClassicalCard.ACE_CLUB);

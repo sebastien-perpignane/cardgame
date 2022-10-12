@@ -2,7 +2,10 @@ package sebastien.perpignane.cardgame.game;
 
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
-import sebastien.perpignane.cardgame.game.contree.*;
+import sebastien.perpignane.cardgame.game.contree.ContreeBidValue;
+import sebastien.perpignane.cardgame.game.contree.ContreeDealObserver;
+import sebastien.perpignane.cardgame.game.contree.ContreeGame;
+import sebastien.perpignane.cardgame.game.contree.ContreeTrickObserver;
 import sebastien.perpignane.cardgame.game.war.WarGame;
 import sebastien.perpignane.cardgame.game.war.WarTrickObserver;
 import sebastien.perpignane.cardgame.player.Player;
@@ -83,7 +86,13 @@ public class GameTextDisplayer implements GameObserver, WarTrickObserver, Contre
 
     @Override
     public void onBidStepStarted(String dealId) {
-        System.out.printf("Bid step is started on deal %s%n", dealId);
+        System.out.printf("""
+
+***********************************************************************
+* BID STEP started on deal %s
+***********************************************************************
+
+""", dealId);
     }
 
     @Override
@@ -93,7 +102,13 @@ public class GameTextDisplayer implements GameObserver, WarTrickObserver, Contre
 
     @Override
     public void onPlayStepStarted(String dealId, CardSuit trumpSuit) {
-        System.out.printf("Play step is started on deal %s. Trump is %s.%n", dealId, trumpSuit);
+        System.out.printf("""
+
+***********************************************************************
+* PLAY STEP started on deal %s. TRUMP is %s
+***********************************************************************
+
+""", dealId, trumpSuit);
     }
 
     @Override
@@ -103,6 +118,18 @@ public class GameTextDisplayer implements GameObserver, WarTrickObserver, Contre
 
     @Override
     public void onTrumpedTrick(String trickId) {
+        System.out.printf("Trick #%s is trumped!%n", trickId);
+    }
 
+    @Override
+    public void onNewTrick(String trickId, CardSuit trumpSuit) {
+        System.out.printf("""
+                                
+***********************************************************************
+* NEW TRICK #%s - Trump is %s
+***********************************************************************
+
+""",
+        trickId, trumpSuit);
     }
 }

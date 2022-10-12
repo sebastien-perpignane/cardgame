@@ -2,19 +2,17 @@ package sebastien.perpignane.cardgame.game.contree;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.card.CardSuit;
+import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.player.Player;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
-
-import static sebastien.perpignane.cardgame.game.contree.ContreeTestUtils.buildPlayers;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
+import static sebastien.perpignane.cardgame.game.contree.ContreeTestUtils.buildPlayers;
 
 public class ContreeTrickTest {
 
@@ -28,7 +26,7 @@ public class ContreeTrickTest {
         var players = buildPlayers();
         var winner = players.get(0);
 
-        ContreeTrick trick = new ContreeTrick(players, CardSuit.HEARTS);
+        ContreeTrick trick = new ContreeTrick("TEST", players, CardSuit.HEARTS, new ContreeGameEventSender());
 
         var result = trick.buildNextTrickPlayerListFromPreviousWinner(players, winner);
 
@@ -43,7 +41,7 @@ public class ContreeTrickTest {
         var players = buildPlayers();
         var winner = players.get(1);
 
-        ContreeTrick trick = new ContreeTrick(players, CardSuit.HEARTS);
+        ContreeTrick trick = new ContreeTrick("TEST", players, CardSuit.HEARTS, new ContreeGameEventSender());
 
         var result = trick.buildNextTrickPlayerListFromPreviousWinner(players, winner);
 
@@ -76,7 +74,7 @@ public class ContreeTrickTest {
         var players = buildPlayers();
         var winner = players.get(2);
 
-        ContreeTrick trick = new ContreeTrick(players, CardSuit.HEARTS);
+        ContreeTrick trick = new ContreeTrick("TEST", players, CardSuit.HEARTS, new ContreeGameEventSender());
 
         var result = trick.buildNextTrickPlayerListFromPreviousWinner(players, winner);
 
@@ -99,7 +97,7 @@ public class ContreeTrickTest {
         var players = buildPlayers();
         var winner = players.get(3);
 
-        ContreeTrick trick = new ContreeTrick(players, CardSuit.HEARTS);
+        ContreeTrick trick = new ContreeTrick("TEST", players, CardSuit.HEARTS, new ContreeGameEventSender());
 
         var result = trick.buildNextTrickPlayerListFromPreviousWinner(players, winner);
 
@@ -125,7 +123,7 @@ public class ContreeTrickTest {
         List<ClassicalCard> playerHand = List.of(ClassicalCard.SEVEN_CLUB, ClassicalCard.ACE_CLUB, ClassicalCard.ACE_SPADE);
         when(testedPlayer.getHand()).thenReturn(playerHand);
 
-        ContreeTrick trick = new ContreeTrick(players, CardSuit.HEARTS);
+        ContreeTrick trick = new ContreeTrick("TEST", players, CardSuit.HEARTS, new ContreeGameEventSender());
 
         var playableCards = trick.playableCards(testedPlayer);
 
@@ -148,7 +146,7 @@ public class ContreeTrickTest {
         when(testedPlayer.getHand()).thenReturn(playerHand);
 
         CardSuit trumpSuit = CardSuit.HEARTS;
-        ContreeTrick trick = new ContreeTrick(players, trumpSuit);
+        ContreeTrick trick = new ContreeTrick("TEST", players, trumpSuit, new ContreeGameEventSender());
         trick.startTrick();
 
         trick.playerPlays(opponent, ClassicalCard.JACK_CLUB);
@@ -176,7 +174,7 @@ public class ContreeTrickTest {
         );
         when(testedPlayer.getHand()).thenReturn(playerHand);
 
-        ContreeTrick trick = new ContreeTrick(players, CardSuit.HEARTS);
+        ContreeTrick trick = new ContreeTrick("TEST", players, CardSuit.HEARTS, new ContreeGameEventSender());
         trick.startTrick();
 
         trick.playerPlays(opponent, ClassicalCard.JACK_DIAMOND);
@@ -198,7 +196,7 @@ public class ContreeTrickTest {
         List<ClassicalCard> playerHand = List.of(ClassicalCard.SEVEN_CLUB, ClassicalCard.ACE_CLUB, ClassicalCard.ACE_SPADE, ClassicalCard.JACK_HEART);
         when(testedPlayer.getHand()).thenReturn(playerHand);
 
-        ContreeTrick trick = new ContreeTrick(players, CardSuit.HEARTS);
+        ContreeTrick trick = new ContreeTrick("TEST", players, CardSuit.HEARTS, new ContreeGameEventSender());
         trick.startTrick();
 
         trick.playerPlays(opponent, ClassicalCard.JACK_DIAMOND);
@@ -224,7 +222,7 @@ public class ContreeTrickTest {
         ContreePlayer opponent = players.get(1);
         when(opponent.getHand()).thenReturn(List.of(ClassicalCard.KING_HEART));
 
-        ContreeTrick trick = new ContreeTrick(players, CardSuit.HEARTS);
+        ContreeTrick trick = new ContreeTrick("TEST", players, CardSuit.HEARTS, new ContreeGameEventSender());
         trick.startTrick();
 
         trick.playerPlays(teamMate, ClassicalCard.JACK_DIAMOND);
@@ -250,7 +248,7 @@ public class ContreeTrickTest {
         ContreePlayer teamMate = players.get(0);
         when(teamMate.getHand()).thenReturn(List.of(ClassicalCard.JACK_DIAMOND));
 
-        ContreeTrick trick = new ContreeTrick(players, CardSuit.HEARTS);
+        ContreeTrick trick = new ContreeTrick("TEST", players, CardSuit.HEARTS, new ContreeGameEventSender());
         trick.startTrick();
 
         trick.playerPlays(teamMate, ClassicalCard.JACK_DIAMOND);
@@ -276,7 +274,7 @@ public class ContreeTrickTest {
         ContreePlayer teamMate = players.get(0);
         when(teamMate.getHand()).thenReturn(List.of(ClassicalCard.JACK_DIAMOND));
 
-        ContreeTrick trick = new ContreeTrick(players, CardSuit.HEARTS);
+        ContreeTrick trick = new ContreeTrick("TEST", players, CardSuit.HEARTS, new ContreeGameEventSender());
         trick.startTrick();
 
         trick.playerPlays(teamMate, ClassicalCard.JACK_DIAMOND);
@@ -306,7 +304,7 @@ public class ContreeTrickTest {
         ContreePlayer opponent2 = players.get(2);
         when(opponent2.getHand()).thenReturn(List.of(ClassicalCard.EIGHT_DIAMOND));
 
-        ContreeTrick trick = new ContreeTrick(players, CardSuit.HEARTS);
+        ContreeTrick trick = new ContreeTrick("TEST", players, CardSuit.HEARTS, new ContreeGameEventSender());
         trick.startTrick();
 
         trick.playerPlays(opponent1, ClassicalCard.JACK_DIAMOND);
@@ -346,7 +344,7 @@ public class ContreeTrickTest {
         when(opponent1.sameTeam(opponent2)).thenReturn(true);
         when(opponent2.sameTeam(opponent1)).thenReturn(true);
 
-        ContreeTrick trick = new ContreeTrick(players, CardSuit.HEARTS);
+        ContreeTrick trick = new ContreeTrick("TEST", players, CardSuit.HEARTS, new ContreeGameEventSender());
         trick.startTrick();
 
         trick.playerPlays(opponent1, ClassicalCard.JACK_DIAMOND);
@@ -358,6 +356,7 @@ public class ContreeTrickTest {
 
         var playableCards = trick.playableCards(testedPlayer);
         assertEquals(playerHand, playableCards);
+
     }
 
 }

@@ -65,7 +65,7 @@ class DealScoreCalculator {
 
     }
 
-    private Integer computeCardPoints(Collection<? extends ValuableCard> contreeCards) {
+    Integer computeCardPoints(Collection<? extends ValuableCard> contreeCards) {
         return contreeCards.stream().mapToInt(ValuableCard::getGamePoints).sum();
     }
 

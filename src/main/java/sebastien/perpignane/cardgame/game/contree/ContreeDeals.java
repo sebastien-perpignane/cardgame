@@ -47,7 +47,6 @@ public class ContreeDeals {
     }
 
     public void playCard(ContreePlayer player, ClassicalCard card) {
-        gameEventSender.sendPlayedCardEvent(player, card);
         currentDeal.playerPlays(player, card);
     }
 
@@ -60,7 +59,7 @@ public class ContreeDeals {
     }
 
     private String dealId() {
-        return game.getGameId() + "-" + deals.size();
+        return game.getGameId() + "-" + (deals.size() + 1);
     }
 
 

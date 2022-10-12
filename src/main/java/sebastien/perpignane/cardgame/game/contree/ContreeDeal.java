@@ -243,24 +243,18 @@ class ContreeDeal {
     }
 
     private void initNewCurrentTrick() {
-
-        // FIXME send event to listeners
-        System.out.println(
-"""
-
-***********************************************************************
-* NEW TRICK
-***********************************************************************
-
-""");
-
         if (currentTrick == null) {
-            currentTrick = new ContreeTrick(dealPlayers.getPlayers(), trumpSuit);
+            currentTrick = new ContreeTrick(trickId(), dealPlayers.getPlayers(), trumpSuit, eventSender);
         }
         else {
-            currentTrick = new ContreeTrick(dealPlayers.getPlayers(), currentTrick.getWinner(), trumpSuit);
+            currentTrick = new ContreeTrick(trickId(), dealPlayers.getPlayers(), currentTrick.getWinner(), trumpSuit, eventSender);
         }
         tricks.add(currentTrick);
+        eventSender.sendNewTrickEvent(currentTrick.getTrickId(), trumpSuit);
+    }
+
+    private String trickId() {
+        return dealId + "-" + (tricks.size() + 1);
     }
 
     public List<ContreeTrick> getTricks() {

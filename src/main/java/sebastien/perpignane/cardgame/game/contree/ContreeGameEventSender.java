@@ -80,4 +80,8 @@ public class ContreeGameEventSender extends AbstractGameEventSender {
         trickObservers.forEach(to -> to.onTrumpedTrick(trickId));
     }
 
+    void sendNewTrickEvent(String trickId, CardSuit trumpSuit) {
+        trickObservers.forEach(to -> to.onNewTrick(trickId, trumpSuit));
+    }
+
 }

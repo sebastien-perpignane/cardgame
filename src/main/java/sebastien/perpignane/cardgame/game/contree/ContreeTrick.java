@@ -1,6 +1,7 @@
 package sebastien.perpignane.cardgame.game.contree;
-import sebastien.perpignane.cardgame.card.ClassicalCard;
+
 import sebastien.perpignane.cardgame.card.CardSuit;
+import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.card.contree.ContreeCard;
 import sebastien.perpignane.cardgame.game.Trick;
 import sebastien.perpignane.cardgame.player.Player;
@@ -11,6 +12,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 class ContreeTrick implements Trick {
+
+    private final String trickId;
 
     private final List<PlayedCard> playedCards = new ArrayList<>();
 
@@ -26,12 +29,19 @@ class ContreeTrick implements Trick {
 
     private ContreePlayer winner;
 
-    public ContreeTrick(List<ContreePlayer> players, CardSuit trumpSuit) {
+    private final ContreeGameEventSender eventSender;
+
+    public ContreeTrick(String trickId, List<ContreePlayer> players, CardSuit trumpSuit, ContreeGameEventSender eventSender) {
+        this.trickId = trickId;
+        this.eventSender = eventSender;
         this.trumpSuit = trumpSuit;
         playerIterator = players.iterator();
     }
 
-    public ContreeTrick(List<ContreePlayer> players, ContreePlayer previousWinner, CardSuit trumpSuit) {
+    public ContreeTrick(String trickId, List<ContreePlayer> players, ContreePlayer previousWinner, CardSuit trumpSuit, ContreeGameEventSender eventSender) {
+        this.trickId = trickId;
+        this.eventSender = eventSender;
+        // FIXME player list should be provided as argument
         var newPlayers = buildNextTrickPlayerListFromPreviousWinner(players, previousWinner);
         this.trumpSuit = trumpSuit;
         playerIterator = newPlayers.iterator();
@@ -94,6 +104,11 @@ class ContreeTrick implements Trick {
 
         if (firstPlayedCard == null) {
             firstPlayedCard = playedCard.card();
+        }
+        else {
+            if (!isTrumpTrick() && playedCard.card().isTrump()) {
+                eventSender.sendTrumpedTrickEvent(this.trickId);
+            }
         }
         playedCards.add(playedCard);
         if (isEndOfTrick()) {
@@ -242,4 +257,9 @@ class ContreeTrick implements Trick {
     List<PlayedCard> getPlayedCards() {
         return playedCards;
     }
+
+    public String getTrickId() {
+        return trickId;
+    }
+
 }

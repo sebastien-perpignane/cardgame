@@ -3,13 +3,12 @@ package sebastien.perpignane.cardgame.game.contree;
 import org.junit.jupiter.api.Test;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
-import static sebastien.perpignane.cardgame.game.contree.ContreeTestUtils.buildPlayers;
 
 import java.util.List;
 
-import static org.mockito.Mockito.when;
-
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
+import static sebastien.perpignane.cardgame.game.contree.ContreeTestUtils.buildPlayers;
 
 public class ContreeTrickLifeCycleTest {
 
@@ -20,7 +19,7 @@ public class ContreeTrickLifeCycleTest {
 
         when(players.get(0).getHand()).thenReturn(List.of(ClassicalCard.ACE_CLUB));
 
-        ContreeTrick trick = new ContreeTrick(players, CardSuit.DIAMONDS);
+        ContreeTrick trick = new ContreeTrick("TEST", players, CardSuit.DIAMONDS, new ContreeGameEventSender());
         trick.startTrick();
 
         trick.playerPlays(players.get(0), ClassicalCard.ACE_CLUB);
@@ -38,7 +37,7 @@ public class ContreeTrickLifeCycleTest {
         when(players.get(0).getHand()).thenReturn(List.of(ClassicalCard.ACE_CLUB));
         when(players.get(1).getHand()).thenReturn(List.of(ClassicalCard.SEVEN_CLUB));
 
-        ContreeTrick trick = new ContreeTrick(players, CardSuit.DIAMONDS);
+        ContreeTrick trick = new ContreeTrick("TEST", players, CardSuit.DIAMONDS, new ContreeGameEventSender());
         trick.startTrick();
 
         trick.playerPlays(players.get(0), ClassicalCard.ACE_CLUB);
@@ -58,7 +57,7 @@ public class ContreeTrickLifeCycleTest {
         when(players.get(1).getHand()).thenReturn(List.of(ClassicalCard.SEVEN_CLUB));
         when(players.get(2).getHand()).thenReturn(List.of(ClassicalCard.TEN_CLUB));
 
-        ContreeTrick trick = new ContreeTrick(players, CardSuit.DIAMONDS);
+        ContreeTrick trick = new ContreeTrick("TEST", players, CardSuit.DIAMONDS, new ContreeGameEventSender());
         trick.startTrick();
 
         trick.playerPlays(players.get(0), ClassicalCard.ACE_CLUB);
@@ -80,7 +79,7 @@ public class ContreeTrickLifeCycleTest {
         when(players.get(2).getHand()).thenReturn(List.of(ClassicalCard.TEN_CLUB));
         when(players.get(3).getHand()).thenReturn(List.of(ClassicalCard.JACK_CLUB));
 
-        ContreeTrick trick = new ContreeTrick(players, CardSuit.DIAMONDS);
+        ContreeTrick trick = new ContreeTrick("TEST", players, CardSuit.DIAMONDS, new ContreeGameEventSender());
         trick.startTrick();
 
         trick.playerPlays(players.get(0), ClassicalCard.ACE_CLUB);
