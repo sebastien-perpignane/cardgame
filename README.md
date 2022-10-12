@@ -2,14 +2,14 @@
 
 ## What is cardgame ?
 
-cardgame, for now, is just a war card game played by two bots, displayed in the console.
+cardgame, for now, provides two games engines : war game and "belote contrée". 
 
 It allows me to practice multiple programming skills :
 
 * implements more complex things that you usually code in a web business app.
 * apply multithreading concepts learned by reading but rarely practiced.
 
-The final objective of the project is a try to provide a framework that would facilitate implementation of any kind of classical card games.
+War game was just a warm up. The final objective of the project is a try to provide a contree game with a modern dynamic GUI.
 
 ## How to build 
 
