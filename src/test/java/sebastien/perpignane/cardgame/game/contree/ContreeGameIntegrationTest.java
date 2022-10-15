@@ -22,7 +22,7 @@ public class ContreeGameIntegrationTest {
 
     @DisplayName("Running a game with bot players, including one always bidding 80 HEART. The game must end without error, whoever wins.")
     @Test
-    public void testRunGameWithBotsPlayingRandomCards() {
+    public void testRunGameWithBotsPlayingRandomCards() throws InterruptedException {
         ContreeGame game = new ContreeGame(GameTextDisplayer.getInstance());
         ContreeBotPlayer player1 = new TestBiddingContreePlayer(ContreeBidValue.EIGHTY, CardSuit.HEARTS);
 
@@ -37,20 +37,16 @@ public class ContreeGameIntegrationTest {
 
     }
 
-    private boolean waitForEndOfGameEvent(ContreeGame game) {
+    private boolean waitForEndOfGameEvent(ContreeGame game) throws InterruptedException {
         boolean endOfGame = false;
-        try {
-            BlockingQueue<String> msgQueue = new ArrayBlockingQueue<>(1);
-            game.registerAsGameObserver(new BlockingQueueGameObserver(msgQueue));
+
+        BlockingQueue<String> msgQueue = new ArrayBlockingQueue<>(1);
+        game.registerAsGameObserver(new BlockingQueueGameObserver(msgQueue));
 
 
-            String msg = msgQueue.poll(10, TimeUnit.SECONDS);
-            if ("END_OF_GAME".equals(msg)) {
-                endOfGame = true;
-            }
-        }
-        catch(Exception e) {
-            System.err.println("Fuck");
+        String msg = msgQueue.poll(10, TimeUnit.SECONDS);
+        if ("END_OF_GAME".equals(msg)) {
+            endOfGame = true;
         }
 
         return endOfGame;
