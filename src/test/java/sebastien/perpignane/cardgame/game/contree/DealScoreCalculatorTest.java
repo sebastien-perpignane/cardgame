@@ -18,7 +18,7 @@ import static sebastien.perpignane.cardgame.game.contree.ContreeTestUtils.buildP
 
 public class DealScoreCalculatorTest {
 
-    static class MockDealBuilder {
+    /*static class MockDealBuilder {
 
         private final ContreeDeal deal;
         private final ContreeTrick lastTrick;
@@ -78,7 +78,7 @@ public class DealScoreCalculatorTest {
             return deal;
         }
 
-    }
+    }*/
 
     @Test
     public void testExceptionIfNoContract() {
