@@ -23,7 +23,6 @@ public class ContreeDealBids {
     }
 
     public void startBids() {
-        bidPlayers.goToNextBidder();
         bidPlayers.onCurrentBidderTurnToBid();
     }
 
@@ -41,7 +40,7 @@ public class ContreeDealBids {
         }
 
         if (!bid.isNone()) {
-            maxBids = Math.max(INITIAL_MAX_BIDS, bids.size() + ContreeGame.NB_PLAYERS - 1);
+            maxBids = Math.max(INITIAL_MAX_BIDS, bids.size() + ContreePlayers.NB_PLAYERS - 1);
         }
 
         if (!bidsAreOver()) {
@@ -78,8 +77,8 @@ public class ContreeDealBids {
 
         }
 
-        // Cannot double if highest bid if from team mate
-        // Cannot redouble if double bid if from team mate
+        // Cannot double if highest bid is from teammate
+        // Cannot redouble if double bid is from teammate
         if (bid.isRedouble()) {
             if (!isDoubleBidExists()) {
                 throw new IllegalStateException("Redouble is not allowed if no player has doubled before");
@@ -102,7 +101,7 @@ public class ContreeDealBids {
     public boolean hasOnlyNoneBids()  {
         var highestBid = highestBid();
         if (highestBid.isEmpty()) {
-            throw new IllegalStateException("No bid");
+            return false;
         }
         return highestBid.get().isNone();
     }
@@ -127,6 +126,9 @@ public class ContreeDealBids {
     }
 
     public Optional<ContreeBid> findDealContractBid() {
+        if (!bidsAreOver()) {
+            return Optional.empty();
+        }
         return highestBid().filter(Predicate.not(b -> b.bidValue() == ContreeBidValue.NONE));
     }
 

@@ -19,10 +19,6 @@ class ContreeTrick implements Trick {
 
     private ContreeCard firstPlayedCard = null;
 
-    private final Iterator<ContreePlayer> playerIterator;
-
-    private ContreePlayer currentPlayer;
-
     private Collection<ClassicalCard> currentPlayerPlayableCards;
 
     private final CardSuit trumpSuit;
@@ -31,65 +27,44 @@ class ContreeTrick implements Trick {
 
     private final ContreeGameEventSender eventSender;
 
-    public ContreeTrick(String trickId, List<ContreePlayer> players, CardSuit trumpSuit, ContreeGameEventSender eventSender) {
+    private final ContreeTrickPlayers trickPlayers;
+
+    private final PlayableCardsFilter playableCardsFilter;
+
+    private ContreePlayer currentPlayer;
+
+    public ContreeTrick(String trickId, ContreeTrickPlayers trickPlayers, CardSuit trumpSuit,  ContreeGameEventSender eventSender) {
         this.trickId = trickId;
         this.eventSender = eventSender;
         this.trumpSuit = trumpSuit;
-        playerIterator = players.iterator();
+        this.trickPlayers = trickPlayers;
+        this.playableCardsFilter = new PlayableCardsFilter();
     }
 
-    public ContreeTrick(String trickId, List<ContreePlayer> players, ContreePlayer previousWinner, CardSuit trumpSuit, ContreeGameEventSender eventSender) {
+    public ContreeTrick(ContreeDeal deal, String trickId, ContreeTrickPlayers trickPlayers, PlayableCardsFilter playableCardsFilter) {
         this.trickId = trickId;
-        this.eventSender = eventSender;
-        // FIXME player list should be provided as argument
-        var newPlayers = buildNextTrickPlayerListFromPreviousWinner(players, previousWinner);
-        this.trumpSuit = trumpSuit;
-        playerIterator = newPlayers.iterator();
+        this.eventSender = deal.getEventSender();
+        this.trumpSuit = deal.getTrumpSuit();
+        this.trickPlayers = trickPlayers;
+        this.playableCardsFilter = playableCardsFilter;
     }
 
     public void startTrick() {
-        updateCurrentPlayer();
+        trickPlayers.setCurrentTrick(this);
+        currentPlayer = trickPlayers.getCurrentPlayer();
+        currentPlayerPlayableCards = this.playableCardsFilter.playableCards(this, currentPlayer);
+        trickPlayers.notifyCurrentPlayerTurn(currentPlayerPlayableCards);
     }
 
     private void updateCurrentPlayer() {
-        currentPlayer = playerIterator.next();
-        currentPlayerPlayableCards = playableCards(currentPlayer);
-        currentPlayer.onPlayerTurn(currentPlayerPlayableCards);
+        trickPlayers.gotToNextPlayer();
+        currentPlayer = trickPlayers.getCurrentPlayer();
+        currentPlayerPlayableCards = this.playableCardsFilter.playableCards(this, currentPlayer);
+        trickPlayers.notifyCurrentPlayerTurn(currentPlayerPlayableCards);
     }
-
-    List<ContreePlayer> buildNextTrickPlayerListFromPreviousWinner(List<ContreePlayer> players, ContreePlayer winner) {
-
-        List<ContreePlayer> result = new ArrayList<>(ContreeGame.NB_PLAYERS);
-
-        int winnerIndex = players.indexOf(winner);
-
-        for (int i = winnerIndex ; ; ) {
-
-            result.add(players.get(i));
-
-            if (result.size() == players.size()) {
-                break;
-            }
-
-            if (i == players.size() - 1) {
-                i = 0;
-            }
-            else {
-                i++;
-            }
-        }
-
-        return result;
-
-    }
-
-
-
-
 
     Collection<ClassicalCard> playableCards(Player player) {
-        PlayableCardsFilter filter = new PlayableCardsFilter();
-        return filter.playableCards(player);
+        return this.playableCardsFilter.playableCards(this, player);
     }
 
     public boolean isTrumpTrick() {
@@ -111,7 +86,7 @@ class ContreeTrick implements Trick {
             }
         }
         playedCards.add(playedCard);
-        if (isEndOfTrick()) {
+        if (isOver()) {
             winner = winningPlayer();
         }
         else {
@@ -123,22 +98,22 @@ class ContreeTrick implements Trick {
         Objects.requireNonNull(player);
         Objects.requireNonNull(card);
 
-        if (isEndOfTrick()) {
+        if (isOver()) {
             throw new IllegalStateException(String.format("Cheater detected : trick is over, player %s cannot play%n", player));
         }
 
         if (player != currentPlayer) {
-            throw new IllegalArgumentException(String.format("Cheater detected -> %s is not current player!. Current player is %s%n", player, currentPlayer));
+            throw new IllegalArgumentException( String.format("Cheater detected -> %s is not current player!. Current player is %s%n", player, currentPlayer) );
         }
 
         if (!currentPlayerPlayableCards.contains(card) ) {
-            String allowedCardsStr = currentPlayerPlayableCards.stream().map(ClassicalCard::toString).collect(Collectors.joining(","));
-            throw new IllegalArgumentException(String.format("Player %s : cheater detected -> %s is not an allowed card. Allowed cards are : %s", player, card, allowedCardsStr));
+            String allowedCardsStr = currentPlayerPlayableCards.stream().map( ClassicalCard::toString ).collect( Collectors.joining(",") );
+            throw new IllegalArgumentException( String.format("Player %s : cheater detected -> %s is not an allowed card. Allowed cards are : %s", player, card, allowedCardsStr) );
         }
     }
 
     @Override
-    public boolean isEndOfTrick() {
+    public boolean isOver() {
         return playedCards.size() == 4;
     }
 
@@ -158,93 +133,6 @@ class ContreeTrick implements Trick {
 
     public CardSuit getTrumpSuit() {
         return trumpSuit;
-    }
-
-    private class PlayableCardsFilter {
-        Collection<ClassicalCard> playableCards(Player player) {
-
-            Objects.requireNonNull(player);
-
-            Collection<ClassicalCard> allHand = new ArrayList<>(player.getHand());
-
-            if (firstPlayedCard == null) {
-                return allHand;
-            }
-
-            boolean trumpCardPlayed = playedCards.stream().anyMatch(pc -> pc.card().isTrump());
-
-            if (isTrumpTrick() || trumpCardPlayed) {
-                return computeAllowedCardsForTrickWithTrumpCards(player);
-            }
-
-            var sameSuitCardStream = player.getHand().stream().filter(c -> c.getSuit() == firstPlayedCard.getSuit());
-            var sameSuitCard = sameSuitCardStream.toList();
-            if (sameSuitCard.isEmpty()) {
-                return computeAllowedCardsWhenPlayerLacksSuit(player);
-            }
-            else {
-                return sameSuitCard;
-            }
-
-        }
-
-        private Collection<ClassicalCard> computeAllowedCardsForTrickWithTrumpCards(Player player) {
-
-            Collection<ClassicalCard> allHand = new ArrayList<>(player.getHand());
-
-            var optionalHighestTrump = findHighestPlayedTrumpCard();
-            if (optionalHighestTrump.isEmpty()) {
-                throw new IllegalStateException("This method is supposed to be called when at least one trump card was played");
-            }
-
-            var highestTrump = optionalHighestTrump.get();
-
-            // If the trick was not started by a trump card but trumps were played,
-            // the player does not have to play a trump if his teammate is winning the trick.
-            if (!isTrumpTrick() && winningPlayer().sameTeam(player)) {
-                return allHand;
-            }
-
-            var playerTrumps = ContreeCard.of(trumpSuit, new HashSet<>(player.getHand())).stream()
-                    .filter(ContreeCard::isTrump).toList();
-
-            var higherPlayerTrumps = playerTrumps.stream().filter(c -> c.getGameValue() > highestTrump.card().getGameValue()).toList();
-
-            if (higherPlayerTrumps.isEmpty()) {
-                return playerTrumps.isEmpty() ? allHand : playerTrumps.stream().map(ContreeCard::getCard).toList();
-            } else {
-                return higherPlayerTrumps.stream().map(ContreeCard::getCard).toList();
-            }
-        }
-
-        private Collection<ClassicalCard> playerTrumpCards(Player player) {
-            return ContreeCard.of(trumpSuit, new HashSet<>(player.getHand())).stream()
-                    .filter(ContreeCard::isTrump)
-                    .map(ContreeCard::getCard).toList();
-        }
-
-        private Collection<ClassicalCard> computeAllowedCardsWhenPlayerLacksSuit(Player player) {
-
-            Collection<ClassicalCard> allHand = new ArrayList<>(player.getHand());
-
-            var winningPlayer = winningPlayer();
-            if (winningPlayer != null && winningPlayer.getTeam().orElseThrow() == player.getTeam().orElseThrow()) {
-                return allHand;
-            }
-
-            var trumpCards = playerTrumpCards(player);
-            if (!trumpCards.isEmpty()) {
-                return trumpCards;
-            }
-            else {
-                return allHand;
-            }
-        }
-
-        private Optional<PlayedCard> findHighestPlayedTrumpCard() {
-            return playedCards.stream()
-                    .filter(pc -> pc.card().isTrump()).min((a, b) -> Integer.compare(b.card().getGameValue(), a.card().getGameValue()));
-        }
     }
 
     ContreePlayer winningPlayer() {

@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-public class WarGameTest {
+public class WarGameIntegrationTest {
 
     @Test
     @DisplayName("Player 1 has only superior cards and must win the game")

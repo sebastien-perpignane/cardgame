@@ -1,30 +1,50 @@
 package sebastien.perpignane.cardgame.game.contree;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.AdditionalAnswers;
+import sebastien.perpignane.cardgame.card.CardSet;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
-import static sebastien.perpignane.cardgame.game.contree.ContreeTestUtils.buildPlayers;
+import static org.mockito.Mockito.*;
 
-public class ContreeTrickLifeCycleTest {
+public class ContreeTrickLifeCycleTest extends TestCasesManagingPlayers {
+
+    private ContreeTrickPlayers trickPlayers;
+
+    private ContreeTrick trick;
+
+    @BeforeAll
+    public static void globalSetUp() {
+        initPlayers();
+    }
+
+    @BeforeEach
+    void setUp() {
+
+        trickPlayers = mock(ContreeTrickPlayers.class);
+        when(trickPlayers.getCurrentPlayer()).thenAnswer(AdditionalAnswers.returnsElementsOf(players));
+
+        ContreeDeal deal = mock(ContreeDeal.class);
+        when(deal.getTrumpSuit()).thenReturn(CardSuit.HEARTS);
+
+        PlayableCardsFilter filter = mock(PlayableCardsFilter.class);
+        when(filter.playableCards(any(), any())).thenReturn(CardSet.GAME_32.getGameCards());
+
+        trick = new ContreeTrick(deal, "TEST", trickPlayers, filter);
+    }
 
     @Test
     public void testTrickIsNotOverAfterOnePlayedCard() {
 
-        var players = buildPlayers();
-
-        when(players.get(0).getHand()).thenReturn(List.of(ClassicalCard.ACE_CLUB));
-
-        ContreeTrick trick = new ContreeTrick("TEST", players, CardSuit.DIAMONDS, new ContreeGameEventSender());
         trick.startTrick();
 
-        trick.playerPlays(players.get(0), ClassicalCard.ACE_CLUB);
+        trick.playerPlays(player1, ClassicalCard.ACE_CLUB);
 
-        assertFalse(trick.isEndOfTrick());
+        assertFalse(trick.isOver());
         assertNull(trick.getWinner());
 
     }
@@ -32,39 +52,25 @@ public class ContreeTrickLifeCycleTest {
     @Test
     public void testTrickIsNotOverAfterTwoPlayedCards() {
 
-        var players = buildPlayers();
-
-        when(players.get(0).getHand()).thenReturn(List.of(ClassicalCard.ACE_CLUB));
-        when(players.get(1).getHand()).thenReturn(List.of(ClassicalCard.SEVEN_CLUB));
-
-        ContreeTrick trick = new ContreeTrick("TEST", players, CardSuit.DIAMONDS, new ContreeGameEventSender());
         trick.startTrick();
 
-        trick.playerPlays(players.get(0), ClassicalCard.ACE_CLUB);
-        trick.playerPlays(players.get(1), ClassicalCard.SEVEN_CLUB);
+        trick.playerPlays(player1, ClassicalCard.ACE_CLUB);
+        trick.playerPlays(player2, ClassicalCard.SEVEN_CLUB);
 
-        assertFalse(trick.isEndOfTrick());
+        assertFalse(trick.isOver());
         assertNull(trick.getWinner());
 
     }
 
     @Test
     public void testTrickIsNotOverAfterThreePlayedCards() {
-
-        var players = buildPlayers();
-
-        when(players.get(0).getHand()).thenReturn(List.of(ClassicalCard.ACE_CLUB));
-        when(players.get(1).getHand()).thenReturn(List.of(ClassicalCard.SEVEN_CLUB));
-        when(players.get(2).getHand()).thenReturn(List.of(ClassicalCard.TEN_CLUB));
-
-        ContreeTrick trick = new ContreeTrick("TEST", players, CardSuit.DIAMONDS, new ContreeGameEventSender());
         trick.startTrick();
 
-        trick.playerPlays(players.get(0), ClassicalCard.ACE_CLUB);
-        trick.playerPlays(players.get(1), ClassicalCard.SEVEN_CLUB);
-        trick.playerPlays(players.get(2), ClassicalCard.TEN_CLUB);
+        trick.playerPlays(player1, ClassicalCard.ACE_CLUB);
+        trick.playerPlays(player2, ClassicalCard.SEVEN_CLUB);
+        trick.playerPlays(player3, ClassicalCard.TEN_CLUB);
 
-        assertFalse(trick.isEndOfTrick());
+        assertFalse(trick.isOver());
         assertNull(trick.getWinner());
 
     }
@@ -72,22 +78,14 @@ public class ContreeTrickLifeCycleTest {
     @Test
     public void testTrickIsOverAfterFourPlayedCards() {
 
-        var players = buildPlayers();
-
-        when(players.get(0).getHand()).thenReturn(List.of(ClassicalCard.ACE_CLUB));
-        when(players.get(1).getHand()).thenReturn(List.of(ClassicalCard.SEVEN_CLUB));
-        when(players.get(2).getHand()).thenReturn(List.of(ClassicalCard.TEN_CLUB));
-        when(players.get(3).getHand()).thenReturn(List.of(ClassicalCard.JACK_CLUB));
-
-        ContreeTrick trick = new ContreeTrick("TEST", players, CardSuit.DIAMONDS, new ContreeGameEventSender());
         trick.startTrick();
 
-        trick.playerPlays(players.get(0), ClassicalCard.ACE_CLUB);
-        trick.playerPlays(players.get(1), ClassicalCard.SEVEN_CLUB);
-        trick.playerPlays(players.get(2), ClassicalCard.TEN_CLUB);
-        trick.playerPlays(players.get(3), ClassicalCard.JACK_CLUB);
+        trick.playerPlays(player1, ClassicalCard.ACE_CLUB);
+        trick.playerPlays(player2, ClassicalCard.SEVEN_CLUB);
+        trick.playerPlays(player3, ClassicalCard.TEN_CLUB);
+        trick.playerPlays(player4, ClassicalCard.JACK_CLUB);
 
-        assertTrue(trick.isEndOfTrick());
+        assertTrue(trick.isOver());
         assertNotNull(trick.getWinner());
 
     }

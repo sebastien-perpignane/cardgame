@@ -17,7 +17,9 @@ public abstract class AbstractThreadBotPlayer<T> implements Player, Runnable {
         while (true) {
             try {
                 T playerMessage = gameMsgQueue.take();
-                handleMessage(playerMessage);
+                if (handleMessage(playerMessage)) {
+                    return;
+                }
             }
             catch (InterruptedException ie) {
                 // FIXME review good practices to manage InterruptedException
@@ -34,7 +36,12 @@ public abstract class AbstractThreadBotPlayer<T> implements Player, Runnable {
         thread.start();
     }
 
-    protected abstract void handleMessage(T playerMessage);
+    /**
+     *
+     * @return true if the message processing must result in the end of the thread.
+     *
+     */
+    protected abstract boolean handleMessage(T playerMessage);
 
     protected void receiveNewMessage(T message) {
         gameMsgQueue.add(message);

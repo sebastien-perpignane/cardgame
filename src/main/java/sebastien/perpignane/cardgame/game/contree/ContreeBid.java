@@ -11,7 +11,7 @@ record ContreeBid(ContreePlayer player, ContreeBidValue bidValue, CardSuit cardS
         if (cardSuit == null && bidValue.isCardSuitRequired()) {
             throw new IllegalArgumentException(
                 String.format(
-                    "null cardSuit is not allowed for bid with value %s. Allowed values with null cardSuit are : %s",
+                    "null cardSuit is not allowed for bid with value %s. Allowed bid values with null cardSuit are : %s",
                     bidValue.name(),
                     ContreeBidValue.bidValuesNotRequiringCardSuit().stream()
                         .map(Enum::name)

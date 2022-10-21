@@ -1,7 +1,7 @@
 package sebastien.perpignane.cardgame.game.war;
 
-import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.card.CardRank;
+import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.PlayedCard;
 import sebastien.perpignane.cardgame.game.Trick;
 import sebastien.perpignane.cardgame.player.Player;
@@ -143,7 +143,7 @@ public class WarTrick implements Trick {
     }
 
     @Override
-    public boolean isEndOfTrick() {
+    public boolean isOver() {
         return endOfTrick;
     }
 

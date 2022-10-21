@@ -154,10 +154,14 @@ public class ContreeBotPlayer extends AbstractThreadBotPlayer<ContreeBotPlayer.P
     }
 
     @Override
-    protected void handleMessage(PlayerMessage playerMessage) {
+    protected boolean handleMessage(PlayerMessage playerMessage) {
+
+        boolean mustExit = false;
+
         switch (playerMessage.messageType()) {
             case PLAY -> {
-                System.out.printf("Allowed cards : %s%n", playerMessage.allowedCards().stream().map(ClassicalCard::toString).collect(Collectors.joining(",")));
+                // TODO to be traced in an event manager
+                System.err.printf("Allowed cards : %s%n", playerMessage.allowedCards().stream().map(ClassicalCard::toString).collect(Collectors.joining(",")));
                 int cardIndex = new Random().nextInt(playerMessage.allowedCards().size());
                 Iterator<ClassicalCard> cardIterator = playerMessage.allowedCards.iterator();
                 ClassicalCard playedCard = null;
@@ -170,10 +174,17 @@ public class ContreeBotPlayer extends AbstractThreadBotPlayer<ContreeBotPlayer.P
                 contreeGame.playCard(this, playedCard);
             }
             case BID -> {
+                // TODO to be traced in an event manager
+                System.err.printf("%s reacting to BID event%n", this);
                 placeBid();
             }
-            case END_OF_GAME -> System.out.printf("%s reacting to END_OF_GAME event%n", this);
+            case END_OF_GAME ->  {
+                // TODO to be traced in an event manager
+                System.err.printf("%s reacting to END_OF_GAME event%n", this);
+                mustExit = true;
+            }
         }
+        return mustExit;
     }
 
     @Override

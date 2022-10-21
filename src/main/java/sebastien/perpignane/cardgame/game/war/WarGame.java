@@ -5,7 +5,9 @@ import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.*;
 import sebastien.perpignane.cardgame.player.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 
@@ -116,7 +118,7 @@ public class WarGame extends AbstractGame {
         warGameEventSender.sendPlayedCardEvent(player, card);
 
         currentTrick.playerPlay(player, card);
-        if (currentTrick.isEndOfTrick()) {
+        if (currentTrick.isOver()) {
             warGameEventSender.sendWonTrickEvent(currentTrick);
             currentTrick.getWinner().receiveNewCards(currentTrick.getAllCards());
 
