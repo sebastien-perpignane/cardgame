@@ -111,7 +111,7 @@ class DealScoreCalculator {
         if (deal.isAnnouncedCapot()) {
             return cardsByTeam.get(attackTeam).size() == CardSet.GAME_32.getGameCards().size();
         }
-        return cardScoreByTeam.get(attackTeam) > deal.findDealContractBid().get().bidValue().getExpectedScore();
+        return cardScoreByTeam.get(attackTeam) >= deal.findDealContractBid().get().bidValue().getExpectedScore();
     }
 
     private void roundScores() {

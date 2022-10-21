@@ -3,16 +3,17 @@ package sebastien.perpignane.cardgame.game.war;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
-import sebastien.perpignane.cardgame.game.*;
+import sebastien.perpignane.cardgame.game.Trick;
 import sebastien.perpignane.cardgame.player.Player;
 import sebastien.perpignane.cardgame.player.war.WarBotPlayer;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class WarTrickTest {
 
@@ -29,7 +30,7 @@ public class WarTrickTest {
         WarTrick trick = new WarTrick("test", Arrays.asList(player1, player2), new WarGameEventSender());
         trick.playerPlay(player1, ClassicalCard.SIX_CLUB);
 
-        assertFalse(trick.isEndOfTrick());
+        assertFalse(trick.isOver());
 
         assertNull(trick.getWinner());
 
@@ -51,7 +52,7 @@ public class WarTrickTest {
 
         Trick trick = initAndPlayOnTrick(mockPlayer1, mockPlayer2, nbTurns);
 
-        assertTrue(trick.isEndOfTrick());
+        assertTrue(trick.isOver());
 
         assertEquals(mockPlayer2, trick.getWinner());
 
@@ -73,7 +74,7 @@ public class WarTrickTest {
 
         WarTrick trick = initAndPlayOnTrick(mockPlayer1, mockPlayer2, nbTurns);
 
-        assertTrue(trick.isEndOfTrick());
+        assertTrue(trick.isOver());
         assertSame(mockPlayer1, trick.getWinner());
 
     }
@@ -94,7 +95,7 @@ public class WarTrickTest {
 
         WarTrick trick = initAndPlayOnTrick(mockPlayer1, mockPlayer2, nbTurns);
 
-        assertTrue(trick.isEndOfTrick());
+        assertTrue(trick.isOver());
 
         assertSame(mockPlayer2, trick.getWinner());
 
@@ -124,7 +125,7 @@ public class WarTrickTest {
         trick.playerPlay(player1, ClassicalCard.SIX_CLUB);
         trick.playerPlay(player2, ClassicalCard.TEN_DIAMOND);
 
-        assertTrue(trick.isEndOfTrick());
+        assertTrue(trick.isOver());
 
         IllegalStateException ise =
                 assertThrows(
@@ -162,7 +163,7 @@ public class WarTrickTest {
         // Player 2 has no more card to play
 
         assertTrue(player2.hasNoMoreCard());
-        assertTrue(trick.isEndOfTrick());
+        assertTrue(trick.isOver());
         //assertTrue(trick.isPrematureEndOfTrick());
         assertSame(player1, trick.getWinner());
 

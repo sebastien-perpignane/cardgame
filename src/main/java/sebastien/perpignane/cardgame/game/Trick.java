@@ -7,7 +7,7 @@ import java.util.Set;
 
 public interface Trick {
 
-    boolean isEndOfTrick();
+    boolean isOver();
 
     Player getWinner();
 

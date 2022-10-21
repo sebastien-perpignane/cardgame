@@ -12,7 +12,7 @@ public class CardDealer {
 
     private final int nbDistributedCardsPerPlayer;
 
-    private final List<Integer> nbCardGroups;
+    private final List<Integer> distribConfiguration;
 
     public CardDealer(List<ClassicalCard> cards, int nbPlayers, List<Integer> distribConfiguration) {
 
@@ -28,7 +28,7 @@ public class CardDealer {
 
         this.cards = cards;
         this.nbPlayers = nbPlayers;
-        this.nbCardGroups = distribConfiguration;
+        this.distribConfiguration = distribConfiguration;
     }
 
     public List<List<ClassicalCard>> dealCards() {
@@ -37,7 +37,7 @@ public class CardDealer {
         IntStream.range(0, nbPlayers).forEach(playerIdx ->  result.add(new ArrayList<>(nbDistributedCardsPerPlayer)));
 
         int alreadyDealtCards = 0;
-        for(Integer nbCards : nbCardGroups) {
+        for(Integer nbCards : distribConfiguration) {
             for (int playerIdx = 0 ; playerIdx < nbPlayers ; playerIdx++ ) {
                 int offset = alreadyDealtCards + (playerIdx * nbCards);
                 result.get(playerIdx).addAll(cards.subList(offset, offset + nbCards));

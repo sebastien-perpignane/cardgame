@@ -9,33 +9,36 @@ import sebastien.perpignane.cardgame.player.Team;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ContreeGame extends AbstractGame {
-
-    final static int NB_PLAYERS = ContreeGamePlayers.NB_MAX_PLAYERS;
 
     private final ContreeGamePlayers gamePlayers;
 
     private ContreeGameScore gameScore;
 
-    private final ContreeDeals gameDeals;
+    private ContreeDeals gameDeals;
 
     private final ContreeGameEventSender gameEventSender;
 
     public ContreeGame(GameObserver... observers) {
+        super();
         this.gameEventSender = new ContreeGameEventSender(observers);
-        gamePlayers = new ContreeGamePlayers(this);
-        gameDeals = new ContreeDeals(this, gamePlayers, gameEventSender);
+        gamePlayers = new ContreeGamePlayersImpl(this);
+        updateState(GameState.WAITING_FOR_PLAYERS);
     }
 
     @Override
     protected List<ContreePlayer> getPlayers() {
-        return new ArrayList<>(gamePlayers.getPlayers());
+        return new ArrayList<>(gamePlayers.getGamePlayers());
     }
 
     public void startGame() {
-        updateState(GameState.STARTED);
+        if (!gamePlayers.isFull()) {
+            throw new IllegalArgumentException("Game cannot be started until four players joined the game");
+        }
+        gameDeals = new ContreeDeals(this, gamePlayers.buildDealPlayers(), gameEventSender);
         gameScore = new ContreeGameScore();
         gameDeals.createAndStartNewDeal();
     }
@@ -46,6 +49,9 @@ public class ContreeGame extends AbstractGame {
 
     public void joinGame(ContreePlayer p) {
         gamePlayers.joinGame(p);
+        if (gamePlayers.isFull()) {
+            updateState(GameState.STARTED);
+        }
     }
 
     public synchronized void playCard(ContreePlayer player, ClassicalCard card) {

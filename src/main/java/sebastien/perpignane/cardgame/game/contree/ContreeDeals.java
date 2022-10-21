@@ -11,7 +11,7 @@ public class ContreeDeals {
 
     private final ContreeGame game;
 
-    private final ContreeGamePlayers contreeGamePlayers;
+    private final ContreeDealPlayers dealPlayers;
 
     private final List<ContreeDeal> deals = new ArrayList<>();
 
@@ -19,9 +19,9 @@ public class ContreeDeals {
 
     private final ContreeGameEventSender gameEventSender;
 
-    public ContreeDeals(ContreeGame game, ContreeGamePlayers contreeGamePlayers, ContreeGameEventSender gameEventSender) {
+    public ContreeDeals(ContreeGame game, ContreeDealPlayers contreeDealPlayers, ContreeGameEventSender gameEventSender) {
         this.game = game;
-        this.contreeGamePlayers = contreeGamePlayers;
+        this.dealPlayers = contreeDealPlayers;
         this.gameEventSender = gameEventSender;
     }
 
@@ -31,10 +31,10 @@ public class ContreeDeals {
             return;
         }
 
-        var newDealPlayers = deals.isEmpty() ? contreeGamePlayers.getPlayers() : contreeGamePlayers.nextPlayerList();
-
-        currentDeal = new ContreeDeal(dealId(), newDealPlayers, gameEventSender);
+        currentDeal = new ContreeDeal(dealId(), dealPlayers, gameEventSender);
         deals.add(currentDeal);
+
+        dealPlayers.setCurrentDeal(currentDeal);
 
         currentDeal.startDeal();
     }

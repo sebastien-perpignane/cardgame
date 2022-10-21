@@ -6,14 +6,12 @@ import sebastien.perpignane.cardgame.card.CardSet;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.card.contree.ContreeCard;
-import sebastien.perpignane.cardgame.player.Team;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static sebastien.perpignane.cardgame.game.contree.ContreeTestUtils.buildPlayers;
 
 public class DealScoreCalculatorTest {
@@ -62,11 +60,11 @@ public class DealScoreCalculatorTest {
         }
 
         public MockDealBuilder withAttackTeam(ContreeTeam team) {
-            when(deal.getAttackTeam()).thenReturn(Optional.of(team)); return this;
+            when(deal.getCurrentDealAttackTeam()).thenReturn(Optional.of(team)); return this;
         }
 
         public MockDealBuilder withDefenseTeam(ContreeTeam team) {
-            when(deal.getDefenseTeam()).thenReturn(Optional.of(team)); return this;
+            when(deal.getCurrentDealDefenseTeam()).thenReturn(Optional.of(team)); return this;
         }
 
         public MockDealBuilder withCardsByTeam(Map<Team, Set<ContreeCard>> cardsByTeam) {
@@ -219,7 +217,7 @@ public class DealScoreCalculatorTest {
                 .withIsRedouble(false)
                 .withTeamDoingCapot(null)
                 .withDealContractBid(
-                    new ContreeBid(contractPlayer, ContreeBidValue.HUNDRED_FOURTY, CardSuit.HEARTS)
+                    new ContreeBid(contractPlayer, ContreeBidValue.HUNDRED_FORTY, CardSuit.HEARTS)
                 )
                 .withAttackTeam(ContreeTeam.TEAM1)
                 .withDefenseTeam(ContreeTeam.TEAM2)

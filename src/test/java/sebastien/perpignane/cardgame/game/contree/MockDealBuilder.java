@@ -1,5 +1,6 @@
 package sebastien.perpignane.cardgame.game.contree;
 
+import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.contree.ContreeCard;
 import sebastien.perpignane.cardgame.player.Team;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
@@ -63,6 +64,19 @@ public class MockDealBuilder {
 
     public MockDealBuilder withCardsByTeam(Map<Team, Set<ContreeCard>> cardsByTeam) {
         when(deal.wonCardsByTeam()).thenReturn(cardsByTeam); return this;
+    }
+
+    public MockDealBuilder withTrumpSuit(CardSuit trumpSuit) {
+        when(deal.getTrumpSuit()).thenReturn(trumpSuit); return this;
+    }
+
+    public MockDealBuilder withGameEventSender(ContreeGameEventSender gameEventSender) {
+        when(deal.getEventSender()).thenReturn(gameEventSender); return this;
+    }
+
+    public MockDealBuilder withMockedGameEventSender() {
+        ContreeGameEventSender eventSender = mock(ContreeGameEventSender.class);
+        when(deal.getEventSender()).thenReturn(eventSender); return this;
     }
 
     public ContreeDeal build() {
