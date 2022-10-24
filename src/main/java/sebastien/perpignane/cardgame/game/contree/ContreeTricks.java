@@ -65,6 +65,7 @@ public class ContreeTricks {
         if ( currentTrick.isOver() ) {
 
             var displayCards = currentTrick.getPlayedCards().stream().map(pc -> String.format("Player %s : %s", pc.player(), pc.card().getCard())).collect(Collectors.joining(", "));
+            // TODO send event
             System.out.printf("Trick %s won by %s. Cards : %s%n", currentTrick, currentTrick.getWinner(), displayCards);
 
             if ( tricks.size() == NB_TRICKS_PER_DEAL ) {
@@ -113,7 +114,7 @@ public class ContreeTricks {
         ));
     }
 
-    public Optional<ContreeTrick> lastTrick() {
+    Optional<ContreeTrick> lastTrick() {
         if (tricks.isEmpty()) {
             return Optional.empty();
         }

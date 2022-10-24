@@ -208,7 +208,7 @@ public class WarGame extends AbstractGame {
     }
 
     @Override
-    protected AbstractGameEventSender getGameEventSender() {
+    protected AbstractGameEventSender getEventSender() {
         return warGameEventSender;
     }
 

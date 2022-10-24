@@ -1,38 +1,27 @@
 package sebastien.perpignane.cardgame.game.contree;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
-import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static sebastien.perpignane.cardgame.game.contree.ContreeTestUtils.buildPlayers;
 
-class ContreeTrickPlayersImplTest {
-
-    private List<ContreePlayer> players;
-
-    private ContreePlayer player1;
-    private ContreePlayer player2;
-    private ContreePlayer player3;
-    private ContreePlayer player4;
+class ContreeTrickPlayersImplTest extends TestCasesManagingPlayers {
 
     private ContreeTrickPlayers trickPlayers;
 
+    @BeforeAll
+    public static void globalSetUp() {
+        initPlayers();
+    }
+
     @BeforeEach
-    public void setUpTests() {
-
-        players = buildPlayers();
-
-        int playerIndex = 0;
-        player1 = players.get(playerIndex++);
-        player2 = players.get(playerIndex++);
-        player3 = players.get(playerIndex++);
-        player4 = players.get(playerIndex);
+    public void setUp() {
 
         ContreeDealPlayers dealPlayers = mock(ContreeDealPlayers.class);
         when(dealPlayers.getCurrentDealPlayers()).thenReturn(players);
@@ -95,7 +84,6 @@ class ContreeTrickPlayersImplTest {
         }).when(players.get(playerIndex)).onPlayerTurn(any());
     }
 
-
     @DisplayName("When setting first current trick, currentPlayer is player 1")
     @Test
     public void testGetCurrentPlayerWhenFirstCurrentTrickSet() {
@@ -114,7 +102,6 @@ class ContreeTrickPlayersImplTest {
         when(firstTrick.getWinner()).thenReturn(player4);
 
         ContreeTrick secondTrick = mock(ContreeTrick.class);
-
 
         trickPlayers.setCurrentTrick(firstTrick);
         trickPlayers.setCurrentTrick(secondTrick);

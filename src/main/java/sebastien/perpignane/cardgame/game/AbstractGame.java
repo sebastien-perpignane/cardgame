@@ -23,15 +23,15 @@ public abstract class AbstractGame {
     protected void updateState(GameState newState) {
 
         // FIXME gameEventSender is null on the INIT state
-        if (getGameEventSender() == null) {
+        if (getEventSender() == null) {
             return;
         }
 
         GameState oldState = state;
         state = newState;
-        getGameEventSender().sendStateEvent(oldState, state);
+        getEventSender().sendStateEvent(oldState, state);
         if (newState == GameState.STARTED) {
-            getGameEventSender().sendGameStartedEvent(getPlayers());
+            getEventSender().sendGameStartedEvent(getPlayers());
         }
     }
 
@@ -45,6 +45,6 @@ public abstract class AbstractGame {
         return gameId;
     }
 
-    protected abstract AbstractGameEventSender getGameEventSender();
+    protected abstract AbstractGameEventSender getEventSender();
 
 }

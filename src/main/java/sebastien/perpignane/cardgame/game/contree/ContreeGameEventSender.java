@@ -39,6 +39,7 @@ public class ContreeGameEventSender extends AbstractGameEventSender {
 
         gameObservers.forEach(go -> go.onEndOfGame(contreeGame));
 
+        // FIXME a player should be an observer but all events cannot be sent to all players. Example : onPlayerTurn with the allowed cards
         contreeGame.getPlayers().forEach(Player::onGameOver);
 
     }

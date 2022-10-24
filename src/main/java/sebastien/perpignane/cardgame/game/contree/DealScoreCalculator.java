@@ -11,6 +11,10 @@ import java.util.stream.Collectors;
 
 class DealScoreCalculator {
 
+    final int EXPECTED_CARD_SCORE_SUM = 162;
+
+    final int DIX_DE_DER_BONUS = 10;
+
     private final ContreeDeal deal;
 
     private Team dixDeDerTeam;
@@ -44,8 +48,14 @@ class DealScoreCalculator {
 
         cardScoreByTeam = allTeams.stream().collect(Collectors.toMap(
                 team -> team,
-                team -> computeCardPoints(cardsByTeam.get(team)) + (team == dixDeDerTeam ? 10 : 0)
+                team -> computeCardPoints(cardsByTeam.get(team)) + (team == dixDeDerTeam ? DIX_DE_DER_BONUS : 0)
         ));
+
+        int cardScoreSum = cardScoreByTeam.values().stream().mapToInt(i -> i).sum();
+
+        if (cardScoreSum != EXPECTED_CARD_SCORE_SUM) {
+            throw new IllegalStateException(String.format("Cheating detected : cardScore sum (including 10 de der) must be %d. Calculated sum is %d", EXPECTED_CARD_SCORE_SUM, cardScoreSum));
+        }
 
         if (deal.isDoubleBidExists() || deal.isRedoubleBidExists() || deal.isCapot()) {
             computeDoubledOrRedoubledOrCapotDeal();
@@ -57,7 +67,6 @@ class DealScoreCalculator {
         }
         else {
             scoreByTeam.putAll(cardScoreByTeam);
-
         }
 
         roundScores();

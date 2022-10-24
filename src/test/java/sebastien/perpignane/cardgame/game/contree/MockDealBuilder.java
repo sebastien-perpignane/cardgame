@@ -12,6 +12,12 @@ import java.util.Set;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * Builder for mocked deal.
+ *  * methods returning boolean default to false
+ *  * methods returning objects default to null
+ *  * methods returning collection default to empty collection
+ */
 public class MockDealBuilder {
     private final ContreeDeal deal;
     private final ContreeTrick lastTrick;
@@ -30,6 +36,16 @@ public class MockDealBuilder {
         when(deal.isCapot()).thenReturn(isCapot); return this;
     }
 
+    public MockDealBuilder withIsOver(boolean isOver) {
+        when(deal.isOver()).thenReturn(isOver); return this;
+    }
+
+    public MockDealBuilder withScore(Map<Team, Integer> scoreByTeam) {
+        when(deal.getTeamScore(ContreeTeam.TEAM1)).thenReturn(scoreByTeam.get(ContreeTeam.TEAM1));
+        when(deal.getTeamScore(ContreeTeam.TEAM2)).thenReturn(scoreByTeam.get(ContreeTeam.TEAM2));
+        return this;
+    }
+
     public MockDealBuilder withIsDouble(boolean isDouble) {
         when(deal.isDoubleBidExists()).thenReturn(isDouble); return this;
     }
@@ -42,15 +58,15 @@ public class MockDealBuilder {
         when(deal.isAnnouncedCapot()).thenReturn(isAnnouncedCapot); return this;
     }
 
-    public MockDealBuilder withTeamDoingCapot(ContreeTeam teamDoingCapot) {
-        when(deal.teamDoingCapot()).thenReturn(Optional.ofNullable(teamDoingCapot)); return this;
+    public MockDealBuilder withHasOnlyNoneBids(boolean hasOnlyNoneBids) {
+        when(deal.hasOnlyNoneBids()).thenReturn(hasOnlyNoneBids); return this;
     }
 
     public MockDealBuilder withDealContractBid(ContreeBid dealContractBid) {
         when(deal.findDealContractBid()).thenReturn(Optional.ofNullable(dealContractBid)); return this;
     }
 
-    public MockDealBuilder withWinnerTeam(ContreeTeam team) {
+    public MockDealBuilder withLastTrickWinnerTeam(ContreeTeam team) {
         when(lastTrick.getWinnerTeam()).thenReturn(team); return this;
     }
 

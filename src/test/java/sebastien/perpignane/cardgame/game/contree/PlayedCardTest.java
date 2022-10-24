@@ -11,7 +11,6 @@ import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -42,7 +41,7 @@ public class PlayedCardTest {
 
     }
 
-    @DisplayName("contree PlayedCard cannot be built if the player is not part of a team")
+    @DisplayName("contree PlayedCard cannot be built with null card")
     @Test
     public void testInvalidConstructorArgument_nullCard() {
 

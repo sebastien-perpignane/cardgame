@@ -1,5 +1,6 @@
 package sebastien.perpignane.cardgame.game.contree;
 
+import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
@@ -62,7 +63,7 @@ class ContreeGamePlayersImpl implements ContreeGamePlayers {
 
     }
 
-    public void joinGame(ContreePlayer joiningPlayer) {
+    public synchronized void joinGame(ContreePlayer joiningPlayer) {
         joinGame(joiningPlayer, null);
     }
 
@@ -100,4 +101,8 @@ class ContreeGamePlayersImpl implements ContreeGamePlayers {
         return players;
     }
 
+    @Override
+    public void receiveHandForPlayer(int playerIndex, List<ClassicalCard> hand) {
+        players.get(playerIndex).receiveHand(hand);
+    }
 }
