@@ -54,7 +54,7 @@ class ContreeDeal {
         this.eventSender = game.getEventSender();
 
         this.contreeTricks = new ContreeTricks(this, dealPlayers.buildTrickPlayers(), new PlayableCardsFilter());
-        score = new ContreeDealScore(new DealScoreCalculator(this), this);
+        score = new ContreeDealScore(new DealScoreCalculator(this));
 
     }
 
