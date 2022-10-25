@@ -1,14 +1,11 @@
 package sebastien.perpignane.cardgame.game.war;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.card.CardSet;
 import sebastien.perpignane.cardgame.card.CardSetShuffler;
+import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.BlockingQueueGameObserver;
-import sebastien.perpignane.cardgame.game.GameState;
 import sebastien.perpignane.cardgame.game.GameTextDisplayer;
 import sebastien.perpignane.cardgame.game.WarPlayer1WinShuffler;
 import sebastien.perpignane.cardgame.player.Player;
@@ -18,6 +15,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WarGameIntegrationTest {
 
@@ -32,7 +32,7 @@ public class WarGameIntegrationTest {
         warGame.joinGame(player1);
         warGame.joinGame(player2);
 
-        Assertions.assertEquals(GameState.INITIALIZED, warGame.getState());
+        assertTrue(warGame.isInitialized());
 
         CardSetShuffler shuffler = new WarPlayer1WinShuffler();
         List<ClassicalCard> cards = shuffler.shuffle(CardSet.GAME_32);
@@ -40,8 +40,8 @@ public class WarGameIntegrationTest {
 
         boolean endOfGame = waitForEndOfGameEvent(warGame);
 
-        Assertions.assertTrue(endOfGame);
-        Assertions.assertSame(player1, warGame.getWinner());
+        assertTrue(endOfGame);
+        assertSame(player1, warGame.getWinner());
 
     }
 
@@ -56,7 +56,7 @@ public class WarGameIntegrationTest {
         warGame.joinGame(player1);
         warGame.joinGame(player2);
 
-        Assertions.assertEquals(GameState.INITIALIZED, warGame.getState());
+        assertTrue(warGame.isInitialized());
         GameTextDisplayer observer = GameTextDisplayer.getInstance();
         warGame.registerAsGameObserver(observer);
         warGame.registerAsTrickObserver(observer);
@@ -77,8 +77,8 @@ public class WarGameIntegrationTest {
         warGame.startGame(cards);
 
         boolean endOfGame = waitForEndOfGameEvent(warGame);
-        Assertions.assertTrue(endOfGame);
-        Assertions.assertSame(player2, warGame.getWinner());
+        assertTrue(endOfGame);
+        assertSame(player2, warGame.getWinner());
 
     }
 
