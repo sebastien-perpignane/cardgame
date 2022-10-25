@@ -115,7 +115,7 @@ class ContreeGameScoreTest extends TestCasesManagingPlayers {
         );
 
         assertTrue(gameScoreWith1000AsMax.isMaximumScoreReached());
-        assertSame(ContreeTeam.TEAM1, gameScoreWith1000AsMax.getWinner());
+        assertSame(ContreeTeam.TEAM1, gameScoreWith1000AsMax.getWinner().orElseThrow());
 
     }
 

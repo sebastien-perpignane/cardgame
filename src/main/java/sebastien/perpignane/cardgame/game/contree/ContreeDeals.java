@@ -7,6 +7,7 @@ import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 public class ContreeDeals {
@@ -92,7 +93,7 @@ public class ContreeDeals {
         return gameScore.isMaximumScoreReached();
     }
 
-    public ContreeTeam getWinner() {
+    public Optional<ContreeTeam> getWinner() {
         return gameScore.getWinner();
     }
 
