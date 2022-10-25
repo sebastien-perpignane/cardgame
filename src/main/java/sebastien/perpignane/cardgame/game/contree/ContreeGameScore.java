@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class ContreeGameScore {
 
-    private int maxScore;
+    private final int maxScore;
 
     private final Map<ContreeTeam, Integer> scoreByTeam = new HashMap<>();
 
@@ -39,7 +39,7 @@ public class ContreeGameScore {
     }
 
     public ContreeTeam getWinner() {
-        return scoreByTeam.entrySet().stream().filter(e -> e.getValue() >= 1000).map(Map.Entry::getKey).findFirst().orElseThrow();
+        return scoreByTeam.entrySet().stream().filter(e -> e.getValue() >= maxScore).map(Map.Entry::getKey).findFirst().orElseThrow();
     }
 
 }
