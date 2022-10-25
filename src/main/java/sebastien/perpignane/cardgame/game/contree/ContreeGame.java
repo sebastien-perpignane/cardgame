@@ -6,11 +6,12 @@ import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.AbstractGame;
 import sebastien.perpignane.cardgame.game.GameObserver;
 import sebastien.perpignane.cardgame.game.GameState;
-import sebastien.perpignane.cardgame.player.Team;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
+import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Dependent
 public class ContreeGame extends AbstractGame {
@@ -24,13 +25,6 @@ public class ContreeGame extends AbstractGame {
     public ContreeGame() {
         super();
         this.gameEventSender = new ContreeGameEventSender();
-        gamePlayers = new ContreeGamePlayersImpl(this);
-        updateState(GameState.WAITING_FOR_PLAYERS);
-    }
-
-    public ContreeGame(GameObserver... observers) {
-        super();
-        this.gameEventSender = new ContreeGameEventSender(observers);
         gamePlayers = new ContreeGamePlayersImpl(this);
         updateState(GameState.WAITING_FOR_PLAYERS);
     }
@@ -60,7 +54,7 @@ public class ContreeGame extends AbstractGame {
         gameDeals.placeBid(player, bidValue, cardSuit);
     }
 
-    public void joinGame(ContreePlayer p) {
+    public synchronized void joinGame(ContreePlayer p) {
         if (isOver()) {
             throw new IllegalStateException("This game is over, you cannot join it");
         }
@@ -91,7 +85,10 @@ public class ContreeGame extends AbstractGame {
         gameEventSender.registerAsGameObserver(observer);
     }
 
-    public Team getWinner() {
+    public Optional<ContreeTeam> getWinner() {
+        if (gameDeals == null) {
+            return Optional.empty();
+        }
         return gameDeals.getWinner();
     }
 
@@ -100,15 +97,11 @@ public class ContreeGame extends AbstractGame {
         return gameEventSender;
     }
 
-    public boolean isOver() {
-        return getState() == GameState.OVER;
-    }
-
     @Override
     public String toString() {
         return "ContreeGame{" +
                 "id=" + getGameId() +
-                ",winner=" + gameDeals.getWinner() +
+                ",winner=" + (gameDeals.getWinner().isEmpty() ? "(game not over)" : gameDeals.getWinner().get()) +
                 '}';
     }
 

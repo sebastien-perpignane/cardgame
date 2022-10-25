@@ -37,8 +37,24 @@ public abstract class AbstractGame {
 
     protected abstract List<? extends Player> getPlayers();
 
-    public GameState getState() {
-        return state;
+    public boolean isInPlayableState() {
+        return state.isPlayable();
+    }
+
+    public boolean isInitialized() {
+        return state == GameState.INITIALIZED;
+    }
+
+    public boolean isWaitingForPlayers() {
+        return state == GameState.WAITING_FOR_PLAYERS;
+    }
+
+    public boolean isStarted() {
+        return state == GameState.STARTED;
+    }
+
+    public boolean isOver() {
+        return state == GameState.OVER;
     }
 
     public String getGameId() {
