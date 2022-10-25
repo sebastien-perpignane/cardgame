@@ -63,7 +63,7 @@ public class MockDealBuilder {
     }
 
     public MockDealBuilder withDealContractBid(ContreeBid dealContractBid) {
-        when(deal.findDealContractBid()).thenReturn(Optional.ofNullable(dealContractBid)); return this;
+        when(deal.getContractBid()).thenReturn(Optional.ofNullable(dealContractBid)); return this;
     }
 
     public MockDealBuilder withLastTrickWinnerTeam(ContreeTeam team) {

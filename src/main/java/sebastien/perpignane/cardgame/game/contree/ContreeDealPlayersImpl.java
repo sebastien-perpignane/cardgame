@@ -68,7 +68,7 @@ public class ContreeDealPlayersImpl implements ContreeDealPlayers {
 
     private void computeAttackAndDefenseTeams() {
 
-        var optionalContractBid = currentDeal.findDealContractBid();
+        var optionalContractBid = currentDeal.getContractBid();
         if (optionalContractBid.isPresent()) {
 
             var contractBid = optionalContractBid.get();

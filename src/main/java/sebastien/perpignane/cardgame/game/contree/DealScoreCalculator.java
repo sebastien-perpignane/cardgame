@@ -39,7 +39,7 @@ class DealScoreCalculator {
 
         dixDeDerTeam = deal.lastTrick().orElseThrow().getWinnerTeam();
 
-        Optional<ContreeBid> contractBid = deal.findDealContractBid();
+        Optional<ContreeBid> contractBid = deal.getContractBid();
         if (contractBid.isEmpty()) {
             throw new IllegalStateException("It does not make sense to compute points if the deal has no contract");
         }
@@ -114,13 +114,13 @@ class DealScoreCalculator {
 
     private boolean contractIsReached() {
         var attackTeam = deal.getAttackTeam().orElseThrow();
-        if (deal.findDealContractBid().isEmpty()) {
+        if (deal.getContractBid().isEmpty()) {
             throw new IllegalStateException("Computing score for a no bid deal does not make sense");
         }
         if (deal.isAnnouncedCapot()) {
             return cardsByTeam.get(attackTeam).size() == CardSet.GAME_32.getGameCards().size();
         }
-        return cardScoreByTeam.get(attackTeam) >= deal.findDealContractBid().get().bidValue().getExpectedScore();
+        return cardScoreByTeam.get(attackTeam) >= deal.getContractBid().get().bidValue().getExpectedScore();
     }
 
     private void roundScores() {
