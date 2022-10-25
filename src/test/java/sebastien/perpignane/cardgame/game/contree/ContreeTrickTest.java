@@ -2,127 +2,23 @@ package sebastien.perpignane.cardgame.game.contree;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
 import sebastien.perpignane.cardgame.card.CardSet;
 import sebastien.perpignane.cardgame.card.CardSuit;
+import sebastien.perpignane.cardgame.card.ClassicalCard;
 
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class ContreeTrickTest extends TestCasesManagingPlayers {
 
-    // TODO Test playerPlays when trick is over
-    // TODO Test playerPlays when card played is not allowed
+    // TODO [Unit test] Test playerPlays when card played is not allowed
 
-    /*@DisplayName("if winner is player 0, player list for next trick is same as players")
-    @Test
-    public void testBuildPlayerListFromWinner_Player1() {
-
-        ContreeTrickPlayers trickPlayers = mock(ContreeTrickPlayers.class);
-
-        var players = buildPlayers();
-        var winner = players.get(0);
-
-        ContreeTrick trick = new ContreeTrick("TEST", trickPlayers, CardSuit.HEARTS, new ContreeGameEventSender());
-        trickPlayers.setCurrentTrick(trick);
-
-        var result = trick.buildNextTrickPlayerListFromPreviousWinner(players, winner);
-
-        assertEquals(players, result);
-
-    }
-
-    @DisplayName("if winner is player 2, player list for next trick is : player 2, player 3, player 4, player 1")
-    @Test
-    public void testBuildPlayerListFromWinner_Player2() {
-
-        ContreeTrickPlayers trickPlayers = mock(ContreeTrickPlayers.class);
-
-        var players = buildPlayers();
-        var winner = players.get(1);
-
-        ContreeTrick trick = new ContreeTrick("TEST", trickPlayers, CardSuit.HEARTS, new ContreeGameEventSender());
-
-        var result = trick.buildNextTrickPlayerListFromPreviousWinner(players, winner);
-
-        assertEquals(
-                List.of(
-                        players.get(1),
-                        players.get(2),
-                        players.get(3),
-                        players.get(0)
-                ),
-                result
-        );
-
-        assertNotEquals(
-                List.of(
-                        players.get(0),
-                        players.get(1),
-                        players.get(2),
-                        players.get(3)
-                ),
-                result
-        );
-
-    }
-
-    @DisplayName("if winner is player 3, player list for next trick is : player 3, player 4, player 1, player 2")
-    @Test
-    public void testBuildPlayerListFromWinner_Player3() {
-
-        ContreeTrickPlayers trickPlayers = mock(ContreeTrickPlayers.class);
-
-        var players = buildPlayers();
-        var winner = players.get(2);
-
-        when(trickPlayers.getCurrentPlayer()).thenAnswer(AdditionalAnswers.returnsElementsOf(players));
-
-        ContreeTrick trick = new ContreeTrick("TEST", trickPlayers, CardSuit.HEARTS, new ContreeGameEventSender());
-
-        var result = trick.buildNextTrickPlayerListFromPreviousWinner(players, winner);
-
-        assertEquals(
-                List.of(
-                        players.get(2),
-                        players.get(3),
-                        players.get(0),
-                        players.get(1)
-                ),
-                result
-        );
-
-    }
-
-    @DisplayName("if winner is player 4, player list for next trick is : player 4, player 1, player 2, player 3")
-    @Test
-    public void testBuildPlayerListFromWinner_Player4() {
-
-        ContreeTrickPlayers trickPlayers = mock(ContreeTrickPlayers.class);
-
-        var players = buildPlayers();
-        var winner = players.get(3);
-
-        when(trickPlayers.getCurrentPlayer()).thenAnswer(AdditionalAnswers.returnsElementsOf(players));
-
-        ContreeTrick trick = new ContreeTrick("TEST", trickPlayers, CardSuit.HEARTS, new ContreeGameEventSender());
-
-        var result = trick.buildNextTrickPlayerListFromPreviousWinner(players, winner);
-
-        assertEquals(
-                List.of(
-                        players.get(3),
-                        players.get(0),
-                        players.get(1),
-                        players.get(2)
-                ),
-                result
-        );
-
-    }*/
-
-    private ContreeTrickPlayers trickPlayers;
-
-    private ContreeTrick trick;
+    private ContreeTrick trickWithHeartAsTrump;
 
 
     @BeforeAll
@@ -132,7 +28,7 @@ public class ContreeTrickTest extends TestCasesManagingPlayers {
 
     @BeforeEach
     public void setUp() {
-        trickPlayers = mock(ContreeTrickPlayers.class);
+        ContreeTrickPlayers trickPlayers = mock(ContreeTrickPlayers.class);
         when(trickPlayers.getCurrentPlayer()).thenAnswer(AdditionalAnswers.returnsElementsOf(players));
 
         var deal = MockDealBuilder.builder().withMockedGameEventSender().withTrumpSuit(CardSuit.HEARTS)
@@ -142,7 +38,81 @@ public class ContreeTrickTest extends TestCasesManagingPlayers {
 
         when(playableCardsFilter.playableCards(any(), any())).thenReturn(CardSet.GAME_32.getGameCards());
 
-        trick = new ContreeTrick(deal, "TEST", trickPlayers, playableCardsFilter);
+        trickWithHeartAsTrump = new ContreeTrick(deal, "TEST", trickPlayers, playableCardsFilter);
+    }
+
+    @DisplayName("When other player than current player plays, an exception is thrown")
+    @Test
+    public void testThrowsExceptionWhenNotExpectedPlayerPlays() {
+        trickWithHeartAsTrump.startTrick();
+
+        assertThrows(
+            RuntimeException.class,
+            () -> trickWithHeartAsTrump.playerPlays(player2, ClassicalCard.JACK_HEART)
+        );
+    }
+
+    @DisplayName("winning player on a trick without played card is null")
+    @Test
+    public void testWinningPlayerWhenNoPlayedCardThrowsException() {
+        assertNull(trickWithHeartAsTrump.winningPlayer());
+    }
+
+    @DisplayName("winning player on a trick with played card is consistent")
+    @Test
+    public void testWinningPlayerWhenCardsWerePlayed() {
+        trickWithHeartAsTrump.startTrick();
+
+        trickWithHeartAsTrump.playerPlays(player1, ClassicalCard.JACK_CLUB);
+        assertSame(player1, trickWithHeartAsTrump.winningPlayer());
+
+        trickWithHeartAsTrump.playerPlays(player2, ClassicalCard.TEN_CLUB);
+        assertSame(player2, trickWithHeartAsTrump.winningPlayer());
+
+        trickWithHeartAsTrump.playerPlays(player3, ClassicalCard.ACE_CLUB);
+        assertSame(player3, trickWithHeartAsTrump.winningPlayer());
+
+        trickWithHeartAsTrump.playerPlays(player4, ClassicalCard.SEVEN_HEART);
+        assertSame(player4, trickWithHeartAsTrump.winningPlayer());
+
+    }
+
+    @DisplayName("winning player on a trick with played card is consistent")
+    @Test
+    public void testPlayCardWhenTrickIsOver() {
+        trickWithHeartAsTrump.startTrick();
+
+        trickWithHeartAsTrump.playerPlays(player1, ClassicalCard.JACK_CLUB);
+        trickWithHeartAsTrump.playerPlays(player2, ClassicalCard.TEN_CLUB);
+        trickWithHeartAsTrump.playerPlays(player3, ClassicalCard.ACE_CLUB);
+        trickWithHeartAsTrump.playerPlays(player4, ClassicalCard.SEVEN_HEART);
+
+        assertThrows(
+            RuntimeException.class,
+            () -> trickWithHeartAsTrump.playerPlays(player1, ClassicalCard.JACK_HEART)
+        );
+
+    }
+
+    @DisplayName("getAllCards reflects cards played during the trick")
+    @Test
+    public void testGetPlayedCards() {
+
+        trickWithHeartAsTrump.startTrick();
+
+        trickWithHeartAsTrump.playerPlays(player1, ClassicalCard.JACK_CLUB);
+        trickWithHeartAsTrump.playerPlays(player2, ClassicalCard.ACE_CLUB);
+        trickWithHeartAsTrump.playerPlays(player3, ClassicalCard.TEN_CLUB);
+
+        assertEquals(
+            Set.of(
+                    ClassicalCard.JACK_CLUB,
+                    ClassicalCard.ACE_CLUB,
+                    ClassicalCard.TEN_CLUB
+            ),
+            trickWithHeartAsTrump.getAllCards()
+        );
+
     }
 
 }

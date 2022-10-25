@@ -1,37 +1,56 @@
 package sebastien.perpignane.cardgame.game.contree;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static sebastien.perpignane.cardgame.game.contree.ContreeTestUtils.buildPlayers;
 
-public class ContreeDealPlayersImplTest {
+public class ContreeDealPlayersImplTest extends TestCasesManagingPlayers {
+
+    private ContreeDealPlayersImpl dealPlayers;
+
+    private ContreeDeal dealWith80_club_contract_by_player1;
+
+    private ContreeDeal dealWith80_club_contract_by_player2;
+
+
+    @BeforeAll
+    public static void globalSetUp() {
+        initPlayers();
+    }
+
+    @BeforeEach
+    public void setUp() {
+        ContreeGamePlayers gamePlayers = mock(ContreeGamePlayers.class);
+        when(gamePlayers.getGamePlayers()).thenReturn(players);
+
+        dealPlayers =  new ContreeDealPlayersImpl(gamePlayers);
+
+        dealWith80_club_contract_by_player1 = MockDealBuilder.builder()
+                .withDealContractBid(
+                        new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.CLUBS)
+                )
+                .build();
+
+        dealWith80_club_contract_by_player2 = MockDealBuilder.builder()
+                .withDealContractBid(
+                        new ContreeBid(player2, ContreeBidValue.EIGHTY, CardSuit.CLUBS)
+                )
+                .build();
+
+    }
 
     @DisplayName("When the contract bid is owned by a team 1 player, team 1 is the attack team and team 2 is the defense team")
     @Test
     public void testAttackTeamIsTeam1AndDefenseTeamIsTeam2() {
 
-        var players = buildPlayers();
-
-        ContreeGamePlayers gamePlayers = mock(ContreeGamePlayers.class);
-
-        when(gamePlayers.getGamePlayers()).thenReturn(players);
-
-        ContreeDealPlayers dealPlayers =  new ContreeDealPlayersImpl(gamePlayers);
-
-        var deal = MockDealBuilder.builder()
-                .withDealContractBid(
-                    new ContreeBid(players.get(0), ContreeBidValue.EIGHTY, CardSuit.CLUBS)
-                )
-                .build();
-
-        dealPlayers.setCurrentDeal(deal);
+        dealPlayers.setCurrentDeal(dealWith80_club_contract_by_player1);
 
         var attackTeam = dealPlayers.getCurrentDealAttackTeam().orElseThrow();
         var defenseTeam = dealPlayers.getCurrentDealDefenseTeam().orElseThrow();
@@ -41,58 +60,26 @@ public class ContreeDealPlayersImplTest {
 
     }
 
-    @DisplayName("When the contract bid is owned by a team 2 player, team 2 is the attack team and team 1 is the defense team")
+    @DisplayName("When the contract bid is owned by a team 2 player, team 2 is the attack team")
     @Test
-    public void testPlayerListAfterNewDeal() {
+    public void testAttackTeamIsExpectedOne() {
 
-        var players = buildPlayers();
-
-        ContreeGamePlayers gamePlayers = mock(ContreeGamePlayers.class);
-
-        when(gamePlayers.getGamePlayers()).thenReturn(players);
-
-        ContreeDealPlayers dealPlayers =  new ContreeDealPlayersImpl(gamePlayers);
-
-        var deal = MockDealBuilder.builder()
-                .withDealContractBid(
-                        new ContreeBid(players.get(1), ContreeBidValue.EIGHTY, CardSuit.CLUBS)
-                )
-                .build();
-
-        dealPlayers.setCurrentDeal(deal);
+        dealPlayers.setCurrentDeal(dealWith80_club_contract_by_player2);
 
         var attackTeam = dealPlayers.getCurrentDealAttackTeam().orElseThrow();
-        var defenseTeam = dealPlayers.getCurrentDealDefenseTeam().orElseThrow();
 
         assertSame(ContreeTeam.TEAM2, attackTeam);
-        assertSame(ContreeTeam.TEAM1, defenseTeam);
 
     }
 
-    @DisplayName("When the contract bid is owned by a team 2 player, team 2 is the attack team and team 1 is the defense team")
+    @DisplayName("When the contract bid is owned by a team 2 player, team 1 is the defense team")
     @Test
-    public void testAttackTeamIsTeam2AndDefenseTeamIsTeam1() {
+    public void testDefenseTeamIsExpectedOne() {
 
-        var players = buildPlayers();
+        dealPlayers.setCurrentDeal(dealWith80_club_contract_by_player2);
 
-        ContreeGamePlayers gamePlayers = mock(ContreeGamePlayers.class);
-
-        when(gamePlayers.getGamePlayers()).thenReturn(players);
-
-        ContreeDealPlayers dealPlayers =  new ContreeDealPlayersImpl(gamePlayers);
-
-        var deal = MockDealBuilder.builder()
-                .withDealContractBid(
-                        new ContreeBid(players.get(1), ContreeBidValue.EIGHTY, CardSuit.CLUBS)
-                )
-                .build();
-
-        dealPlayers.setCurrentDeal(deal);
-
-        var attackTeam = dealPlayers.getCurrentDealAttackTeam().orElseThrow();
         var defenseTeam = dealPlayers.getCurrentDealDefenseTeam().orElseThrow();
 
-        assertSame(ContreeTeam.TEAM2, attackTeam);
         assertSame(ContreeTeam.TEAM1, defenseTeam);
 
     }
@@ -101,33 +88,59 @@ public class ContreeDealPlayersImplTest {
     @Test
     public void testPlayerRotationWhenSecondDealStarts() {
 
-        var players = buildPlayers();
-
-        ContreeGamePlayers gamePlayers = mock(ContreeGamePlayers.class);
-
-        when(gamePlayers.getGamePlayers()).thenReturn(players);
-
-        ContreeDealPlayers dealPlayers =  new ContreeDealPlayersImpl(gamePlayers);
-
-        var deal1 = MockDealBuilder.builder()
-                .withDealContractBid(
-                        new ContreeBid(players.get(1), ContreeBidValue.EIGHTY, CardSuit.CLUBS)
-                )
-                .build();
-
-        var deal2 = MockDealBuilder.builder()
-                .withDealContractBid(
-                        new ContreeBid(players.get(1), ContreeBidValue.EIGHTY, CardSuit.CLUBS)
-                )
-                .build();
-
-        dealPlayers.setCurrentDeal(deal1);
+        dealPlayers.setCurrentDeal(dealWith80_club_contract_by_player1);
 
         assertEquals(players, dealPlayers.getCurrentDealPlayers());
 
-        dealPlayers.setCurrentDeal(deal2);
+        dealPlayers.setCurrentDeal(dealWith80_club_contract_by_player2);
 
-        assertSame(players.get(1), dealPlayers.getCurrentDealPlayers().get(0));
+        assertSame(player2, dealPlayers.getCurrentDealPlayers().get(0));
+
+    }
+
+    @DisplayName("setCurrentDeal throws an exception if the same deal is set multiple times")
+    @Test
+    public void testSetSameCurrentDealTwiceThrowsException() {
+
+        dealPlayers.setCurrentDeal(dealWith80_club_contract_by_player2);
+
+        assertThrows(
+                RuntimeException.class,
+                () -> dealPlayers.setCurrentDeal(dealWith80_club_contract_by_player2)
+        );
+
+    }
+
+
+    @DisplayName("Calculation a player list from an invalid index (>3) throw an exception")
+    @Test
+    public void testRollPlayerFromInvalidIndexThrowsException() {
+        assertThrows(
+            RuntimeException.class,
+            () -> dealPlayers.rollPlayerFromIndex(4)
+        );
+    }
+
+    @DisplayName("buildBidPlayers builds a valid object, with expected current player")
+    @Test
+    public void testBuildBidPlayers() {
+
+        ContreeTrickPlayers trickPlayers = dealPlayers.buildTrickPlayers();
+
+        assertNotNull(trickPlayers);
+        assertNotNull(trickPlayers.getCurrentPlayer());
+        assertSame(player1, trickPlayers.getCurrentPlayer());
+    }
+
+    @DisplayName("buildTrickPlayers builds a valid object, with expected current bidder")
+    @Test
+    public void testBuildTrickPlayers() {
+
+        ContreeBidPlayers bidPlayers = dealPlayers.buildBidPlayers();
+
+        assertNotNull(bidPlayers);
+        assertNotNull(bidPlayers.getCurrentBidder());
+        assertSame(player1, bidPlayers.getCurrentBidder());
 
     }
 

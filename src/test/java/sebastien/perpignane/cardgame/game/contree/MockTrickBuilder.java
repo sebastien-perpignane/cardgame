@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 
 public class MockTrickBuilder {
 
-    private ContreeTrick trick;
+    private final ContreeTrick trick;
 
     private MockTrickBuilder() {
         trick = mock(ContreeTrick.class);

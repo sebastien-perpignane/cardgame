@@ -1,5 +1,6 @@
 package sebastien.perpignane.cardgame.game.contree;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -19,16 +20,16 @@ public class ContreeGameIntegrationTest {
     @DisplayName("Running a game with bot players, including one always bidding 80 HEART. The game must end without error, whoever wins.")
     @Test
     @Timeout(value = 500, unit = TimeUnit.MILLISECONDS)
+    @Disabled
     public void testRunGameWithBotsPlayingRandomCards() throws InterruptedException {
         ContreeGame game = new ContreeGame(GameTextDisplayer.getInstance());
-        ContreeBotPlayer player1 = new TestNonBotBiddingContreePlayer(ContreeBidValue.EIGHTY, CardSuit.HEARTS);
+        ContreeBotPlayer player1 = new TestBiddingContreePlayer(ContreeBidValue.EIGHTY, CardSuit.HEARTS);
 
         game.joinGame(player1);
         game.joinGame(new ContreeBotPlayer());
         game.joinGame(new ContreeBotPlayer());
         game.joinGame(new ContreeBotPlayer());
         game.startGame();
-        assertTrue(true);
         var endOfGame = waitForEndOfGameEvent(game);
         assertTrue(endOfGame);
 

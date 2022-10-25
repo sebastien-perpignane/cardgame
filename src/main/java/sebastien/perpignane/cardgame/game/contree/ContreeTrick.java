@@ -4,7 +4,6 @@ import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.card.contree.ContreeCard;
 import sebastien.perpignane.cardgame.game.Trick;
-import sebastien.perpignane.cardgame.player.Player;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
@@ -61,10 +60,6 @@ class ContreeTrick implements Trick {
         currentPlayer = trickPlayers.getCurrentPlayer();
         currentPlayerPlayableCards = this.playableCardsFilter.playableCards(this, currentPlayer);
         trickPlayers.notifyCurrentPlayerTurn(currentPlayerPlayableCards);
-    }
-
-    Collection<ClassicalCard> playableCards(Player player) {
-        return this.playableCardsFilter.playableCards(this, player);
     }
 
     public boolean isTrumpTrick() {

@@ -3,9 +3,11 @@ package sebastien.perpignane.cardgame.game.contree;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
+import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class ContreeDeals {
 
@@ -17,21 +19,27 @@ public class ContreeDeals {
 
     private ContreeDeal currentDeal;
 
+    private final ContreeGameScore gameScore = new ContreeGameScore(1000); // TODO make max score configurable
+
     private final ContreeGameEventSender gameEventSender;
 
-    public ContreeDeals(ContreeGame game, ContreeDealPlayers contreeDealPlayers, ContreeGameEventSender gameEventSender) {
+    public ContreeDeals(ContreeGame game, ContreeDealPlayers contreeDealPlayers) {
         this.game = game;
         this.dealPlayers = contreeDealPlayers;
-        this.gameEventSender = gameEventSender;
+        this.gameEventSender = game.getEventSender();
     }
 
-    public void createAndStartNewDeal() {
+    public void startDeals() {
+        createAndStartNewDeal();
+    }
+
+    private void createAndStartNewDeal() {
 
         if (game.isOver()) {
-            return;
+            throw new IllegalStateException("Game is over, new deal cannot be started");
         }
 
-        currentDeal = new ContreeDeal(dealId(), dealPlayers, gameEventSender);
+        currentDeal = new ContreeDeal(game, dealPlayers);
         deals.add(currentDeal);
 
         dealPlayers.setCurrentDeal(currentDeal);
@@ -47,20 +55,45 @@ public class ContreeDeals {
     }
 
     public void playCard(ContreePlayer player, ClassicalCard card) {
+
+        if (isMaximumScoreReached()) {
+            throw new IllegalStateException("Maximum score is reached");
+        }
+
         currentDeal.playerPlays(player, card);
+        if (currentDeal.isOver()) {
+            gameScore.addDealScore(currentDeal);
+            // FIXME Send updated score event
+            ContreeTeam.getTeams().forEach(t -> System.out.printf("Score of Team %s : %d%n", t, gameScore.getTeamScore(t)));
+
+            if (!isMaximumScoreReached()) {
+                createAndStartNewDeal();
+            }
+        }
     }
 
     public ContreeDeal getCurrentDeal() {
         return currentDeal;
     }
 
-    public boolean isCurrentDealOver() {
-        return currentDeal.isOver();
+    public int getNbDeals() {
+        return deals.size();
     }
 
-    private String dealId() {
-        return game.getGameId() + "-" + (deals.size() + 1);
+    public int nbOverDeals() {
+        return (int) deals.stream().filter(ContreeDeal::isOver).count();
     }
 
+    public int nbOngoingDeals() {
+        return (int) deals.stream().filter(Predicate.not(ContreeDeal::isOver)).count();
+    }
+
+    public boolean isMaximumScoreReached() {
+        return gameScore.isMaximumScoreReached();
+    }
+
+    public ContreeTeam getWinner() {
+        return gameScore.getWinner();
+    }
 
 }

@@ -2,6 +2,7 @@ package sebastien.perpignane.cardgame.game.contree;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
 import sebastien.perpignane.cardgame.card.CardSet;
@@ -13,9 +14,7 @@ import static org.mockito.Mockito.*;
 
 public class ContreeTrickLifeCycleTest extends TestCasesManagingPlayers {
 
-    private ContreeTrickPlayers trickPlayers;
-
-    private ContreeTrick trick;
+    private ContreeTrick trickWithHeartTrump;
 
     @BeforeAll
     public static void globalSetUp() {
@@ -25,7 +24,7 @@ public class ContreeTrickLifeCycleTest extends TestCasesManagingPlayers {
     @BeforeEach
     void setUp() {
 
-        trickPlayers = mock(ContreeTrickPlayers.class);
+        ContreeTrickPlayers trickPlayers = mock(ContreeTrickPlayers.class);
         when(trickPlayers.getCurrentPlayer()).thenAnswer(AdditionalAnswers.returnsElementsOf(players));
 
         ContreeDeal deal = mock(ContreeDeal.class);
@@ -34,62 +33,65 @@ public class ContreeTrickLifeCycleTest extends TestCasesManagingPlayers {
         PlayableCardsFilter filter = mock(PlayableCardsFilter.class);
         when(filter.playableCards(any(), any())).thenReturn(CardSet.GAME_32.getGameCards());
 
-        trick = new ContreeTrick(deal, "TEST", trickPlayers, filter);
+        trickWithHeartTrump = new ContreeTrick(deal, "TEST", trickPlayers, filter);
     }
 
+    @DisplayName("After the first played card, game is not over and winner is not available")
     @Test
     public void testTrickIsNotOverAfterOnePlayedCard() {
 
-        trick.startTrick();
+        trickWithHeartTrump.startTrick();
 
-        trick.playerPlays(player1, ClassicalCard.ACE_CLUB);
+        trickWithHeartTrump.playerPlays(player1, ClassicalCard.ACE_CLUB);
 
-        assertFalse(trick.isOver());
-        assertNull(trick.getWinner());
+        assertFalse(trickWithHeartTrump.isOver());
+        assertNull(trickWithHeartTrump.getWinner());
 
     }
 
+    @DisplayName("After two played cards, game is not over and winner is not available")
     @Test
     public void testTrickIsNotOverAfterTwoPlayedCards() {
 
-        trick.startTrick();
+        trickWithHeartTrump.startTrick();
 
-        trick.playerPlays(player1, ClassicalCard.ACE_CLUB);
-        trick.playerPlays(player2, ClassicalCard.SEVEN_CLUB);
+        trickWithHeartTrump.playerPlays(player1, ClassicalCard.ACE_CLUB);
+        trickWithHeartTrump.playerPlays(player2, ClassicalCard.SEVEN_CLUB);
 
-        assertFalse(trick.isOver());
-        assertNull(trick.getWinner());
+        assertFalse(trickWithHeartTrump.isOver());
+        assertNull(trickWithHeartTrump.getWinner());
 
     }
 
+    @DisplayName("After three played cards, game is not over and winner is not available")
     @Test
     public void testTrickIsNotOverAfterThreePlayedCards() {
-        trick.startTrick();
+        trickWithHeartTrump.startTrick();
 
-        trick.playerPlays(player1, ClassicalCard.ACE_CLUB);
-        trick.playerPlays(player2, ClassicalCard.SEVEN_CLUB);
-        trick.playerPlays(player3, ClassicalCard.TEN_CLUB);
+        trickWithHeartTrump.playerPlays(player1, ClassicalCard.ACE_CLUB);
+        trickWithHeartTrump.playerPlays(player2, ClassicalCard.SEVEN_CLUB);
+        trickWithHeartTrump.playerPlays(player3, ClassicalCard.TEN_CLUB);
 
-        assertFalse(trick.isOver());
-        assertNull(trick.getWinner());
+        assertFalse(trickWithHeartTrump.isOver());
+        assertNull(trickWithHeartTrump.getWinner());
 
     }
 
+    @DisplayName("After four played cards, game is  over and trick winner is available")
     @Test
     public void testTrickIsOverAfterFourPlayedCards() {
 
-        trick.startTrick();
+        trickWithHeartTrump.startTrick();
 
-        trick.playerPlays(player1, ClassicalCard.ACE_CLUB);
-        trick.playerPlays(player2, ClassicalCard.SEVEN_CLUB);
-        trick.playerPlays(player3, ClassicalCard.TEN_CLUB);
-        trick.playerPlays(player4, ClassicalCard.JACK_CLUB);
+        trickWithHeartTrump.playerPlays(player1, ClassicalCard.ACE_CLUB);
+        trickWithHeartTrump.playerPlays(player2, ClassicalCard.SEVEN_CLUB);
+        trickWithHeartTrump.playerPlays(player3, ClassicalCard.TEN_CLUB);
+        trickWithHeartTrump.playerPlays(player4, ClassicalCard.JACK_CLUB);
 
-        assertTrue(trick.isOver());
-        assertNotNull(trick.getWinner());
+        assertTrue(trickWithHeartTrump.isOver());
+        assertNotNull(trickWithHeartTrump.getWinner());
+        assertSame(player1, trickWithHeartTrump.getWinner());
 
     }
-
-
 
 }

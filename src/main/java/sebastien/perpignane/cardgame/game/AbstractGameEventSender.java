@@ -4,12 +4,13 @@ import sebastien.perpignane.cardgame.player.Player;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AbstractGameEventSender {
 
-    //We use CopyOnWriteArrayList to allow addition of observers while the game is running.
-    protected final List<GameObserver> gameObservers = new CopyOnWriteArrayList<>();
+    //We use a concurrent set (provided by concurrent hash map) to allow safe addition of observers while the game is running.
+    protected final Set<GameObserver> gameObservers = ConcurrentHashMap.newKeySet();
 
     public AbstractGameEventSender(GameObserver... observers) {
         gameObservers.addAll(Arrays.asList(observers));

@@ -8,19 +8,35 @@ import org.mockito.AdditionalAnswers;
 import sebastien.perpignane.cardgame.card.CardSet;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
+import sebastien.perpignane.cardgame.card.contree.ContreeCard;
+import sebastien.perpignane.cardgame.player.Team;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/*
+ Responsibilities of ContreeTricks are :
+    * manage tricks lifecycle (start the first one, start a new one when the previous is over or stop when all tricks are played)
+    * provide information about the tricks to allow deal score calculation
+        * teamDoingCapot *
+        * wonCardsByTeam *
+        * lastTrick *
+        * isCapot *
+        * nbOverTricks *
+        * nbOngoingTricks *
+ */
 public class ContreeTricksTest extends TestCasesManagingPlayers {
 
     private ContreeTrickPlayers trickPlayers;
 
-    private ContreeTricks tricks;
+    private ContreeTricks tricksWithHeartAsTrumpSuit;
 
     @BeforeAll
     public static void globalSetUp() {
@@ -50,7 +66,7 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
         PlayableCardsFilter playableCardsFilter = mock(PlayableCardsFilter.class);
         when(playableCardsFilter.playableCards(any(), any())).thenReturn(CardSet.GAME_32.getGameCards());
 
-        tricks = new ContreeTricks(deal, trickPlayers, playableCardsFilter);
+        tricksWithHeartAsTrumpSuit = new ContreeTricks(deal, trickPlayers, playableCardsFilter);
 
         configureTrickPlayersForNumberOfTricks(1);
 
@@ -69,10 +85,10 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
     @Test
     public void testNotStartedTricks() {
 
-        assert(tricks.lastTrick().isEmpty());
-        assertEquals(0, tricks.nbOverTricks());
-        assertEquals(0, tricks.nbOngoingTricks());
-        assertFalse(tricks.isMaxNbOverTricksReached());
+        assertTrue(tricksWithHeartAsTrumpSuit.lastTrick().isEmpty());
+        assertEquals(0, tricksWithHeartAsTrumpSuit.nbOverTricks());
+        assertEquals(0, tricksWithHeartAsTrumpSuit.nbOngoingTricks());
+        assertFalse(tricksWithHeartAsTrumpSuit.isMaxNbOverTricksReached());
 
     }
 
@@ -80,15 +96,13 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
     @Test
     public void testStartTricks() {
 
-        tricks.startTricks();
+        tricksWithHeartAsTrumpSuit.startTricks();
 
-        assertEquals(0, tricks.nbOverTricks());
-        assertEquals(1, tricks.nbOngoingTricks());
+        assertEquals(0, tricksWithHeartAsTrumpSuit.nbOverTricks());
+        assertEquals(1, tricksWithHeartAsTrumpSuit.nbOngoingTricks());
 
-
-
-        tricks.playerPlays(player1, ClassicalCard.JACK_CLUB);
-        tricks.playerPlays(player2, ClassicalCard.JACK_CLUB);
+        tricksWithHeartAsTrumpSuit.playerPlays(player1, ClassicalCard.JACK_CLUB);
+        tricksWithHeartAsTrumpSuit.playerPlays(player2, ClassicalCard.JACK_CLUB);
 
     }
 
@@ -98,49 +112,54 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
 
         configureTrickPlayersForNumberOfTricks(2);
 
-        tricks.startTricks();
+        tricksWithHeartAsTrumpSuit.startTricks();
 
-        tricks.playerPlays(player1, ClassicalCard.JACK_HEART);
-        tricks.playerPlays(player2, ClassicalCard.JACK_CLUB);
-        tricks.playerPlays(player3, ClassicalCard.JACK_CLUB);
-        tricks.playerPlays(player4, ClassicalCard.JACK_CLUB);
+        // mocked PlayableCardsFilter is very permissive ^^
+        tricksWithHeartAsTrumpSuit.playerPlays(player1, ClassicalCard.JACK_HEART);
+        tricksWithHeartAsTrumpSuit.playerPlays(player2, ClassicalCard.JACK_CLUB);
+        tricksWithHeartAsTrumpSuit.playerPlays(player3, ClassicalCard.JACK_CLUB);
+        tricksWithHeartAsTrumpSuit.playerPlays(player4, ClassicalCard.JACK_CLUB);
 
-        assertEquals(1, tricks.nbOverTricks());
-        assertEquals(1, tricks.nbOngoingTricks());
+        assertEquals(1, tricksWithHeartAsTrumpSuit.nbOverTricks());
+        assertEquals(1, tricksWithHeartAsTrumpSuit.nbOngoingTricks());
 
-        tricks.playerPlays(player1, ClassicalCard.JACK_HEART);
-        tricks.playerPlays(player2, ClassicalCard.JACK_CLUB);
-        tricks.playerPlays(player3, ClassicalCard.JACK_CLUB);
-        tricks.playerPlays(player4, ClassicalCard.JACK_CLUB);
+        tricksWithHeartAsTrumpSuit.playerPlays(player1, ClassicalCard.JACK_HEART);
+        tricksWithHeartAsTrumpSuit.playerPlays(player2, ClassicalCard.JACK_CLUB);
+        tricksWithHeartAsTrumpSuit.playerPlays(player3, ClassicalCard.JACK_CLUB);
+        tricksWithHeartAsTrumpSuit.playerPlays(player4, ClassicalCard.JACK_CLUB);
 
-        assertEquals(2, tricks.nbOverTricks());
-        assertEquals(1, tricks.nbOngoingTricks());
+        assertEquals(2, tricksWithHeartAsTrumpSuit.nbOverTricks());
+        assertEquals(1, tricksWithHeartAsTrumpSuit.nbOngoingTricks());
+
+        assertTrue(tricksWithHeartAsTrumpSuit.lastTrick().isPresent());
+        assertFalse(tricksWithHeartAsTrumpSuit.lastTrick().get().isOver());
 
     }
 
     @DisplayName("All tricks are won by team 1, team 1 makes capot")
     @Test
-    public void testTeamDoingCapotWhenCapot() {
+    public void testTeamDoingCapotWhenCapotHappens() {
         configureTrickPlayersForNumberOfTricks(8);
 
-        tricks.startTricks();
+        tricksWithHeartAsTrumpSuit.startTricks();
 
         int i = 0;
         while( i < ContreeTricks.NB_TRICKS_PER_DEAL ) {
-            tricks.playerPlays(player1, ClassicalCard.JACK_HEART);
-            tricks.playerPlays(player2, ClassicalCard.JACK_CLUB);
-            tricks.playerPlays(player3, ClassicalCard.JACK_CLUB);
-            tricks.playerPlays(player4, ClassicalCard.JACK_CLUB);
+            // mocked PlayableCardsFilter is very permissive ^^
+            tricksWithHeartAsTrumpSuit.playerPlays(player1, ClassicalCard.JACK_HEART);
+            tricksWithHeartAsTrumpSuit.playerPlays(player2, ClassicalCard.JACK_CLUB);
+            tricksWithHeartAsTrumpSuit.playerPlays(player3, ClassicalCard.JACK_CLUB);
+            tricksWithHeartAsTrumpSuit.playerPlays(player4, ClassicalCard.JACK_CLUB);
             i++;
         }
 
-        assertTrue(tricks.isMaxNbOverTricksReached());
-        assertTrue(tricks.isCapot());
-        assertTrue(tricks.teamDoingCapot().isPresent());
-        assertSame(ContreeTeam.TEAM1, tricks.teamDoingCapot().get());
+        assertTrue(tricksWithHeartAsTrumpSuit.isMaxNbOverTricksReached());
+        assertTrue(tricksWithHeartAsTrumpSuit.isCapot());
+        assertTrue(tricksWithHeartAsTrumpSuit.teamDoingCapot().isPresent());
+        assertSame(ContreeTeam.TEAM1, tricksWithHeartAsTrumpSuit.teamDoingCapot().get());
 
-        assertEquals(8, tricks.nbOverTricks());
-        assertEquals(0, tricks.nbOngoingTricks());
+        assertEquals(8, tricksWithHeartAsTrumpSuit.nbOverTricks());
+        assertEquals(0, tricksWithHeartAsTrumpSuit.nbOngoingTricks());
 
     }
 
@@ -150,40 +169,49 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
 
         configureTrickPlayersForNumberOfTricks(8);
 
-        tricks.startTricks();
+        tricksWithHeartAsTrumpSuit.startTricks();
 
         // First 7 tricks are won by team 1
         int i = 0;
         while( i < ContreeTricks.NB_TRICKS_PER_DEAL - 1 ) {
-            tricks.playerPlays(player1, ClassicalCard.JACK_HEART);
-            tricks.playerPlays(player2, ClassicalCard.JACK_CLUB);
-            tricks.playerPlays(player3, ClassicalCard.JACK_CLUB);
-            tricks.playerPlays(player4, ClassicalCard.JACK_CLUB);
+            // mocked PlayableCardsFilter is very permissive ^^
+            tricksWithHeartAsTrumpSuit.playerPlays(player1, ClassicalCard.JACK_HEART);
+            tricksWithHeartAsTrumpSuit.playerPlays(player2, ClassicalCard.JACK_CLUB);
+            tricksWithHeartAsTrumpSuit.playerPlays(player3, ClassicalCard.JACK_CLUB);
+            tricksWithHeartAsTrumpSuit.playerPlays(player4, ClassicalCard.JACK_CLUB);
             i++;
         }
 
         // Final trick is won by team 2
-        tricks.playerPlays(player1, ClassicalCard.JACK_CLUB);
-        tricks.playerPlays(player2, ClassicalCard.JACK_HEART);
-        tricks.playerPlays(player3, ClassicalCard.JACK_CLUB);
-        tricks.playerPlays(player4, ClassicalCard.JACK_CLUB);
+        tricksWithHeartAsTrumpSuit.playerPlays(player1, ClassicalCard.JACK_CLUB);
+        tricksWithHeartAsTrumpSuit.playerPlays(player2, ClassicalCard.JACK_HEART);
+        tricksWithHeartAsTrumpSuit.playerPlays(player3, ClassicalCard.JACK_CLUB);
+        tricksWithHeartAsTrumpSuit.playerPlays(player4, ClassicalCard.JACK_CLUB);
 
-        assertTrue(tricks.isMaxNbOverTricksReached());
-        assertTrue(tricks.teamDoingCapot().isEmpty());
+        assertTrue(tricksWithHeartAsTrumpSuit.isMaxNbOverTricksReached());
+        assertFalse(tricksWithHeartAsTrumpSuit.isCapot());
+        assertTrue(tricksWithHeartAsTrumpSuit.teamDoingCapot().isEmpty());
 
-        assertEquals(8, tricks.nbOverTricks());
-        assertEquals(0, tricks.nbOngoingTricks());
+        assertEquals(8, tricksWithHeartAsTrumpSuit.nbOverTricks());
+        assertEquals(0, tricksWithHeartAsTrumpSuit.nbOngoingTricks());
+
+        Map<Team, Set<ContreeCard>> wonCardsByTeam = tricksWithHeartAsTrumpSuit.wonCardsByTeam();
+
+        var expectedWonCards = Set.of(ClassicalCard.JACK_HEART, ClassicalCard.JACK_CLUB);
+
+        assertEquals( expectedWonCards, wonCardsByTeam.get(ContreeTeam.TEAM1).stream().map(ContreeCard::getCard).collect(Collectors.toSet()) );
+        assertEquals( expectedWonCards, wonCardsByTeam.get(ContreeTeam.TEAM2).stream().map(ContreeCard::getCard).collect(Collectors.toSet()) );
 
     }
 
     @DisplayName("Tricks cannot be started multiple times")
     @Test
     public void testStartTricksMultipleTimesFails() {
-        tricks.startTricks();
+        tricksWithHeartAsTrumpSuit.startTricks();
 
         assertThrows(
                 RuntimeException.class,
-                () -> tricks.startTricks()
+                () -> tricksWithHeartAsTrumpSuit.startTricks()
         );
 
     }
@@ -194,16 +222,17 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
 
         configureTrickPlayersForNumberOfTricks(2);
 
-        tricks.startTricks();
+        tricksWithHeartAsTrumpSuit.startTricks();
 
-        tricks.playerPlays(player1, ClassicalCard.JACK_HEART);
-        tricks.playerPlays(player2, ClassicalCard.JACK_CLUB);
-        tricks.playerPlays(player3, ClassicalCard.JACK_CLUB);
-        tricks.playerPlays(player4, ClassicalCard.JACK_CLUB);
+        // mocked PlayableCardsFilter is very permissive ^^
+        tricksWithHeartAsTrumpSuit.playerPlays(player1, ClassicalCard.JACK_HEART);
+        tricksWithHeartAsTrumpSuit.playerPlays(player2, ClassicalCard.JACK_CLUB);
+        tricksWithHeartAsTrumpSuit.playerPlays(player3, ClassicalCard.JACK_CLUB);
+        tricksWithHeartAsTrumpSuit.playerPlays(player4, ClassicalCard.JACK_CLUB);
 
         assertThrows(
                 RuntimeException.class,
-                () -> tricks.teamDoingCapot()
+                () -> tricksWithHeartAsTrumpSuit.teamDoingCapot()
         );
 
     }

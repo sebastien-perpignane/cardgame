@@ -45,12 +45,4 @@ record ContreeBid(ContreePlayer player, ContreeBidValue bidValue, CardSuit cardS
         return bidValue == ContreeBidValue.REDOUBLE;
     }
 
-    @Override
-    public String toString() {
-        return "ContreeBid{" +
-                "player=" + player +
-                ", bidValue=" + bidValue +
-                ", cardSuit=" + cardSuit +
-                '}';
-    }
 }

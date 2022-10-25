@@ -12,13 +12,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
-/*
-
-    End of deal :
-        - Only "NONE" bids
-        - All cards played
- */
-
 enum DealStep {
     NOT_STARTED,
     BID,
@@ -52,16 +45,16 @@ class ContreeDeal {
         return dealPlayers.getCurrentDealDefenseTeam();
     }
 
-    public ContreeDeal(String dealId, ContreeDealPlayers dealPlayers, ContreeGameEventSender eventSender) {
+    public ContreeDeal(ContreeGame game, ContreeDealPlayers dealPlayers) {
 
-        this.dealId = dealId;
+        this.dealId = game.getGameId() + "-" + (game.getNbDeals() + 1);
         dealStep = DealStep.NOT_STARTED;
         this.dealPlayers = dealPlayers;
         this.dealBids = new ContreeDealBids(dealPlayers.buildBidPlayers());
-        this.eventSender = eventSender;
+        this.eventSender = game.getEventSender();
 
         this.contreeTricks = new ContreeTricks(this, dealPlayers.buildTrickPlayers(), new PlayableCardsFilter());
-        score = new ContreeDealScore(this);
+        score = new ContreeDealScore(new DealScoreCalculator(this), this);
 
     }
 
@@ -72,7 +65,6 @@ class ContreeDeal {
         CardSetShuffler shuffler = new CardSetShufflerImpl();
         List<ClassicalCard> cards = shuffler.shuffle(CardSet.GAME_32);
         distributeCardsToPlayers(cards);
-        //this.dealBids = new ContreeDealBids( new ContreeBidPlayersImpl( dealPlayers.getDealPlayers(), this ) );
         dealBids.startBids();
     }
 
@@ -123,7 +115,6 @@ class ContreeDeal {
         return dealBids.hasOnlyNoneBids();
     }
 
-
     private void manageEndOfDeal() {
 
         Consumer<String> endOfStepEventSender;
@@ -136,8 +127,8 @@ class ContreeDeal {
         else {
             throw new IllegalStateException(String.format("Unexpected deal step while managing end of deal : %s", dealStep));
         }
-        endOfStepEventSender.accept(dealId);
         dealStep = DealStep.OVER;
+        endOfStepEventSender.accept(dealId);
         eventSender.sendEndOfDealEvent(dealId);
     }
 
@@ -155,10 +146,6 @@ class ContreeDeal {
 
     public boolean isRedoubleBidExists() {
         return dealBids.isRedoubleBidExists();
-    }
-
-    public Optional<ContreeTeam> teamDoingCapot() {
-        return contreeTricks.teamDoingCapot();
     }
 
     public Map<Team, Set<ContreeCard>> wonCardsByTeam() {
@@ -188,7 +175,9 @@ class ContreeDeal {
     public void playerPlays(ContreePlayer player, ClassicalCard card) {
 
         if (!isPlayStep()) {
-            throw new IllegalStateException(String.format("Cheater detected : %s is trying to play a card on a deal not in PLAY step", player));
+            throw new IllegalStateException(
+                String.format("Cheater detected : %s is trying to play a card on a deal not in PLAY step", player)
+            );
         }
 
         contreeTricks.playerPlays(player, card);
@@ -199,8 +188,8 @@ class ContreeDeal {
 
     }
 
-    public ContreeDealScore getScore() {
-        return score;
+    public int getTeamScore(Team t) {
+        return score.getTeamScore(t);
     }
 
     public boolean isBidStep() {

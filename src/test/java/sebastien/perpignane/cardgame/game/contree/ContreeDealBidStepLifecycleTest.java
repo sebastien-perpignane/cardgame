@@ -8,7 +8,6 @@ import org.mockito.AdditionalAnswers;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,12 +15,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class ContreeDealBidStepLifecycleTest extends TestCasesManagingPlayers {
-
-    private ContreeDealPlayers dealPlayers;
-
-    private ContreeBidPlayers bidPlayers;
-
-    private ContreeDealBids dealBids;
 
     private ContreeDeal deal;
 
@@ -35,29 +28,30 @@ public class ContreeDealBidStepLifecycleTest extends TestCasesManagingPlayers {
         ContreeBidPlayers bidPlayers = mock(ContreeBidPlayers.class);
         ContreeTrickPlayers trickPlayers = mock(ContreeTrickPlayers.class);
 
-        dealPlayers = mock(ContreeDealPlayers.class);
+        ContreeDealPlayers dealPlayers = mock(ContreeDealPlayers.class);
         when(dealPlayers.getNumberOfPlayers()).thenReturn(4);
         when(dealPlayers.buildBidPlayers()).thenReturn(bidPlayers);
         when(dealPlayers.buildTrickPlayers()).thenReturn(trickPlayers);
 
-        List<ContreePlayer> loopingPlayers = new ArrayList<>();
-        loopingPlayers.addAll(players);
-        loopingPlayers.addAll(players);
-        loopingPlayers.addAll(players);
+        List<ContreePlayer> loopingPlayers = loopingPlayers(3);
 
         when(bidPlayers.getCurrentBidder()).thenAnswer(AdditionalAnswers.returnsElementsOf(loopingPlayers));
         when(trickPlayers.getCurrentPlayer()).thenAnswer(AdditionalAnswers.returnsElementsOf(loopingPlayers));
 
+        ContreeGameEventSender eventSender = mock(ContreeGameEventSender.class);
 
-        deal = new ContreeDeal("TEST", dealPlayers, new ContreeGameEventSender());
+        ContreeGame game = mock(ContreeGame.class);
+        when(game.getGameId()).thenReturn("TEST");
+        when(game.getNbDeals()).thenReturn(-1);
+        when(game.getEventSender()).thenReturn(eventSender);
+
+        deal = new ContreeDeal(game, dealPlayers);
     }
 
     @DisplayName("First bid, none, deal step is still BID")
     @Test
     public void testFirstBid_None() {
         ContreePlayer biddingPlayer = player1;
-
-        ContreeDeal deal = new ContreeDeal("TEST", dealPlayers, new ContreeGameEventSender());
         deal.startDeal();
 
         var noneBid = new ContreeBid(biddingPlayer);
@@ -144,7 +138,7 @@ public class ContreeDealBidStepLifecycleTest extends TestCasesManagingPlayers {
 
     @DisplayName("Bidding step does not end at 4 bids if multiple valued bids are placed")
     @Test
-    public void testMultipleValuedBids_noPrematuredEndOfBid() {
+    public void testMultipleValuedBids_noUnexpectedEndOfBid() {
         deal.startDeal();
 
         deal.placeBid(new ContreeBid(players.get(0), ContreeBidValue.EIGHTY, CardSuit.DIAMONDS));
@@ -213,74 +207,4 @@ public class ContreeDealBidStepLifecycleTest extends TestCasesManagingPlayers {
         assertTrue(deal.isPlayStep());
 
     }
-
-    @DisplayName("Exception if a player tries to double before any valued bid")
-    @Test
-    public void testExceptionWhenDoubleBeforeAnyValuedBid() {
-        deal.startDeal();
-        deal.placeBid(new ContreeBid(players.get(0), ContreeBidValue.NONE, null));
-
-        assertThrows(
-            IllegalStateException.class,
-            () -> deal.placeBid(new ContreeBid(players.get(1), ContreeBidValue.DOUBLE, null))
-        );
-
-    }
-
-    @DisplayName("Exception if a player tries to double before any bid")
-    @Test
-    public void testExceptionWhenDoubleBeforeAnyBid() {
-        deal.startDeal();
-
-        assertThrows(
-            IllegalStateException.class,
-            () -> deal.placeBid(new ContreeBid(players.get(0), ContreeBidValue.DOUBLE, null))
-        );
-
-    }
-
-    @DisplayName("Exception if a player tries to redouble before a double")
-    @Test
-    public void testExceptionWhenRedoubleBeforeDouble() {
-        deal.startDeal();
-        deal.placeBid(new ContreeBid(players.get(0), ContreeBidValue.EIGHTY, CardSuit.HEARTS));
-        deal.placeBid(new ContreeBid(players.get(1), ContreeBidValue.NINETY, CardSuit.SPADES));
-
-        assertThrows(
-                IllegalStateException.class,
-                () -> deal.placeBid(new ContreeBid(players.get(2), ContreeBidValue.REDOUBLE, null))
-        );
-
-    }
-
-    @DisplayName("Exception if a player tries to redouble before any bid")
-    @Test
-    public void testExceptionWhenRedoubleBeforeAnyBid() {
-        deal.startDeal();
-        deal.placeBid(new ContreeBid(players.get(0), ContreeBidValue.EIGHTY, CardSuit.HEARTS));
-        deal.placeBid(new ContreeBid(players.get(1), ContreeBidValue.NINETY, CardSuit.SPADES));
-
-        assertThrows(
-                IllegalStateException.class,
-                () -> deal.placeBid(new ContreeBid(players.get(2), ContreeBidValue.REDOUBLE, null))
-        );
-
-    }
-
-
-    @DisplayName("A player cannot redouble if double was announced by his team mate")
-    @Test
-    public void testRedoubleAgainstTeamMate() {
-        deal.startDeal();
-
-        deal.placeBid(new ContreeBid(players.get(0), ContreeBidValue.HUNDRED_FORTY, CardSuit.HEARTS));
-        deal.placeBid(new ContreeBid(players.get(1), ContreeBidValue.DOUBLE));
-        deal.placeBid(new ContreeBid(players.get(2), ContreeBidValue.NONE));
-        assertThrows(
-                IllegalStateException.class,
-                () -> deal.placeBid(new ContreeBid(players.get(3), ContreeBidValue.REDOUBLE))
-        );
-
-    }
-
 }

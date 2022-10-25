@@ -190,7 +190,7 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
 
     }
 
-    @DisplayName("Announced capot")
+    @DisplayName("Announced capot is true when a player bids 'capot' ")
     @Test
     public void testAnnouncedCapot() {
         dealBids.startBids();
@@ -226,7 +226,7 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
 
     }
 
-    @DisplayName("Same player bids 2 times")
+    @DisplayName("If same player bids 2 times, exception")
     @Test
     void testBidFromUnexpectedPlayer_samePlayerBids2times() {
 
@@ -266,17 +266,71 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
 
     }
 
-    @DisplayName("A player cannot redouble against his team mate")
+    @DisplayName("Exception if a player tries to double before any valued bid")
     @Test
-    void testRedoubleAgainstTeamMate() {
-
+    public void testExceptionWhenDoubleBeforeAnyValuedBid() {
         dealBids.startBids();
-        dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.DIAMONDS));
-        dealBids.placeBid(new ContreeBid(player2, ContreeBidValue.DOUBLE));
-        dealBids.placeBid(new ContreeBid(player3, ContreeBidValue.NONE));
+        dealBids.placeBid(new ContreeBid(players.get(0), ContreeBidValue.NONE, null));
+
         assertThrows(
-                RuntimeException.class,
-                () -> dealBids.placeBid(new ContreeBid(player4, ContreeBidValue.REDOUBLE))
+                IllegalStateException.class,
+                () -> dealBids.placeBid(new ContreeBid(players.get(1), ContreeBidValue.DOUBLE, null))
+        );
+
+    }
+
+    @DisplayName("Exception if a player tries to double before any bid")
+    @Test
+    public void testExceptionWhenDoubleBeforeAnyBid() {
+        dealBids.startBids();
+
+        assertThrows(
+                IllegalStateException.class,
+                () -> dealBids.placeBid(new ContreeBid(players.get(0), ContreeBidValue.DOUBLE, null))
+        );
+
+    }
+
+    @DisplayName("Exception if a player tries to redouble before a double")
+    @Test
+    public void testExceptionWhenRedoubleBeforeDouble() {
+        dealBids.startBids();
+        dealBids.placeBid(new ContreeBid(players.get(0), ContreeBidValue.EIGHTY, CardSuit.HEARTS));
+        dealBids.placeBid(new ContreeBid(players.get(1), ContreeBidValue.NINETY, CardSuit.SPADES));
+
+        assertThrows(
+                IllegalStateException.class,
+                () -> dealBids.placeBid(new ContreeBid(players.get(2), ContreeBidValue.REDOUBLE, null))
+        );
+
+    }
+
+    @DisplayName("Exception if a player tries to redouble before any bid")
+    @Test
+    public void testExceptionWhenRedoubleBeforeAnyBid() {
+        dealBids.startBids();
+        dealBids.placeBid(new ContreeBid(players.get(0), ContreeBidValue.EIGHTY, CardSuit.HEARTS));
+        dealBids.placeBid(new ContreeBid(players.get(1), ContreeBidValue.NINETY, CardSuit.SPADES));
+
+        assertThrows(
+                IllegalStateException.class,
+                () -> dealBids.placeBid(new ContreeBid(players.get(2), ContreeBidValue.REDOUBLE, null))
+        );
+
+    }
+
+
+    @DisplayName("A player cannot redouble if double was announced by his team mate")
+    @Test
+    public void testRedoubleAgainstTeamMate() {
+        dealBids.startBids();
+
+        dealBids.placeBid(new ContreeBid(players.get(0), ContreeBidValue.HUNDRED_FORTY, CardSuit.HEARTS));
+        dealBids.placeBid(new ContreeBid(players.get(1), ContreeBidValue.DOUBLE));
+        dealBids.placeBid(new ContreeBid(players.get(2), ContreeBidValue.NONE));
+        assertThrows(
+                IllegalStateException.class,
+                () -> dealBids.placeBid(new ContreeBid(players.get(3), ContreeBidValue.REDOUBLE))
         );
 
     }

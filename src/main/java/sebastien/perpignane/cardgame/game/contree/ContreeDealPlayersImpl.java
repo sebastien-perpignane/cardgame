@@ -47,7 +47,7 @@ public class ContreeDealPlayersImpl implements ContreeDealPlayers {
 
     @Override
     public void receiveHandForPlayer(int playerIndex, List<ClassicalCard> hand) {
-        gamePlayers.getGamePlayers().get(playerIndex).receiveHand(hand);
+        gamePlayers.receiveHandForPlayer(playerIndex, hand);
     }
 
     @Override

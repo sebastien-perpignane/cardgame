@@ -7,10 +7,12 @@ import java.util.Map;
 
 public class ContreeGameScore {
 
+    private int maxScore;
+
     private final Map<ContreeTeam, Integer> scoreByTeam = new HashMap<>();
 
-    public ContreeGameScore() {
-
+    public ContreeGameScore(int maxScore) {
+        this.maxScore = maxScore;
         ContreeTeam.getTeams().forEach(t -> scoreByTeam.put(t, 0));
     }
 
@@ -25,8 +27,7 @@ public class ContreeGameScore {
         if (deal.hasOnlyNoneBids()) {
             return;
         }
-        ContreeTeam.getTeams().forEach(t -> incrementTeamScore(t, deal.getScore().getTeamScore(t)) );
-
+        ContreeTeam.getTeams().forEach(t -> incrementTeamScore(t, deal.getTeamScore(t)) );
     }
 
     private void incrementTeamScore(ContreeTeam team, int newScore) {
@@ -34,11 +35,11 @@ public class ContreeGameScore {
     }
 
     public boolean isMaximumScoreReached() {
-        return scoreByTeam.entrySet().stream().anyMatch(e -> e.getValue() > 1000);
+        return scoreByTeam.entrySet().stream().anyMatch(e -> e.getValue() >= maxScore);
     }
 
     public ContreeTeam getWinner() {
-        return scoreByTeam.entrySet().stream().filter(e -> e.getValue() > 1000).map(Map.Entry::getKey).findFirst().orElseThrow();
+        return scoreByTeam.entrySet().stream().filter(e -> e.getValue() >= 1000).map(Map.Entry::getKey).findFirst().orElseThrow();
     }
 
 }

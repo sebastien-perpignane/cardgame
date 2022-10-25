@@ -7,13 +7,13 @@ import sebastien.perpignane.cardgame.player.contree.ContreeBotPlayer;
  *
  * ContreePlayer designed for testing the bidding step of a deal. bid placed is configurable wih the constructor.
  */
-public class TestNonBotBiddingContreePlayer extends ContreeBotPlayer {
+public class TestBiddingContreePlayer extends ContreeBotPlayer {
 
     private final ContreeBidValue bidValue;
 
     private final CardSuit cardSuit;
 
-    public TestNonBotBiddingContreePlayer(ContreeBidValue bidValue, CardSuit cardSuit) {
+    public TestBiddingContreePlayer(ContreeBidValue bidValue, CardSuit cardSuit) {
         super();
         this.bidValue = bidValue;
         this.cardSuit = cardSuit;
@@ -24,8 +24,4 @@ public class TestNonBotBiddingContreePlayer extends ContreeBotPlayer {
         placeBid(bidValue, cardSuit);
     }
 
-    @Override
-    public boolean isBot() {
-        return false;
-    }
 }

@@ -10,8 +10,8 @@ public class ContreeDealScore {
 
     private final DealScoreCalculator scoreCalculator;
 
-    public ContreeDealScore(ContreeDeal deal) {
-        scoreCalculator = new DealScoreCalculator(deal);
+    public ContreeDealScore(DealScoreCalculator scoreCalculator, ContreeDeal deal) {
+        this.scoreCalculator = scoreCalculator;
     }
 
     public Integer getTeamScore(Team team) {

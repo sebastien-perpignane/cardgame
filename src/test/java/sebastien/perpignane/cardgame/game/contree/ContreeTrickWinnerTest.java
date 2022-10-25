@@ -17,8 +17,6 @@ import static sebastien.perpignane.cardgame.game.contree.ContreeTestUtils.buildP
 
 public class ContreeTrickWinnerTest extends TestCasesManagingPlayers {
 
-    private ContreeTrickPlayers trickPlayers;
-
     private ContreeTrick trick;
 
     @BeforeAll
@@ -28,7 +26,7 @@ public class ContreeTrickWinnerTest extends TestCasesManagingPlayers {
 
     @BeforeEach
     public void setUp() {
-        trickPlayers = mock(ContreeTrickPlayers.class);
+        ContreeTrickPlayers trickPlayers = mock(ContreeTrickPlayers.class);
         when(trickPlayers.getCurrentPlayer()).thenAnswer(AdditionalAnswers.returnsElementsOf(players));
 
         var deal = MockDealBuilder.builder().withMockedGameEventSender().withTrumpSuit(CardSuit.CLUBS)
