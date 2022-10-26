@@ -8,15 +8,16 @@ import java.util.stream.Collectors;
 
 public enum ContreeRankValueAndPoints {
 
-    ACE(CardRank.ACE, 8, 6, 11, 11),
-    TEN(CardRank.TEN, 7, 5, 10, 10),
-    KING(CardRank.KING, 6, 4, 4, 4),
-    QUEEN(CardRank.QUEEN, 5, 3, 3, 3),
+    ACE(CardRank.ACE, 8, 6, 11),
+    TEN(CardRank.TEN, 7, 5, 10),
+    KING(CardRank.KING, 6, 4, 4),
+    QUEEN(CardRank.QUEEN, 5, 3, 3),
     JACK(CardRank.JACK, 4, 8, 2, 20 ),
     NINE(CardRank.NINE, 3, 7, 0, 14),
     EIGHT(CardRank.EIGHT, 2, 0),
     SEVEN(CardRank.SEVEN, 1, 0)
     ;
+
     private final CardRank cardRank;
     private final int standardValue;
     private final int trumpValue;
@@ -32,8 +33,12 @@ public enum ContreeRankValueAndPoints {
         ));
     }
 
-    ContreeRankValueAndPoints(CardRank cardRank, int allValues, int allPoints) {
-        this(cardRank, allValues, allValues, allPoints, allPoints);
+    ContreeRankValueAndPoints(CardRank cardRank, int standardAndTrumpValues, int standardAndTrumpPoints) {
+        this(cardRank, standardAndTrumpValues, standardAndTrumpValues, standardAndTrumpPoints, standardAndTrumpPoints);
+    }
+
+    ContreeRankValueAndPoints(CardRank rank, int standardValue, int trumpValue, int standardAndTrumpPoints) {
+        this(rank, standardValue, trumpValue, standardAndTrumpPoints, standardAndTrumpPoints);
     }
 
     ContreeRankValueAndPoints(CardRank cardRank, int standardValue, int trumpValue, int standardPoints, int trumpPoints) {

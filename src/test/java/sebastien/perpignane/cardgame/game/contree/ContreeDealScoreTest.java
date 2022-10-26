@@ -22,7 +22,7 @@ class ContreeDealScoreTest extends TestCasesManagingPlayers {
             Map.of(ContreeTeam.TEAM1, 130, ContreeTeam.TEAM2, 30)
         );
 
-        ContreeDealScore dealScore = new ContreeDealScore(calculator, deal);
+        ContreeDealScore dealScore = new ContreeDealScore(calculator);
 
         assertEquals(130, dealScore.getTeamScore(ContreeTeam.TEAM1));
         assertEquals( 30, dealScore.getTeamScore(ContreeTeam.TEAM2));

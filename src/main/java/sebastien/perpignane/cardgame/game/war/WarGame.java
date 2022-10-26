@@ -113,7 +113,7 @@ public class WarGame extends AbstractGame {
 
     public synchronized void play(Player player, ClassicalCard card) {
 
-        if (isInvalidPlay(player, card)) return;
+        if (isInvalidPlay(player)) return;
 
         warGameEventSender.sendPlayedCardEvent(player, card);
 
@@ -134,9 +134,9 @@ public class WarGame extends AbstractGame {
         updateToNextPlayer();
     }
 
-    private boolean isInvalidPlay(Player player, ClassicalCard card) {
+    private boolean isInvalidPlay(Player player) {
 
-        boolean invalidPlay = !getState().isPlayable();
+        boolean invalidPlay = !isInPlayableState();
 
         //System.err.printf("Cheater detected : %s tries to play on a game not in a playable state.", pc.player());
 
@@ -177,10 +177,6 @@ public class WarGame extends AbstractGame {
 
     public Player getWinner() {
         return winner;
-    }
-
-    public boolean isOver() {
-        return getState() == GameState.OVER;
     }
 
     public void registerAsGameObserver(GameObserver observer) {

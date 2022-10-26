@@ -12,65 +12,57 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
-enum DealStep {
-    NOT_STARTED,
-    BID,
-    PLAY,
-    OVER
-}
-
 class ContreeDeal {
+
+    private enum DealStep {
+        NOT_STARTED,
+        BID,
+        PLAY,
+        OVER
+    }
 
     private final String dealId;
 
-    private CardSuit trumpSuit;
+    private DealStep dealStep;
 
-    private final ContreeTricks contreeTricks;
-
-    DealStep dealStep;
-
-    private final ContreeGameEventSender eventSender;
+    private final ContreeDealPlayers players;
 
     private final ContreeDealScore score;
 
-    private final ContreeDealPlayers dealPlayers;
+    private final ContreeDealBids bids;
 
-    private final ContreeDealBids dealBids;
+    private CardSuit trumpSuit;
 
-    public Optional<ContreeTeam> getAttackTeam() {
-        return dealPlayers.getCurrentDealAttackTeam();
-    }
+    private final ContreeTricks tricks;
 
-    public Optional<ContreeTeam> getDefenseTeam() {
-        return dealPlayers.getCurrentDealDefenseTeam();
-    }
+    private final ContreeGameEventSender eventSender;
 
     public ContreeDeal(ContreeGame game, ContreeDealPlayers dealPlayers) {
-
-        this.dealId = game.getGameId() + "-" + (game.getNbDeals() + 1);
-        dealStep = DealStep.NOT_STARTED;
-        this.dealPlayers = dealPlayers;
-        this.dealBids = new ContreeDealBids(dealPlayers.buildBidPlayers());
-        this.eventSender = game.getEventSender();
-
-        this.contreeTricks = new ContreeTricks(this, dealPlayers.buildTrickPlayers(), new PlayableCardsFilter());
-        score = new ContreeDealScore(new DealScoreCalculator(this), this);
-
+        dealId          = game.getGameId() + "-" + (game.getNbDeals() + 1);
+        dealStep        = DealStep.NOT_STARTED;
+        eventSender     = game.getEventSender();
+        players         = dealPlayers;
+        bids            = new ContreeDealBids(dealPlayers.buildBidPlayers());
+        tricks          = new ContreeTricks(this, dealPlayers.buildTrickPlayers(), new PlayableCardsFilter());
+        score           = new ContreeDealScore(new DealScoreCalculator(this));
     }
 
     void startDeal() {
-        eventSender.sendStartOfDealEvent(dealId);
         dealStep = DealStep.BID;
+
+        eventSender.sendStartOfDealEvent(dealId);
         eventSender.sendBidStepStartedEvent(dealId);
-        CardSetShuffler shuffler = new CardSetShufflerImpl();
-        List<ClassicalCard> cards = shuffler.shuffle(CardSet.GAME_32);
+
+        CardSetShuffler shuffler    = new CardSetShufflerImpl();
+        List<ClassicalCard> cards   = shuffler.shuffle(CardSet.GAME_32);
         distributeCardsToPlayers(cards);
-        dealBids.startBids();
+
+        bids.startBids();
     }
 
     private void distributeCardsToPlayers(List<ClassicalCard> cards) {
 
-        int numberOfPlayers = dealPlayers.getNumberOfPlayers();
+        int numberOfPlayers = players.getNumberOfPlayers();
 
         if (numberOfPlayers == 0) {
             throw new IllegalStateException("Cannot distribute cards if no player joined the game");
@@ -87,7 +79,7 @@ class ContreeDeal {
         var distributedCards = cardDealer.dealCards();
 
         for (int i = 0 ; i < distributedCards.size() ; i++) {
-            dealPlayers.receiveHandForPlayer(i, distributedCards.get(i));
+            players.receiveHandForPlayer(i, distributedCards.get(i));
         }
 
     }
@@ -95,24 +87,17 @@ class ContreeDeal {
     public void placeBid(ContreeBid bid) {
 
         eventSender.sendPlacedBidEvent(dealId, bid);
-        dealBids.placeBid(bid);
+        bids.placeBid(bid);
 
-
-        if ( dealBids.bidsAreOver() ) {
-
-            if ( dealBids.hasOnlyNoneBids() ) {
+        if ( bids.bidsAreOver() ) {
+            if ( bids.hasOnlyNoneBids() ) {
                 manageEndOfDeal();
             }
             else {
                 startPlay();
             }
-
         }
 
-    }
-
-    public boolean hasOnlyNoneBids()  {
-        return dealBids.hasOnlyNoneBids();
     }
 
     private void manageEndOfDeal() {
@@ -132,64 +117,39 @@ class ContreeDeal {
         eventSender.sendEndOfDealEvent(dealId);
     }
 
-    Optional<ContreeBid> highestBid() {
-        return dealBids.highestBid();
-    }
-
-    public boolean isAnnouncedCapot() {
-        return dealBids.isAnnouncedCapot();
-    }
-
-    public boolean isDoubleBidExists() {
-        return dealBids.isDoubleBidExists();
-    }
-
-    public boolean isRedoubleBidExists() {
-        return dealBids.isRedoubleBidExists();
-    }
-
-    public Map<Team, Set<ContreeCard>> wonCardsByTeam() {
-        return contreeTricks.wonCardsByTeam();
-    }
-
-    public Optional<ContreeTrick> lastTrick() {
-        return contreeTricks.lastTrick();
-    }
-
-    public boolean isCapot() {
-        return contreeTricks.isCapot();
-    }
-
-    public Optional<ContreeBid> findDealContractBid() {
-        return dealBids.findDealContractBid();
-    }
-
     private void startPlay() {
-        trumpSuit = dealBids.highestBid().orElseThrow().cardSuit();
-        dealStep = DealStep.PLAY;
+
+        trumpSuit   = bids.highestBid().orElseThrow().cardSuit();
+
+        dealStep    = DealStep.PLAY;
         eventSender.sendBidStepEndedEvent(dealId);
         eventSender.sendPlayStepStartedEvent(dealId, trumpSuit);
-        contreeTricks.startTricks();
+
+        tricks.startTricks();
     }
 
     public void playerPlays(ContreePlayer player, ClassicalCard card) {
 
         if (!isPlayStep()) {
             throw new IllegalStateException(
-                String.format("Cheater detected : %s is trying to play a card on a deal not in PLAY step", player)
+                    String.format("Cheater detected : %s is trying to play a card on a deal not in PLAY step", player)
             );
         }
 
-        contreeTricks.playerPlays(player, card);
+        tricks.playerPlays(player, card);
 
-        if (contreeTricks.isMaxNbOverTricksReached()) {
+        if (tricks.isMaxNbOverTricksReached()) {
             manageEndOfDeal();
         }
 
     }
 
-    public int getTeamScore(Team t) {
-        return score.getTeamScore(t);
+    public String getDealId() {
+        return dealId;
+    }
+
+    public CardSuit getTrumpSuit() {
+        return trumpSuit;
     }
 
     public boolean isBidStep() {
@@ -204,17 +164,56 @@ class ContreeDeal {
         return dealStep == DealStep.OVER;
     }
 
-    // TODO think about a better lifecycle
     public boolean isNotStarted() {
         return dealStep == DealStep.NOT_STARTED;
     }
 
-    public String getDealId() {
-        return dealId;
+    public boolean hasOnlyNoneBids()  {
+        return bids.hasOnlyNoneBids();
     }
 
-    public CardSuit getTrumpSuit() {
-        return trumpSuit;
+    Optional<ContreeBid> highestBid() {
+        return bids.highestBid();
+    }
+
+    public boolean isCapot() {
+        return tricks.isCapot();
+    }
+
+    public boolean isAnnouncedCapot() {
+        return bids.isAnnouncedCapot();
+    }
+
+    public boolean isDoubleBidExists() {
+        return bids.isDoubleBidExists();
+    }
+
+    public boolean isRedoubleBidExists() {
+        return bids.isRedoubleBidExists();
+    }
+
+    public Optional<ContreeBid> getContractBid() {
+        return bids.findDealContractBid();
+    }
+
+    public Optional<ContreeTeam> getAttackTeam() {
+        return players.getCurrentDealAttackTeam();
+    }
+
+    public Optional<ContreeTeam> getDefenseTeam() {
+        return players.getCurrentDealDefenseTeam();
+    }
+
+    public Map<Team, Set<ContreeCard>> wonCardsByTeam() {
+        return tricks.wonCardsByTeam();
+    }
+
+    public Optional<ContreeTrick> lastTrick() {
+        return tricks.lastTrick();
+    }
+
+    public int getTeamScore(Team t) {
+        return score.getTeamScore(t);
     }
 
     ContreeGameEventSender getEventSender() {

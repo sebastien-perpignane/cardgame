@@ -4,10 +4,11 @@ import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class ContreeGameScore {
 
-    private int maxScore;
+    private final int maxScore;
 
     private final Map<ContreeTeam, Integer> scoreByTeam = new HashMap<>();
 
@@ -38,8 +39,8 @@ public class ContreeGameScore {
         return scoreByTeam.entrySet().stream().anyMatch(e -> e.getValue() >= maxScore);
     }
 
-    public ContreeTeam getWinner() {
-        return scoreByTeam.entrySet().stream().filter(e -> e.getValue() >= 1000).map(Map.Entry::getKey).findFirst().orElseThrow();
+    public Optional<ContreeTeam> getWinner() {
+        return scoreByTeam.entrySet().stream().filter(e -> e.getValue() >= maxScore).map(Map.Entry::getKey).findFirst();
     }
 
 }

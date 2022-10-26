@@ -14,8 +14,6 @@ public class PlayableCardsFilter {
 
         Collection<ClassicalCard> allHand = new ArrayList<>(player.getHand());
 
-
-
         if (trick.getPlayedCards().isEmpty()) {
             return allHand;
         }

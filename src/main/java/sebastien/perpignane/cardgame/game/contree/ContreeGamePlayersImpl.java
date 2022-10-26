@@ -58,7 +58,16 @@ class ContreeGamePlayersImpl implements ContreeGamePlayers {
         }
 
         if (!joined) {
-            throw new IllegalStateException(String.format("No slot available in the wanted team: %s", wantedTeam));
+            String exceptionMessage;
+            if (wantedTeam == null) {
+                exceptionMessage = "No slot available in the game";
+            }
+            else {
+                exceptionMessage = String.format("No slot available in the wanted team: %s", wantedTeam);
+
+            }
+            throw new IllegalStateException(exceptionMessage);
+
         }
 
     }
