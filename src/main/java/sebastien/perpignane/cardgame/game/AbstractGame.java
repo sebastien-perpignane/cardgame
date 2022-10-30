@@ -12,12 +12,7 @@ public abstract class AbstractGame {
 
 
     public AbstractGame() {
-        // FIXME this lifecycle is shit
-        updateState(GameState.NOT_INITIALIZED);
         gameId = UUID.randomUUID().toString();
-        updateState(GameState.INITIALIZED);
-        updateState(GameState.WAITING_FOR_PLAYERS);
-
     }
 
     protected void updateState(GameState newState) {
