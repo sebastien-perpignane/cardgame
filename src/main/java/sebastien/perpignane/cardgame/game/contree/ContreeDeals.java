@@ -1,5 +1,7 @@
 package sebastien.perpignane.cardgame.game.contree;
 
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
@@ -10,42 +12,65 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+@Dependent
 public class ContreeDeals {
 
-    private final ContreeGame game;
+    private String gameId;
 
-    private final ContreeDealPlayers dealPlayers;
+    private ContreeDealPlayers dealPlayers;
 
     private final List<ContreeDeal> deals = new ArrayList<>();
 
+    private final PlayableCardsFilter playableCardsFilter;
+
+    private final DealScoreCalculator dealScoreCalculator;
+
     private ContreeDeal currentDeal;
 
-    private final ContreeGameScore gameScore = new ContreeGameScore(1000); // TODO make max score configurable
+    private final ContreeGameScore gameScore;
 
     private final ContreeGameEventSender gameEventSender;
 
-    public ContreeDeals(ContreeGame game, ContreeDealPlayers contreeDealPlayers) {
-        this.game = game;
-        this.dealPlayers = contreeDealPlayers;
-        this.gameEventSender = game.getEventSender();
+    @Inject
+    public ContreeDeals(
+            ContreeGameScore gameScore,
+            DealScoreCalculator dealScoreCalculator,
+            PlayableCardsFilter playableCardsFilter,
+            ContreeGameEventSender eventSender
+    ) {
+        this.gameScore = gameScore;
+        this.dealScoreCalculator = dealScoreCalculator;
+        this.playableCardsFilter = playableCardsFilter;
+        this.gameEventSender = eventSender;
     }
 
-    public void startDeals() {
+    public void startDeals(
+            String gameId,
+            ContreeDealPlayers dealPlayers
+    ) {
+        this.gameId = gameId;
+        this.dealPlayers = dealPlayers;
         createAndStartNewDeal();
     }
 
     private void createAndStartNewDeal() {
 
-        if (game.isOver()) {
+        if (isMaximumScoreReached()) {
             throw new IllegalStateException("Game is over, new deal cannot be started");
         }
 
-        currentDeal = new ContreeDeal(game, dealPlayers);
+        currentDeal = new ContreeDeal(
+                new ContreeDealBids(),
+                new ContreeTricks(playableCardsFilter, gameEventSender),
+                new ContreeDealScore(dealScoreCalculator),
+                gameEventSender
+        );
         deals.add(currentDeal);
 
         dealPlayers.setCurrentDeal(currentDeal);
 
-        currentDeal.startDeal();
+        String dealId = gameId + "-" + (deals.size() + 1);
+        currentDeal.startDeal(dealId, dealPlayers);
     }
 
     public void placeBid(ContreePlayer player, ContreeBidValue bidValue, CardSuit cardSuit) {
@@ -64,7 +89,7 @@ public class ContreeDeals {
         currentDeal.playerPlays(player, card);
         if (currentDeal.isOver()) {
             gameScore.addDealScore(currentDeal);
-            // FIXME Send updated score event
+            // TODO Send updated score event
             ContreeTeam.getTeams().forEach(t -> System.out.printf("Score of Team %s : %d%n", t, gameScore.getTeamScore(t)));
 
             if (!isMaximumScoreReached()) {

@@ -29,7 +29,8 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
     @BeforeEach
     public void setup() {
         bidPlayers = mock(ContreeBidPlayers.class);
-        dealBids = new ContreeDealBids(bidPlayers);
+        dealBids = new ContreeDealBids();
+        dealBids.startBids(bidPlayers);
 
         configureBidPlayersForNbBidTurns(1);
     }
@@ -39,11 +40,9 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
         when(bidPlayers.getCurrentBidder()).thenAnswer(AdditionalAnswers.returnsElementsOf(multipliedPlayers));
     }
 
-    @DisplayName("State of the bids is as expected just after bids are started")
+    @DisplayName("State of dealBids is as expected just after bids are started : not over, highestBid not available, ne special bid")
     @Test
-    void testStartBids() {
-
-        dealBids.startBids();
+    void testBidsJustAfterStart() {
 
         assertFalse(dealBids.bidsAreOver());
         assertTrue(dealBids.highestBid().isEmpty());
@@ -58,9 +57,6 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
     @DisplayName("Only NONE bids, bids are over")
     @Test
     void testOnlyNoneBids() {
-
-        dealBids.startBids();
-
         dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.NONE));
         dealBids.placeBid(new ContreeBid(player2, ContreeBidValue.NONE));
         dealBids.placeBid(new ContreeBid(player3, ContreeBidValue.NONE));
@@ -68,15 +64,11 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
 
         assertTrue(dealBids.hasOnlyNoneBids());
         assertTrue(dealBids.bidsAreOver());
-
-
     }
 
     @DisplayName("After first bid, highest bid state is available")
     @Test
     void testBidsAfterFirstBid() {
-
-        dealBids.startBids();
         dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.DIAMONDS));
 
         assertTrue(dealBids.highestBid().isPresent());
@@ -94,8 +86,6 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
     @DisplayName("After a first valued bid and 3 none bids, highest bid state is available, bids are over and contract bid is available")
     @Test
     void testBidsAfterFirstValuedBidAnd3NoneBids() {
-
-        dealBids.startBids();
         dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.DIAMONDS));
         dealBids.placeBid(new ContreeBid(player2, ContreeBidValue.NONE));
         dealBids.placeBid(new ContreeBid(player3, ContreeBidValue.NONE));
@@ -119,8 +109,6 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
     @DisplayName("After multiple valued bids but only 4 bids, highest bid state is available, bids are NOT over and contract bid is NOT available")
     @Test
     void testBidsAfterMultipleValuedBids_partialBids() {
-
-        dealBids.startBids();
         dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.DIAMONDS));
         dealBids.placeBid(new ContreeBid(player2, ContreeBidValue.NONE));
         dealBids.placeBid(new ContreeBid(player3, ContreeBidValue.NINETY, CardSuit.DIAMONDS));
@@ -144,7 +132,6 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
 
         configureBidPlayersForNbBidTurns(2);
 
-        dealBids.startBids();
         dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.DIAMONDS));
         dealBids.placeBid(new ContreeBid(player2, ContreeBidValue.NONE));
         dealBids.placeBid(new ContreeBid(player3, ContreeBidValue.NINETY, CardSuit.DIAMONDS));
@@ -166,11 +153,29 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
 
     }
 
+    @DisplayName("First bid is capot, next player double, bidding step is over after three next players passed")
+    @Test
+    public void testFirstBidCapotThenDoubleAndNones() {
+
+        configureBidPlayersForNbBidTurns(2);
+
+        dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.CAPOT, CardSuit.HEARTS));
+        dealBids.placeBid(new ContreeBid(player2, ContreeBidValue.DOUBLE));
+
+        assertFalse(dealBids.bidsAreOver());
+
+        dealBids.placeBid(new ContreeBid(player3));
+        dealBids.placeBid(new ContreeBid(player4));
+        dealBids.placeBid(new ContreeBid(player1));
+
+        assertTrue(dealBids.bidsAreOver());
+
+    }
+
     @DisplayName("If valid redouble, bidding is over")
     @Test
     void testRedoubleEndsBids() {
 
-        dealBids.startBids();
         dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.DIAMONDS));
         dealBids.placeBid(new ContreeBid(player2, ContreeBidValue.DOUBLE));
         dealBids.placeBid(new ContreeBid(player3, ContreeBidValue.REDOUBLE));
@@ -193,7 +198,6 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
     @DisplayName("Announced capot is true when a player bids 'capot' ")
     @Test
     public void testAnnouncedCapot() {
-        dealBids.startBids();
         dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.DIAMONDS));
         dealBids.placeBid(new ContreeBid(player2, ContreeBidValue.NONE));
         dealBids.placeBid(new ContreeBid(player3, ContreeBidValue.CAPOT, CardSuit.DIAMONDS));
@@ -201,10 +205,23 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
         assertTrue(dealBids.isAnnouncedCapot());
     }
 
+    @DisplayName("Exception if current bid does not overbid the last valued bid")
+    @Test
+    public void testNoOverBidWhenExpected() {
+        dealBids.placeBid(new ContreeBid( player1, ContreeBidValue.HUNDRED, CardSuit.DIAMONDS ));
+        dealBids.placeBid(new ContreeBid( player2 ));
+
+        assertThrows(
+                RuntimeException.class,
+                () -> dealBids.placeBid(new ContreeBid(players.get(2), ContreeBidValue.NINETY, CardSuit.DIAMONDS))
+        );
+
+    }
+
+
     @DisplayName("A player cannot double if only NONE bids before")
     @Test
     public void testDoubleIfNoValuedBidMustFail() {
-        dealBids.startBids();
 
         dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.NONE));
         assertThrows(
@@ -217,7 +234,6 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
     @DisplayName("First bid cannot be DOUBLE")
     @Test
     public void testFirstBidIsDoubleFails() {
-        dealBids.startBids();
 
         assertThrows(
                 RuntimeException.class,
@@ -230,7 +246,6 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
     @Test
     void testBidFromUnexpectedPlayer_samePlayerBids2times() {
 
-        dealBids.startBids();
         dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.DIAMONDS));
         assertThrows(
                 RuntimeException.class,
@@ -242,8 +257,6 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
     @DisplayName("Same player bids 2 times must trigger exception")
     @Test
     void testBidFromUnexpectedPlayer_3rdPlayerPlacesSecondBid() {
-
-        dealBids.startBids();
         dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.DIAMONDS));
         assertThrows(
                 RuntimeException.class,
@@ -256,7 +269,6 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
     @Test
     void testDoubleAgainstTeamMate() {
 
-        dealBids.startBids();
         dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.DIAMONDS));
         dealBids.placeBid(new ContreeBid(player2, ContreeBidValue.NONE));
         assertThrows(
@@ -269,7 +281,7 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
     @DisplayName("Exception if a player tries to double before any valued bid")
     @Test
     public void testExceptionWhenDoubleBeforeAnyValuedBid() {
-        dealBids.startBids();
+
         dealBids.placeBid(new ContreeBid(players.get(0), ContreeBidValue.NONE, null));
 
         assertThrows(
@@ -282,7 +294,6 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
     @DisplayName("Exception if a player tries to double before any bid")
     @Test
     public void testExceptionWhenDoubleBeforeAnyBid() {
-        dealBids.startBids();
 
         assertThrows(
                 IllegalStateException.class,
@@ -294,7 +305,6 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
     @DisplayName("Exception if a player tries to redouble before a double")
     @Test
     public void testExceptionWhenRedoubleBeforeDouble() {
-        dealBids.startBids();
         dealBids.placeBid(new ContreeBid(players.get(0), ContreeBidValue.EIGHTY, CardSuit.HEARTS));
         dealBids.placeBid(new ContreeBid(players.get(1), ContreeBidValue.NINETY, CardSuit.SPADES));
 
@@ -308,7 +318,6 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
     @DisplayName("Exception if a player tries to redouble before any bid")
     @Test
     public void testExceptionWhenRedoubleBeforeAnyBid() {
-        dealBids.startBids();
         dealBids.placeBid(new ContreeBid(players.get(0), ContreeBidValue.EIGHTY, CardSuit.HEARTS));
         dealBids.placeBid(new ContreeBid(players.get(1), ContreeBidValue.NINETY, CardSuit.SPADES));
 
@@ -323,7 +332,6 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
     @DisplayName("A player cannot redouble if double was announced by his team mate")
     @Test
     public void testRedoubleAgainstTeamMate() {
-        dealBids.startBids();
 
         dealBids.placeBid(new ContreeBid(players.get(0), ContreeBidValue.HUNDRED_FORTY, CardSuit.HEARTS));
         dealBids.placeBid(new ContreeBid(players.get(1), ContreeBidValue.DOUBLE));
@@ -333,6 +341,15 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
                 () -> dealBids.placeBid(new ContreeBid(players.get(3), ContreeBidValue.REDOUBLE))
         );
 
+    }
+
+    @DisplayName("if no double or redouble bid is placed correctly, deal wont be considered doubled nor redoubled")
+    @Test
+    public void testDealIsNotDoubleNorRedouble() {
+        dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.HEARTS));
+
+        assertFalse(dealBids.isDoubleBidExists());
+        assertFalse(dealBids.isRedoubleBidExists());
     }
 
 }

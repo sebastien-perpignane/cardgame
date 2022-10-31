@@ -22,7 +22,7 @@ public abstract class AbstractThreadBotPlayer<T> implements Player, Runnable {
                 }
             }
             catch (InterruptedException ie) {
-                // FIXME review good practices to manage InterruptedException
+                // TODO review good practices to manage InterruptedException
                 System.err.println("I'm interrupted");
                 return;
             }

@@ -18,11 +18,13 @@ class ContreeDealScoreTest extends TestCasesManagingPlayers {
 
         ContreeDeal deal = mock(ContreeDeal.class);
         DealScoreCalculator calculator = mock(DealScoreCalculator.class);
-        when(calculator.computeDealScores()).thenReturn(
+        when(calculator.computeDealScores(deal)).thenReturn(
             Map.of(ContreeTeam.TEAM1, 130, ContreeTeam.TEAM2, 30)
         );
 
         ContreeDealScore dealScore = new ContreeDealScore(calculator);
+
+        dealScore.computeScore(deal);
 
         assertEquals(130, dealScore.getTeamScore(ContreeTeam.TEAM1));
         assertEquals( 30, dealScore.getTeamScore(ContreeTeam.TEAM2));

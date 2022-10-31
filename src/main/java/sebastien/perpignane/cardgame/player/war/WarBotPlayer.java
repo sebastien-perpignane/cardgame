@@ -1,7 +1,6 @@
 package sebastien.perpignane.cardgame.player.war;
 
 import sebastien.perpignane.cardgame.card.ClassicalCard;
-import sebastien.perpignane.cardgame.player.AbstractPlayer;
 import sebastien.perpignane.cardgame.player.Team;
 
 import java.util.*;
@@ -14,7 +13,7 @@ enum MessageType {
     END_OF_GAME
 }
 
-public class WarBotPlayer extends AbstractPlayer implements Runnable {
+public class WarBotPlayer extends AbstractWarPlayer implements Runnable {
 
     private static final Deque<String> fakeNames = new LinkedList<>();
 

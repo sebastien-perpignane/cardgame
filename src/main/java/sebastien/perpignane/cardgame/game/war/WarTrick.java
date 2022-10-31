@@ -152,7 +152,6 @@ public class WarTrick implements Trick {
         return winner;
     }
 
-    @Override
     public Set<ClassicalCard> getAllCards() {
         return playedCardsByPlayer.values().stream()
                 .flatMap(Collection::stream)

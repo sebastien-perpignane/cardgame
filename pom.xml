@@ -60,6 +60,13 @@
             <version>4.4</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.smallrye</groupId>
+            <artifactId>jandex</artifactId>
+            <version>3.0.1</version>
+        </dependency>
+
+
         <!-- Dependencies that will be useful later, when game stats will be persisted
         <dependency>
             <groupId>org.liquibase</groupId>

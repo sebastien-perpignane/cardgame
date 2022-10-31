@@ -22,7 +22,15 @@ public class ContreeGameIntegrationTest {
     @Timeout(value = 500, unit = TimeUnit.MILLISECONDS)
     @Disabled
     public void testRunGameWithBotsPlayingRandomCards() throws InterruptedException {
-        ContreeGame game = new ContreeGame();
+
+        ContreeGameEventSender eventSender = new ContreeGameEventSender();
+        ContreeGamePlayers players = new ContreeGamePlayersImpl();
+        ContreeGameConfig config = new ContreeGameConfig();
+        ContreeGameScore gameScore = new ContreeGameScore(config.maxScore());
+        PlayableCardsFilter filter = new PlayableCardsFilter();
+        DealScoreCalculator dealScoreCalculator = new DealScoreCalculator();
+        ContreeDeals deals = new ContreeDeals(gameScore, dealScoreCalculator, filter, eventSender);
+        ContreeGame game = new ContreeGame(players, deals, eventSender);
         game.registerAsGameObserver(GameTextDisplayer.getInstance());
         ContreeBotPlayer player1 = new TestBiddingContreePlayer(ContreeBidValue.EIGHTY, CardSuit.HEARTS);
 
@@ -30,7 +38,6 @@ public class ContreeGameIntegrationTest {
         game.joinGame(new ContreeBotPlayer());
         game.joinGame(new ContreeBotPlayer());
         game.joinGame(new ContreeBotPlayer());
-        game.startGame();
         var endOfGame = waitForEndOfGameEvent(game);
         assertTrue(endOfGame);
 

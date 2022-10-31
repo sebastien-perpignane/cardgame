@@ -14,10 +14,11 @@ public class ContreeDealScore {
         this.scoreCalculator = scoreCalculator;
     }
 
+    public void computeScore(ContreeDeal deal) {
+        this.scoreByTeam = scoreCalculator.computeDealScores(deal);
+    }
+
     public Integer getTeamScore(Team team) {
-        if (scoreByTeam == null) {
-            scoreByTeam = scoreCalculator.computeDealScores();
-        }
         return scoreByTeam.get(team);
     }
 

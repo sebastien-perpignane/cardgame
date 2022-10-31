@@ -28,6 +28,7 @@ public class WarGame extends AbstractGame {
     private final List<WarTrick> tricks = new ArrayList<>();
 
     public WarGame(CardGameObserver... observers) {
+        super();
         warGameEventSender = new WarGameEventSender(observers);
         updateState(GameState.NOT_INITIALIZED);
         updateState(GameState.INITIALIZED);

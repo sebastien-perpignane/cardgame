@@ -36,6 +36,8 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
 
     private ContreeTrickPlayers trickPlayers;
 
+    private ContreeDeal deal;
+
     private ContreeTricks tricksWithHeartAsTrumpSuit;
 
     @BeforeAll
@@ -54,7 +56,7 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
 
         ContreeGameEventSender gameEventSender = mock(ContreeGameEventSender.class);
 
-        var deal = MockDealBuilder.builder()
+        deal = MockDealBuilder.builder()
                 .withDealContractBid(
                         new ContreeBid(players.get(0), ContreeBidValue.EIGHTY, CardSuit.HEARTS)
                 )
@@ -66,7 +68,7 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
         PlayableCardsFilter playableCardsFilter = mock(PlayableCardsFilter.class);
         when(playableCardsFilter.playableCards(any(), any())).thenReturn(CardSet.GAME_32.getGameCards());
 
-        tricksWithHeartAsTrumpSuit = new ContreeTricks(deal, trickPlayers, playableCardsFilter);
+        tricksWithHeartAsTrumpSuit = new ContreeTricks(playableCardsFilter, gameEventSender);
 
         configureTrickPlayersForNumberOfTricks(1);
 
@@ -96,7 +98,7 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
     @Test
     public void testStartTricks() {
 
-        tricksWithHeartAsTrumpSuit.startTricks();
+        tricksWithHeartAsTrumpSuit.startTricks(deal, trickPlayers);
 
         assertEquals(0, tricksWithHeartAsTrumpSuit.nbOverTricks());
         assertEquals(1, tricksWithHeartAsTrumpSuit.nbOngoingTricks());
@@ -112,7 +114,7 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
 
         configureTrickPlayersForNumberOfTricks(2);
 
-        tricksWithHeartAsTrumpSuit.startTricks();
+        tricksWithHeartAsTrumpSuit.startTricks(deal, trickPlayers);
 
         // mocked PlayableCardsFilter is very permissive ^^
         tricksWithHeartAsTrumpSuit.playerPlays(player1, ClassicalCard.JACK_HEART);
@@ -141,7 +143,7 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
     public void testTeamDoingCapotWhenCapotHappens() {
         configureTrickPlayersForNumberOfTricks(8);
 
-        tricksWithHeartAsTrumpSuit.startTricks();
+        tricksWithHeartAsTrumpSuit.startTricks(deal, trickPlayers);
 
         int i = 0;
         while( i < ContreeTricks.NB_TRICKS_PER_DEAL ) {
@@ -169,7 +171,7 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
 
         configureTrickPlayersForNumberOfTricks(8);
 
-        tricksWithHeartAsTrumpSuit.startTricks();
+        tricksWithHeartAsTrumpSuit.startTricks(deal, trickPlayers);
 
         // First 7 tricks are won by team 1
         int i = 0;
@@ -207,11 +209,11 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
     @DisplayName("Tricks cannot be started multiple times")
     @Test
     public void testStartTricksMultipleTimesFails() {
-        tricksWithHeartAsTrumpSuit.startTricks();
+        tricksWithHeartAsTrumpSuit.startTricks(deal, trickPlayers);
 
         assertThrows(
                 RuntimeException.class,
-                () -> tricksWithHeartAsTrumpSuit.startTricks()
+                () -> tricksWithHeartAsTrumpSuit.startTricks(deal, trickPlayers)
         );
 
     }
@@ -222,7 +224,7 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
 
         configureTrickPlayersForNumberOfTricks(2);
 
-        tricksWithHeartAsTrumpSuit.startTricks();
+        tricksWithHeartAsTrumpSuit.startTricks(deal, trickPlayers);
 
         // mocked PlayableCardsFilter is very permissive ^^
         tricksWithHeartAsTrumpSuit.playerPlays(player1, ClassicalCard.JACK_HEART);

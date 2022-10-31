@@ -17,8 +17,7 @@ public class ContreeGamePlayersImplTest {
 
     @BeforeEach
     public void setUp() {
-        ContreeGame game = mock(ContreeGame.class);
-        gamePlayers = new ContreeGamePlayersImpl(game);
+        gamePlayers = new ContreeGamePlayersImpl();
     }
 
     @DisplayName("Join a specific team in a game that no player joined yet")

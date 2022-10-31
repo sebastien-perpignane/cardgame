@@ -11,7 +11,6 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// TODO [Unit test]
 class ContreeGameScoreTest extends TestCasesManagingPlayers {
 
     private ContreeGameScore gameScoreWith1000AsMax;
