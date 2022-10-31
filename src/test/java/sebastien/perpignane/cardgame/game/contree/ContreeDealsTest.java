@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
+import sebastien.perpignane.cardgame.card.CardDealer;
 import sebastien.perpignane.cardgame.card.CardSet;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
@@ -51,8 +52,10 @@ class ContreeDealsTest extends TestCasesManagingPlayers {
         gameScore = mock(ContreeGameScore.class);
         DealScoreCalculator dealScoreCalculator = mock(DealScoreCalculator.class);
 
+        CardDealer cardDealer = mock(CardDealer.class);
 
-        deals = new ContreeDeals(gameScore, dealScoreCalculator, filter, eventSender);
+
+        deals = new ContreeDeals(gameScore, dealScoreCalculator, filter, cardDealer, eventSender);
 
     }
 

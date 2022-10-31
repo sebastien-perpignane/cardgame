@@ -1,6 +1,5 @@
 package sebastien.perpignane.cardgame.game.contree;
 
-import jakarta.enterprise.context.Dependent;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
@@ -9,7 +8,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-@Dependent
 class ContreeGamePlayersImpl implements ContreeGamePlayers {
 
     final static int NB_MAX_PLAYERS = 4;

@@ -1,6 +1,5 @@
 package sebastien.perpignane.cardgame.game.contree;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -15,24 +14,15 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ContreeGameIntegrationTest {
+public class ContreeGameIT {
 
     @DisplayName("Running a game with bot players, including one always bidding 80 HEART. The game must end without error, whoever wins.")
     @Test
     @Timeout(value = 500, unit = TimeUnit.MILLISECONDS)
-    @Disabled
     public void testRunGameWithBotsPlayingRandomCards() throws InterruptedException {
-
-        ContreeGameEventSender eventSender = new ContreeGameEventSender();
-        ContreeGamePlayers players = new ContreeGamePlayersImpl();
-        ContreeGameConfig config = new ContreeGameConfig();
-        ContreeGameScore gameScore = new ContreeGameScore(config.maxScore());
-        PlayableCardsFilter filter = new PlayableCardsFilter();
-        DealScoreCalculator dealScoreCalculator = new DealScoreCalculator();
-        ContreeDeals deals = new ContreeDeals(gameScore, dealScoreCalculator, filter, eventSender);
-        ContreeGame game = new ContreeGame(players, deals, eventSender);
+        ContreeGame game = ContreeGameFactory.createGame(1000);
         game.registerAsGameObserver(GameTextDisplayer.getInstance());
-        ContreeBotPlayer player1 = new TestBiddingContreePlayer(ContreeBidValue.EIGHTY, CardSuit.HEARTS);
+        ContreeBotPlayer player1 = new BiddingContreeBotPlayer(ContreeBidValue.EIGHTY, CardSuit.HEARTS);
 
         game.joinGame(player1);
         game.joinGame(new ContreeBotPlayer());

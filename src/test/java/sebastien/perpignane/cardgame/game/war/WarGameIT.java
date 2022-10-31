@@ -1,6 +1,5 @@
 package sebastien.perpignane.cardgame.game.war;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import sebastien.perpignane.cardgame.card.CardSet;
@@ -20,11 +19,10 @@ import java.util.concurrent.BlockingQueue;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class WarGameIntegrationTest {
+public class WarGameIT {
 
     @Test
     @DisplayName("Player 1 has only superior cards and must win the game")
-    @Disabled
     public void testPlayer1HasBestCardsAndWins() throws InterruptedException {
 
         Player player1 = new WarBotPlayer();
@@ -49,7 +47,6 @@ public class WarGameIntegrationTest {
 
     @Test
     @DisplayName("Player 1 wins 1st trick but loses the game")
-    @Disabled
     public void testPlayer1Win1TrickButLoses() throws InterruptedException {
 
         Player player1 = new WarBotPlayer();

@@ -1,6 +1,5 @@
 package sebastien.perpignane.cardgame.game.contree;
 
-import jakarta.enterprise.context.Dependent;
 import sebastien.perpignane.cardgame.card.CardSet;
 import sebastien.perpignane.cardgame.card.contree.ContreeCard;
 import sebastien.perpignane.cardgame.card.contree.ValuableCard;
@@ -10,7 +9,6 @@ import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Dependent
 class DealScoreCalculator {
 
     final int EXPECTED_CARD_SCORE_SUM = 162;

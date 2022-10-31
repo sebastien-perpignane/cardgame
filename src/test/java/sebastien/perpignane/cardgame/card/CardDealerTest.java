@@ -19,12 +19,10 @@ public class CardDealerTest {
         final int nbCardsPerPlayer = distribConfig.stream().mapToInt(Integer::intValue).sum();
 
         CardDealer cardDealer = new CardDealer(
-            CardSet.GAME_32.getGameCards().stream().toList(),
-            nbPlayers,
             distribConfig
         );
 
-        var hands = cardDealer.dealCards();
+        var hands = cardDealer.dealCards(CardSet.GAME_32.getGameCards().stream().toList(), nbPlayers);
 
         assertEquals(nbPlayers, hands.size());
         assertEquals(nbCardsPerPlayer, hands.get(0).size());
@@ -44,13 +42,11 @@ public class CardDealerTest {
         final List<Integer> distribConfig = List.of(3,3,3);
         final int nbPlayers = 4;
 
+        CardDealer cardDealer = new CardDealer(distribConfig);
+
         assertThrows(
-            IllegalArgumentException.class,
-            () -> new CardDealer(
-                CardSet.GAME_32.getGameCards().stream().toList(),
-                nbPlayers,
-                distribConfig
-            )
+            RuntimeException.class,
+            () -> cardDealer.dealCards(CardSet.GAME_32.getGameCards().stream().toList(), nbPlayers)
         );
 
     }
@@ -63,13 +59,11 @@ public class CardDealerTest {
         final List<Integer> distribConfig = List.of(3,3,2);
         final int nbPlayers = 3;
 
+        CardDealer cardDealer = new CardDealer(distribConfig);
+
         assertThrows(
-                IllegalArgumentException.class,
-                () -> new CardDealer(
-                        CardSet.GAME_32.getGameCards().stream().toList(),
-                        nbPlayers,
-                        distribConfig
-                )
+            RuntimeException.class,
+            () -> cardDealer.dealCards(CardSet.GAME_32.getGameCards().stream().toList(), nbPlayers)
         );
 
     }

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.AdditionalAnswers;
+import sebastien.perpignane.cardgame.card.CardDealer;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 
@@ -65,7 +66,9 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
         tricks = mock(ContreeTricks.class);
         ContreeDealScore score = mock(ContreeDealScore.class);
 
-        deal = new ContreeDeal(bids, tricks, score, eventSender);
+        CardDealer cardDealer = mock(CardDealer.class);
+
+        deal = new ContreeDeal(bids, tricks, cardDealer, score, eventSender);
 
     }
 
