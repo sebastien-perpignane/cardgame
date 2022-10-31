@@ -24,7 +24,7 @@ class ContreeGameConfigTest  {
         assertFalse(config.isFileNotFound());
 
         assertEquals(1_000_000, config.maxScore());
-        assertEquals(List.of(4, 4, 2), config.distributionConfiguration());
+        assertEquals(List.of(3, 3, 2), config.distributionConfiguration());
 
     }
 

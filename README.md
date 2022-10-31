@@ -23,9 +23,7 @@ java -jar target/cardgame-*-jar-with-dependencies.jar
 ```
 
 * It will start 1000 (more or less) simultaneous games.
-* The main class used is :
-  * a first test of dependency injection using CDI with Weld
-  * the beginning of a resource consumption test
+* The main class used is the beginning of a resource consumption test
 
 ### Reference Documentation
 For further reference, please consider the following sections:
