@@ -121,7 +121,6 @@ class ContreeTrick implements Trick {
         return winner.getTeam().orElseThrow();
     }
 
-    @Override
     public Set<ClassicalCard> getAllCards() {
         return playedCards.stream().map(pc -> pc.card().getCard()).collect(Collectors.toSet());
     }

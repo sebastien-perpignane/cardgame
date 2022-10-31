@@ -1,5 +1,6 @@
 package sebastien.perpignane.cardgame.game.contree;
 
+import jakarta.enterprise.context.Dependent;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.AbstractGameEventSender;
@@ -9,30 +10,38 @@ import sebastien.perpignane.cardgame.player.Player;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
+@Dependent
 public class ContreeGameEventSender extends AbstractGameEventSender {
 
-    private final List<ContreeDealObserver> dealObservers = new CopyOnWriteArrayList<>();
-    private final List<ContreeTrickObserver> trickObservers = new CopyOnWriteArrayList<>();
+    private final Set<ContreeDealObserver> dealObservers = ConcurrentHashMap.newKeySet();
+    private final Set<ContreeTrickObserver> trickObservers = ConcurrentHashMap.newKeySet();
+
+    public ContreeGameEventSender() {
+        this(Collections.emptySet());
+    }
 
     public ContreeGameEventSender(Collection<CardGameObserver> observers) {
-        observers.forEach(o -> {
-            if (o instanceof ContreeTrickObserver cto) {
-                trickObservers.add(cto);
-            }
-            if (o instanceof GameObserver go) {
-                gameObservers.add(go);
-            }
-            if (o instanceof ContreeDealObserver cdo) {
-                dealObservers.add(cdo);
-            }
-        });
+        observers.forEach(this::registerAsObserver);
     }
 
     public ContreeGameEventSender(CardGameObserver... observers) {
         this(Arrays.asList(observers));
+    }
+
+    public void registerAsObserver(CardGameObserver observer) {
+        if (observer instanceof ContreeTrickObserver cto) {
+            trickObservers.add(cto);
+        }
+        if (observer instanceof GameObserver go) {
+            gameObservers.add(go);
+        }
+        if (observer instanceof ContreeDealObserver cdo) {
+            dealObservers.add(cdo);
+        }
     }
 
     void sendEndOfGameEvent(ContreeGame contreeGame) {
@@ -76,7 +85,6 @@ public class ContreeGameEventSender extends AbstractGameEventSender {
         dealObservers.forEach(cdo -> cdo.onPlayStepEnded(dealId));
     }
 
-    // FIXME Manage this event in trick management code
     void sendTrumpedTrickEvent(String trickId) {
         trickObservers.forEach(to -> to.onTrumpedTrick(trickId));
     }

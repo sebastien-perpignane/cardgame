@@ -1,17 +1,21 @@
 package sebastien.perpignane.cardgame.game.contree;
 
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@Dependent
 public class ContreeGameScore {
 
     private final int maxScore;
 
     private final Map<ContreeTeam, Integer> scoreByTeam = new HashMap<>();
 
+    @Inject
     public ContreeGameScore(int maxScore) {
         this.maxScore = maxScore;
         ContreeTeam.getTeams().forEach(t -> scoreByTeam.put(t, 0));

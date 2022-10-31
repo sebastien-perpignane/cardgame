@@ -1,11 +1,13 @@
 package sebastien.perpignane.cardgame.game.contree;
 
+import jakarta.enterprise.context.Dependent;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.card.contree.ContreeCard;
 import sebastien.perpignane.cardgame.player.Player;
 
 import java.util.*;
 
+@Dependent
 public class PlayableCardsFilter {
 
     Collection<ClassicalCard> playableCards(ContreeTrick trick, Player player) {

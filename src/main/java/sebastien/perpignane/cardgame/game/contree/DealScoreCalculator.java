@@ -1,5 +1,6 @@
 package sebastien.perpignane.cardgame.game.contree;
 
+import jakarta.enterprise.context.Dependent;
 import sebastien.perpignane.cardgame.card.CardSet;
 import sebastien.perpignane.cardgame.card.contree.ContreeCard;
 import sebastien.perpignane.cardgame.card.contree.ValuableCard;
@@ -9,27 +10,20 @@ import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Dependent
 class DealScoreCalculator {
 
     final int EXPECTED_CARD_SCORE_SUM = 162;
 
     final int DIX_DE_DER_BONUS = 10;
 
-    private final ContreeDeal deal;
-
     private Team dixDeDerTeam;
-
-    private Map<Team, Integer> cardScoreByTeam = new HashMap<>();
-
-    private final Map<Team, Integer> scoreByTeam = new HashMap<>();
 
     private Map<Team, ? extends Collection<ContreeCard>> cardsByTeam = new HashMap<>();
 
-    public DealScoreCalculator(ContreeDeal deal) {
-        this.deal = deal;
-    }
+    public Map<Team, Integer> computeDealScores(ContreeDeal deal) {
 
-    public Map<Team, Integer> computeDealScores() {
+        Map<Team, Integer> scoreByTeam = new HashMap<>();
 
         Set<ContreeTeam> allTeams = ContreeTeam.getTeams();
 
@@ -46,7 +40,7 @@ class DealScoreCalculator {
 
         cardsByTeam = deal.wonCardsByTeam();
 
-        cardScoreByTeam = allTeams.stream().collect(Collectors.toMap(
+        Map<Team, Integer> cardScoreByTeam = allTeams.stream().collect(Collectors.toMap(
                 team -> team,
                 team -> computeCardPoints(cardsByTeam.get(team)) + (team == dixDeDerTeam ? DIX_DE_DER_BONUS : 0)
         ));
@@ -58,10 +52,9 @@ class DealScoreCalculator {
         }
 
         if (deal.isDoubleBidExists() || deal.isRedoubleBidExists() || deal.isCapot()) {
-            computeDoubledOrRedoubledOrCapotDeal();
-            return scoreByTeam;
+            return computeDoubledOrRedoubledOrCapotDeal(deal, cardScoreByTeam);
         }
-        else if (!contractIsReached()) {
+        else if (!contractIsReached(deal, cardScoreByTeam)) {
             scoreByTeam.put(deal.getAttackTeam().orElseThrow(), 0);
             scoreByTeam.put(deal.getDefenseTeam().orElseThrow(), ContreeBidValue.HUNDRED_SIXTY.getExpectedScore());
         }
@@ -69,7 +62,7 @@ class DealScoreCalculator {
             scoreByTeam.putAll(cardScoreByTeam);
         }
 
-        roundScores();
+        roundScores(scoreByTeam);
         return scoreByTeam;
 
     }
@@ -78,10 +71,10 @@ class DealScoreCalculator {
         return contreeCards.stream().mapToInt(ValuableCard::getGamePoints).sum();
     }
 
-    private void computeDoubledOrRedoubledOrCapotDeal() {
+    private Map<Team, Integer> computeDoubledOrRedoubledOrCapotDeal(ContreeDeal deal, Map<Team, Integer> cardScoreByTeam) {
         Team winnerTeam;
         Team loserTeam;
-        if (contractIsReached()) {
+        if (contractIsReached(deal, cardScoreByTeam)) {
             winnerTeam = deal.getAttackTeam().orElseThrow();
             loserTeam = deal.getDefenseTeam().orElseThrow();
         }
@@ -107,12 +100,16 @@ class DealScoreCalculator {
             }
         }
 
+        Map<Team, Integer> scoreByTeam = new HashMap<>();
+
         scoreByTeam.put(winnerTeam, winnerBaseScore * multiplier);
         scoreByTeam.put(loserTeam, 0);
 
+        return scoreByTeam;
+
     }
 
-    private boolean contractIsReached() {
+    private boolean contractIsReached(ContreeDeal deal, Map<Team, Integer> cardScoreByTeam) {
         var attackTeam = deal.getAttackTeam().orElseThrow();
         if (deal.getContractBid().isEmpty()) {
             throw new IllegalStateException("Computing score for a no bid deal does not make sense");
@@ -123,7 +120,7 @@ class DealScoreCalculator {
         return cardScoreByTeam.get(attackTeam) >= deal.getContractBid().get().bidValue().getExpectedScore();
     }
 
-    private void roundScores() {
+    private void roundScores(Map<Team, Integer> scoreByTeam) {
         for (Team t : scoreByTeam.keySet()) {
             int score = scoreByTeam.get(t);
             var roundScore = ((score+5)/10)*10;

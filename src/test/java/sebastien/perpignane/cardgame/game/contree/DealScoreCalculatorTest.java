@@ -1,6 +1,7 @@
 package sebastien.perpignane.cardgame.game.contree;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import sebastien.perpignane.cardgame.card.CardSet;
@@ -14,7 +15,6 @@ import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
 
 /*
  Responsibilities are :
@@ -26,6 +26,8 @@ import static org.mockito.Mockito.mock;
 public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
     private static Map<CardSuit, CardSuitTypicalTricks>  typicalTricksBySuit;
+
+    private DealScoreCalculator dealScoreCalculator;
 
     record CardSuitTypicalTricks(CardSuit cardSuit,
              List<ClassicalCard> standardStrongTrick_27points, // gives 27
@@ -170,16 +172,19 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
     }
 
+    @BeforeEach
+    public void setUp() {
+        dealScoreCalculator = new DealScoreCalculator();
+    }
+
     @DisplayName("Score cannot be calculated on a deal with no contract (no valued bids)")
     @Test
     public void testExceptionIfNoContract() {
 
         ContreeDeal deal = MockDealBuilder.builder().build();
-
-        DealScoreCalculator dealScoreCalculator = new DealScoreCalculator(deal);
         assertThrows(
                 RuntimeException.class,
-                dealScoreCalculator::computeDealScores
+                () -> dealScoreCalculator.computeDealScores(deal)
         );
 
     }
@@ -202,11 +207,9 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
                 .withCardsByTeam(cardsByTeam)
                 .build();
 
-        DealScoreCalculator dealScoreCalculator = new DealScoreCalculator(deal);
-
         assertThrows(
                 RuntimeException.class,
-                dealScoreCalculator::computeDealScores
+                () -> dealScoreCalculator.computeDealScores(deal)
         );
 
     }
@@ -249,9 +252,7 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
                 .withCardsByTeam(cardsByTeam)
                 .build();
 
-        DealScoreCalculator dealScoreCalculator = new DealScoreCalculator(deal);
-
-        var scoreByTeam = dealScoreCalculator.computeDealScores();
+        var scoreByTeam = dealScoreCalculator.computeDealScores(deal);
         // 89
         assertEquals(90, scoreByTeam.get(contractPlayer.getTeam().orElseThrow()));
         // 63 + dix de der, rounded
@@ -279,9 +280,7 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
                 .withCardsByTeam(cardsByTeam)
                 .build();
 
-        DealScoreCalculator dealScoreCalculator = new DealScoreCalculator(deal);
-
-        var scoreByTeam = dealScoreCalculator.computeDealScores();
+        var scoreByTeam = dealScoreCalculator.computeDealScores(deal);
 
         assertEquals(320, scoreByTeam.get(contractPlayer.getTeam().orElseThrow()));
         assertEquals(0, scoreByTeam.get(ContreeTeam.TEAM2));
@@ -308,9 +307,7 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
                 .withCardsByTeam(cardsByTeam)
                 .build();
 
-        DealScoreCalculator dealScoreCalculator = new DealScoreCalculator(deal);
-
-        var scoreByTeam = dealScoreCalculator.computeDealScores();
+        var scoreByTeam = dealScoreCalculator.computeDealScores(deal);
         // 88 + dix de der, rounded
         assertEquals(640, scoreByTeam.get(contractPlayer.getTeam().orElseThrow()));
         assertEquals(0, scoreByTeam.get(ContreeTeam.TEAM2));
@@ -340,9 +337,7 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
                 .withCardsByTeam(cardsByTeam)
                 .build();
 
-        DealScoreCalculator dealScoreCalculator = new DealScoreCalculator(deal);
-
-        var scoreByTeam = dealScoreCalculator.computeDealScores();
+        var scoreByTeam = dealScoreCalculator.computeDealScores(deal);
 
         assertEquals(0, scoreByTeam.get(contractPlayer.getTeam().orElseThrow()));
         assertEquals(160, scoreByTeam.get(ContreeTeam.TEAM2));
@@ -381,9 +376,7 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
         // To make sure that buildPlayers() always return different teams for player 1 and player 2
         assertNotEquals(contractPlayer.getTeam(), firstOpponent.getTeam());
 
-        DealScoreCalculator dealScoreCalculator = new DealScoreCalculator(deal);
-
-        var scoreByTeam = dealScoreCalculator.computeDealScores();
+        var scoreByTeam = dealScoreCalculator.computeDealScores(deal);
 
         assertEquals(500, scoreByTeam.get(contractPlayer.getTeam().orElseThrow()));
         assertEquals(0, scoreByTeam.get(ContreeTeam.TEAM2));
@@ -417,9 +410,7 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
         // To make sure that buildPlayers() always return different teams for player 1 and player 2
         assertNotEquals(contractPlayer.getTeam(), firstOpponent.getTeam());
 
-        DealScoreCalculator dealScoreCalculator = new DealScoreCalculator(deal);
-
-        var scoreByTeam = dealScoreCalculator.computeDealScores();
+        var scoreByTeam = dealScoreCalculator.computeDealScores(deal);
 
         assertEquals(0, scoreByTeam.get(contractPlayer.getTeam().orElseThrow()));
         assertEquals(500, scoreByTeam.get(firstOpponent.getTeam().orElseThrow()));
@@ -461,11 +452,9 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
                 .withCardsByTeam(cardsByTeam)
                 .build();
 
-        DealScoreCalculator dealScoreCalculator = new DealScoreCalculator(deal);
-
         var re = assertThrows(
             RuntimeException.class,
-            dealScoreCalculator::computeDealScores
+            () -> dealScoreCalculator.computeDealScores(deal)
         );
 
         assertTrue(re.getMessage().contains("Cheat"));
@@ -481,9 +470,8 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
                 .withHasOnlyNoneBids(true)
                 .build();
 
-        DealScoreCalculator calculator = new DealScoreCalculator(onlyNoneBidsDeal);
 
-        var scores = calculator.computeDealScores();
+        var scores = dealScoreCalculator.computeDealScores(onlyNoneBidsDeal);
 
         assertTrue(scores.values().stream().allMatch(i -> i == 0));
 
@@ -496,11 +484,9 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
                 .withDealContractBid(null)
                 .build();
 
-        DealScoreCalculator calculator = new DealScoreCalculator(onlyNoneBidsDeal);
-
         assertThrows(
                 RuntimeException.class,
-                calculator::computeDealScores
+                () -> dealScoreCalculator.computeDealScores(onlyNoneBidsDeal)
         );
     }
 
@@ -522,10 +508,7 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
                 )
         );
 
-        ContreeDeal deal = mock(ContreeDeal.class);
-
-        DealScoreCalculator dealPointComputer = new DealScoreCalculator(deal);
-        var dealPoints = dealPointComputer.computeCardPoints(dealCards);
+        var dealPoints = dealScoreCalculator.computeCardPoints(dealCards);
 
         assertEquals(21, dealPoints);
 
@@ -545,10 +528,7 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
                 )
         );
 
-        ContreeDeal deal = mock(ContreeDeal.class);
-
-        DealScoreCalculator dealPointComputer = new DealScoreCalculator(deal);
-        var dealPoints = dealPointComputer.computeCardPoints(dealCards);
+        var dealPoints = dealScoreCalculator.computeCardPoints(dealCards);
 
         assertEquals(45, dealPoints);
 
@@ -563,10 +543,7 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
                 CardSet.GAME_32.getGameCards()
         );
 
-        ContreeDeal deal = mock(ContreeDeal.class);
-
-        DealScoreCalculator dealPointComputer = new DealScoreCalculator(deal);
-        var dealPoints = dealPointComputer.computeCardPoints(dealCards);
+        var dealPoints = dealScoreCalculator.computeCardPoints(dealCards);
 
         assertEquals(152, dealPoints);
 

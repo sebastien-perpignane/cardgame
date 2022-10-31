@@ -14,26 +14,27 @@ public class ContreeTricks {
 
     final static int NB_TRICKS_PER_DEAL = 8;
 
-    private final List<ContreeTrick> tricks = new ArrayList<>();
+    private final List<ContreeTrick> tricks;
 
     private final ContreeGameEventSender eventSender;
 
-    private final ContreeDeal deal;
+    private ContreeDeal deal;
 
     private ContreeTrick currentTrick;
 
-    private final ContreeTrickPlayers trickPlayers;
+    private ContreeTrickPlayers trickPlayers;
 
     private final PlayableCardsFilter playableCardsFilter;
 
-    public ContreeTricks(ContreeDeal deal, ContreeTrickPlayers trickPlayers, PlayableCardsFilter playableCardsFilter) {
-        this.deal = deal;
-        this.trickPlayers = trickPlayers;
+    public ContreeTricks(PlayableCardsFilter playableCardsFilter, ContreeGameEventSender eventSender) {
         this.playableCardsFilter = playableCardsFilter;
-        this.eventSender = deal.getEventSender();
+        this.eventSender = eventSender;
+        tricks = new ArrayList<>();
     }
 
-    public void startTricks() {
+    public void startTricks(ContreeDeal deal, ContreeTrickPlayers trickPlayers) {
+        this.deal = deal;
+        this.trickPlayers = trickPlayers;
         if (!tricks.isEmpty()) {
             throw new IllegalStateException("Tricks are already started");
         }
@@ -50,7 +51,7 @@ public class ContreeTricks {
         );
 
         tricks.add(currentTrick);
-        eventSender.sendNewTrickEvent(currentTrick.getTrickId(), deal.getTrumpSuit());
+        eventSender.sendNewTrickEvent(currentTrick.getTrickId(), currentTrick.getTrumpSuit());
         currentTrick.startTrick();
     }
 

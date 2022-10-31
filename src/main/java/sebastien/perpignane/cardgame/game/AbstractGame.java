@@ -17,11 +17,6 @@ public abstract class AbstractGame {
 
     protected void updateState(GameState newState) {
 
-        // FIXME gameEventSender is null on the INIT state
-        if (getEventSender() == null) {
-            return;
-        }
-
         GameState oldState = state;
         state = newState;
         getEventSender().sendStateEvent(oldState, state);

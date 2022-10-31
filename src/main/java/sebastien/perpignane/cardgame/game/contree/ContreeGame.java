@@ -1,6 +1,7 @@
 package sebastien.perpignane.cardgame.game.contree;
 
 import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.AbstractGame;
@@ -18,14 +19,20 @@ public class ContreeGame extends AbstractGame {
 
     private final ContreeGamePlayers gamePlayers;
 
-    private ContreeDeals gameDeals;
+    private final ContreeDeals gameDeals;
 
     private final ContreeGameEventSender gameEventSender;
 
-    public ContreeGame() {
+    @Inject
+    ContreeGame(
+        ContreeGamePlayers gamePlayers,
+        ContreeDeals gameDeals,
+        ContreeGameEventSender eventSender
+    ) {
         super();
-        this.gameEventSender = new ContreeGameEventSender();
-        gamePlayers = new ContreeGamePlayersImpl(this);
+        this.gamePlayers = gamePlayers;
+        this.gameDeals = gameDeals;
+        this.gameEventSender = eventSender;
         updateState(GameState.WAITING_FOR_PLAYERS);
     }
 
@@ -34,17 +41,8 @@ public class ContreeGame extends AbstractGame {
         return new ArrayList<>(gamePlayers.getGamePlayers());
     }
 
-    public void startGame() {
-
-        if (isOver()) {
-            throw new IllegalStateException("This game is over, you cannot start it");
-        }
-
-        if (!gamePlayers.isFull()) {
-            throw new IllegalArgumentException("Game cannot be started until four players joined the game");
-        }
-        gameDeals = new ContreeDeals(this, gamePlayers.buildDealPlayers());
-        gameDeals.startDeals();
+    private void startGame() {
+        gameDeals.startDeals(getGameId(), gamePlayers.buildDealPlayers());
     }
 
     public synchronized void placeBid(ContreePlayer player, ContreeBidValue bidValue, CardSuit cardSuit) {
@@ -59,8 +57,10 @@ public class ContreeGame extends AbstractGame {
             throw new IllegalStateException("This game is over, you cannot join it");
         }
         gamePlayers.joinGame(p);
+        p.setGame(this);
         if (gamePlayers.isFull()) {
             updateState(GameState.STARTED);
+            startGame();
         }
     }
 

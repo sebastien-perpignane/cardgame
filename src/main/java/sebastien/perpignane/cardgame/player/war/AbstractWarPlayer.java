@@ -1,21 +1,20 @@
-package sebastien.perpignane.cardgame.player;
+package sebastien.perpignane.cardgame.player.war;
 
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.AbstractGame;
 import sebastien.perpignane.cardgame.game.war.WarGame;
+import sebastien.perpignane.cardgame.player.Player;
+import sebastien.perpignane.cardgame.player.PlayerState;
 
 import java.util.Objects;
 
 
-/**
- * FIXME WarGame cannot be referenced in AbstractPlayer
- */
-public abstract class AbstractPlayer implements Player {
+public abstract class AbstractWarPlayer implements Player {
 
     private WarGame warGame;
     private PlayerState state;
 
-    public AbstractPlayer() {
+    public AbstractWarPlayer() {
         state = PlayerState.WAITING;
     }
 
@@ -43,8 +42,8 @@ public abstract class AbstractPlayer implements Player {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof AbstractPlayer)) return false;
-        return Objects.equals(warGame, ((AbstractPlayer)o).warGame);
+        if (!(o instanceof AbstractWarPlayer)) return false;
+        return Objects.equals(warGame, ((AbstractWarPlayer)o).warGame);
     }
 
     @Override

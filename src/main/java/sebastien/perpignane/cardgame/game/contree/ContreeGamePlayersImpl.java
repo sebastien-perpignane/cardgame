@@ -1,5 +1,6 @@
 package sebastien.perpignane.cardgame.game.contree;
 
+import jakarta.enterprise.context.Dependent;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
@@ -8,18 +9,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+@Dependent
 class ContreeGamePlayersImpl implements ContreeGamePlayers {
 
     final static int NB_MAX_PLAYERS = 4;
-
-    private final ContreeGame contreeGame;
 
     private final List<ContreePlayer> players = new CopyOnWriteArrayList<>();
 
     private volatile int nbPlayers = 0;
 
-    public ContreeGamePlayersImpl(ContreeGame contreeGame) {
-        this.contreeGame = contreeGame;
+    public ContreeGamePlayersImpl() {
         for (int i = 0 ; i < NB_PLAYERS ; i++) {
             players.add(null);
         }
@@ -45,7 +44,6 @@ class ContreeGamePlayersImpl implements ContreeGamePlayers {
                 if ( noPresentPlayer || ( !joiningPlayer.isBot() && presentPlayer.isBot() ) ) {
                     players.set(i, joiningPlayer);
                     assignTeamToPlayer(i);
-                    joiningPlayer.setGame(contreeGame);
                     joined = true;
                     if (noPresentPlayer) {
                         nbPlayers++;

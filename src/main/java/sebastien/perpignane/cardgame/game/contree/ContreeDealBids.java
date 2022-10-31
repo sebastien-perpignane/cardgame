@@ -14,22 +14,20 @@ public class ContreeDealBids {
 
     private int maxBids = INITIAL_MAX_BIDS;
 
-    private final List<ContreeBid> bids = new ArrayList<>();
+    private final List<ContreeBid> bids;
 
-    private final ContreeBidPlayers bidPlayers;
+    private ContreeBidPlayers bidPlayers;
 
-    public ContreeDealBids(ContreeBidPlayers bidPlayers) {
-        this.bidPlayers = bidPlayers;
+    public ContreeDealBids() {
+        bids = new ArrayList<>();
     }
 
-    public void startBids() {
-        bidPlayers.onCurrentBidderTurnToBid();
+    public void startBids(ContreeBidPlayers bidPlayers) {
+        this.bidPlayers = bidPlayers;
+        this.bidPlayers.onCurrentBidderTurnToBid();
     }
 
     public void placeBid(ContreeBid bid) {
-
-        // FIXME find a way to share event sender
-        // eventSender.sendPlacedBidEvent(dealId, bid);
 
         throwsExceptionIfBidIsInvalid(bid);
 

@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 
 public class ContreeTrickTest extends TestCasesManagingPlayers {
 
-    // TODO [Unit test] Test playerPlays when card played is not allowed
+    private PlayableCardsFilter playableCardsFilter;
 
     private ContreeTrick trickWithHeartAsTrump;
 
@@ -34,7 +34,7 @@ public class ContreeTrickTest extends TestCasesManagingPlayers {
         var deal = MockDealBuilder.builder().withMockedGameEventSender().withTrumpSuit(CardSuit.HEARTS)
             .build();
 
-        PlayableCardsFilter playableCardsFilter = mock(PlayableCardsFilter.class);
+        playableCardsFilter = mock(PlayableCardsFilter.class);
 
         when(playableCardsFilter.playableCards(any(), any())).thenReturn(CardSet.GAME_32.getGameCards());
 
@@ -111,6 +111,23 @@ public class ContreeTrickTest extends TestCasesManagingPlayers {
                     ClassicalCard.TEN_CLUB
             ),
             trickWithHeartAsTrump.getAllCards()
+        );
+
+    }
+
+    @DisplayName("Exception when a player plays a not allowed card")
+    @Test
+    public void testPlayNotAllowedCard() {
+
+        trickWithHeartAsTrump.startTrick();
+
+        // When player1 plays his card, the trick compute and store the allowed cards for the next player
+        when(playableCardsFilter.playableCards(any(), any())).thenReturn(Set.of(ClassicalCard.JACK_HEART));
+        trickWithHeartAsTrump.playerPlays(player1, ClassicalCard.SEVEN_CLUB);
+
+        assertThrows(
+            RuntimeException.class,
+            () -> trickWithHeartAsTrump.playerPlays(player2, ClassicalCard.JACK_CLUB)
         );
 
     }

@@ -4,29 +4,41 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.AdditionalAnswers;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /*
+
  ContreDeal responsibilities are :
     * manage that all conditions are met to start a deal *
     * manage steps of a deal *
     * prevents actions that are now allowed during the current step *
     * define the trump suit of the deal at the end of the bid step *
+
+  (!) Method coverage % will be low as a lot of methods are "delegate" methods in ContreeDeal
+
  */
 public class ContreeDealTest extends TestCasesManagingPlayers {
 
     private ContreeDealPlayers dealPlayers;
 
+    private ContreeDealBids bids;
+
+
+    private ContreeTricks tricks;
+
     private ContreeDeal deal;
+
 
     @BeforeAll
     public static void globalSetUp() {
@@ -49,12 +61,11 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
 
         ContreeGameEventSender eventSender = mock(ContreeGameEventSender.class);
 
-        ContreeGame game = mock(ContreeGame.class);
-        when(game.getGameId()).thenReturn("TEST");
-        when(game.getNbDeals()).thenReturn(-1);
-        when(game.getEventSender()).thenReturn(eventSender);
+        bids = mock(ContreeDealBids.class);
+        tricks = mock(ContreeTricks.class);
+        ContreeDealScore score = mock(ContreeDealScore.class);
 
-        deal = new ContreeDeal(game, dealPlayers);
+        deal = new ContreeDeal(bids, tricks, score, eventSender);
 
     }
 
@@ -66,7 +77,7 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
 
         assertThrows(
                 RuntimeException.class,
-                () -> deal.startDeal()
+                () -> deal.startDeal("TEST", dealPlayers)
         );
 
     }
@@ -79,32 +90,15 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
 
         assertThrows(
                 RuntimeException.class,
-                () -> deal.startDeal()
+                () -> deal.startDeal("TEST", dealPlayers)
         );
-
-    }
-
-    @DisplayName("When only NONE bids, dealStep is not PLAY, deal is over")
-    @Test
-    public void testOnlyNoneBids() {
-
-        deal.startDeal();
-
-        deal.placeBid( new ContreeBid(player1, ContreeBidValue.NONE) );
-        deal.placeBid( new ContreeBid(player2, ContreeBidValue.NONE) );
-        deal.placeBid( new ContreeBid(player3, ContreeBidValue.NONE) );
-        deal.placeBid( new ContreeBid(player4, ContreeBidValue.NONE) );
-
-        assertTrue(deal.hasOnlyNoneBids());
-        assertTrue(deal.isOver());
-        assertFalse(deal.isPlayStep());
 
     }
 
     @DisplayName("After deal.startDeal(), the deal is in bid step")
     @Test
     public void testDealIsInBidStepAfterStart() {
-        deal.startDeal();
+        deal.startDeal("TEST", dealPlayers);
 
         assertTrue( deal.isBidStep() );
         assertFalse( deal.isPlayStep() );
@@ -113,9 +107,12 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
     @DisplayName("When bids are over, the deal is in play step. Trump suit is defined.")
     @Test
     public void testDealIsInPlayStepWhenBidsAreOver() {
-        deal.startDeal();
+        deal.startDeal("TEST", dealPlayers);
+        ContreeBid bid = new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.DIAMONDS);
+        when(bids.bidsAreOver()).thenReturn(true);
+        when(bids.highestBid()).thenReturn(Optional.of(bid));
 
-        placeBidsWithPlayer1BiddingForHeartAndOthersPass(deal);
+        deal.placeBid(bid);
 
         assertFalse( deal.isBidStep() );
         assertTrue( deal.isPlayStep() );
@@ -127,13 +124,13 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
     @DisplayName("Players cannot play a card in BID step ")
     @Test
     public void testExceptionWhenPlayingWhileBidStep() {
-        deal.startDeal();
+        deal.startDeal("TEST", dealPlayers);
 
         assertTrue(deal.isBidStep());
 
         assertThrows(
             RuntimeException.class,
-            () -> deal.playerPlays(players.get(0), ClassicalCard.JACK_DIAMOND)
+            () -> deal.playerPlays(player1, ClassicalCard.JACK_DIAMOND)
         );
 
     }
@@ -142,23 +139,77 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
     @Test
     public void testExceptionWhenPlacingBidDuringPlayStep() {
 
-        deal.startDeal();
+        // Given
 
-        placeBidsWithPlayer1BiddingForHeartAndOthersPass(deal);
+        deal.startDeal("TEST", dealPlayers);
 
-        assertTrue( deal.isPlayStep() );
+        ContreeBid bid = new ContreeBid(player1, ContreeBidValue.HUNDRED, CardSuit.DIAMONDS);
+        when(bids.bidsAreOver()).thenReturn(true);
+        when(bids.highestBid()).thenReturn(Optional.of(bid));// When bids are over, startPlay method is called and gets the trump suit.
+        deal.placeBid(new ContreeBid( player1 ));
 
-        assertThrows(
-            RuntimeException.class,
-            () -> deal.placeBid(new ContreeBid(players.get(0), ContreeBidValue.NONE, null))
+        // When
+        Executable placeBidAction = () -> deal.placeBid(new ContreeBid( player2 ));
+
+        // Then
+        assertTrue(deal.isPlayStep());
+        var ise = assertThrows(
+                RuntimeException.class,
+                placeBidAction
         );
+        assertTrue(ise.getMessage().contains("A bid cannot be placed during PLAY step"));
     }
 
-    private void placeBidsWithPlayer1BiddingForHeartAndOthersPass(ContreeDeal deal) {
+    @DisplayName("One play step reached, deal is over when tricks are over")
+    @Test
+    public void testPlayerPlaysWhenTricksAreOver() {
+
+        goToPlayStep();
+
+        when(tricks.isMaxNbOverTricksReached()).thenReturn(true);
+
+        deal.playerPlays(player1, ClassicalCard.JACK_DIAMOND);
+
+        assertTrue(deal.isOver());
+
+    }
+
+    @DisplayName("One play step reached, deal is not over when tricks are not over")
+    @Test
+    public void testPlayerPlaysWhenTricksAreNotOver() {
+
+        goToPlayStep();
+
+        when(tricks.isMaxNbOverTricksReached()).thenReturn(false);
+
+        deal.playerPlays(player1, ClassicalCard.JACK_DIAMOND);
+
+        assertFalse(deal.isOver());
+
+    }
+
+    private void goToPlayStep() {
+        ContreeBid bid = new ContreeBid(player1, ContreeBidValue.HUNDRED, CardSuit.DIAMONDS);
+        when(bids.bidsAreOver()).thenReturn(true);
+        when(bids.highestBid()).thenReturn(Optional.of(bid));// When bids are over, startPlay method is called and gets the trump suit.
+
+        deal.startDeal("TEST", dealPlayers);
+
+        deal.placeBid(new ContreeBid( player1 ));
+
+        assertTrue(deal.isPlayStep());
+    }
+
+    @Test
+    public void testDealIsNotDoubleNorRedouble() {
+
+        deal.startDeal("TEST", dealPlayers);
+
         deal.placeBid(new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.HEARTS));
-        deal.placeBid(new ContreeBid(player2, ContreeBidValue.NONE, null));
-        deal.placeBid(new ContreeBid(player3, ContreeBidValue.NONE, null));
-        deal.placeBid(new ContreeBid(player4, ContreeBidValue.NONE, null));
+
+        assertFalse(deal.isDoubleBidExists());
+        assertFalse(deal.isRedoubleBidExists());
+        assertTrue(deal.isBidStep());
     }
 
 }

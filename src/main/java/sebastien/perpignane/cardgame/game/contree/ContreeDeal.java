@@ -21,11 +21,11 @@ class ContreeDeal {
         OVER
     }
 
-    private final String dealId;
+    private String dealId;
 
     private DealStep dealStep;
 
-    private final ContreeDealPlayers players;
+    private ContreeDealPlayers players;
 
     private final ContreeDealScore score;
 
@@ -37,17 +37,27 @@ class ContreeDeal {
 
     private final ContreeGameEventSender eventSender;
 
-    public ContreeDeal(ContreeGame game, ContreeDealPlayers dealPlayers) {
-        dealId          = game.getGameId() + "-" + (game.getNbDeals() + 1);
-        dealStep        = DealStep.NOT_STARTED;
-        eventSender     = game.getEventSender();
-        players         = dealPlayers;
-        bids            = new ContreeDealBids(dealPlayers.buildBidPlayers());
-        tricks          = new ContreeTricks(this, dealPlayers.buildTrickPlayers(), new PlayableCardsFilter());
-        score           = new ContreeDealScore(new DealScoreCalculator(this));
+    public ContreeDeal(
+            ContreeDealBids contreeDealBids,
+            ContreeTricks tricks,
+            ContreeDealScore dealScore,
+            ContreeGameEventSender gameEventSender
+    ) {
+        this.dealStep        = DealStep.NOT_STARTED;
+        this.eventSender     = gameEventSender;
+        this.bids            = contreeDealBids;
+        this.tricks          = tricks;
+        this.score           = dealScore;
     }
 
-    void startDeal() {
+    void startDeal(
+            String dealId,
+            ContreeDealPlayers dealPlayers
+    ) {
+
+        this.dealId = dealId;
+        this.players = dealPlayers;
+
         dealStep = DealStep.BID;
 
         eventSender.sendStartOfDealEvent(dealId);
@@ -57,7 +67,7 @@ class ContreeDeal {
         List<ClassicalCard> cards   = shuffler.shuffle(CardSet.GAME_32);
         distributeCardsToPlayers(cards);
 
-        bids.startBids();
+        bids.startBids(dealPlayers.buildBidPlayers());
     }
 
     private void distributeCardsToPlayers(List<ClassicalCard> cards) {
@@ -73,9 +83,9 @@ class ContreeDeal {
         }
 
         // TODO make it configurable
-        List<Integer> cardGroups = List.of(3, 3, 2);
+        List<Integer> distributionConfiguration = List.of(3, 3, 2);
 
-        CardDealer cardDealer = new CardDealer(cards, numberOfPlayers, cardGroups);
+        CardDealer cardDealer = new CardDealer(cards, numberOfPlayers, distributionConfiguration);
         var distributedCards = cardDealer.dealCards();
 
         for (int i = 0 ; i < distributedCards.size() ; i++) {
@@ -85,6 +95,12 @@ class ContreeDeal {
     }
 
     public void placeBid(ContreeBid bid) {
+
+        if (isPlayStep()) {
+            throw new IllegalStateException(
+                String.format("Cheater detected: %s ? A bid cannot be placed during PLAY step", bid.player())
+            );
+        }
 
         eventSender.sendPlacedBidEvent(dealId, bid);
         bids.placeBid(bid);
@@ -112,6 +128,7 @@ class ContreeDeal {
         else {
             throw new IllegalStateException(String.format("Unexpected deal step while managing end of deal : %s", dealStep));
         }
+        score.computeScore(this);
         dealStep = DealStep.OVER;
         endOfStepEventSender.accept(dealId);
         eventSender.sendEndOfDealEvent(dealId);
@@ -125,7 +142,7 @@ class ContreeDeal {
         eventSender.sendBidStepEndedEvent(dealId);
         eventSender.sendPlayStepStartedEvent(dealId, trumpSuit);
 
-        tricks.startTricks();
+        tricks.startTricks(this, players.buildTrickPlayers());
     }
 
     public void playerPlays(ContreePlayer player, ClassicalCard card) {
@@ -170,10 +187,6 @@ class ContreeDeal {
 
     public boolean hasOnlyNoneBids()  {
         return bids.hasOnlyNoneBids();
-    }
-
-    Optional<ContreeBid> highestBid() {
-        return bids.highestBid();
     }
 
     public boolean isCapot() {
