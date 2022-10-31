@@ -1,57 +1,69 @@
 package sebastien.perpignane.cardgame.game.contree;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Produces;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-@ApplicationScoped
 public class ContreeGameConfig {
+
+    private final static String DEFAULT_CONFIG_FILE = "contree-game.properties";
+
+    private final static String MAX_SCORE_PROP = "contree-game.max.score";
+
+    private final static String DISTRIBUTION_CONFIG_PROP = "contree-game.distribution.config";
+
+    private boolean fileNotFound = false;
 
     private final int maxScore;
     private final List<Integer> distributionConfiguration;
 
     public ContreeGameConfig()  {
+        this(DEFAULT_CONFIG_FILE);
+    }
+
+    public ContreeGameConfig(String fileName) {
 
         int tmpMaxScore = 1500;
-        List<Integer> tmpDistribConfig = List.of(3,3,2);
+        List<Integer> tmpDistributionConfig = List.of(3,3,2);
 
         try {
             Properties properties = new Properties();
-            var in = getClass().getResourceAsStream("/contree-game.properties");
+            String finalFileName = fileName == null ? DEFAULT_CONFIG_FILE : fileName;
+            var in = getClass().getResourceAsStream("/" + finalFileName);
             properties.load(in);
 
-            tmpMaxScore = Integer.parseInt(properties.getProperty("contree-game.max.score", "1500"));
+            tmpMaxScore = Integer.parseInt(properties.getProperty(MAX_SCORE_PROP));
 
-            tmpDistribConfig =
-                    Arrays.stream(
-                        properties.getProperty("contree-game.distribution.config").split(",")
-                    ).map(Integer::valueOf)
-                    .collect(Collectors.toList());
+            tmpDistributionConfig = mapComaSeparatedStringToIntegerList(properties.getProperty(DISTRIBUTION_CONFIG_PROP));
         }
         catch(Exception e) {
-            System.err.println("Could not read contree game configuration");
-            e.printStackTrace(System.err);
-            System.exit(1);
+            fileNotFound = true;
         }
 
         maxScore = tmpMaxScore;
-        distributionConfiguration = tmpDistribConfig;
+        distributionConfiguration = tmpDistributionConfig;
 
     }
 
+    List<Integer> mapComaSeparatedStringToIntegerList(String comaSeparated) {
+        return Arrays.stream(
+                        comaSeparated.split(",")
+                ).map(String::trim).map(Integer::valueOf)
+                .collect(Collectors.toList());
+    }
 
-    @Produces // @Named("maxScore")
+
     public int maxScore() {
         return maxScore;
     }
 
-    @Produces
-    public List<Integer> getDistributionConfiguration() {
+    public List<Integer> distributionConfiguration() {
         return distributionConfiguration;
+    }
+
+    public boolean isFileNotFound() {
+        return fileNotFound;
     }
 
 }

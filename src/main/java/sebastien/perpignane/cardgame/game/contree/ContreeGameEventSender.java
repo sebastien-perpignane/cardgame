@@ -1,6 +1,5 @@
 package sebastien.perpignane.cardgame.game.contree;
 
-import jakarta.enterprise.context.Dependent;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.AbstractGameEventSender;
@@ -14,7 +13,6 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Dependent
 public class ContreeGameEventSender extends AbstractGameEventSender {
 
     private final Set<ContreeDealObserver> dealObservers = ConcurrentHashMap.newKeySet();

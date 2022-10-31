@@ -1,6 +1,5 @@
 package sebastien.perpignane.cardgame.game;
 
-import jakarta.enterprise.context.Dependent;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.contree.ContreeBidValue;
@@ -14,7 +13,6 @@ import sebastien.perpignane.cardgame.player.Player;
 import java.util.List;
 
 // FIXME use loggers
-@Dependent
 public class GameTextDisplayer implements GameObserver, WarTrickObserver, ContreeDealObserver, ContreeTrickObserver {
 
     private final static GameTextDisplayer INSTANCE;

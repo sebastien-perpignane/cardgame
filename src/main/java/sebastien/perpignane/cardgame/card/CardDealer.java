@@ -6,17 +6,15 @@ import java.util.stream.IntStream;
 
 public class CardDealer {
 
-    private final List<ClassicalCard> cards;
-
-    private final int nbPlayers;
-
-    private final int nbDistributedCardsPerPlayer;
-
     private final List<Integer> distribConfiguration;
 
-    public CardDealer(List<ClassicalCard> cards, int nbPlayers, List<Integer> distribConfiguration) {
+    public CardDealer(List<Integer> distribConfiguration) {
+        this.distribConfiguration = distribConfiguration;
+    }
 
-        nbDistributedCardsPerPlayer = distribConfiguration.stream().mapToInt(Integer::intValue).sum();
+    public List<List<ClassicalCard>> dealCards(List<ClassicalCard> cards, int nbPlayers) {
+
+        int nbDistributedCardsPerPlayer = distribConfiguration.stream().mapToInt(Integer::intValue).sum();
 
         if (cards.size() % nbPlayers != 0) {
             throw new IllegalArgumentException(String.format("%d cards cannot be equally distributed to %d players", nbDistributedCardsPerPlayer, nbPlayers));
@@ -26,26 +24,19 @@ public class CardDealer {
             throw new IllegalArgumentException("All cards will not be distributed to players");
         }
 
-        this.cards = cards;
-        this.nbPlayers = nbPlayers;
-        this.distribConfiguration = distribConfiguration;
-    }
-
-    public List<List<ClassicalCard>> dealCards() {
-
-        final List<List<ClassicalCard>> result = new ArrayList<>(nbPlayers);
-        IntStream.range(0, nbPlayers).forEach(playerIdx ->  result.add(new ArrayList<>(nbDistributedCardsPerPlayer)));
+        final List<List<ClassicalCard>> dealCardsByPlayer = new ArrayList<>(nbPlayers);
+        IntStream.range(0, nbPlayers).forEach(playerIdx ->  dealCardsByPlayer.add(new ArrayList<>(nbDistributedCardsPerPlayer)));
 
         int alreadyDealtCards = 0;
         for(Integer nbCards : distribConfiguration) {
             for (int playerIdx = 0 ; playerIdx < nbPlayers ; playerIdx++ ) {
                 int offset = alreadyDealtCards + (playerIdx * nbCards);
-                result.get(playerIdx).addAll(cards.subList(offset, offset + nbCards));
+                dealCardsByPlayer.get(playerIdx).addAll(cards.subList(offset, offset + nbCards));
             }
             alreadyDealtCards += nbPlayers * nbCards;
         }
 
-        return result;
+        return dealCardsByPlayer;
 
     }
 

@@ -1,7 +1,6 @@
 package sebastien.perpignane.cardgame.game.contree;
 
-import jakarta.enterprise.context.Dependent;
-import jakarta.inject.Inject;
+import sebastien.perpignane.cardgame.card.CardDealer;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
@@ -12,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-@Dependent
 public class ContreeDeals {
 
     private String gameId;
@@ -23,6 +21,8 @@ public class ContreeDeals {
 
     private final PlayableCardsFilter playableCardsFilter;
 
+    private final CardDealer cardDealer;
+
     private final DealScoreCalculator dealScoreCalculator;
 
     private ContreeDeal currentDeal;
@@ -31,17 +31,18 @@ public class ContreeDeals {
 
     private final ContreeGameEventSender gameEventSender;
 
-    @Inject
     public ContreeDeals(
             ContreeGameScore gameScore,
             DealScoreCalculator dealScoreCalculator,
             PlayableCardsFilter playableCardsFilter,
+            CardDealer cardDealer,
             ContreeGameEventSender eventSender
     ) {
-        this.gameScore = gameScore;
-        this.dealScoreCalculator = dealScoreCalculator;
-        this.playableCardsFilter = playableCardsFilter;
-        this.gameEventSender = eventSender;
+        this.gameScore              = gameScore;
+        this.dealScoreCalculator    = dealScoreCalculator;
+        this.playableCardsFilter    = playableCardsFilter;
+        this.cardDealer             = cardDealer;
+        this.gameEventSender        = eventSender;
     }
 
     public void startDeals(
@@ -62,6 +63,7 @@ public class ContreeDeals {
         currentDeal = new ContreeDeal(
                 new ContreeDealBids(),
                 new ContreeTricks(playableCardsFilter, gameEventSender),
+                cardDealer,
                 new ContreeDealScore(dealScoreCalculator),
                 gameEventSender
         );

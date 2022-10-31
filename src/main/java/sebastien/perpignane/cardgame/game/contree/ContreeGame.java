@@ -1,7 +1,5 @@
 package sebastien.perpignane.cardgame.game.contree;
 
-import jakarta.enterprise.context.Dependent;
-import jakarta.inject.Inject;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.AbstractGame;
@@ -14,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Dependent
 public class ContreeGame extends AbstractGame {
 
     private final ContreeGamePlayers gamePlayers;
@@ -23,7 +20,6 @@ public class ContreeGame extends AbstractGame {
 
     private final ContreeGameEventSender gameEventSender;
 
-    @Inject
     ContreeGame(
         ContreeGamePlayers gamePlayers,
         ContreeDeals gameDeals,

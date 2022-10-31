@@ -1,7 +1,5 @@
 package sebastien.perpignane.cardgame.game.contree;
 
-import org.jboss.weld.environment.se.Weld;
-import org.jboss.weld.environment.se.WeldContainer;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.game.GameTextDisplayer;
 import sebastien.perpignane.cardgame.player.contree.ContreeBotPlayer;
@@ -10,23 +8,17 @@ public class ContreeGameMain {
 
     public static void main(String[] args) {
 
-        Weld weld = new Weld();
-
-        try(final WeldContainer container = weld.initialize()) {
-
-            int i = 0;
-            while (i < 1000) {
-                startAGame(container);
-                i++;
-            }
-
+        int i = 0;
+        while (i < 1000) {
+            startAGame();
+            i++;
         }
 
     }
 
-    private static void startAGame( WeldContainer container) {
+    private static void startAGame() {
         try {
-            var game = container.select(ContreeGame.class).get();
+            var game = ContreeGameFactory.createGame(1000);
 
             game.registerAsGameObserver(GameTextDisplayer.getInstance());
 

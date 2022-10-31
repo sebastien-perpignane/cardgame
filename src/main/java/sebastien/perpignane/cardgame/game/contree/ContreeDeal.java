@@ -35,16 +35,20 @@ class ContreeDeal {
 
     private final ContreeTricks tricks;
 
+    private final CardDealer cardDealer;
+
     private final ContreeGameEventSender eventSender;
 
     public ContreeDeal(
             ContreeDealBids contreeDealBids,
             ContreeTricks tricks,
+            CardDealer cardDealer,
             ContreeDealScore dealScore,
             ContreeGameEventSender gameEventSender
     ) {
         this.dealStep        = DealStep.NOT_STARTED;
         this.eventSender     = gameEventSender;
+        this.cardDealer      = cardDealer;
         this.bids            = contreeDealBids;
         this.tricks          = tricks;
         this.score           = dealScore;
@@ -82,11 +86,7 @@ class ContreeDeal {
             throw new IllegalStateException("The cards cannot be equally distributed to all players");
         }
 
-        // TODO make it configurable
-        List<Integer> distributionConfiguration = List.of(3, 3, 2);
-
-        CardDealer cardDealer = new CardDealer(cards, numberOfPlayers, distributionConfiguration);
-        var distributedCards = cardDealer.dealCards();
+        var distributedCards = cardDealer.dealCards(cards, numberOfPlayers);
 
         for (int i = 0 ; i < distributedCards.size() ; i++) {
             players.receiveHandForPlayer(i, distributedCards.get(i));
