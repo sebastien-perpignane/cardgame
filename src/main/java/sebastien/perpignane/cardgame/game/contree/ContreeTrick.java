@@ -137,7 +137,7 @@ class ContreeTrick implements Trick {
         return playedCards.stream()
                 .filter(pc -> pc.card().getSuit() == wantedSuit || pc.card().getSuit() == trumpSuit)
                 .max(Comparator.comparingInt(a -> a.card().getGameValue()))
-                .orElseThrow(() -> new IllegalStateException("At least one card must be found is playedCards is not empty"))
+                .orElseThrow(() -> new IllegalStateException("At least one card must be found as playedCards is not empty"))
                 .player();
     }
 
