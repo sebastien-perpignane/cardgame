@@ -2,31 +2,14 @@ package sebastien.perpignane.cardgame.player.contree;
 
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
-import sebastien.perpignane.cardgame.game.AbstractGame;
 import sebastien.perpignane.cardgame.game.contree.ContreeBidValue;
-import sebastien.perpignane.cardgame.game.contree.ContreeGame;
-import sebastien.perpignane.cardgame.player.AbstractThreadBotPlayer;
-import sebastien.perpignane.cardgame.player.Player;
-import sebastien.perpignane.cardgame.player.Team;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 
-public class ContreeBotPlayer extends AbstractThreadBotPlayer<ContreeBotPlayer.PlayerMessage> implements ContreePlayer, Runnable {
+public class ContreeBotPlayer extends AbstractLocalThreadContreePlayer implements ContreePlayer, Runnable {
 
     private final String name;
-
-    private enum MessageType {
-        PLAY,
-        BID,
-        END_OF_GAME
-    }
-
-    public record PlayerMessage(
-            MessageType messageType,
-            Collection<ClassicalCard> allowedCards) {
-    }
 
     private static final Deque<String> fakeNames = new LinkedList<>();
 
@@ -43,101 +26,8 @@ public class ContreeBotPlayer extends AbstractThreadBotPlayer<ContreeBotPlayer.P
         addFakeNames();
     }
 
-    private ContreeTeam team;
-
-    private Collection<ClassicalCard> hand;
-
-    private ContreeGame contreeGame;
-
     public ContreeBotPlayer() {
-        //gameMsgQueue = new ArrayBlockingQueue<>(54);
         this.name = fakeNames.isEmpty() ? UUID.randomUUID().toString() : fakeNames.pop();
-    }
-
-    @Override
-    public void receiveHand(Collection<ClassicalCard> cards) {
-        this.hand = cards;
-    }
-
-    @Override
-    public void onUpdatedGame() {
-
-    }
-
-    @Override
-    public void setGame(AbstractGame game) {
-        this.contreeGame = (ContreeGame) game;
-    }
-
-    @Override
-    public boolean hasNoMoreCard() {
-        return hand.isEmpty();
-    }
-
-    @Override
-    public void receiveNewCards(Collection<ClassicalCard> cards) {
-
-    }
-
-    @Override
-    public void onGameStarted() {
-        startBotPlayer();
-    }
-
-    @Override
-    public void onGameOver() {
-        receiveNewMessage(new PlayerMessage(MessageType.END_OF_GAME, null));
-    }
-
-    @Override
-    public ClassicalCard play() {
-        return null;
-    }
-
-    @Override
-    public void onPlayerTurn() {
-        // do nothing
-    }
-
-    @Override
-    public void onPlayerTurn(Collection<ClassicalCard> allowedCards) {
-        receiveNewMessage(new PlayerMessage(MessageType.PLAY, allowedCards));
-    }
-
-    @Override
-    public int nbAvailableCards() {
-        return hand == null ? 0 : hand.size();
-    }
-
-    @Override
-    public Collection<ClassicalCard> getHand() {
-        return hand;
-    }
-
-    @Override
-    public Optional<ContreeTeam> getTeam() {
-        return Optional.ofNullable(team);
-    }
-
-    @Override
-    public void setTeam(Team team) {
-
-        if (team instanceof ContreeTeam ct) {
-            this.team = ct;
-        }
-        else {
-            throw new IllegalArgumentException("ContreeTeam expected");
-        }
-    }
-
-    @Override
-    public void onPlayerTurnToBid() {
-        receiveNewMessage(new PlayerMessage(MessageType.BID, Collections.emptyList()));
-    }
-
-    @Override
-    public boolean sameTeam(Player otherPlayer) {
-        return getTeam().orElseThrow() == otherPlayer.getTeam().orElseThrow();
     }
 
     protected void placeBid() {
@@ -145,7 +35,7 @@ public class ContreeBotPlayer extends AbstractThreadBotPlayer<ContreeBotPlayer.P
     }
 
     protected final void placeBid(ContreeBidValue bidValue, CardSuit cardSuit) {
-        contreeGame.placeBid(this, bidValue, cardSuit);
+        getGame().placeBid(this, bidValue, cardSuit);
     }
 
     @Override
@@ -154,43 +44,30 @@ public class ContreeBotPlayer extends AbstractThreadBotPlayer<ContreeBotPlayer.P
     }
 
     @Override
-    protected boolean handleMessage(PlayerMessage playerMessage) {
-
-        boolean mustExit = false;
-
-        switch (playerMessage.messageType()) {
-            case PLAY -> {
-                // TODO to be traced in an event manager
-                System.err.printf("Allowed cards : %s%n", playerMessage.allowedCards().stream().map(ClassicalCard::toString).collect(Collectors.joining(",")));
-                int cardIndex = new Random().nextInt(playerMessage.allowedCards().size());
-                Iterator<ClassicalCard> cardIterator = playerMessage.allowedCards.iterator();
-                ClassicalCard playedCard = null;
-                int i = 0;
-                while (i < (cardIndex == 0 ? 1 : cardIndex)) {
-                    playedCard = cardIterator.next();
-                    i++;
-                }
-                hand.remove(playedCard);
-                contreeGame.playCard(this, playedCard);
-            }
-            case BID -> {
-                // TODO to be traced in an event manager
-                System.err.printf("%s reacting to BID event%n", this);
-                placeBid();
-            }
-            case END_OF_GAME ->  {
-                // TODO to be traced in an event manager
-                System.err.printf("%s reacting to END_OF_GAME event%n", this);
-                mustExit = true;
-            }
-        }
-        return mustExit;
+    public String toString() {
+        return "{name=" + name + "-BOT, " +
+                "team=" + getTeam().orElseThrow() +'}';
     }
 
     @Override
-    public String toString() {
-        return "{name=" + name + "-BOT, " +
-                "team=" + team +'}';
+    void managePlayMessage(AbstractLocalThreadContreePlayer.PlayerMessage playerMessage) {
+        // TODO to be traced in an event manager
+        // System.err.printf("Allowed cards : %s%n", playerMessage.allowedCards().stream().map(ClassicalCard::toString).collect(Collectors.joining(",")));
+        int cardIndex = new Random().nextInt(playerMessage.allowedCards().size());
+        Iterator<ClassicalCard> cardIterator = playerMessage.allowedCards().iterator();
+        ClassicalCard playedCard = null;
+        int i = 0;
+        while (i < (cardIndex == 0 ? 1 : cardIndex)) {
+            playedCard = cardIterator.next();
+            i++;
+        }
+        getHand().remove(playedCard);
+        getGame().playCard(this, playedCard);
     }
 
+    @Override
+    void manageBidMessage(AbstractLocalThreadContreePlayer.PlayerMessage bidMessage) {
+        System.err.printf("%s reacting to BID event%n", this);
+        placeBid();
+    }
 }

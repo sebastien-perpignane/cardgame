@@ -137,7 +137,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
     }
 
-    @DisplayName("An opponent played trump against the player teammate, player must over trump")
+    @DisplayName("An opponent played trump against the player teammate, player must over trump when he has trump cards")
     @Test
     public void testFirstCardPlayed_notTrumpTrick_trumpCardPlayed_playerHasHigherCard() {
         trickTrumpSuit = CardSuit.HEARTS;
@@ -162,7 +162,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
     }
 
-    @DisplayName("An opponent played trump against the player teammate, player must under trump")
+    @DisplayName("An opponent played trump against the player teammate, player must under trump as he has trump")
     @Test
     public void testFirstCardPlayed_notTrumpTrick_trumpCardPlayed_playerHasNotHigherCard() {
         trickTrumpSuit = CardSuit.HEARTS;

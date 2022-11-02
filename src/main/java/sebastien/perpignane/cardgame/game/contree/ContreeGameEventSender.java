@@ -6,6 +6,7 @@ import sebastien.perpignane.cardgame.game.AbstractGameEventSender;
 import sebastien.perpignane.cardgame.game.CardGameObserver;
 import sebastien.perpignane.cardgame.game.GameObserver;
 import sebastien.perpignane.cardgame.player.Player;
+import sebastien.perpignane.cardgame.player.Team;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -59,8 +60,8 @@ public class ContreeGameEventSender extends AbstractGameEventSender {
         dealObservers.forEach(cdo -> cdo.onDealStarted(dealId));
     }
 
-    void sendEndOfDealEvent(String dealId) {
-        dealObservers.forEach(cdo -> cdo.onDealOver(dealId));
+    void sendEndOfDealEvent(String dealId, Team winnerTeam) {
+        dealObservers.forEach(cdo -> cdo.onDealOver(dealId, winnerTeam));
     }
 
     void sendPlacedBidEvent(String dealId, ContreeBid bid) {

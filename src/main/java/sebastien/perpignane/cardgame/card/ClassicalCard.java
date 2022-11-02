@@ -1,5 +1,9 @@
 package sebastien.perpignane.cardgame.card;
 
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+
 public enum ClassicalCard implements Card {
 
     ACE_DIAMOND(    CardRank.ACE,      CardSuit.DIAMONDS),
@@ -79,6 +83,10 @@ public enum ClassicalCard implements Card {
     @Override
     public CardSuit getSuit() {
         return suit;
+    }
+
+    public static List<ClassicalCard> sort(Collection<ClassicalCard> cards) {
+        return cards.stream().sorted(Comparator.comparing(ClassicalCard::getSuit).thenComparing(ClassicalCard::getRank)).toList();
     }
 
     @Override

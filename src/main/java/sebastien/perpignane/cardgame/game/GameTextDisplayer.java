@@ -9,6 +9,8 @@ import sebastien.perpignane.cardgame.game.contree.ContreeTrickObserver;
 import sebastien.perpignane.cardgame.game.war.WarGame;
 import sebastien.perpignane.cardgame.game.war.WarTrickObserver;
 import sebastien.perpignane.cardgame.player.Player;
+import sebastien.perpignane.cardgame.player.Team;
+import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
 import java.util.List;
 
@@ -59,7 +61,60 @@ public class GameTextDisplayer implements GameObserver, WarTrickObserver, Contre
 
     @Override
     public void onEndOfGame(ContreeGame contreeGame) {
-        System.out.printf("Game %s is over. Winner is %s%n", contreeGame, contreeGame.getWinner());
+
+        String team1WinnerAscii = """
+                                                                                                                                                                                                                                   
+     ##### /    ##   ###                                                                                 /###           /                                             # ###
+  ######  /  #####    ###     #                                                    #                    /  ############/                                            /  /###
+ /#   /  /     #####   ###   ###                                                  ###                  /     #########                                             /  /  ###
+/    /  ##     # ##      ##   #                                                    #                   #     /  #                                                 /  ##   ###
+    /  ###     #         ##                                                                             ##  /  ##                                                /  ###    ###
+   ##   ##     #         ## ###   ###  /###   ###  /###     /##  ###  /###       ###        /###           /  ###          /##       /###   ### /### /###       ##   ##     ## ###  /###     /##
+   ##   ##     #         ##  ###   ###/ #### / ###/ #### / / ###  ###/ #### /     ###      / #### /       ##   ##         / ###     / ###  / ##/ ###/ /##  /    ##   ##     ##  ###/ #### / / ###
+   ##   ##     #         ##   ##    ##   ###/   ##   ###/ /   ###  ##   ###/       ##     ##  ###/        ##   ##        /   ###   /   ###/   ##  ###/ ###/     ##   ##     ##   ##   ###/ /   ###
+   ##   ##     #         ##   ##    ##    ##    ##    ## ##    ### ##              ##    ####             ##   ##       ##    ### ##    ##    ##   ##   ##      ##   ##     ##   ##    ## ##    ###
+   ##   ##     #         ##   ##    ##    ##    ##    ## ########  ##              ##      ###            ##   ##       ########  ##    ##    ##   ##   ##      ##   ##     ##   ##    ## ########
+    ##  ##     #         ##   ##    ##    ##    ##    ## #######   ##              ##        ###           ##  ##       #######   ##    ##    ##   ##   ##       ##  ##     ##   ##    ## #######
+     ## #      #         /    ##    ##    ##    ##    ## ##        ##              ##          ###          ## #      / ##        ##    ##    ##   ##   ##        ## #      /    ##    ## ##
+      ###      /##      /     ##    ##    ##    ##    ## ####    / ##              ##     /###  ##           ###     /  ####    / ##    /#    ##   ##   ##         ###     /     ##    ## ####    /
+       #######/ #######/      ### / ###   ###   ###   ### ######/  ###             ### / / #### /             ######/    ######/   ####/ ##   ###  ###  ###         ######/      ###   ### ######/
+         ####     ####         ##/   ###   ###   ###   ### #####    ###             ##/     ###/                ###       #####     ###   ##   ###  ###  ###          ###         ###   ### #####
+                                                
+                """;
+
+        String team2WinnerAscii = """
+                                                                                                                                                                                                                              
+     ##### /    ##   ###                                                                                 /###           /                                         /###           /
+  ######  /  #####    ###     #                                                    #                    /  ############/                                         /  ############/
+ /#   /  /     #####   ###   ###                                                  ###                  /     #########                                          /     #########
+/    /  ##     # ##      ##   #                                                    #                   #     /  #                                               #     /  #     ##
+    /  ###     #         ##                                                                             ##  /  ##                                                ##  /  ##     ##
+   ##   ##     #         ## ###   ###  /###   ###  /###     /##  ###  /###       ###        /###           /  ###          /##       /###   ### /### /###           /  ###      ##    ###    ####      /###
+   ##   ##     #         ##  ###   ###/ #### / ###/ #### / / ###  ###/ #### /     ###      / #### /       ##   ##         / ###     / ###  / ##/ ###/ /##  /       ##   ##       ##    ###     ###  / / ###  /
+   ##   ##     #         ##   ##    ##   ###/   ##   ###/ /   ###  ##   ###/       ##     ##  ###/        ##   ##        /   ###   /   ###/   ##  ###/ ###/        ##   ##       ##     ###     ###/ /   ###/
+   ##   ##     #         ##   ##    ##    ##    ##    ## ##    ### ##              ##    ####             ##   ##       ##    ### ##    ##    ##   ##   ##         ##   ##       ##      ##      ## ##    ##
+   ##   ##     #         ##   ##    ##    ##    ##    ## ########  ##              ##      ###            ##   ##       ########  ##    ##    ##   ##   ##         ##   ##       ##      ##      ## ##    ##
+    ##  ##     #         ##   ##    ##    ##    ##    ## #######   ##              ##        ###           ##  ##       #######   ##    ##    ##   ##   ##          ##  ##       ##      ##      ## ##    ##
+     ## #      #         /    ##    ##    ##    ##    ## ##        ##              ##          ###          ## #      / ##        ##    ##    ##   ##   ##           ## #      / ##      ##      ## ##    ##
+      ###      /##      /     ##    ##    ##    ##    ## ####    / ##              ##     /###  ##           ###     /  ####    / ##    /#    ##   ##   ##            ###     /  ##      /#      /  ##    ##
+       #######/ #######/      ### / ###   ###   ###   ### ######/  ###             ### / / #### /             ######/    ######/   ####/ ##   ###  ###  ###            ######/    ######/ ######/    ######
+         ####     ####         ##/   ###   ###   ###   ### #####    ###             ##/     ###/                ###       #####     ###   ##   ###  ###  ###             ###       #####   #####      ####
+                                                                                                                                                                                                                                                                                                                                                                                                                       
+                """;
+
+        System.out.printf("Game %s is over!!%n", contreeGame);
+
+        String ascii;
+        if (contreeGame.getWinner().orElseThrow() == ContreeTeam.TEAM1) {
+            ascii = team1WinnerAscii;
+        }
+        else {
+            ascii = team2WinnerAscii;
+        }
+
+        System.out.println(ascii);
+
+
     }
 
     @Override
@@ -72,12 +127,25 @@ public class GameTextDisplayer implements GameObserver, WarTrickObserver, Contre
 
     @Override
     public void onDealStarted(String dealId) {
-        System.out.printf("Deal %s is started%n", dealId);
+        System.out.printf("""
+************************************************************************************************************************
+Deal %s is started%n
+************************************************************************************************************************
+""",
+                dealId);
     }
 
     @Override
-    public void onDealOver(String dealId) {
-        System.out.printf("Deal %s is over%n", dealId);
+    public void onDealOver(String dealId, Team winnerTeam) {
+        String winnerText = winnerTeam == null ? "No winner" : String.format("Winner is %s", winnerTeam);
+        System.out.printf("""
+************************************************************************************************************************
+Deal %s is over. %s%n
+************************************************************************************************************************
+""",
+                dealId,
+                winnerText
+        );
     }
 
     @Override

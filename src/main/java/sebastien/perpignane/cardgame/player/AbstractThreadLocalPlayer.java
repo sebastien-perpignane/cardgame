@@ -3,7 +3,7 @@ package sebastien.perpignane.cardgame.player;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-public abstract class AbstractThreadBotPlayer<T> implements Player, Runnable {
+public abstract class AbstractThreadLocalPlayer<T> implements Player, Runnable {
 
     private final BlockingQueue<T> gameMsgQueue = new ArrayBlockingQueue<>(54);
 
@@ -31,7 +31,7 @@ public abstract class AbstractThreadBotPlayer<T> implements Player, Runnable {
 
     public abstract String getName();
 
-    protected void startBotPlayer() {
+    protected void startPlayerThread() {
         var thread = new Thread(this, "PlayerThread-" + getName());
         thread.start();
     }

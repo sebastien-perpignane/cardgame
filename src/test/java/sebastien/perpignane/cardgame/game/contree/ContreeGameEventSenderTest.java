@@ -7,6 +7,7 @@ import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.GameObserver;
 import sebastien.perpignane.cardgame.game.GameState;
+import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -91,9 +92,9 @@ class ContreeGameEventSenderTest extends TestCasesManagingPlayers {
         doAnswer(invocationOnMock -> {
             calledFlag[0] = true;
             return null;
-        }).when(dealObserver).onDealOver(any());
+        }).when(dealObserver).onDealOver(any(), any());
 
-        gameEventSender.sendEndOfDealEvent("TEST");
+        gameEventSender.sendEndOfDealEvent("TEST", ContreeTeam.TEAM1);
 
         assertTrue(calledFlag[0]);
 
