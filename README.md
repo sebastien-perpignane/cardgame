@@ -37,6 +37,7 @@ java -Dmax-score=500 -jar target/cardgame-*-jar-with-dependencies.jar
 For further reference, please consider the following sections:
 
 * [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
+* [Belote contrée rules (french)](http://www.ffbelote.org/belote-contree/#6)
 * [What is a trick-taking game](https://en.wikipedia.org/wiki/Trick-taking_game)
 * [Official JUnit5 documentation](https://junit.org/junit5/docs/current/user-guide/)
 * [Official Mockito documentation](https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html)
