@@ -50,6 +50,10 @@ public class MockDealBuilder {
         when(deal.isDoubleBidExists()).thenReturn(isDouble); return this;
     }
 
+    public MockDealBuilder withIsCapotMadeByAttackTeam(boolean isCapotMadeByAttackTeam) {
+        when(deal.isCapotMadeByAttackTeam()).thenReturn(isCapotMadeByAttackTeam);return this;
+    }
+
     public MockDealBuilder withIsRedouble(boolean isRedouble) {
         when(deal.isRedoubleBidExists()).thenReturn(isRedouble); return this;
     }

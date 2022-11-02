@@ -353,6 +353,7 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
         ContreeDeal deal = MockDealBuilder.builder()
                 .withIsAnnouncedCapot(true)
                 .withIsCapot(true)
+                .withIsCapotMadeByAttackTeam(true)
                 .withIsDouble(false)
                 .withIsRedouble(false)
                 .withDealContractBid(
@@ -454,7 +455,7 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
     }
 
-    @DisplayName("Compute score when attack team announces capot and reach the contract, without double nor redouble")
+    @DisplayName("Compute score when attack team announces capot and does not reach the contract, without double nor redouble")
     @Test
     public void testAnnouncedCapotNotReached() {
 
@@ -466,6 +467,7 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
         ContreeDeal deal = MockDealBuilder.builder()
                 .withIsAnnouncedCapot(true)
                 .withIsCapot(false)
+                .withIsCapotMadeByAttackTeam(false)
                 .withIsDouble(false)
                 .withIsRedouble(false)
                 .withDealContractBid(
