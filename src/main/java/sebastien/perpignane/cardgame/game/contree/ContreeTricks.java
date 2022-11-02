@@ -83,7 +83,7 @@ public class ContreeTricks {
         return maxNbOverTricksReached;
     }
 
-    public Optional<ContreeTeam> teamDoingCapot() {
+    public Optional<ContreeTeam> teamWhoDidCapot() {
 
         if  (!maxNbOverTricksReached) {
             throw new IllegalStateException("Team doing capot cannot be computed if the deal is not over");
@@ -123,7 +123,11 @@ public class ContreeTricks {
     }
 
     public boolean isCapot() {
-        return teamDoingCapot().isPresent();
+        return teamWhoDidCapot().isPresent();
+    }
+
+    public boolean isCapotMadeByAttackTeam() {
+        return teamWhoDidCapot().isPresent() && teamWhoDidCapot().get() == deal.getAttackTeam().orElseThrow();
     }
 
     public int nbOverTricks() {

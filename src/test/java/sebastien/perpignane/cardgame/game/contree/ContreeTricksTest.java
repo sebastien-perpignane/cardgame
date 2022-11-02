@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
  Responsibilities of ContreeTricks are :
     * manage tricks lifecycle (start the first one, start a new one when the previous is over or stop when all tricks are played)
     * provide information about the tricks to allow deal score calculation
-        * teamDoingCapot *
+        * teamWhoDidCapot *
         * wonCardsByTeam *
         * lastTrick *
         * isCapot *
@@ -140,7 +140,7 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
 
     @DisplayName("All tricks are won by team 1, team 1 makes capot")
     @Test
-    public void testTeamDoingCapotWhenCapotHappens() {
+    public void testTeamWhoDidCapotWhenCapotHappens() {
         configureTrickPlayersForNumberOfTricks(8);
 
         tricksWithHeartAsTrumpSuit.startTricks(deal, trickPlayers);
@@ -157,8 +157,8 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
 
         assertTrue(tricksWithHeartAsTrumpSuit.isMaxNbOverTricksReached());
         assertTrue(tricksWithHeartAsTrumpSuit.isCapot());
-        assertTrue(tricksWithHeartAsTrumpSuit.teamDoingCapot().isPresent());
-        assertSame(ContreeTeam.TEAM1, tricksWithHeartAsTrumpSuit.teamDoingCapot().get());
+        assertTrue(tricksWithHeartAsTrumpSuit.teamWhoDidCapot().isPresent());
+        assertSame(ContreeTeam.TEAM1, tricksWithHeartAsTrumpSuit.teamWhoDidCapot().get());
 
         assertEquals(8, tricksWithHeartAsTrumpSuit.nbOverTricks());
         assertEquals(0, tricksWithHeartAsTrumpSuit.nbOngoingTricks());
@@ -167,7 +167,7 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
 
     @DisplayName("Not all tricks are won by the same team, no team doing capot")
     @Test
-    public void testTeamDoingCapotWhenNoCapot() {
+    public void testTeamWhoDidCapotWhenNoCapot() {
 
         configureTrickPlayersForNumberOfTricks(8);
 
@@ -192,7 +192,7 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
 
         assertTrue(tricksWithHeartAsTrumpSuit.isMaxNbOverTricksReached());
         assertFalse(tricksWithHeartAsTrumpSuit.isCapot());
-        assertTrue(tricksWithHeartAsTrumpSuit.teamDoingCapot().isEmpty());
+        assertTrue(tricksWithHeartAsTrumpSuit.teamWhoDidCapot().isEmpty());
 
         assertEquals(8, tricksWithHeartAsTrumpSuit.nbOverTricks());
         assertEquals(0, tricksWithHeartAsTrumpSuit.nbOngoingTricks());
@@ -218,9 +218,9 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
 
     }
 
-    @DisplayName("teamDoingCapot cannot be called if all tricks were not played yet")
+    @DisplayName("teamWhoDidCapot cannot be called if all tricks were not played yet")
     @Test
-    public void testComputeTeamDoingCapotFailsIfTricksAreNotOver() {
+    public void testComputeTeamWhoDidCapotFailsIfTricksAreNotOver() {
 
         configureTrickPlayersForNumberOfTricks(2);
 
@@ -234,7 +234,7 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
 
         assertThrows(
                 RuntimeException.class,
-                () -> tricksWithHeartAsTrumpSuit.teamDoingCapot()
+                () -> tricksWithHeartAsTrumpSuit.teamWhoDidCapot()
         );
 
     }

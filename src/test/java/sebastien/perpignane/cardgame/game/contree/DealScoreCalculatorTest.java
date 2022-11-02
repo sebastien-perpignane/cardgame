@@ -382,6 +382,78 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
         assertEquals(0, scoreByTeam.get(ContreeTeam.TEAM2));
     }
 
+    @DisplayName("A capot made by attack team that was not announced gives 250 points to attack team")
+    @Test
+    public void testNotAnnouncedCapotMadeByAttackTeam() {
+
+        var contractPlayer = player1;
+        var firstOpponent = player2;
+
+        Map<Team, Set<ContreeCard>> cardsByTeam = Map.of(
+                ContreeTeam.TEAM1, ContreeCard.of( CardSuit.HEARTS, CardSet.GAME_32.getGameCards() ),
+                ContreeTeam.TEAM2, ContreeCard.of(CardSuit.HEARTS, Collections.emptySet())
+        );
+
+        ContreeDeal deal = MockDealBuilder.builder()
+                .withIsAnnouncedCapot(false)
+                .withIsCapot(true)
+                .withIsDouble(false)
+                .withIsRedouble(false)
+                .withDealContractBid(
+                        new ContreeBid(contractPlayer, ContreeBidValue.HUNDRED_SIXTY, CardSuit.HEARTS)
+                )
+                .withAttackTeam(ContreeTeam.TEAM1)
+                .withDefenseTeam(ContreeTeam.TEAM2)
+                .withLastTrickWinnerTeam(ContreeTeam.TEAM1)
+                .withCardsByTeam(cardsByTeam)
+                .build();
+
+        // To make sure that buildPlayers() always return different teams for player 1 and player 2
+        assertNotEquals(contractPlayer.getTeam(), firstOpponent.getTeam());
+
+        var scoreByTeam = dealScoreCalculator.computeDealScores(deal);
+
+        assertEquals(250, scoreByTeam.get(contractPlayer.getTeam().orElseThrow()));
+        assertEquals(0, scoreByTeam.get(firstOpponent.getTeam().orElseThrow()));
+
+    }
+
+    @DisplayName("A capot made by defense team gives 250 points to defense team")
+    @Test
+    public void testNotAnnouncedCapotMadeByDefenseTeam() {
+
+        var contractPlayer = player1;
+        var firstOpponent = player2;
+
+        Map<Team, Set<ContreeCard>> cardsByTeam = Map.of(
+                ContreeTeam.TEAM1, ContreeCard.of( CardSuit.HEARTS, Collections.emptySet() ),
+                ContreeTeam.TEAM2, ContreeCard.of( CardSuit.HEARTS, CardSet.GAME_32.getGameCards() )
+        );
+
+        ContreeDeal deal = MockDealBuilder.builder()
+                .withIsAnnouncedCapot(false)
+                .withIsCapot(true)
+                .withIsDouble(false)
+                .withIsRedouble(false)
+                .withDealContractBid(
+                        new ContreeBid(contractPlayer, ContreeBidValue.EIGHTY, CardSuit.HEARTS)
+                )
+                .withAttackTeam(ContreeTeam.TEAM1)
+                .withDefenseTeam(ContreeTeam.TEAM2)
+                .withLastTrickWinnerTeam(ContreeTeam.TEAM1)
+                .withCardsByTeam(cardsByTeam)
+                .build();
+
+        // To make sure that buildPlayers() always return different teams for player 1 and player 2
+        assertNotEquals(contractPlayer.getTeam(), firstOpponent.getTeam());
+
+        var scoreByTeam = dealScoreCalculator.computeDealScores(deal);
+
+        assertEquals(0, scoreByTeam.get(contractPlayer.getTeam().orElseThrow()));
+        assertEquals(250, scoreByTeam.get(firstOpponent.getTeam().orElseThrow()));
+
+    }
+
     @DisplayName("Compute score when attack team announces capot and reach the contract, without double nor redouble")
     @Test
     public void testAnnouncedCapotNotReached() {
@@ -393,7 +465,7 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
         ContreeDeal deal = MockDealBuilder.builder()
                 .withIsAnnouncedCapot(true)
-                .withIsCapot(true)
+                .withIsCapot(false)
                 .withIsDouble(false)
                 .withIsRedouble(false)
                 .withDealContractBid(
@@ -404,8 +476,6 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
                 .withLastTrickWinnerTeam(ContreeTeam.TEAM1)
                 .withCardsByTeam(cardsByTeam)
                 .build();
-
-
 
         // To make sure that buildPlayers() always return different teams for player 1 and player 2
         assertNotEquals(contractPlayer.getTeam(), firstOpponent.getTeam());

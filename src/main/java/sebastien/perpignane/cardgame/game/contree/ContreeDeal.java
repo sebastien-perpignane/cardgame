@@ -193,6 +193,10 @@ class ContreeDeal {
         return tricks.isCapot();
     }
 
+    public boolean isCapotMadeByAttackTeam() {
+        return tricks.isCapotMadeByAttackTeam();
+    }
+
     public boolean isAnnouncedCapot() {
         return bids.isAnnouncedCapot();
     }
