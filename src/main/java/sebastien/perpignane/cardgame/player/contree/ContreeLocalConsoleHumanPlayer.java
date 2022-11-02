@@ -56,37 +56,50 @@ public class ContreeLocalConsoleHumanPlayer extends AbstractLocalThreadContreePl
     @Override
     void managePlayMessage(PlayerMessage playMessage) {
 
+        boolean cardPlayed = false;
+
         Scanner scanner = new Scanner(System.in);
 
         final String allowedCards = collectionToJoinedStr(
                 ClassicalCard.sort(playMessage.allowedCards())
         );
 
-        out.printf("Your turn to play, %s.%n", getName());
-        out.printf("Here is your hand : %s%n", playerHandAsSortedJoinedStr());
+        while (!cardPlayed) {
+            try {
+                out.printf("Your turn to play, %s.%n", getName());
+                out.printf("Here is your hand : %s%n", playerHandAsSortedJoinedStr());
 
-        ClassicalCard playedCard = null;
-        if (playMessage.allowedCards().size() == 1) {
-            playedCard = playMessage.allowedCards().iterator().next();
-            out.printf("Only one allowed card: %s. This card is played automatically. Please press enter.%n", playedCard);
-            scanner.nextLine();
-        }
-        while (playedCard == null) {
-            out.printf("Select a card among the allowed ones : %s:%n", allowedCards);
-            String selectedCard = scanner.nextLine();
-            playedCard = cardByLabel.get(selectedCard);
-            if (playedCard != null && !playMessage.allowedCards().contains(playedCard)) {
-                out.printf("%s is not an allowed card. Please play one of these cards : %s", playedCard, allowedCards);
-                playedCard = null;
+                ClassicalCard playedCard = null;
+                if (playMessage.allowedCards().size() == 1) {
+                    playedCard = playMessage.allowedCards().iterator().next();
+                    out.printf("Only one allowed card: %s. This card is played automatically. Please press enter.%n", playedCard);
+                    scanner.nextLine();
+                }
+                while (playedCard == null) {
+                    out.printf("Select a card among the allowed ones : %s:%n", allowedCards);
+                    String selectedCard = scanner.nextLine();
+                    playedCard = cardByLabel.get(selectedCard);
+                    if (playedCard != null && !playMessage.allowedCards().contains(playedCard)) {
+                        out.printf("%s is not an allowed card. Please play one of these cards : %s", playedCard, allowedCards);
+                        playedCard = null;
+                    }
+                }
+                getHand().remove(playedCard);
+                getGame().playCard(this, playedCard);
+                cardPlayed = true;
+            }
+            catch(Exception e) {
+                System.err.printf("Error occurred when playing your card: %s. Please try again.%n", e.getMessage());
             }
         }
-        getHand().remove(playedCard);
-        getGame().playCard(this, playedCard);
 
     }
 
     @Override
     void manageBidMessage(PlayerMessage bidMessage) {
+
+        int nbTries = 0;
+        boolean bidPlaced = false;
 
         Scanner scanner = new Scanner(System.in);
 
@@ -101,33 +114,48 @@ public class ContreeLocalConsoleHumanPlayer extends AbstractLocalThreadContreePl
                         .sorted()
                 );
 
-        ContreeBidValue bidValue = null;
-        CardSuit bidSuit = null;
-
         out.printf("Your turn to bid, %s.%n", getName());
         out.printf("Here is your hand : %s%n", playerHandAsSortedJoinedStr());
 
+        while (!bidPlaced && nbTries < 3) {
+            try {
+                ContreeBidValue bidValue = null;
+                CardSuit bidSuit = null;
 
-        while (bidValue == null) {
-            out.printf("Select a bid value. Allowed values are : %s%n : ", bidValues);
-            String selectedBid = scanner.nextLine();
+                while (bidValue == null) {
+                    out.printf("Select a bid value. Allowed values are : %s%n : ", bidValues);
+                    String selectedBid = scanner.nextLine();
 
-            bidValue = bidValueByLabel.get(selectedBid);
+                    bidValue = bidValueByLabel.get(selectedBid);
 
+                }
+
+                if ( !bidValue.isCardSuitRequired() ) {
+                    getGame().placeBid(this, bidValue, null);
+                    return;
+                }
+
+                while (bidSuit == null) {
+                    out.printf("Select a card suit. Allowed values are : %s%n : ", cardSuitValues);
+                    String selectedSuit = scanner.nextLine();
+                    bidSuit = cardSuitByLabel.get(selectedSuit);
+                }
+
+                getGame().placeBid(this, bidValue, bidSuit);
+                bidPlaced = true;
+            }
+            catch (Exception e) {
+                System.err.printf("Error occurred when placing your bid: %s. Please try again.%n", e.getMessage());
+            }
+            finally {
+                nbTries++;
+            }
         }
 
-        if ( !bidValue.isCardSuitRequired() ) {
-            getGame().placeBid(this, bidValue, null);
-            return;
+        if (!bidPlaced) {
+            System.err.println("It looks like you cannot bid. Is it a technical issue ? Please create an issue at https://github.com/sebastien-perpignane/cardgame/");
+            System.exit(1);
         }
-
-        while (bidSuit == null) {
-            out.printf("Select a card suit. Allowed values are : %s%n : ", cardSuitValues);
-            String selectedSuit = scanner.nextLine();
-            bidSuit = cardSuitByLabel.get(selectedSuit);
-        }
-
-        getGame().placeBid(this, bidValue, bidSuit);
 
     }
 
