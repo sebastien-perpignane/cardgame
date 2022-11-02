@@ -16,14 +16,22 @@ War game was just a warm-up. The final objective of the project is a try to prov
 Java 17 is required. I suggest to install the JDK with [SdkMan](https://sdkman.io/).
 
 ## How to run contree games
-You can run contree games played by 4 stupid bots with this command  :
+
+### You can play a contree game in text mode with 3 (stupid) bots who never bid by running this command :
 
 ```bash
 java -jar target/cardgame-*-jar-with-dependencies.jar
 ```
 
-* It will start 1000 (more or less) simultaneous games.
-* The main class used is the beginning of a resource consumption test
+### You can run a "4 bots" game by adding the "only-bots" property :
+```bash
+java -Donly-bots=true -jar target/cardgame-*-jar-with-dependencies.jar
+```
+
+### Default score to reach to end a game is 1000. You can change the max score with the "max-score" property : 
+```bash
+java -Dmax-score=500 -jar target/cardgame-*-jar-with-dependencies.jar
+```
 
 ### Reference Documentation
 For further reference, please consider the following sections:

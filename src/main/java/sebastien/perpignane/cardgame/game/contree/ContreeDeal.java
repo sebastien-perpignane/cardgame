@@ -131,7 +131,7 @@ class ContreeDeal {
         score.computeScore(this);
         dealStep = DealStep.OVER;
         endOfStepEventSender.accept(dealId);
-        eventSender.sendEndOfDealEvent(dealId);
+        eventSender.sendEndOfDealEvent(dealId, score.winnerTeam().orElse(null));
     }
 
     private void startPlay() {
@@ -181,6 +181,7 @@ class ContreeDeal {
         return dealStep == DealStep.OVER;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isNotStarted() {
         return dealStep == DealStep.NOT_STARTED;
     }
@@ -191,6 +192,10 @@ class ContreeDeal {
 
     public boolean isCapot() {
         return tricks.isCapot();
+    }
+
+    public boolean isCapotMadeByAttackTeam() {
+        return tricks.isCapotMadeByAttackTeam();
     }
 
     public boolean isAnnouncedCapot() {

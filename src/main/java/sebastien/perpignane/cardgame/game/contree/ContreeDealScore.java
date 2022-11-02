@@ -3,6 +3,7 @@ package sebastien.perpignane.cardgame.game.contree;
 import sebastien.perpignane.cardgame.player.Team;
 
 import java.util.Map;
+import java.util.Optional;
 
 public class ContreeDealScore {
 
@@ -20,6 +21,10 @@ public class ContreeDealScore {
 
     public Integer getTeamScore(Team team) {
         return scoreByTeam.get(team);
+    }
+
+    public Optional<Team> winnerTeam() {
+        return scoreByTeam.entrySet().stream().filter(e -> e.getValue() > 0).max(Map.Entry.comparingByValue()).map(Map.Entry::getKey);
     }
 
 }

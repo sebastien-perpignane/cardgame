@@ -1,6 +1,5 @@
 package sebastien.perpignane.cardgame.game.contree;
 
-import sebastien.perpignane.cardgame.card.CardSet;
 import sebastien.perpignane.cardgame.card.contree.ContreeCard;
 import sebastien.perpignane.cardgame.card.contree.ValuableCard;
 import sebastien.perpignane.cardgame.player.Team;
@@ -49,12 +48,13 @@ class DealScoreCalculator {
             throw new IllegalStateException(String.format("Cheating detected : cardScore sum (including 10 de der) must be %d. Calculated sum is %d", EXPECTED_CARD_SCORE_SUM, cardScoreSum));
         }
 
-        if (deal.isDoubleBidExists() || deal.isRedoubleBidExists() || deal.isCapot()) {
+        if ( deal.isDoubleBidExists() || deal.isRedoubleBidExists() || deal.isAnnouncedCapot() || deal.isCapot() ) {
             return computeDoubledOrRedoubledOrCapotDeal(deal, cardScoreByTeam);
         }
         else if (!contractIsReached(deal, cardScoreByTeam)) {
             scoreByTeam.put(deal.getAttackTeam().orElseThrow(), 0);
-            scoreByTeam.put(deal.getDefenseTeam().orElseThrow(), ContreeBidValue.HUNDRED_SIXTY.getExpectedScore());
+            var winnerScore = deal.isCapot() ? ContreeBidValue.CAPOT.getExpectedScore() : ContreeBidValue.HUNDRED_SIXTY.getExpectedScore();
+            scoreByTeam.put(deal.getDefenseTeam().orElseThrow(), winnerScore);
         }
         else {
             scoreByTeam.putAll(cardScoreByTeam);
@@ -90,12 +90,11 @@ class DealScoreCalculator {
         }
 
         int winnerBaseScore = ContreeBidValue.HUNDRED_SIXTY.getExpectedScore();
-
         if (deal.isCapot()) {
             winnerBaseScore = ContreeBidValue.CAPOT.getExpectedScore();
-            if (deal.isAnnouncedCapot()) {
-                winnerBaseScore *= 2;
-            }
+        }
+        if (deal.isAnnouncedCapot()) {
+            winnerBaseScore = ContreeBidValue.CAPOT.getExpectedScore() * 2;
         }
 
         Map<Team, Integer> scoreByTeam = new HashMap<>();
@@ -113,7 +112,7 @@ class DealScoreCalculator {
             throw new IllegalStateException("Computing score for a no bid deal does not make sense");
         }
         if (deal.isAnnouncedCapot()) {
-            return cardsByTeam.get(attackTeam).size() == CardSet.GAME_32.getGameCards().size();
+            return deal.isCapotMadeByAttackTeam();
         }
         return cardScoreByTeam.get(attackTeam) >= deal.getContractBid().get().bidValue().getExpectedScore();
     }

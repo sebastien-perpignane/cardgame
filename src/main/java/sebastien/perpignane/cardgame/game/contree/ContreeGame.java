@@ -78,7 +78,7 @@ public class ContreeGame extends AbstractGame {
         if (isOver()) {
             throw new IllegalStateException("This game is over, you cannot register an observer on it");
         }
-        gameEventSender.registerAsGameObserver(observer);
+        gameEventSender.registerAsObserver(observer);
     }
 
     public Optional<ContreeTeam> getWinner() {

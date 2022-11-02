@@ -17,7 +17,7 @@ import static sebastien.perpignane.cardgame.game.contree.ContreeTestUtils.buildP
 
 public class ContreeTrickWinnerTest extends TestCasesManagingPlayers {
 
-    private ContreeTrick trick;
+    private ContreeTrick trickWithClubAsTrump;
 
     @BeforeAll
     public static void globalSetUp() {
@@ -36,22 +36,22 @@ public class ContreeTrickWinnerTest extends TestCasesManagingPlayers {
 
         when(playableCardsFilter.playableCards(any(), any())).thenReturn(CardSet.GAME_32.getGameCards());
 
-        trick = new ContreeTrick(deal, "TEST", trickPlayers, playableCardsFilter);
+        trickWithClubAsTrump = new ContreeTrick(deal, "TEST", trickPlayers, playableCardsFilter);
     }
 
     @DisplayName("non trump trick where player playing ACE must win")
     @Test
     public void testExpectedWinner_noTrump_ace() {
-        trick.startTrick();
+        trickWithClubAsTrump.startTrick();
 
-        trick.playerPlays(player1, ClassicalCard.ACE_DIAMOND);
-        trick.playerPlays(player2, ClassicalCard.SEVEN_DIAMOND);
-        trick.playerPlays(player3, ClassicalCard.TEN_DIAMOND);
-        trick.playerPlays(player4, ClassicalCard.JACK_DIAMOND);
+        trickWithClubAsTrump.playerPlays(player1, ClassicalCard.ACE_DIAMOND);
+        trickWithClubAsTrump.playerPlays(player2, ClassicalCard.SEVEN_DIAMOND);
+        trickWithClubAsTrump.playerPlays(player3, ClassicalCard.TEN_DIAMOND);
+        trickWithClubAsTrump.playerPlays(player4, ClassicalCard.JACK_DIAMOND);
 
-        assertTrue(trick.isOver());
-        assertNotNull(trick.getWinner());
-        assertSame(player1, trick.getWinner());
+        assertTrue(trickWithClubAsTrump.isOver());
+        assertNotNull(trickWithClubAsTrump.getWinner());
+        assertSame(player1, trickWithClubAsTrump.getWinner());
 
     }
 
@@ -59,16 +59,16 @@ public class ContreeTrickWinnerTest extends TestCasesManagingPlayers {
     @DisplayName("non trump trick where player playing TEN must win")
     @Test
     public void testExpectedWinner_noTrump_ten() {
-        trick.startTrick();
+        trickWithClubAsTrump.startTrick();
 
-        trick.playerPlays(player1, ClassicalCard.TEN_DIAMOND);
-        trick.playerPlays(player2, ClassicalCard.SEVEN_DIAMOND);
-        trick.playerPlays(player3, ClassicalCard.EIGHT_DIAMOND);
-        trick.playerPlays(player4, ClassicalCard.JACK_DIAMOND);
+        trickWithClubAsTrump.playerPlays(player1, ClassicalCard.TEN_DIAMOND);
+        trickWithClubAsTrump.playerPlays(player2, ClassicalCard.SEVEN_DIAMOND);
+        trickWithClubAsTrump.playerPlays(player3, ClassicalCard.EIGHT_DIAMOND);
+        trickWithClubAsTrump.playerPlays(player4, ClassicalCard.JACK_DIAMOND);
 
-        assertTrue(trick.isOver());
-        assertNotNull(trick.getWinner());
-        assertSame(player1, trick.getWinner());
+        assertTrue(trickWithClubAsTrump.isOver());
+        assertNotNull(trickWithClubAsTrump.getWinner());
+        assertSame(player1, trickWithClubAsTrump.getWinner());
 
     }
 
@@ -76,16 +76,16 @@ public class ContreeTrickWinnerTest extends TestCasesManagingPlayers {
     @Test
     public void testExpectedWinner_trump_jack() {
 
-        trick.startTrick();
+        trickWithClubAsTrump.startTrick();
 
-        trick.playerPlays(player1, ClassicalCard.ACE_CLUB);
-        trick.playerPlays(player2, ClassicalCard.SEVEN_CLUB);
-        trick.playerPlays(player3, ClassicalCard.TEN_CLUB);
-        trick.playerPlays(player4, ClassicalCard.JACK_CLUB);
+        trickWithClubAsTrump.playerPlays(player1, ClassicalCard.ACE_CLUB);
+        trickWithClubAsTrump.playerPlays(player2, ClassicalCard.SEVEN_CLUB);
+        trickWithClubAsTrump.playerPlays(player3, ClassicalCard.TEN_CLUB);
+        trickWithClubAsTrump.playerPlays(player4, ClassicalCard.JACK_CLUB);
 
-        assertTrue(trick.isOver());
-        assertNotNull(trick.getWinner());
-        assertSame(player4, trick.getWinner());
+        assertTrue(trickWithClubAsTrump.isOver());
+        assertNotNull(trickWithClubAsTrump.getWinner());
+        assertSame(player4, trickWithClubAsTrump.getWinner());
 
     }
 
@@ -261,6 +261,40 @@ public class ContreeTrickWinnerTest extends TestCasesManagingPlayers {
         assertNotNull(trick.getWinner());
         assertSame(players.get(3), trick.getWinner());
 
+    }
+
+    @DisplayName("""
+If a player plays a card with the highest rank of the trick
+but the suit of his card is not the wanted suit of the trick, he does not win
+    """)
+    @Test
+    public void testExpectedWinner_highestCardOnNotWantedSuit() {
+        trickWithClubAsTrump.startTrick();
+
+        trickWithClubAsTrump.playerPlays(player1, ClassicalCard.JACK_DIAMOND);
+        trickWithClubAsTrump.playerPlays(player2, ClassicalCard.TEN_HEART);
+        trickWithClubAsTrump.playerPlays(player3, ClassicalCard.ACE_HEART);
+        trickWithClubAsTrump.playerPlays(player4, ClassicalCard.SEVEN_SPADE);
+
+        assertTrue(trickWithClubAsTrump.isOver());
+        assertNotNull(trickWithClubAsTrump.getWinner());
+        assertSame(player1, trickWithClubAsTrump.getWinner());
+    }
+
+    @DisplayName("A low rank trump card will win a trick, even if higher wanted suit card has a higher rank than the trump card")
+    @Test
+    public void testExpectedWinner_trumpedTrick_trumpIsLowerRankThanHighestWantedSuitCard() {
+
+        trickWithClubAsTrump.startTrick();
+
+        trickWithClubAsTrump.playerPlays(player1, ClassicalCard.ACE_DIAMOND);
+        trickWithClubAsTrump.playerPlays(player2, ClassicalCard.SEVEN_DIAMOND);
+        trickWithClubAsTrump.playerPlays(player3, ClassicalCard.SEVEN_CLUB);
+        trickWithClubAsTrump.playerPlays(player4, ClassicalCard.TEN_DIAMOND);
+
+        assertTrue(trickWithClubAsTrump.isOver());
+        assertNotNull(trickWithClubAsTrump.getWinner());
+        assertSame(player3, trickWithClubAsTrump.getWinner());
     }
 
 }
