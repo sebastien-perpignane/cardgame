@@ -136,15 +136,20 @@ Deal %s is started%n
     }
 
     @Override
-    public void onDealOver(String dealId, Team winnerTeam) {
-        String winnerText = winnerTeam == null ? "No winner" : String.format("Winner is %s", winnerTeam);
+    public void onDealOver(String dealId, Team winnerTeam, Integer team1Score, Integer team2Score) {
+        String winnerText = winnerTeam == null ? "No winner" : String.format("Winner is %s.", winnerTeam);
         System.out.printf("""
 ************************************************************************************************************************
 Deal %s is over. %s%n
+Deal score :
+    Team 1: %d
+    Team 2: %d
 ************************************************************************************************************************
 """,
                 dealId,
-                winnerText
+                winnerText,
+                team1Score,
+                team2Score
         );
     }
 

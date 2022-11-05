@@ -92,9 +92,9 @@ class ContreeGameEventSenderTest extends TestCasesManagingPlayers {
         doAnswer(invocationOnMock -> {
             calledFlag[0] = true;
             return null;
-        }).when(dealObserver).onDealOver(any(), any());
+        }).when(dealObserver).onDealOver(any(), any(), any(), any());
 
-        gameEventSender.sendEndOfDealEvent("TEST", ContreeTeam.TEAM1);
+        gameEventSender.sendEndOfDealEvent("TEST", ContreeTeam.TEAM1, 0, 0);
 
         assertTrue(calledFlag[0]);
 

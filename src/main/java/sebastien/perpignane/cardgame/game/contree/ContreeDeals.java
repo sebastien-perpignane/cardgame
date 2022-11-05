@@ -96,7 +96,8 @@ public class ContreeDeals {
         if (currentDeal.isOver()) {
             gameScore.addDealScore(currentDeal);
             // TODO Send updated score event
-            ContreeTeam.getTeams().forEach(t -> System.out.printf("Score of Team %s : %d%n", t, gameScore.getTeamScore(t)));
+            System.out.println("Game score:");
+            ContreeTeam.getTeams().forEach(t -> System.out.printf("\t%s: %d%n", t, gameScore.getTeamScore(t)));
 
             if (!isMaximumScoreReached()) {
                 createAndStartNewDeal();
