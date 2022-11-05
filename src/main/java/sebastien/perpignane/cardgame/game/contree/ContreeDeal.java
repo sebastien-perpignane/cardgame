@@ -131,7 +131,11 @@ class ContreeDeal {
         score.computeScore(this);
         dealStep = DealStep.OVER;
         endOfStepEventSender.accept(dealId);
-        eventSender.sendEndOfDealEvent(dealId, score.winnerTeam().orElse(null));
+
+        Integer team1Score = score.getTeamScore(ContreeTeam.TEAM1);
+        Integer team2Score = score.getTeamScore(ContreeTeam.TEAM2);
+
+        eventSender.sendEndOfDealEvent(dealId, score.winnerTeam().orElse(null), team1Score, team2Score);
     }
 
     private void startPlay() {
