@@ -5,6 +5,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
@@ -60,9 +62,9 @@ class ContreeBidPlayersImplTest extends TestCasesManagingPlayers {
         doAnswer(invocationOnMock -> {
             called[0] = true;
             return null;
-        }).when(player1).onPlayerTurnToBid();
+        }).when(player1).onPlayerTurnToBid(anySet());
 
-        bidPlayers.onCurrentBidderTurnToBid();
+        bidPlayers.onCurrentBidderTurnToBid(Set.of(ContreeBidValue.NONE));
 
         assertTrue(called[0]);
 
@@ -76,10 +78,10 @@ class ContreeBidPlayersImplTest extends TestCasesManagingPlayers {
         doAnswer(invocationOnMock -> {
             called[0] = true;
             return null;
-        }).when(player2).onPlayerTurnToBid();
+        }).when(player2).onPlayerTurnToBid(anySet());
 
         bidPlayers.goToNextBidder();
-        bidPlayers.onCurrentBidderTurnToBid();
+        bidPlayers.onCurrentBidderTurnToBid(Set.of(ContreeBidValue.NONE));
 
         assertTrue(called[0]);
 

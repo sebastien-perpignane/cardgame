@@ -1,11 +1,8 @@
 package sebastien.perpignane.cardgame.game.contree;
 
-import sebastien.perpignane.cardgame.player.Player;
+import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 
 public class ContreeDealBids {
@@ -18,13 +15,22 @@ public class ContreeDealBids {
 
     private ContreeBidPlayers bidPlayers;
 
-    public ContreeDealBids() {
+    private ContreePlayer currentBidder;
+
+    private BiddableValuesFilter.BidFilterResult currentBidderFilterResult;
+
+    private final BiddableValuesFilter biddableValuesFilter;
+
+    public ContreeDealBids(BiddableValuesFilter biddableValuesFilter) {
         bids = new ArrayList<>();
+        this.biddableValuesFilter = biddableValuesFilter;
     }
 
     public void startBids(ContreeBidPlayers bidPlayers) {
         this.bidPlayers = bidPlayers;
-        this.bidPlayers.onCurrentBidderTurnToBid();
+        currentBidder = bidPlayers.getCurrentBidder();
+        currentBidderFilterResult = biddableValuesFilter.biddableValues(currentBidder, this);
+        currentBidder.onPlayerTurnToBid(currentBidderFilterResult.biddableValues());
     }
 
     public void placeBid(ContreeBid bid) {
@@ -43,7 +49,9 @@ public class ContreeDealBids {
 
         if (!bidsAreOver()) {
             bidPlayers.goToNextBidder();
-            bidPlayers.onCurrentBidderTurnToBid();
+            currentBidder = bidPlayers.getCurrentBidder();
+            currentBidderFilterResult = biddableValuesFilter.biddableValues(currentBidder, this);
+            currentBidder.onPlayerTurnToBid(currentBidderFilterResult.biddableValues());
         }
 
     }
@@ -52,56 +60,45 @@ public class ContreeDealBids {
         return bids.size() == maxBids || bids.stream().anyMatch(ContreeBid::isRedouble);
     }
 
+    static class BidNotAllowedException extends RuntimeException  {
+
+        private final boolean suspectedCheat;
+
+        public BidNotAllowedException(String message) {
+            this(message, false);
+        }
+
+        public BidNotAllowedException(String message, boolean suspectedCheat) {
+            super(message);
+            this.suspectedCheat = suspectedCheat;
+        }
+
+        public boolean isSuspectedCheat() {
+            return suspectedCheat;
+        }
+    }
+
     private void throwsExceptionIfBidIsInvalid(ContreeBid bid) {
 
+        Map<ContreeBidValue, String> exclusionCauseByBidValue = currentBidderFilterResult.exclusionCauseByBidValue();
+
         if (bidsAreOver()) {
-            throw new IllegalStateException("Bids are over");
+            throw new BidNotAllowedException("Bids are over", true);
         }
 
-        if (bidPlayers.getCurrentBidder() != bid.player()) {
-            throw new IllegalStateException(String.format("Cheater detected : player %s is not the current bidder. Current bidder is: %s", bid.player(), bidPlayers.getCurrentBidder()));
+        if (currentBidder != bid.player()) {
+            throw new BidNotAllowedException(String.format("Cheater detected : player %s is not the current bidder. Current bidder is: %s", bid.player(), currentBidder ), true);
         }
 
-        // Cannot double if no bid <> NONE exists
-        // Cannot redouble if no double bid exists
-        if (bid.isDouble()) {
-            var highestBid = highestBid();
-            if (highestBid.isEmpty() || highestBid().orElseThrow().bidValue() == ContreeBidValue.NONE) {
-                throw new IllegalStateException("Double is not allowed if no player has bid before");
-            }
-            if (highestBid().orElseThrow().player().getTeam().orElseThrow() == bid.player().getTeam().orElseThrow()) {
-                throw new IllegalStateException("A player cannot double his team mate");
-            }
-
+        if (exclusionCauseByBidValue.containsKey(bid.bidValue())) {
+            throw new BidNotAllowedException(exclusionCauseByBidValue.get(bid.bidValue()));
         }
 
-        // Cannot double if highest bid is from teammate
-        // Cannot redouble if double bid is from teammate
-        if (bid.isRedouble()) {
-            if (!isDoubleBidExists()) {
-                throw new IllegalStateException("Redouble is not allowed if no player has doubled before");
-            }
-
-            if (isDoubleBidExists() && doublePlayer().orElseThrow().getTeam().orElseThrow() == bid.player().getTeam().orElseThrow()) {
-                throw new IllegalStateException("Redouble is not allowed if doubling player is in the same team");
-            }
-        }
-
-        if (!bids.isEmpty() && !bid.isNone()) {
-            var highestBid = highestBid();
-            boolean overBid = highestBid.orElseThrow().bidValue().ordinal() < bid.bidValue().ordinal();
-            if (!overBid) {
-                throw new IllegalArgumentException(String.format("Illegal bid as last bid value %s is higher than current bid value (%s)", highestBid.orElseThrow().bidValue(), bid.bidValue()));
-            }
-        }
     }
 
     public boolean hasOnlyNoneBids()  {
         var highestBid = highestBid();
-        if (highestBid.isEmpty()) {
-            return false;
-        }
-        return highestBid.get().isNone();
+        return highestBid.map(ContreeBid::isNone).orElse(false);
     }
 
     Optional<ContreeBid> highestBid() {
@@ -133,10 +130,5 @@ public class ContreeDealBids {
     public boolean containsBidValue(final ContreeBidValue bidValue) {
         return bids.stream().anyMatch(cb -> cb.bidValue() == bidValue);
     }
-
-    private Optional<? extends Player> doublePlayer() {
-        return bids.stream().filter(cb -> cb.bidValue() == ContreeBidValue.DOUBLE).map(ContreeBid::player).findFirst();
-    }
-
 
 }

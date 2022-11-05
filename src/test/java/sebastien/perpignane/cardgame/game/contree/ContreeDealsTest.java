@@ -11,6 +11,9 @@ import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,6 +49,8 @@ class ContreeDealsTest extends TestCasesManagingPlayers {
         when(trickPlayers.getCurrentPlayer()).thenAnswer(AdditionalAnswers.returnsElementsOf(multipliedPlayers));
         when(dealPlayers.buildTrickPlayers()).thenReturn(trickPlayers);
 
+        BiddableValuesFilter biddableValuesFilter = mock(BiddableValuesFilter.class);
+
         PlayableCardsFilter filter = mock(PlayableCardsFilter.class);
         when(filter.playableCards(any(), any())).thenReturn(CardSet.GAME_32.getGameCards());
 
@@ -54,8 +59,13 @@ class ContreeDealsTest extends TestCasesManagingPlayers {
 
         CardDealer cardDealer = mock(CardDealer.class);
 
+        when(biddableValuesFilter.biddableValues(any(), any())).thenReturn(new BiddableValuesFilter.BidFilterResult(
+                new HashSet<>(Arrays.stream(ContreeBidValue.values()).toList()),
+                Collections.emptyMap()
+        ));
 
-        deals = new ContreeDeals(gameScore, dealScoreCalculator, filter, cardDealer, eventSender);
+
+        deals = new ContreeDeals(gameScore, dealScoreCalculator, biddableValuesFilter, filter, cardDealer, eventSender);
 
     }
 

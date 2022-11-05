@@ -263,9 +263,6 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
         testedPlayerHand = List.of(ClassicalCard.SEVEN_CLUB, ClassicalCard.ACE_CLUB, ClassicalCard.ACE_SPADE, ClassicalCard.EIGHT_HEART);
 
-        when(testedPlayer.sameTeam(teamMate)).thenReturn(true);
-        when(teamMate.sameTeam(testedPlayer)).thenReturn(true);
-
         var playableCards = buildMocksAndRunTestOnTestedPlayer();
 
         assertEquals(testedPlayerHand, playableCards);
