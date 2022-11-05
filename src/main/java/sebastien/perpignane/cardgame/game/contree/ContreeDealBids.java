@@ -43,7 +43,7 @@ public class ContreeDealBids {
             return;
         }
 
-        if (!bid.isNone()) {
+        if (!bid.isPass()) {
             maxBids = Math.max(INITIAL_MAX_BIDS, bids.size() + ContreePlayers.NB_PLAYERS - 1);
         }
 
@@ -96,9 +96,9 @@ public class ContreeDealBids {
 
     }
 
-    public boolean hasOnlyNoneBids()  {
+    public boolean hasOnlyPassBids()  {
         var highestBid = highestBid();
-        return highestBid.map(ContreeBid::isNone).orElse(false);
+        return highestBid.map(ContreeBid::isPass).orElse(false);
     }
 
     Optional<ContreeBid> highestBid() {
@@ -124,7 +124,7 @@ public class ContreeDealBids {
         if (!bidsAreOver()) {
             return Optional.empty();
         }
-        return highestBid().filter(Predicate.not(b -> b.bidValue() == ContreeBidValue.NONE));
+        return highestBid().filter(Predicate.not(b -> b.bidValue() == ContreeBidValue.PASS));
     }
 
     public boolean containsBidValue(final ContreeBidValue bidValue) {

@@ -6,7 +6,7 @@ import java.util.function.Predicate;
 
 public enum ContreeBidValue {
 
-    NONE(null, false),
+    PASS(null, false),
     EIGHTY(80),
     NINETY(90),
     HUNDRED(100),

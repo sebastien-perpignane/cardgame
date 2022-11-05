@@ -29,14 +29,14 @@ public class BiddableValuesFilter {
         Set<ContreeBidValue> biddableValues = new HashSet<>();
         Map<ContreeBidValue, String> exclusionCauseByBidValue = new HashMap<>();
 
-        biddableValues.add(ContreeBidValue.NONE);
+        biddableValues.add(ContreeBidValue.PASS);
 
         exclusionCauseByBidValue.put(ContreeBidValue.DOUBLE, "Double is is only possible if an opponent bade before and this opponent made the highest bid");
         exclusionCauseByBidValue.put(ContreeBidValue.REDOUBLE, "Redouble is is only possible if an opponent doubled before");
 
-        biddableValues.add(ContreeBidValue.NONE);
+        biddableValues.add(ContreeBidValue.PASS);
 
-        if (bids.highestBid().isEmpty() || bids.hasOnlyNoneBids()) {
+        if (bids.highestBid().isEmpty() || bids.hasOnlyPassBids()) {
             biddableValues.addAll(allBidValuesExceptDoubleAndRedouble);
         }
         else {
@@ -51,7 +51,7 @@ public class BiddableValuesFilter {
                                 .collect(Collectors.toSet())
                 );
 
-                exclusionCausePredicate = bv -> bv.compareTo(highestBid.bidValue()) <= 0 && bv != ContreeBidValue.NONE;
+                exclusionCausePredicate = bv -> bv.compareTo(highestBid.bidValue()) <= 0 && bv != ContreeBidValue.PASS;
 
             }
 

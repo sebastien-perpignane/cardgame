@@ -62,8 +62,8 @@ public class MockDealBuilder {
         when(deal.isAnnouncedCapot()).thenReturn(isAnnouncedCapot); return this;
     }
 
-    public MockDealBuilder withHasOnlyNoneBids(boolean hasOnlyNoneBids) {
-        when(deal.hasOnlyNoneBids()).thenReturn(hasOnlyNoneBids); return this;
+    public MockDealBuilder withHasOnlyPassBids(boolean hasOnlyPassBids) {
+        when(deal.hasOnlyPassBids()).thenReturn(hasOnlyPassBids); return this;
     }
 
     public MockDealBuilder withDealContractBid(ContreeBid dealContractBid) {

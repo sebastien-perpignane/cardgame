@@ -64,7 +64,7 @@ class ContreeBidPlayersImplTest extends TestCasesManagingPlayers {
             return null;
         }).when(player1).onPlayerTurnToBid(anySet());
 
-        bidPlayers.onCurrentBidderTurnToBid(Set.of(ContreeBidValue.NONE));
+        bidPlayers.onCurrentBidderTurnToBid(Set.of(ContreeBidValue.PASS));
 
         assertTrue(called[0]);
 
@@ -81,7 +81,7 @@ class ContreeBidPlayersImplTest extends TestCasesManagingPlayers {
         }).when(player2).onPlayerTurnToBid(anySet());
 
         bidPlayers.goToNextBidder();
-        bidPlayers.onCurrentBidderTurnToBid(Set.of(ContreeBidValue.NONE));
+        bidPlayers.onCurrentBidderTurnToBid(Set.of(ContreeBidValue.PASS));
 
         assertTrue(called[0]);
 

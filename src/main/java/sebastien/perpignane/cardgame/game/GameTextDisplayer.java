@@ -7,6 +7,7 @@ import sebastien.perpignane.cardgame.game.contree.ContreeDealObserver;
 import sebastien.perpignane.cardgame.game.contree.ContreeGame;
 import sebastien.perpignane.cardgame.game.contree.ContreeTrickObserver;
 import sebastien.perpignane.cardgame.game.war.WarGame;
+import sebastien.perpignane.cardgame.game.war.WarPlayedCard;
 import sebastien.perpignane.cardgame.game.war.WarTrickObserver;
 import sebastien.perpignane.cardgame.player.Player;
 import sebastien.perpignane.cardgame.player.Team;
@@ -118,7 +119,7 @@ public class GameTextDisplayer implements GameObserver, WarTrickObserver, Contre
     }
 
     @Override
-    public void onWar(List<PlayedCard> cardsTriggeringWar) {
+    public void onWar(List<WarPlayedCard> cardsTriggeringWar) {
 
         System.out.println(" !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  WAR !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         cardsTriggeringWar.forEach(pc -> System.out.printf("Player %s : %s ; ", pc.player(), pc.card()));

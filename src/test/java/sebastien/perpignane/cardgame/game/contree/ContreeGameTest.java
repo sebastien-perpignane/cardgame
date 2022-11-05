@@ -104,7 +104,7 @@ class ContreeGameTest extends TestCasesManagingPlayers {
 
         assertThrows(
                 RuntimeException.class,
-                () -> game.placeBid(player2, ContreeBidValue.NONE, null)
+                () -> game.placeBid(player2, ContreeBidValue.PASS, null)
         );
     }
 
@@ -112,7 +112,7 @@ class ContreeGameTest extends TestCasesManagingPlayers {
     @Test
     public void testCanBidIfGameIsOver() {
         assertFalse(game.isOver());
-        game.placeBid(player2, ContreeBidValue.NONE, null);
+        game.placeBid(player2, ContreeBidValue.PASS, null);
     }
 
     @DisplayName("Exception if a player tries to join an over game")

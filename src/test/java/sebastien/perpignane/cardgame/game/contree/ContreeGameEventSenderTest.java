@@ -108,7 +108,7 @@ class ContreeGameEventSenderTest extends TestCasesManagingPlayers {
             return null;
         }).when(dealObserver).onPlacedBid(any(), any(), any(), any());
 
-        gameEventSender.sendPlacedBidEvent("TEST", new ContreeBid(player1, ContreeBidValue.NONE, null));
+        gameEventSender.sendPlacedBidEvent("TEST", new ContreeBid(player1, ContreeBidValue.PASS, null));
 
         assertTrue(calledFlag[0]);
 

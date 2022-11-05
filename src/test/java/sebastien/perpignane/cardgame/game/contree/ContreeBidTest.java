@@ -14,9 +14,7 @@ public class ContreeBidTest {
     public void testFirstBid_invalid_EIGHTY() {
 
         ContreePlayer biddingPlayer = mock(ContreePlayer.class);
-
-        var e = assertThrows(IllegalArgumentException.class, () -> new ContreeBid(biddingPlayer, ContreeBidValue.EIGHTY, null));
-        System.err.println(e.getMessage());
+        assertThrows(IllegalArgumentException.class, () -> new ContreeBid(biddingPlayer, ContreeBidValue.EIGHTY, null));
 
     }
 

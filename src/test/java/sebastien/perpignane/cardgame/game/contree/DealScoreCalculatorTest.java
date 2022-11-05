@@ -533,17 +533,17 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
     }
 
-    @DisplayName("When only NONE bids are placed on a bid, expected scores are 0")
+    @DisplayName("When only PASS bids are placed on a deal, expected scores are 0")
     @Test
-    public void testComputeScoreOnDealWithOnlyNoneBids() {
+    public void testComputeScoreOnDealWithOnlyPassBids() {
 
-        ContreeDeal onlyNoneBidsDeal = MockDealBuilder.builder()
+        ContreeDeal onlyPassBidsDeal = MockDealBuilder.builder()
                 .withDealContractBid(new ContreeBid(player1))
-                .withHasOnlyNoneBids(true)
+                .withHasOnlyPassBids(true)
                 .build();
 
 
-        var scores = dealScoreCalculator.computeDealScores(onlyNoneBidsDeal);
+        var scores = dealScoreCalculator.computeDealScores(onlyPassBidsDeal);
 
         assertTrue(scores.values().stream().allMatch(i -> i == 0));
 
@@ -552,13 +552,13 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
     @DisplayName("When no bids are placed on a deal, trying to compute scores throws exception")
     @Test
     public void testComputeScoreOnDealWithNoBidsThrowsException() {
-        ContreeDeal onlyNoneBidsDeal = MockDealBuilder.builder()
+        ContreeDeal noBidDeal = MockDealBuilder.builder()
                 .withDealContractBid(null)
                 .build();
 
         assertThrows(
                 RuntimeException.class,
-                () -> dealScoreCalculator.computeDealScores(onlyNoneBidsDeal)
+                () -> dealScoreCalculator.computeDealScores(noBidDeal)
         );
     }
 

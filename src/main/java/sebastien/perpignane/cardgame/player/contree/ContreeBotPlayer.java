@@ -31,7 +31,7 @@ public class ContreeBotPlayer extends AbstractLocalThreadContreePlayer implement
     }
 
     protected void placeBid() {
-        placeBid(ContreeBidValue.NONE, null);
+        placeBid(ContreeBidValue.PASS, null);
     }
 
     protected final void placeBid(ContreeBidValue bidValue, CardSuit cardSuit) {
@@ -67,7 +67,6 @@ public class ContreeBotPlayer extends AbstractLocalThreadContreePlayer implement
 
     @Override
     void manageBidMessage(PlayerMessage bidMessage) {
-        System.err.printf("%s reacting to BID event%n", this);
         placeBid();
     }
 }

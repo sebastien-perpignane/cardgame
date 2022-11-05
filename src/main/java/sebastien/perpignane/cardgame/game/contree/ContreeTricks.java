@@ -109,7 +109,7 @@ public class ContreeTricks {
         return ContreeTeam.getTeams().stream().collect(Collectors.toMap(
                 team -> team,
                 team -> tricksByWinnerTeam.getOrDefault(team, Collections.emptyList()).stream()
-                        .map(trick -> trick.getPlayedCards().stream().map(PlayedCard::card).toList())
+                        .map(trick -> trick.getPlayedCards().stream().map(ContreePlayedCard::card).toList())
                         .flatMap(Collection::stream)
                         .collect(Collectors.toSet())
         ));

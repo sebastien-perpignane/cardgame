@@ -2,7 +2,6 @@ package sebastien.perpignane.cardgame.game.war;
 
 import sebastien.perpignane.cardgame.card.CardRank;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
-import sebastien.perpignane.cardgame.game.PlayedCard;
 import sebastien.perpignane.cardgame.game.Trick;
 import sebastien.perpignane.cardgame.player.Player;
 
@@ -21,7 +20,7 @@ public class WarTrick implements Trick {
 
     private final Map<Player, Integer> nbPlayedCardsByPlayer = new HashMap<>();
 
-    private final Map<Player, List<PlayedCard>> playedCardsByPlayer = new HashMap<>();
+    private final Map<Player, List<WarPlayedCard>> playedCardsByPlayer = new HashMap<>();
 
     private Player winner = null;
 
@@ -42,8 +41,7 @@ public class WarTrick implements Trick {
         this.warGameEventSender = warGameEventSender;
     }
 
-    //@Override
-    public void playerPlay(PlayedCard pc) {
+    public void playerPlay(WarPlayedCard pc) {
 
         if (endOfTrick) {
             throw new IllegalStateException("This trick is over");
@@ -62,11 +60,10 @@ public class WarTrick implements Trick {
 
     }
 
-    //@Override
     public void playerPlay(Player player, ClassicalCard card) {
         Objects.requireNonNull(player);
         Objects.requireNonNull(card);
-        playerPlay(new PlayedCard(player, card));
+        playerPlay(new WarPlayedCard(player, card));
     }
 
     public boolean isWarInProgress() {
@@ -77,11 +74,11 @@ public class WarTrick implements Trick {
         return nbPlayedCardsByPlayer.values().stream().mapToInt(i -> i).min().orElse(0);
     }
 
-    private void addPlayedCard(PlayedCard pc) {
+    private void addPlayedCard(WarPlayedCard pc) {
         playedCardsByPlayer.get(pc.player()).add(pc);
     }
 
-    private void incrementPlayedCards(PlayedCard pc) {
+    private void incrementPlayedCards(WarPlayedCard pc) {
         int ncPlayedCards = nbPlayedCardsByPlayer.get(pc.player());
         nbPlayedCardsByPlayer.put(pc.player(), ++ncPlayedCards);
     }
@@ -106,8 +103,8 @@ public class WarTrick implements Trick {
                 continue;
             }
 
-            List<PlayedCard> cards = playedCardsByPlayer.get(player);
-            PlayedCard lastPlayedCard = cards.get(cards.size() - 1);
+            List<WarPlayedCard> cards = playedCardsByPlayer.get(player);
+            WarPlayedCard lastPlayedCard = cards.get(cards.size() - 1);
             if (bestCard == null) {
                 bestCard = lastPlayedCard.card();
                 bestCardPlayer = player;
@@ -155,11 +152,11 @@ public class WarTrick implements Trick {
     public Set<ClassicalCard> getAllCards() {
         return playedCardsByPlayer.values().stream()
                 .flatMap(Collection::stream)
-                .map(PlayedCard::card)
+                .map(WarPlayedCard::card)
                 .collect(Collectors.toSet());
     }
 
-    private List<PlayedCard> collectLastPlayedCards() {
+    private List<WarPlayedCard> collectLastPlayedCards() {
         return playedCardsByPlayer.values().stream()
                 .filter(cards -> !cards.isEmpty())
                 .map(cards -> {
@@ -176,6 +173,11 @@ public class WarTrick implements Trick {
             }
         }
         return false;
+    }
+
+    @Override
+    public List<WarPlayedCard> getPlayedCards() {
+        return playedCardsByPlayer.values().stream().flatMap(Collection::stream).toList();
     }
 
     @Override

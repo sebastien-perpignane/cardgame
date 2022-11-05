@@ -126,11 +126,7 @@ public abstract class AbstractLocalThreadContreePlayer extends AbstractThreadLoc
         switch (playerMessage.messageType()) {
             case PLAY -> managePlayMessage(playerMessage);
             case BID -> manageBidMessage(playerMessage);
-            case END_OF_GAME ->  {
-                // TODO to be traced in an event manager
-                System.err.printf("%s reacting to END_OF_GAME event%n", this);
-                mustExit = true;
-            }
+            case END_OF_GAME ->  mustExit = true;
         }
         return mustExit;
     }

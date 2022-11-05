@@ -88,10 +88,10 @@ class ContreeDealsTest extends TestCasesManagingPlayers {
 
         deals.startDeals("TEST", dealPlayers);
 
-        deals.placeBid(player1, ContreeBidValue.NONE, null);
-        deals.placeBid(player2, ContreeBidValue.NONE, null);
-        deals.placeBid(player3, ContreeBidValue.NONE, null);
-        deals.placeBid(player4, ContreeBidValue.NONE, null);
+        deals.placeBid(player1, ContreeBidValue.PASS, null);
+        deals.placeBid(player2, ContreeBidValue.PASS, null);
+        deals.placeBid(player3, ContreeBidValue.PASS, null);
+        deals.placeBid(player4, ContreeBidValue.PASS, null);
 
         assertEquals(2, deals.getNbDeals());
 
@@ -127,9 +127,9 @@ class ContreeDealsTest extends TestCasesManagingPlayers {
         deals.startDeals("TEST", dealPlayers);
 
         deals.placeBid(player1, ContreeBidValue.EIGHTY, CardSuit.HEARTS);
-        deals.placeBid(player2, ContreeBidValue.NONE, null);
-        deals.placeBid(player3, ContreeBidValue.NONE, null);
-        deals.placeBid(player4, ContreeBidValue.NONE, null);
+        deals.placeBid(player2, ContreeBidValue.PASS, null);
+        deals.placeBid(player3, ContreeBidValue.PASS, null);
+        deals.placeBid(player4, ContreeBidValue.PASS, null);
 
         int i = 0;
 

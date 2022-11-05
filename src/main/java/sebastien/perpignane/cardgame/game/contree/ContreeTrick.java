@@ -14,7 +14,7 @@ class ContreeTrick implements Trick {
 
     private final String trickId;
 
-    private final List<PlayedCard> playedCards = new ArrayList<>();
+    private final List<ContreePlayedCard> playedCards = new ArrayList<>();
 
     private ContreeCard firstPlayedCard = null;
 
@@ -70,7 +70,7 @@ class ContreeTrick implements Trick {
 
         throwExceptionIfInvalidPlayedCard(player, card);
 
-        var playedCard = new PlayedCard(player, new ContreeCard(card, trumpSuit));
+        ContreePlayedCard playedCard = new ContreePlayedCard(player, new ContreeCard(card, trumpSuit));
 
         if (firstPlayedCard == null) {
             firstPlayedCard = playedCard.card();
@@ -141,7 +141,8 @@ class ContreeTrick implements Trick {
                 .player();
     }
 
-    List<PlayedCard> getPlayedCards() {
+    @Override
+    public List<ContreePlayedCard> getPlayedCards() {
         return playedCards;
     }
 

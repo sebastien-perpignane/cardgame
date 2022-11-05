@@ -24,7 +24,7 @@ class DealScoreCalculator {
 
         Set<ContreeTeam> allTeams = ContreeTeam.getTeams();
 
-        if (deal.hasOnlyNoneBids()) {
+        if (deal.hasOnlyPassBids()) {
             return allTeams.stream().collect(Collectors.toMap(t -> t, t -> 0));
         }
 
