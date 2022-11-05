@@ -82,7 +82,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
         when(bids.highestBid()).thenReturn(Optional.empty());
         when(bids.isDoubleBidExists()).thenReturn(false);
         when(bids.isRedoubleBidExists()).thenReturn(false);
-        when(bids.hasOnlyNoneBids()).thenReturn(false);
+        when(bids.hasOnlyPassBids()).thenReturn(false);
 
         expectedAllowedBidValues = allValuesExceptDoubleRedouble;
 
@@ -91,15 +91,15 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
 
     }
 
-    @DisplayName("When only NONE bid were placed, any bid value except double and redouble is allowed")
+    @DisplayName("When only PASS bid were placed, any bid value except double and redouble is allowed")
     @Test
-    public void testOnlyNoneBids() {
+    public void testOnlyPassBids() {
         when(bids.highestBid()).thenReturn(Optional.of(
-                new ContreeBid(teamMate, ContreeBidValue.NONE)
+                new ContreeBid(teamMate, ContreeBidValue.PASS)
         ));
         when(bids.isDoubleBidExists()).thenReturn(false);
         when(bids.isRedoubleBidExists()).thenReturn(false);
-        when(bids.hasOnlyNoneBids()).thenReturn(true);
+        when(bids.hasOnlyPassBids()).thenReturn(true);
 
         expectedAllowedBidValues = allValuesExceptDoubleRedouble;
 
@@ -114,7 +114,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(opponent, ContreeBidValue.EIGHTY, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(false);
         when(bids.isRedoubleBidExists()).thenReturn(false);
-        when(bids.hasOnlyNoneBids()).thenReturn(false);
+        when(bids.hasOnlyPassBids()).thenReturn(false);
 
         expectedAllowedBidValues = new HashSet<>(allValuesExceptDoubleRedouble);
         expectedAllowedBidValues.remove(ContreeBidValue.EIGHTY);
@@ -124,16 +124,16 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
 
     }
 
-    @DisplayName("When a EIGHTY bid was placed by an opponent and the team mate doubled, only NONE bid is allowed")
+    @DisplayName("When a EIGHTY bid was placed by an opponent and the team mate doubled, only PASS bid is allowed")
     @Test
     public void testEightyBidByOpponent_alreadyDouble() {
 
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(opponent, ContreeBidValue.EIGHTY, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(true);
         when(bids.isRedoubleBidExists()).thenReturn(false);
-        when(bids.hasOnlyNoneBids()).thenReturn(false);
+        when(bids.hasOnlyPassBids()).thenReturn(false);
 
-        expectedAllowedBidValues = Set.of(ContreeBidValue.NONE);
+        expectedAllowedBidValues = Set.of(ContreeBidValue.PASS);
 
         runTestWithCurrentPlayerAndCheckAssertions();
 
@@ -146,7 +146,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(opponent, ContreeBidValue.HUNDRED_TEN, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(false);
         when(bids.isRedoubleBidExists()).thenReturn(false);
-        when(bids.hasOnlyNoneBids()).thenReturn(false);
+        when(bids.hasOnlyPassBids()).thenReturn(false);
 
         expectedAllowedBidValues = new HashSet<>(allValuesExceptDoubleRedouble);
         expectedAllowedBidValues.remove(ContreeBidValue.EIGHTY);
@@ -159,16 +159,16 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
 
     }
 
-    @DisplayName("When a HUNDRED_TEN bid was placed by an opponent and the teeam mate doubled, only NONE bid is allowed")
+    @DisplayName("When a HUNDRED_TEN bid was placed by an opponent and the teeam mate doubled, only PASS bid is allowed")
     @Test
     public void testHundredTenBidByOpponent_alreadyDouble() {
 
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(opponent, ContreeBidValue.EIGHTY, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(true);
         when(bids.isRedoubleBidExists()).thenReturn(false);
-        when(bids.hasOnlyNoneBids()).thenReturn(false);
+        when(bids.hasOnlyPassBids()).thenReturn(false);
 
-        expectedAllowedBidValues = Set.of(ContreeBidValue.NONE);
+        expectedAllowedBidValues = Set.of(ContreeBidValue.PASS);
 
         runTestWithCurrentPlayerAndCheckAssertions();
 
@@ -181,7 +181,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(teamMate, ContreeBidValue.EIGHTY, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(false);
         when(bids.isRedoubleBidExists()).thenReturn(false);
-        when(bids.hasOnlyNoneBids()).thenReturn(false);
+        when(bids.hasOnlyPassBids()).thenReturn(false);
 
         expectedAllowedBidValues = new HashSet<>(allValuesExceptDoubleRedouble);
         expectedAllowedBidValues.remove(ContreeBidValue.EIGHTY);
@@ -190,16 +190,16 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
 
     }
 
-    @DisplayName("When a EIGHTY bid was placed by the team mate and the opponents doubled, the player can only bid NONE or REDOUBLE")
+    @DisplayName("When a EIGHTY bid was placed by the team mate and the opponents doubled, the player can only bid PASS or REDOUBLE")
     @Test
     public void testEightyBidByMate_withDouble() {
 
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(teamMate, ContreeBidValue.EIGHTY, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(true);
         when(bids.isRedoubleBidExists()).thenReturn(false);
-        when(bids.hasOnlyNoneBids()).thenReturn(false);
+        when(bids.hasOnlyPassBids()).thenReturn(false);
 
-        expectedAllowedBidValues = Set.of(ContreeBidValue.REDOUBLE, ContreeBidValue.NONE);
+        expectedAllowedBidValues = Set.of(ContreeBidValue.REDOUBLE, ContreeBidValue.PASS);
 
         runTestWithCurrentPlayerAndCheckAssertions();
 
@@ -212,7 +212,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(teamMate, ContreeBidValue.HUNDRED_TEN, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(false);
         when(bids.isRedoubleBidExists()).thenReturn(false);
-        when(bids.hasOnlyNoneBids()).thenReturn(false);
+        when(bids.hasOnlyPassBids()).thenReturn(false);
 
         expectedAllowedBidValues = new HashSet<>(allValuesExceptDoubleRedouble);
         expectedAllowedBidValues.remove(ContreeBidValue.EIGHTY);
@@ -224,16 +224,16 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
 
     }
 
-    @DisplayName("When a HUNDRED_TEN bid is placed by the teammate and the opponents double, the player can only bid NONE or REDOUBLE")
+    @DisplayName("When a HUNDRED_TEN bid is placed by the teammate and the opponents double, the player can only bid PASS or REDOUBLE")
     @Test
     public void testHundredTenBidByMate_withDouble() {
 
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(teamMate, ContreeBidValue.EIGHTY, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(true);
         when(bids.isRedoubleBidExists()).thenReturn(false);
-        when(bids.hasOnlyNoneBids()).thenReturn(false);
+        when(bids.hasOnlyPassBids()).thenReturn(false);
 
-        expectedAllowedBidValues = Set.of(ContreeBidValue.REDOUBLE, ContreeBidValue.NONE);
+        expectedAllowedBidValues = Set.of(ContreeBidValue.REDOUBLE, ContreeBidValue.PASS);
 
         runTestWithCurrentPlayerAndCheckAssertions();
 
@@ -246,114 +246,114 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
         when(bids.isDoubleBidExists()).thenReturn(false);
         when(bids.isRedoubleBidExists()).thenReturn(false);
         when(bids.isAnnouncedCapot()).thenReturn(true);
-        when(bids.hasOnlyNoneBids()).thenReturn(false);
+        when(bids.hasOnlyPassBids()).thenReturn(false);
 
-        expectedAllowedBidValues = Set.of(ContreeBidValue.DOUBLE, ContreeBidValue.NONE);
+        expectedAllowedBidValues = Set.of(ContreeBidValue.DOUBLE, ContreeBidValue.PASS);
 
         runTestWithCurrentPlayerAndCheckAssertions();
 
     }
 
-    @DisplayName("When an opponent bids CAPOT and the team mate double, the current player can only bid NONE")
+    @DisplayName("When an opponent bids CAPOT and the team mate double, the current player can only bid PASS")
     @Test
     public void testCapotByOpponent_withDouble() {
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(opponent, ContreeBidValue.CAPOT, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(true);
         when(bids.isRedoubleBidExists()).thenReturn(false);
         when(bids.isAnnouncedCapot()).thenReturn(true);
-        when(bids.hasOnlyNoneBids()).thenReturn(false);
+        when(bids.hasOnlyPassBids()).thenReturn(false);
 
-        expectedAllowedBidValues = Set.of(ContreeBidValue.NONE);
+        expectedAllowedBidValues = Set.of(ContreeBidValue.PASS);
 
         runTestWithCurrentPlayerAndCheckAssertions();
 
     }
 
-    @DisplayName("When the teammate bids CAPOT and the opponents do not double, the current player can only bid NONE")
+    @DisplayName("When the teammate bids CAPOT and the opponents do not double, the current player can only bid PASS")
     @Test
     public void testCapotByTeammate_noDouble() {
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(teamMate, ContreeBidValue.CAPOT, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(false);
         when(bids.isRedoubleBidExists()).thenReturn(false);
         when(bids.isAnnouncedCapot()).thenReturn(true);
-        when(bids.hasOnlyNoneBids()).thenReturn(false);
+        when(bids.hasOnlyPassBids()).thenReturn(false);
 
-        expectedAllowedBidValues = Set.of(ContreeBidValue.NONE);
+        expectedAllowedBidValues = Set.of(ContreeBidValue.PASS);
 
         runTestWithCurrentPlayerAndCheckAssertions();
 
     }
 
-    @DisplayName("When the teammate bids CAPOT and the opponents do not double, the current player can redouble or bid NONE")
+    @DisplayName("When the teammate bids CAPOT and the opponents do not double, the current player can redouble or bid PASS")
     @Test
     public void testCapotByTeammate_withDouble() {
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(teamMate, ContreeBidValue.CAPOT, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(true);
         when(bids.isRedoubleBidExists()).thenReturn(false);
         when(bids.isAnnouncedCapot()).thenReturn(true);
-        when(bids.hasOnlyNoneBids()).thenReturn(false);
+        when(bids.hasOnlyPassBids()).thenReturn(false);
 
-        expectedAllowedBidValues = Set.of(ContreeBidValue.NONE, ContreeBidValue.REDOUBLE);
+        expectedAllowedBidValues = Set.of(ContreeBidValue.PASS, ContreeBidValue.REDOUBLE);
 
         runTestWithCurrentPlayerAndCheckAssertions();
 
     }
 
-    @DisplayName("When an opponent bids 160 and the teammate does not double, the current player can bid NONE, double or bid CAPOT")
+    @DisplayName("When an opponent bids 160 and the teammate does not double, the current player can bid PASS, double or bid CAPOT")
     @Test
     public void testHundredSixtyByOpponent_noDouble() {
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(opponent, ContreeBidValue.HUNDRED_SIXTY, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(false);
         when(bids.isRedoubleBidExists()).thenReturn(false);
         when(bids.isAnnouncedCapot()).thenReturn(false);
-        when(bids.hasOnlyNoneBids()).thenReturn(false);
+        when(bids.hasOnlyPassBids()).thenReturn(false);
 
-        expectedAllowedBidValues = Set.of(ContreeBidValue.DOUBLE, ContreeBidValue.NONE, ContreeBidValue.CAPOT);
+        expectedAllowedBidValues = Set.of(ContreeBidValue.DOUBLE, ContreeBidValue.PASS, ContreeBidValue.CAPOT);
 
         runTestWithCurrentPlayerAndCheckAssertions();
 
     }
 
-    @DisplayName("When an opponent bids 160 and the teammate double, the current player can only bid NONE")
+    @DisplayName("When an opponent bids 160 and the teammate double, the current player can only bid PASS")
     @Test
     public void testHundredSixtyByOpponent_withDouble() {
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(opponent, ContreeBidValue.HUNDRED_SIXTY, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(true);
         when(bids.isRedoubleBidExists()).thenReturn(false);
         when(bids.isAnnouncedCapot()).thenReturn(false);
-        when(bids.hasOnlyNoneBids()).thenReturn(false);
+        when(bids.hasOnlyPassBids()).thenReturn(false);
 
-        expectedAllowedBidValues = Set.of(ContreeBidValue.NONE);
+        expectedAllowedBidValues = Set.of(ContreeBidValue.PASS);
 
         runTestWithCurrentPlayerAndCheckAssertions();
 
     }
 
-    @DisplayName("When the teammate bids 160 and the opponent does not double, the current player can bid NONE or CAPOT")
+    @DisplayName("When the teammate bids 160 and the opponent does not double, the current player can bid PASS or CAPOT")
     @Test
     public void testHundredSixtyByTeammate_noDouble() {
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(teamMate, ContreeBidValue.HUNDRED_SIXTY, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(false);
         when(bids.isRedoubleBidExists()).thenReturn(false);
         when(bids.isAnnouncedCapot()).thenReturn(false);
-        when(bids.hasOnlyNoneBids()).thenReturn(false);
+        when(bids.hasOnlyPassBids()).thenReturn(false);
 
-        expectedAllowedBidValues = Set.of(ContreeBidValue.NONE, ContreeBidValue.CAPOT);
+        expectedAllowedBidValues = Set.of(ContreeBidValue.PASS, ContreeBidValue.CAPOT);
 
         runTestWithCurrentPlayerAndCheckAssertions();
 
     }
 
-    @DisplayName("When the teammate bids 160 and the opponents double, the current player can bid NONE or redouble")
+    @DisplayName("When the teammate bids 160 and the opponents double, the current player can bid PASS or redouble")
     @Test
     public void testHundredSixtyByTeammate_withDouble() {
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(teamMate, ContreeBidValue.HUNDRED_SIXTY, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(true);
         when(bids.isRedoubleBidExists()).thenReturn(false);
         when(bids.isAnnouncedCapot()).thenReturn(false);
-        when(bids.hasOnlyNoneBids()).thenReturn(false);
+        when(bids.hasOnlyPassBids()).thenReturn(false);
 
-        expectedAllowedBidValues = Set.of(ContreeBidValue.NONE, ContreeBidValue.REDOUBLE);
+        expectedAllowedBidValues = Set.of(ContreeBidValue.PASS, ContreeBidValue.REDOUBLE);
 
         runTestWithCurrentPlayerAndCheckAssertions();
 

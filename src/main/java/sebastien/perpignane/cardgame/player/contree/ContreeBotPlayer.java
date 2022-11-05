@@ -31,7 +31,7 @@ public class ContreeBotPlayer extends AbstractLocalThreadContreePlayer implement
     }
 
     protected void placeBid() {
-        placeBid(ContreeBidValue.NONE, null);
+        placeBid(ContreeBidValue.PASS, null);
     }
 
     protected final void placeBid(ContreeBidValue bidValue, CardSuit cardSuit) {

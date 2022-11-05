@@ -106,7 +106,7 @@ class ContreeDeal {
         bids.placeBid(bid);
 
         if ( bids.bidsAreOver() ) {
-            if ( bids.hasOnlyNoneBids() ) {
+            if ( bids.hasOnlyPassBids() ) {
                 manageEndOfDeal();
             }
             else {
@@ -190,8 +190,8 @@ class ContreeDeal {
         return dealStep == DealStep.NOT_STARTED;
     }
 
-    public boolean hasOnlyNoneBids()  {
-        return bids.hasOnlyNoneBids();
+    public boolean hasOnlyPassBids()  {
+        return bids.hasOnlyPassBids();
     }
 
     public boolean isCapot() {

@@ -22,19 +22,19 @@ record ContreeBid(ContreePlayer player, ContreeBidValue bidValue, CardSuit cardS
     }
 
     /**
-     * Convenient constructor to build a NONE bid.
+     * Convenient constructor to build a PASS bid.
      * @param player the bidding player
      */
     public ContreeBid(ContreePlayer player) {
-        this(player, ContreeBidValue.NONE, null);
+        this(player, ContreeBidValue.PASS, null);
     }
 
     public ContreeBid(ContreePlayer player, ContreeBidValue bidValue) {
         this(player, bidValue, null);
     }
 
-    public boolean isNone() {
-        return bidValue == ContreeBidValue.NONE;
+    public boolean isPass() {
+        return bidValue == ContreeBidValue.PASS;
     }
 
     public boolean isDouble() {

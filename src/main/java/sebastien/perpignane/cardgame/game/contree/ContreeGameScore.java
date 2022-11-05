@@ -25,7 +25,7 @@ public class ContreeGameScore {
         if (!deal.isOver()) {
             throw new IllegalStateException("Deal is not over, score cannot be added");
         }
-        if (deal.hasOnlyNoneBids()) {
+        if (deal.hasOnlyPassBids()) {
             return;
         }
         ContreeTeam.getTeams().forEach(t -> incrementTeamScore(t, deal.getTeamScore(t)) );
