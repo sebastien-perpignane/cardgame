@@ -67,7 +67,6 @@ public class ContreeBotPlayer extends AbstractLocalThreadContreePlayer implement
 
     @Override
     void manageBidMessage(PlayerMessage bidMessage) {
-        System.err.printf("%s reacting to BID event%n", this);
         placeBid();
     }
 }
