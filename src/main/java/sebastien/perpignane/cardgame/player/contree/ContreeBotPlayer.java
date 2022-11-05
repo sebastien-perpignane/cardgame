@@ -50,7 +50,7 @@ public class ContreeBotPlayer extends AbstractLocalThreadContreePlayer implement
     }
 
     @Override
-    void managePlayMessage(AbstractLocalThreadContreePlayer.PlayerMessage playerMessage) {
+    void managePlayMessage(PlayerMessage playerMessage) {
         // TODO to be traced in an event manager
         // System.err.printf("Allowed cards : %s%n", playerMessage.allowedCards().stream().map(ClassicalCard::toString).collect(Collectors.joining(",")));
         int cardIndex = new Random().nextInt(playerMessage.allowedCards().size());
@@ -66,7 +66,7 @@ public class ContreeBotPlayer extends AbstractLocalThreadContreePlayer implement
     }
 
     @Override
-    void manageBidMessage(AbstractLocalThreadContreePlayer.PlayerMessage bidMessage) {
+    void manageBidMessage(PlayerMessage bidMessage) {
         System.err.printf("%s reacting to BID event%n", this);
         placeBid();
     }

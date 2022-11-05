@@ -13,7 +13,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static sebastien.perpignane.cardgame.game.contree.ContreeTestUtils.buildPlayers;
 
 public class ContreeTrickWinnerTest extends TestCasesManagingPlayers {
 
@@ -95,26 +94,24 @@ public class ContreeTrickWinnerTest extends TestCasesManagingPlayers {
 
         ContreeTrickPlayers trickPlayers = mock(ContreeTrickPlayers.class);
 
-        var players = buildPlayers();
-
-        when(players.get(0).getHand()).thenReturn(List.of(ClassicalCard.ACE_CLUB));
-        when(players.get(1).getHand()).thenReturn(List.of(ClassicalCard.SEVEN_CLUB));
-        when(players.get(2).getHand()).thenReturn(List.of(ClassicalCard.TEN_CLUB));
-        when(players.get(3).getHand()).thenReturn(List.of(ClassicalCard.NINE_CLUB));
+        when(player1.getHand()).thenReturn(List.of(ClassicalCard.ACE_CLUB));
+        when(player2.getHand()).thenReturn(List.of(ClassicalCard.SEVEN_CLUB));
+        when(player3.getHand()).thenReturn(List.of(ClassicalCard.TEN_CLUB));
+        when(player4.getHand()).thenReturn(List.of(ClassicalCard.NINE_CLUB));
 
         when(trickPlayers.getCurrentPlayer()).thenAnswer(AdditionalAnswers.returnsElementsOf(players));
 
         ContreeTrick trick = new ContreeTrick("TEST", trickPlayers, CardSuit.CLUBS, new ContreeGameEventSender());
         trick.startTrick();
 
-        trick.playerPlays(players.get(0), ClassicalCard.ACE_CLUB);
-        trick.playerPlays(players.get(1), ClassicalCard.SEVEN_CLUB);
-        trick.playerPlays(players.get(2), ClassicalCard.TEN_CLUB);
-        trick.playerPlays(players.get(3), ClassicalCard.NINE_CLUB);
+        trick.playerPlays(player1, ClassicalCard.ACE_CLUB);
+        trick.playerPlays(player2, ClassicalCard.SEVEN_CLUB);
+        trick.playerPlays(player3, ClassicalCard.TEN_CLUB);
+        trick.playerPlays(player4, ClassicalCard.NINE_CLUB);
 
         assertTrue(trick.isOver());
         assertNotNull(trick.getWinner());
-        assertSame(players.get(3), trick.getWinner());
+        assertSame(player4, trick.getWinner());
 
     }
 
@@ -124,26 +121,24 @@ public class ContreeTrickWinnerTest extends TestCasesManagingPlayers {
 
         ContreeTrickPlayers trickPlayers = mock(ContreeTrickPlayers.class);
 
-        var players = buildPlayers();
-
-        when(players.get(0).getHand()).thenReturn(List.of(ClassicalCard.ACE_CLUB));
-        when(players.get(1).getHand()).thenReturn(List.of(ClassicalCard.SEVEN_CLUB));
-        when(players.get(2).getHand()).thenReturn(List.of(ClassicalCard.TEN_CLUB));
-        when(players.get(3).getHand()).thenReturn(List.of(ClassicalCard.EIGHT_CLUB));
+        when(player1.getHand()).thenReturn(List.of(ClassicalCard.ACE_CLUB));
+        when(player2.getHand()).thenReturn(List.of(ClassicalCard.SEVEN_CLUB));
+        when(player3.getHand()).thenReturn(List.of(ClassicalCard.TEN_CLUB));
+        when(player4.getHand()).thenReturn(List.of(ClassicalCard.EIGHT_CLUB));
 
         when(trickPlayers.getCurrentPlayer()).thenAnswer(AdditionalAnswers.returnsElementsOf(players));
 
         ContreeTrick trick = new ContreeTrick("TEST", trickPlayers, CardSuit.CLUBS, new ContreeGameEventSender());
         trick.startTrick();
 
-        trick.playerPlays(players.get(0), ClassicalCard.ACE_CLUB);
-        trick.playerPlays(players.get(1), ClassicalCard.SEVEN_CLUB);
-        trick.playerPlays(players.get(2), ClassicalCard.TEN_CLUB);
-        trick.playerPlays(players.get(3), ClassicalCard.EIGHT_CLUB);
+        trick.playerPlays(player1, ClassicalCard.ACE_CLUB);
+        trick.playerPlays(player2, ClassicalCard.SEVEN_CLUB);
+        trick.playerPlays(player3, ClassicalCard.TEN_CLUB);
+        trick.playerPlays(player4, ClassicalCard.EIGHT_CLUB);
 
         assertTrue(trick.isOver());
         assertNotNull(trick.getWinner());
-        assertSame(players.get(0), trick.getWinner());
+        assertSame(player1, trick.getWinner());
 
     }
 
@@ -153,26 +148,24 @@ public class ContreeTrickWinnerTest extends TestCasesManagingPlayers {
 
         ContreeTrickPlayers trickPlayers = mock(ContreeTrickPlayers.class);
 
-        var players = buildPlayers();
-
-        when(players.get(0).getHand()).thenReturn(List.of(ClassicalCard.QUEEN_CLUB));
-        when(players.get(1).getHand()).thenReturn(List.of(ClassicalCard.SEVEN_CLUB));
-        when(players.get(2).getHand()).thenReturn(List.of(ClassicalCard.TEN_CLUB));
-        when(players.get(3).getHand()).thenReturn(List.of(ClassicalCard.EIGHT_CLUB));
+        when(player1.getHand()).thenReturn(List.of(ClassicalCard.QUEEN_CLUB));
+        when(player2.getHand()).thenReturn(List.of(ClassicalCard.SEVEN_CLUB));
+        when(player3.getHand()).thenReturn(List.of(ClassicalCard.TEN_CLUB));
+        when(player4.getHand()).thenReturn(List.of(ClassicalCard.EIGHT_CLUB));
 
         when(trickPlayers.getCurrentPlayer()).thenAnswer(AdditionalAnswers.returnsElementsOf(players));
 
         ContreeTrick trick = new ContreeTrick("TEST", trickPlayers, CardSuit.CLUBS, new ContreeGameEventSender());
         trick.startTrick();
 
-        trick.playerPlays(players.get(0), ClassicalCard.QUEEN_CLUB);
-        trick.playerPlays(players.get(1), ClassicalCard.SEVEN_CLUB);
-        trick.playerPlays(players.get(2), ClassicalCard.TEN_CLUB);
-        trick.playerPlays(players.get(3), ClassicalCard.EIGHT_CLUB);
+        trick.playerPlays(player1, ClassicalCard.QUEEN_CLUB);
+        trick.playerPlays(player2, ClassicalCard.SEVEN_CLUB);
+        trick.playerPlays(player3, ClassicalCard.TEN_CLUB);
+        trick.playerPlays(player4, ClassicalCard.EIGHT_CLUB);
 
         assertTrue(trick.isOver());
         assertNotNull(trick.getWinner());
-        assertSame(players.get(2), trick.getWinner());
+        assertSame(player3, trick.getWinner());
 
     }
 
@@ -182,26 +175,24 @@ public class ContreeTrickWinnerTest extends TestCasesManagingPlayers {
 
         ContreeTrickPlayers trickPlayers = mock(ContreeTrickPlayers.class);
 
-        var players = buildPlayers();
-
-        when(players.get(0).getHand()).thenReturn(List.of(ClassicalCard.QUEEN_CLUB));
-        when(players.get(1).getHand()).thenReturn(List.of(ClassicalCard.SEVEN_CLUB));
-        when(players.get(2).getHand()).thenReturn(List.of(ClassicalCard.KING_CLUB));
-        when(players.get(3).getHand()).thenReturn(List.of(ClassicalCard.EIGHT_CLUB));
+        when(player1.getHand()).thenReturn(List.of(ClassicalCard.QUEEN_CLUB));
+        when(player2.getHand()).thenReturn(List.of(ClassicalCard.SEVEN_CLUB));
+        when(player3.getHand()).thenReturn(List.of(ClassicalCard.KING_CLUB));
+        when(player4.getHand()).thenReturn(List.of(ClassicalCard.EIGHT_CLUB));
 
         when(trickPlayers.getCurrentPlayer()).thenAnswer(AdditionalAnswers.returnsElementsOf(players));
 
         ContreeTrick trick = new ContreeTrick("TEST", trickPlayers, CardSuit.CLUBS, new ContreeGameEventSender());
         trick.startTrick();
 
-        trick.playerPlays(players.get(0), ClassicalCard.QUEEN_CLUB);
-        trick.playerPlays(players.get(1), ClassicalCard.SEVEN_CLUB);
-        trick.playerPlays(players.get(2), ClassicalCard.KING_CLUB);
-        trick.playerPlays(players.get(3), ClassicalCard.EIGHT_CLUB);
+        trick.playerPlays(player1, ClassicalCard.QUEEN_CLUB);
+        trick.playerPlays(player2, ClassicalCard.SEVEN_CLUB);
+        trick.playerPlays(player3, ClassicalCard.KING_CLUB);
+        trick.playerPlays(player4, ClassicalCard.EIGHT_CLUB);
 
         assertTrue(trick.isOver());
         assertNotNull(trick.getWinner());
-        assertSame(players.get(2), trick.getWinner());
+        assertSame(player3, trick.getWinner());
 
     }
 
@@ -211,26 +202,24 @@ public class ContreeTrickWinnerTest extends TestCasesManagingPlayers {
 
         ContreeTrickPlayers trickPlayers = mock(ContreeTrickPlayers.class);
 
-        var players = buildPlayers();
-
-        when(players.get(0).getHand()).thenReturn(List.of(ClassicalCard.ACE_CLUB));
-        when(players.get(1).getHand()).thenReturn(List.of(ClassicalCard.SEVEN_CLUB));
-        when(players.get(2).getHand()).thenReturn(List.of(ClassicalCard.TEN_DIAMOND));
-        when(players.get(3).getHand()).thenReturn(List.of(ClassicalCard.JACK_CLUB));
+        when(player1.getHand()).thenReturn(List.of(ClassicalCard.ACE_CLUB));
+        when(player2.getHand()).thenReturn(List.of(ClassicalCard.SEVEN_CLUB));
+        when(player3.getHand()).thenReturn(List.of(ClassicalCard.TEN_DIAMOND));
+        when(player4.getHand()).thenReturn(List.of(ClassicalCard.JACK_CLUB));
 
         when(trickPlayers.getCurrentPlayer()).thenAnswer(AdditionalAnswers.returnsElementsOf(players));
 
         ContreeTrick trick = new ContreeTrick("TEST", trickPlayers, CardSuit.DIAMONDS, new ContreeGameEventSender());
         trick.startTrick();
 
-        trick.playerPlays(players.get(0), ClassicalCard.ACE_CLUB);
-        trick.playerPlays(players.get(1), ClassicalCard.SEVEN_CLUB);
-        trick.playerPlays(players.get(2), ClassicalCard.TEN_DIAMOND);
-        trick.playerPlays(players.get(3), ClassicalCard.JACK_CLUB);
+        trick.playerPlays(player1, ClassicalCard.ACE_CLUB);
+        trick.playerPlays(player2, ClassicalCard.SEVEN_CLUB);
+        trick.playerPlays(player3, ClassicalCard.TEN_DIAMOND);
+        trick.playerPlays(player4, ClassicalCard.JACK_CLUB);
 
         assertTrue(trick.isOver());
         assertNotNull(trick.getWinner());
-        assertSame(players.get(2), trick.getWinner());
+        assertSame(player3, trick.getWinner());
 
     }
 
@@ -240,26 +229,24 @@ public class ContreeTrickWinnerTest extends TestCasesManagingPlayers {
 
         ContreeTrickPlayers trickPlayers = mock(ContreeTrickPlayers.class);
 
-        var players = buildPlayers();
-
-        when(players.get(0).getHand()).thenReturn(List.of(ClassicalCard.ACE_CLUB));
-        when(players.get(1).getHand()).thenReturn(List.of(ClassicalCard.SEVEN_DIAMOND));
-        when(players.get(2).getHand()).thenReturn(List.of(ClassicalCard.TEN_DIAMOND));
-        when(players.get(3).getHand()).thenReturn(List.of(ClassicalCard.ACE_DIAMOND));
+        when(player1.getHand()).thenReturn(List.of(ClassicalCard.ACE_CLUB));
+        when(player2.getHand()).thenReturn(List.of(ClassicalCard.SEVEN_DIAMOND));
+        when(player3.getHand()).thenReturn(List.of(ClassicalCard.TEN_DIAMOND));
+        when(player4.getHand()).thenReturn(List.of(ClassicalCard.ACE_DIAMOND));
 
         when(trickPlayers.getCurrentPlayer()).thenAnswer(AdditionalAnswers.returnsElementsOf(players));
 
         ContreeTrick trick = new ContreeTrick("TEST", trickPlayers, CardSuit.DIAMONDS, new ContreeGameEventSender());
         trick.startTrick();
 
-        trick.playerPlays(players.get(0), ClassicalCard.ACE_CLUB);
-        trick.playerPlays(players.get(1), ClassicalCard.SEVEN_DIAMOND);
-        trick.playerPlays(players.get(2), ClassicalCard.TEN_DIAMOND);
-        trick.playerPlays(players.get(3), ClassicalCard.ACE_DIAMOND);
+        trick.playerPlays(player1, ClassicalCard.ACE_CLUB);
+        trick.playerPlays(player2, ClassicalCard.SEVEN_DIAMOND);
+        trick.playerPlays(player3, ClassicalCard.TEN_DIAMOND);
+        trick.playerPlays(player4, ClassicalCard.ACE_DIAMOND);
 
         assertTrue(trick.isOver());
         assertNotNull(trick.getWinner());
-        assertSame(players.get(3), trick.getWinner());
+        assertSame(player4, trick.getWinner());
 
     }
 

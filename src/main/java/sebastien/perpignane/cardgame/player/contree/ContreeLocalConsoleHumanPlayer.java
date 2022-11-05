@@ -103,7 +103,9 @@ public class ContreeLocalConsoleHumanPlayer extends AbstractLocalThreadContreePl
 
         Scanner scanner = new Scanner(System.in);
 
-        final String bidValues = streamToJoinedStr(
+        final String allowedBiValues = streamToJoinedStr(bidMessage.allowedBidValues().stream().sorted());
+
+        final String allBidValues = streamToJoinedStr(
             Arrays.stream(ContreeBidValue.values()).sorted()
         );
 
@@ -115,7 +117,8 @@ public class ContreeLocalConsoleHumanPlayer extends AbstractLocalThreadContreePl
                 );
 
         out.printf("Your turn to bid, %s.%n", getName());
-        out.printf("Here is your hand : %s%n", playerHandAsSortedJoinedStr());
+        out.printf("Here is your hand: %s%n", playerHandAsSortedJoinedStr());
+
 
         while (!bidPlaced && nbTries < 3) {
             try {
@@ -123,7 +126,8 @@ public class ContreeLocalConsoleHumanPlayer extends AbstractLocalThreadContreePl
                 CardSuit bidSuit = null;
 
                 while (bidValue == null) {
-                    out.printf("Select a bid value. Allowed values are : %s%n : ", bidValues);
+                    out.printf("All bid values are: %s%n", allBidValues);
+                    out.printf("Select a bid value. Allowed values are : %s%n : ", allowedBiValues);
                     String selectedBid = scanner.nextLine();
 
                     bidValue = bidValueByLabel.get(selectedBid);

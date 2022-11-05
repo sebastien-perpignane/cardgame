@@ -19,6 +19,8 @@ public class ContreeDeals {
 
     private final List<ContreeDeal> deals = new ArrayList<>();
 
+    private final BiddableValuesFilter biddableValuesFilter;
+
     private final PlayableCardsFilter playableCardsFilter;
 
     private final CardDealer cardDealer;
@@ -34,12 +36,14 @@ public class ContreeDeals {
     public ContreeDeals(
             ContreeGameScore gameScore,
             DealScoreCalculator dealScoreCalculator,
+            BiddableValuesFilter biddableValuesFilter,
             PlayableCardsFilter playableCardsFilter,
             CardDealer cardDealer,
             ContreeGameEventSender eventSender
     ) {
         this.gameScore              = gameScore;
         this.dealScoreCalculator    = dealScoreCalculator;
+        this.biddableValuesFilter   = biddableValuesFilter;
         this.playableCardsFilter    = playableCardsFilter;
         this.cardDealer             = cardDealer;
         this.gameEventSender        = eventSender;
@@ -61,7 +65,7 @@ public class ContreeDeals {
         }
 
         currentDeal = new ContreeDeal(
-                new ContreeDealBids(),
+                new ContreeDealBids(biddableValuesFilter),
                 new ContreeTricks(playableCardsFilter, gameEventSender),
                 cardDealer,
                 new ContreeDealScore(dealScoreCalculator),

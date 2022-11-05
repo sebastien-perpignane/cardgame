@@ -8,36 +8,38 @@ import org.mockito.AdditionalAnswers;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class ContreeDealBidsTest extends TestCasesManagingPlayers {
 
-    private ContreeBidPlayers bidPlayers;
+    private BiddableValuesFilter biddableValuesFilter;
 
     private ContreeDealBids dealBids;
 
     @BeforeAll
     public static void globalSetUp() {
         initPlayers();
-
     }
 
     @BeforeEach
-    public void setup() {
-        bidPlayers = mock(ContreeBidPlayers.class);
-        dealBids = new ContreeDealBids();
+    public void setUp() {
+        biddableValuesFilter = mock(BiddableValuesFilter.class);
+        when(biddableValuesFilter.biddableValues(any(), any())).thenReturn(new BiddableValuesFilter.BidFilterResult(Collections.emptySet(), Collections.emptyMap()));
+        ContreeBidPlayers bidPlayers = mock(ContreeBidPlayers.class);
+        dealBids = new ContreeDealBids(biddableValuesFilter);
+        List<ContreePlayer> multipliedPlayers = loopingPlayers(5);
+        when(bidPlayers.getCurrentBidder()).thenAnswer(AdditionalAnswers.returnsElementsOf(multipliedPlayers));
         dealBids.startBids(bidPlayers);
 
-        configureBidPlayersForNbBidTurns(1);
-    }
 
-    private void configureBidPlayersForNbBidTurns(int nbTurns) {
-        List<ContreePlayer> multipliedPlayers = loopingPlayers(nbTurns);
-        when(bidPlayers.getCurrentBidder()).thenAnswer(AdditionalAnswers.returnsElementsOf(multipliedPlayers));
     }
 
     @DisplayName("State of dealBids is as expected just after bids are started : not over, highestBid not available, ne special bid")
@@ -64,6 +66,23 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
 
         assertTrue(dealBids.hasOnlyNoneBids());
         assertTrue(dealBids.bidsAreOver());
+    }
+
+    @DisplayName("Exception when placing a bid after  bids are over")
+    @Test
+    void testExceptionWhenPlacingBidAfterBidsAreOver() {
+        dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.NONE));
+        dealBids.placeBid(new ContreeBid(player2, ContreeBidValue.NONE));
+        dealBids.placeBid(new ContreeBid(player3, ContreeBidValue.NONE));
+        dealBids.placeBid(new ContreeBid(player4, ContreeBidValue.NONE));
+
+        assertTrue(dealBids.bidsAreOver());
+
+        var e = assertThrows(
+            ContreeDealBids.BidNotAllowedException.class,
+            () -> dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.NONE))
+        );
+        assertTrue(e.isSuspectedCheat());
     }
 
     @DisplayName("After first bid, highest bid state is available")
@@ -130,7 +149,7 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
     @Test
     void testBidsAfterMultipleValuedBids_completeBids() {
 
-        configureBidPlayersForNbBidTurns(2);
+        //configureBidPlayersForNbBidTurns(2);
 
         dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.DIAMONDS));
         dealBids.placeBid(new ContreeBid(player2, ContreeBidValue.NONE));
@@ -157,7 +176,7 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
     @Test
     public void testFirstBidCapotThenDoubleAndNones() {
 
-        configureBidPlayersForNbBidTurns(2);
+        //configureBidPlayersForNbBidTurns(2);
 
         dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.CAPOT, CardSuit.HEARTS));
         dealBids.placeBid(new ContreeBid(player2, ContreeBidValue.DOUBLE));
@@ -205,52 +224,27 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
         assertTrue(dealBids.isAnnouncedCapot());
     }
 
-    @DisplayName("Exception if current bid does not overbid the last valued bid")
+    @DisplayName("Exception if current bid value is present in the exclusion cause map returned by the biddable values filter")
     @Test
     public void testNoOverBidWhenExpected() {
         dealBids.placeBid(new ContreeBid( player1, ContreeBidValue.HUNDRED, CardSuit.DIAMONDS ));
+
+        when(biddableValuesFilter.biddableValues(any(), any())).thenReturn(
+                new BiddableValuesFilter.BidFilterResult(
+                        Set.of(
+                        ),
+                        Map.of(ContreeBidValue.NINETY, "Why do you bid shit, player 3 ????")
+                )
+        );
+
         dealBids.placeBid(new ContreeBid( player2 ));
 
-        assertThrows(
-                RuntimeException.class,
-                () -> dealBids.placeBid(new ContreeBid(players.get(2), ContreeBidValue.NINETY, CardSuit.DIAMONDS))
+        var e = assertThrows(
+                ContreeDealBids.BidNotAllowedException.class,
+                () -> dealBids.placeBid(new ContreeBid(player3, ContreeBidValue.NINETY, CardSuit.DIAMONDS))
         );
 
-    }
-
-
-    @DisplayName("A player cannot double if only NONE bids before")
-    @Test
-    public void testDoubleIfNoValuedBidMustFail() {
-
-        dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.NONE));
-        assertThrows(
-                RuntimeException.class,
-                () -> dealBids.placeBid(new ContreeBid(player2, ContreeBidValue.DOUBLE))
-        );
-
-    }
-
-    @DisplayName("First bid cannot be DOUBLE")
-    @Test
-    public void testFirstBidIsDoubleFails() {
-
-        assertThrows(
-                RuntimeException.class,
-                () -> dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.DOUBLE))
-        );
-
-    }
-
-    @DisplayName("If same player bids 2 times, exception")
-    @Test
-    void testBidFromUnexpectedPlayer_samePlayerBids2times() {
-
-        dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.DIAMONDS));
-        assertThrows(
-                RuntimeException.class,
-                () -> dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.NONE))
-        );
+        assertFalse(e.isSuspectedCheat());
 
     }
 
@@ -258,88 +252,12 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
     @Test
     void testBidFromUnexpectedPlayer_3rdPlayerPlacesSecondBid() {
         dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.DIAMONDS));
-        assertThrows(
-                RuntimeException.class,
+        var e = assertThrows(
+                ContreeDealBids.BidNotAllowedException.class,
                 () -> dealBids.placeBid(new ContreeBid(player3, ContreeBidValue.NONE))
         );
 
-    }
-
-    @DisplayName("A player cannot double against his team mate")
-    @Test
-    void testDoubleAgainstTeamMate() {
-
-        dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.DIAMONDS));
-        dealBids.placeBid(new ContreeBid(player2, ContreeBidValue.NONE));
-        assertThrows(
-                RuntimeException.class,
-                () -> dealBids.placeBid(new ContreeBid(player3, ContreeBidValue.DOUBLE))
-        );
-
-    }
-
-    @DisplayName("Exception if a player tries to double before any valued bid")
-    @Test
-    public void testExceptionWhenDoubleBeforeAnyValuedBid() {
-
-        dealBids.placeBid(new ContreeBid(players.get(0), ContreeBidValue.NONE, null));
-
-        assertThrows(
-                IllegalStateException.class,
-                () -> dealBids.placeBid(new ContreeBid(players.get(1), ContreeBidValue.DOUBLE, null))
-        );
-
-    }
-
-    @DisplayName("Exception if a player tries to double before any bid")
-    @Test
-    public void testExceptionWhenDoubleBeforeAnyBid() {
-
-        assertThrows(
-                IllegalStateException.class,
-                () -> dealBids.placeBid(new ContreeBid(players.get(0), ContreeBidValue.DOUBLE, null))
-        );
-
-    }
-
-    @DisplayName("Exception if a player tries to redouble before a double")
-    @Test
-    public void testExceptionWhenRedoubleBeforeDouble() {
-        dealBids.placeBid(new ContreeBid(players.get(0), ContreeBidValue.EIGHTY, CardSuit.HEARTS));
-        dealBids.placeBid(new ContreeBid(players.get(1), ContreeBidValue.NINETY, CardSuit.SPADES));
-
-        assertThrows(
-                IllegalStateException.class,
-                () -> dealBids.placeBid(new ContreeBid(players.get(2), ContreeBidValue.REDOUBLE, null))
-        );
-
-    }
-
-    @DisplayName("Exception if a player tries to redouble before any bid")
-    @Test
-    public void testExceptionWhenRedoubleBeforeAnyBid() {
-        dealBids.placeBid(new ContreeBid(players.get(0), ContreeBidValue.EIGHTY, CardSuit.HEARTS));
-        dealBids.placeBid(new ContreeBid(players.get(1), ContreeBidValue.NINETY, CardSuit.SPADES));
-
-        assertThrows(
-                IllegalStateException.class,
-                () -> dealBids.placeBid(new ContreeBid(players.get(2), ContreeBidValue.REDOUBLE, null))
-        );
-
-    }
-
-
-    @DisplayName("A player cannot redouble if double was announced by his team mate")
-    @Test
-    public void testRedoubleAgainstTeamMate() {
-
-        dealBids.placeBid(new ContreeBid(players.get(0), ContreeBidValue.HUNDRED_FORTY, CardSuit.HEARTS));
-        dealBids.placeBid(new ContreeBid(players.get(1), ContreeBidValue.DOUBLE));
-        dealBids.placeBid(new ContreeBid(players.get(2), ContreeBidValue.NONE));
-        assertThrows(
-                IllegalStateException.class,
-                () -> dealBids.placeBid(new ContreeBid(players.get(3), ContreeBidValue.REDOUBLE))
-        );
+        assertTrue(e.isSuspectedCheat());
 
     }
 

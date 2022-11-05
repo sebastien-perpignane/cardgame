@@ -1,5 +1,6 @@
 package sebastien.perpignane.cardgame.game.contree;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,11 +10,15 @@ import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static sebastien.perpignane.cardgame.game.contree.ContreeTestUtils.buildPlayers;
 
-public class ContreeGamePlayersImplTest {
+public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
     private ContreeGamePlayers gamePlayers;
+
+    @BeforeAll
+    public static void globalSetUp() {
+        initPlayers();
+    }
 
     @BeforeEach
     public void setUp() {
@@ -191,8 +196,6 @@ public class ContreeGamePlayersImplTest {
     @Test
     @DisplayName("Building a ContreeDealPlayers on a valid ContreeGamePlayers must succeed and build a consistent object")
     public void testBuildDealPlayersOnFullGame() {
-
-        var players = buildPlayers();
 
         players.forEach(gamePlayers::joinGame);
 

@@ -2,6 +2,7 @@ package sebastien.perpignane.cardgame.player.contree;
 
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.AbstractGame;
+import sebastien.perpignane.cardgame.game.contree.ContreeBidValue;
 import sebastien.perpignane.cardgame.game.contree.ContreeGame;
 import sebastien.perpignane.cardgame.player.AbstractThreadLocalPlayer;
 import sebastien.perpignane.cardgame.player.Player;
@@ -10,6 +11,7 @@ import sebastien.perpignane.cardgame.player.Team;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 
 public abstract class AbstractLocalThreadContreePlayer extends AbstractThreadLocalPlayer<AbstractLocalThreadContreePlayer.PlayerMessage> implements ContreePlayer {
 
@@ -27,7 +29,8 @@ public abstract class AbstractLocalThreadContreePlayer extends AbstractThreadLoc
 
     public record PlayerMessage(
             MessageType messageType,
-            Collection<ClassicalCard> allowedCards) {
+            Collection<ClassicalCard> allowedCards,
+            Collection<ContreeBidValue> allowedBidValues) {
     }
 
     @Override
@@ -76,8 +79,8 @@ public abstract class AbstractLocalThreadContreePlayer extends AbstractThreadLoc
     }
 
     @Override
-    public void onPlayerTurnToBid() {
-        receiveNewMessage(new PlayerMessage(MessageType.BID, Collections.emptyList()));
+    public void onPlayerTurnToBid(Set<ContreeBidValue> allowedBidValues) {
+        receiveNewMessage( new PlayerMessage( MessageType.BID, Collections.emptyList(), allowedBidValues ) );
     }
 
     @Override
@@ -92,7 +95,7 @@ public abstract class AbstractLocalThreadContreePlayer extends AbstractThreadLoc
 
     @Override
     public void onPlayerTurn(Collection<ClassicalCard> allowedCards) {
-        receiveNewMessage(new PlayerMessage(MessageType.PLAY, allowedCards));
+        receiveNewMessage(new PlayerMessage(MessageType.PLAY, allowedCards, Collections.emptyList()));
     }
 
     @Override
@@ -112,7 +115,7 @@ public abstract class AbstractLocalThreadContreePlayer extends AbstractThreadLoc
 
     @Override
     public void onGameOver() {
-        receiveNewMessage(new PlayerMessage(MessageType.END_OF_GAME, null));
+        receiveNewMessage( new PlayerMessage( MessageType.END_OF_GAME, null, null ) );
     }
 
     @Override

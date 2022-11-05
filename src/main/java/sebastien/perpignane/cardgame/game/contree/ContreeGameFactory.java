@@ -11,9 +11,10 @@ public class ContreeGameFactory {
         ContreeGamePlayers players = new ContreeGamePlayersImpl();
         ContreeGameScore gameScore = new ContreeGameScore(maxScore == null ? config.maxScore() : maxScore);
         PlayableCardsFilter playableCardsFilter = new PlayableCardsFilter();
+        BiddableValuesFilter biddableValuesFilter = new BiddableValuesFilter();
         DealScoreCalculator scoreCalculator = new DealScoreCalculator();
         CardDealer cardDealer = new CardDealer(config.distributionConfiguration());
-        ContreeDeals deals = new ContreeDeals(gameScore, scoreCalculator, playableCardsFilter, cardDealer, eventSender);
+        ContreeDeals deals = new ContreeDeals(gameScore, scoreCalculator, biddableValuesFilter, playableCardsFilter, cardDealer, eventSender);
         return new ContreeGame(players, deals, eventSender);
 
     }

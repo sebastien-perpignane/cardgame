@@ -3,6 +3,8 @@ package sebastien.perpignane.cardgame.game.contree;
 import org.apache.commons.collections4.iterators.LoopingListIterator;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 
+import java.util.Set;
+
 public class ContreeBidPlayersImpl implements ContreeBidPlayers {
 
     private ContreePlayer currentBidder;
@@ -14,16 +16,19 @@ public class ContreeBidPlayersImpl implements ContreeBidPlayers {
         currentBidder = biddersIterator.next();
     }
 
+    @Override
     public void goToNextBidder() {
         currentBidder = biddersIterator.next();
     }
 
+    @Override
     public ContreePlayer getCurrentBidder() {
         return currentBidder;
     }
 
-    public void onCurrentBidderTurnToBid() {
-        currentBidder.onPlayerTurnToBid();
+    @Override
+    public void onCurrentBidderTurnToBid(Set<ContreeBidValue> allowedBidValues) {
+        currentBidder.onPlayerTurnToBid(allowedBidValues);
     }
 
 }
