@@ -86,7 +86,7 @@ public class ContreeTricks {
     public Optional<ContreeTeam> teamWhoDidCapot() {
 
         if  (!maxNbOverTricksReached) {
-            throw new IllegalStateException("Team doing capot cannot be computed if the deal is not over");
+            return Optional.empty();
         }
 
         var teamsWinningTrick = tricks.stream()
@@ -123,6 +123,9 @@ public class ContreeTricks {
     }
 
     public boolean isCapot() {
+        if (teamWhoDidCapot().isEmpty()) {
+            return false;
+        }
         return teamWhoDidCapot().isPresent();
     }
 

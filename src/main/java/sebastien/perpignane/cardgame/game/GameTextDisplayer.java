@@ -137,8 +137,36 @@ Deal %s is started%n
     }
 
     @Override
-    public void onDealOver(String dealId, Team winnerTeam, Integer team1Score, Integer team2Score) {
-        String winnerText = winnerTeam == null ? "No winner" : String.format("Winner is %s.", winnerTeam);
+    public void onDealOver(String dealId, Team winnerTeam, Integer team1Score, Integer team2Score, boolean capot) {
+        String winnerText = winnerTeam == null ? "No winner." : String.format("Winner is %s.", winnerTeam);
+
+        if (capot) {
+
+            System.out.println("""
+                                                                                                                                     
+                    ###      ###      ###              # ###                                                ###      ###      ###
+                     ###      ###      ###           /  /###  /                                              ###      ###      ###
+                      ##       ##       ##          /  /  ###/                                    #           ##       ##       ##
+                      ##       ##       ##         /  ##   ##                                    ##           ##       ##       ##
+                      ##       ##       ##        /  ###                                         ##           ##       ##       ##
+                      ##       ##       ##       ##   ##          /###       /###     /###     ########       ##       ##       ##
+                      ##       ##       ##       ##   ##         / ###  /   / ###  / / ###  / ########        ##       ##       ##
+                      ##       ##       ##       ##   ##        /   ###/   /   ###/ /   ###/     ##           ##       ##       ##
+                      ##       ##       ##       ##   ##       ##    ##   ##    ## ##    ##      ##           ##       ##       ##
+                      ### /    ### /    ### /    ##   ##       ##    ##   ##    ## ##    ##      ##           ### /    ### /    ### /
+                       ##/      ##/      ##/      ##  ##       ##    ##   ##    ## ##    ##      ##            ##/      ##/      ##/
+                                                   ## #      / ##    ##   ##    ## ##    ##      ##
+                       #        #        #          ###     /  ##    /#   ##    ## ##    ##      ##            #        #        #
+                      ###      ###      ###          ######/    ####/ ##  #######   ######       ##           ###      ###      ###
+                       #        #        #             ###       ###   ## ######     ####         ##           #        #        #
+                                                                          ##
+                                                                          ##
+                                                                          ##
+                                                                           ##
+
+                                       """);
+        }
+
         System.out.printf("""
 ************************************************************************************************************************
 Deal %s is over. %s%n
