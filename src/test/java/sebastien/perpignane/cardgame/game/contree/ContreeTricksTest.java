@@ -218,9 +218,9 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
 
     }
 
-    @DisplayName("teamWhoDidCapot cannot be called if all tricks were not played yet")
+    @DisplayName("teamWhoDidCapot return Optional.empty if all tricks were not played yet")
     @Test
-    public void testComputeTeamWhoDidCapotFailsIfTricksAreNotOver() {
+    public void testComputeTeamWhoDidCapotReturnsEmptyIfTricksAreNotOver() {
 
         configureTrickPlayersForNumberOfTricks(2);
 
@@ -232,10 +232,7 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
         tricksWithHeartAsTrumpSuit.playerPlays(player3, ClassicalCard.JACK_CLUB);
         tricksWithHeartAsTrumpSuit.playerPlays(player4, ClassicalCard.JACK_CLUB);
 
-        assertThrows(
-                RuntimeException.class,
-                () -> tricksWithHeartAsTrumpSuit.teamWhoDidCapot()
-        );
+        assertTrue(tricksWithHeartAsTrumpSuit.teamWhoDidCapot().isEmpty());
 
     }
 

@@ -60,8 +60,8 @@ public class ContreeGameEventSender extends AbstractGameEventSender {
         dealObservers.forEach(cdo -> cdo.onDealStarted(dealId));
     }
 
-    void sendEndOfDealEvent(String dealId, Team winnerTeam, Integer team1Score, Integer team2Score) {
-        dealObservers.forEach(cdo -> cdo.onDealOver(dealId, winnerTeam, team1Score, team2Score));
+    void sendEndOfDealEvent(String dealId, Team winnerTeam, Integer team1Score, Integer team2Score, boolean capot) {
+        dealObservers.forEach(cdo -> cdo.onDealOver(dealId, winnerTeam, team1Score, team2Score, capot));
     }
 
     void sendPlacedBidEvent(String dealId, ContreeBid bid) {
