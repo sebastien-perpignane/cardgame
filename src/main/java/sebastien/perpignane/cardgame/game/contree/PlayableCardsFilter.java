@@ -90,7 +90,7 @@ public class PlayableCardsFilter {
         }
     }
 
-    private Optional<PlayedCard> findHighestPlayedTrumpCard(ContreeTrick trick) {
+    private Optional<ContreePlayedCard> findHighestPlayedTrumpCard(ContreeTrick trick) {
         return trick.getPlayedCards().stream()
                 .filter(pc -> pc.card().isTrump()).min((a, b) -> Integer.compare(b.card().getGameValue(), a.card().getGameValue()));
     }

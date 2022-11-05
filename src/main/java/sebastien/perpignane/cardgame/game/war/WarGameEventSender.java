@@ -1,7 +1,10 @@
 package sebastien.perpignane.cardgame.game.war;
 
 import sebastien.perpignane.cardgame.card.ClassicalCard;
-import sebastien.perpignane.cardgame.game.*;
+import sebastien.perpignane.cardgame.game.AbstractGameEventSender;
+import sebastien.perpignane.cardgame.game.CardGameObserver;
+import sebastien.perpignane.cardgame.game.GameObserver;
+import sebastien.perpignane.cardgame.game.Trick;
 import sebastien.perpignane.cardgame.player.Player;
 
 import java.util.Arrays;
@@ -53,7 +56,7 @@ class WarGameEventSender extends AbstractGameEventSender {
         }
     }
 
-    void sendWarEvent(List<PlayedCard> cardsTriggeringWar) {
+    void sendWarEvent(List<WarPlayedCard> cardsTriggeringWar) {
         trickObservers.forEach(o -> o.onWar(cardsTriggeringWar));
     }
 }

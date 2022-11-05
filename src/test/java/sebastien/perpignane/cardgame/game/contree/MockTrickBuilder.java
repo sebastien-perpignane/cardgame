@@ -24,7 +24,7 @@ public class MockTrickBuilder {
         when(trick.getTrumpSuit()).thenReturn(trumpSuit); return this;
     }
 
-    public MockTrickBuilder withPlayedCards(List<PlayedCard> playedCards) {
+    public MockTrickBuilder withPlayedCards(List<ContreePlayedCard> playedCards) {
         when(trick.getPlayedCards()).thenReturn(playedCards); return this;
     }
 

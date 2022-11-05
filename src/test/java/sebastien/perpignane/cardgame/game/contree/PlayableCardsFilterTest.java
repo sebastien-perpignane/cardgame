@@ -22,7 +22,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
     private ContreePlayer trickWinningPlayer;
 
-    private List<PlayedCard> trickPlayedCards;
+    private List<ContreePlayedCard> trickPlayedCards;
 
     private boolean isTrumpTrick;
 
@@ -83,7 +83,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
         ContreePlayer opponent = player1;
         trickPlayedCards = List.of(
-                new PlayedCard(opponent, new ContreeCard(ClassicalCard.JACK_CLUB, trickTrumpSuit))
+                new ContreePlayedCard(opponent, new ContreeCard(ClassicalCard.JACK_CLUB, trickTrumpSuit))
         );
 
         testedPlayer = player2;
@@ -108,7 +108,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
         testedPlayerHand = List.of(ClassicalCard.SEVEN_CLUB, ClassicalCard.ACE_CLUB, ClassicalCard.ACE_SPADE);
 
         trickPlayedCards = List.of(
-                new PlayedCard(opponent, new ContreeCard(ClassicalCard.JACK_DIAMOND, trickTrumpSuit))
+                new ContreePlayedCard(opponent, new ContreeCard(ClassicalCard.JACK_DIAMOND, trickTrumpSuit))
         );
 
         var playableCards = buildMocksAndRunTestOnTestedPlayer();
@@ -128,7 +128,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
         testedPlayerHand = List.of(ClassicalCard.SEVEN_CLUB, ClassicalCard.ACE_CLUB, ClassicalCard.ACE_HEART);
 
         trickPlayedCards = List.of(
-                new PlayedCard(opponent, new ContreeCard(ClassicalCard.JACK_DIAMOND, trickTrumpSuit))
+                new ContreePlayedCard(opponent, new ContreeCard(ClassicalCard.JACK_DIAMOND, trickTrumpSuit))
         );
 
         var playableCards = buildMocksAndRunTestOnTestedPlayer();
@@ -150,8 +150,8 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
         testedPlayerHand = List.of(ClassicalCard.SEVEN_CLUB, ClassicalCard.ACE_CLUB, ClassicalCard.EIGHT_HEART, ClassicalCard.ACE_HEART);
 
         trickPlayedCards = List.of(
-                new PlayedCard(teammate, new ContreeCard(ClassicalCard.JACK_DIAMOND, trickTrumpSuit)),
-                new PlayedCard(opponent, new ContreeCard(ClassicalCard.TEN_HEART, trickTrumpSuit))
+                new ContreePlayedCard(teammate, new ContreeCard(ClassicalCard.JACK_DIAMOND, trickTrumpSuit)),
+                new ContreePlayedCard(opponent, new ContreeCard(ClassicalCard.TEN_HEART, trickTrumpSuit))
         );
 
         trickWinningPlayer = opponent;
@@ -175,8 +175,8 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
         testedPlayerHand = List.of(ClassicalCard.SEVEN_CLUB, ClassicalCard.ACE_CLUB, ClassicalCard.EIGHT_HEART);
 
         trickPlayedCards = List.of(
-                new PlayedCard(teammate, new ContreeCard(ClassicalCard.JACK_DIAMOND, trickTrumpSuit)),
-                new PlayedCard(opponent, new ContreeCard(ClassicalCard.TEN_HEART, trickTrumpSuit))
+                new ContreePlayedCard(teammate, new ContreeCard(ClassicalCard.JACK_DIAMOND, trickTrumpSuit)),
+                new ContreePlayedCard(opponent, new ContreeCard(ClassicalCard.TEN_HEART, trickTrumpSuit))
         );
 
         trickWinningPlayer = opponent;
@@ -200,8 +200,8 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
         testedPlayerHand = List.of(ClassicalCard.SEVEN_CLUB, ClassicalCard.ACE_CLUB, ClassicalCard.EIGHT_SPADE);
 
         trickPlayedCards = List.of(
-                new PlayedCard(teammate, new ContreeCard(ClassicalCard.JACK_DIAMOND, trickTrumpSuit)),
-                new PlayedCard(opponent, new ContreeCard(ClassicalCard.TEN_HEART, trickTrumpSuit))
+                new ContreePlayedCard(teammate, new ContreeCard(ClassicalCard.JACK_DIAMOND, trickTrumpSuit)),
+                new ContreePlayedCard(opponent, new ContreeCard(ClassicalCard.TEN_HEART, trickTrumpSuit))
         );
 
         trickWinningPlayer = opponent;
@@ -223,9 +223,9 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
         ContreePlayer opponent2 = player3;
 
         trickPlayedCards = List.of(
-                new PlayedCard(opponent1, new ContreeCard(ClassicalCard.JACK_DIAMOND, trickTrumpSuit)),
-                new PlayedCard(teamMate, new ContreeCard(ClassicalCard.ACE_DIAMOND, trickTrumpSuit)),
-                new PlayedCard(opponent2, new ContreeCard(ClassicalCard.EIGHT_DIAMOND, trickTrumpSuit))
+                new ContreePlayedCard(opponent1, new ContreeCard(ClassicalCard.JACK_DIAMOND, trickTrumpSuit)),
+                new ContreePlayedCard(teamMate, new ContreeCard(ClassicalCard.ACE_DIAMOND, trickTrumpSuit)),
+                new ContreePlayedCard(opponent2, new ContreeCard(ClassicalCard.EIGHT_DIAMOND, trickTrumpSuit))
         );
 
         trickWinningPlayer = teamMate;
@@ -250,9 +250,9 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
         ContreePlayer opponent2 = player3;
 
         trickPlayedCards = List.of(
-                new PlayedCard(opponent1, new ContreeCard(ClassicalCard.JACK_DIAMOND, trickTrumpSuit)),
-                new PlayedCard(teamMate, new ContreeCard(ClassicalCard.TEN_HEART, trickTrumpSuit)),
-                new PlayedCard(opponent2, new ContreeCard(ClassicalCard.SEVEN_HEART, trickTrumpSuit))
+                new ContreePlayedCard(opponent1, new ContreeCard(ClassicalCard.JACK_DIAMOND, trickTrumpSuit)),
+                new ContreePlayedCard(teamMate, new ContreeCard(ClassicalCard.TEN_HEART, trickTrumpSuit)),
+                new ContreePlayedCard(opponent2, new ContreeCard(ClassicalCard.SEVEN_HEART, trickTrumpSuit))
         );
 
         trickWinningPlayer = teamMate;

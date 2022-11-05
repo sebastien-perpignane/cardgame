@@ -14,15 +14,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class PlayedCardTest {
+public class ContreePlayedCardTest {
 
     @DisplayName("contree PlayedCard cannot be built with null player")
     @Test
     public void testInvalidConstructorArgument_nullPlayer() {
 
         assertThrows(
-                IllegalArgumentException.class,
-                () -> new PlayedCard(null, new ContreeCard(ClassicalCard.JACK_DIAMOND, CardSuit.HEARTS))
+            RuntimeException.class,
+            () -> new ContreePlayedCard(null, new ContreeCard(ClassicalCard.JACK_DIAMOND, CardSuit.HEARTS))
         );
 
     }
@@ -35,8 +35,8 @@ public class PlayedCardTest {
         when(noTeamPlayer.getTeam()).thenReturn(Optional.empty());
 
         assertThrows(
-                IllegalArgumentException.class,
-                () -> new PlayedCard(noTeamPlayer, new ContreeCard(ClassicalCard.JACK_DIAMOND, CardSuit.HEARTS))
+            RuntimeException.class,
+            () -> new ContreePlayedCard(noTeamPlayer, new ContreeCard(ClassicalCard.JACK_DIAMOND, CardSuit.HEARTS))
         );
 
     }
@@ -49,8 +49,8 @@ public class PlayedCardTest {
         when(player.getTeam()).thenReturn(Optional.of(ContreeTeam.TEAM1));
 
         assertThrows(
-                IllegalArgumentException.class,
-                () -> new PlayedCard(player, null)
+            RuntimeException.class,
+            () -> new ContreePlayedCard(player, null)
         );
 
     }

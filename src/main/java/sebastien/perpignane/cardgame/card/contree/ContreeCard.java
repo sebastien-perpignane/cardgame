@@ -1,5 +1,6 @@
 package sebastien.perpignane.cardgame.card.contree;
 
+import sebastien.perpignane.cardgame.card.Card;
 import sebastien.perpignane.cardgame.card.CardRank;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
@@ -8,7 +9,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class ContreeCard implements ValuableCard {
+public class ContreeCard implements ValuableCard, Card {
 
     private final ClassicalCard card;
 
