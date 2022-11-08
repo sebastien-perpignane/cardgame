@@ -5,11 +5,11 @@ import sebastien.perpignane.cardgame.player.Player;
 
 import java.util.Objects;
 
-public class GenericPlayedCard<P extends Player, C extends Card> {
+public class PlayedCard<P extends Player<?>, C extends Card> {
     private final C card;
     private final P player;
 
-    public GenericPlayedCard(P player, C card) {
+    public PlayedCard(P player, C card) {
 
         Objects.requireNonNull(player, "player cannot be null");
         Objects.requireNonNull(card, "card cannot be null");
@@ -30,7 +30,7 @@ public class GenericPlayedCard<P extends Player, C extends Card> {
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (GenericPlayedCard<?, ?>) obj;
+        var that = (PlayedCard<?, ?>) obj;
         return Objects.equals(this.card, that.card) &&
                 Objects.equals(this.player, that.player);
     }

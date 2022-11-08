@@ -43,4 +43,7 @@ public class ContreeGameScore {
         return scoreByTeam.entrySet().stream().filter(e -> e.getValue() >= maxScore).map(Map.Entry::getKey).findFirst();
     }
 
+    public int getMaxScore() {
+        return maxScore;
+    }
 }

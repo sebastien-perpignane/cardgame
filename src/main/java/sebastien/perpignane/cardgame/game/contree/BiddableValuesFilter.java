@@ -32,7 +32,7 @@ public class BiddableValuesFilter {
         biddableValues.add(ContreeBidValue.PASS);
 
         exclusionCauseByBidValue.put(ContreeBidValue.DOUBLE, "Double is is only possible if an opponent bade before and this opponent made the highest bid");
-        exclusionCauseByBidValue.put(ContreeBidValue.REDOUBLE, "Redouble is is only possible if an opponent doubled before");
+        exclusionCauseByBidValue.put(ContreeBidValue.REDOUBLE, "Redouble is only possible if an opponent doubled before");
 
         biddableValues.add(ContreeBidValue.PASS);
 

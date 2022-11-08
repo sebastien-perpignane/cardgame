@@ -8,8 +8,8 @@ public interface Trick {
 
     boolean isOver();
 
-    Player getWinner();
+    Player<?> getWinner();
 
-    Collection<? extends GenericPlayedCard<?, ?>> getPlayedCards();
+    Collection<? extends PlayedCard<?, ?>> getPlayedCards();
 
 }
