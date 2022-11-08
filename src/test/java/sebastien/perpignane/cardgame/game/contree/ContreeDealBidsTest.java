@@ -38,8 +38,6 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
         List<ContreePlayer> multipliedPlayers = loopingPlayers(5);
         when(bidPlayers.getCurrentBidder()).thenAnswer(AdditionalAnswers.returnsElementsOf(multipliedPlayers));
         dealBids.startBids(bidPlayers);
-
-
     }
 
     @DisplayName("State of dealBids is as expected just after bids are started : not over, highestBid not available, ne special bid")
@@ -266,6 +264,49 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
 
         assertFalse(dealBids.isDoubleBidExists());
         assertFalse(dealBids.isRedoubleBidExists());
+    }
+
+    @DisplayName("When bids are in progress, there is a current bidder")
+    @Test
+    void testGetCurrentBidder_bidsInProgress() {
+
+        dealBids.placeBid(new ContreeBid(player1));
+
+        assertTrue(dealBids.getCurrentBidder().isPresent());
+        assertSame(player2, dealBids.getCurrentBidder().get());
+
+    }
+
+    @DisplayName("When bids are over, there is no current bidder")
+    @Test
+    void testGetCurrentBidder_bidsAreOver() {
+
+        dealBids.placeBid(new ContreeBid(player1));
+        dealBids.placeBid(new ContreeBid(player2));
+        dealBids.placeBid(new ContreeBid(player3));
+        dealBids.placeBid(new ContreeBid(player4));
+
+        assertTrue(dealBids.bidsAreOver());
+        assertFalse(dealBids.getCurrentBidder().isPresent());
+
+    }
+
+    @DisplayName("Current bidder is not updatable if bids are over")
+    @Test
+    public void testUpdateCurrentBidder_bidsAreOver() {
+
+        ContreePlayer newPlayer = mock(ContreePlayer.class);
+
+        dealBids.placeBid(new ContreeBid(player1));
+        dealBids.placeBid(new ContreeBid(player2));
+        dealBids.placeBid(new ContreeBid(player3));
+        dealBids.placeBid(new ContreeBid(player4));
+
+        assertThrows(
+            RuntimeException.class,
+            () -> dealBids.updateCurrentBidder(newPlayer)
+        );
+
     }
 
 }

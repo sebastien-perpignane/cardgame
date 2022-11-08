@@ -6,14 +6,14 @@ import sebastien.perpignane.cardgame.game.AbstractGame;
 import java.util.Collection;
 import java.util.Optional;
 
-public interface Player {
+public interface Player<G extends AbstractGame<?>> {
 
     void receiveHand(Collection<ClassicalCard> cards);
 
     // FIXME Replace with finer grained event
     void onUpdatedGame();
 
-    void setGame(AbstractGame game);
+    void setGame(G game);
 
     boolean hasNoMoreCard();
 

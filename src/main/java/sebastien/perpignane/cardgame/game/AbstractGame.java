@@ -5,11 +5,10 @@ import sebastien.perpignane.cardgame.player.Player;
 import java.util.List;
 import java.util.UUID;
 
-public abstract class AbstractGame {
+public abstract class AbstractGame<P extends Player<?>> {
 
     private final String gameId;
     private GameState state;
-
 
     public AbstractGame() {
         gameId = UUID.randomUUID().toString();
@@ -25,7 +24,7 @@ public abstract class AbstractGame {
         }
     }
 
-    protected abstract List<? extends Player> getPlayers();
+    protected abstract List<P> getPlayers();
 
     public boolean isInPlayableState() {
         return state.isPlayable();

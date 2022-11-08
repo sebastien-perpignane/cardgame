@@ -10,11 +10,9 @@ import sebastien.perpignane.cardgame.card.CardSet;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
+import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -26,6 +24,8 @@ class ContreeDealsTest extends TestCasesManagingPlayers {
     private ContreeGameScore gameScore;
 
     private ContreeDeals deals;
+
+    private ContreePlayer newPlayer;
 
     @BeforeAll
     public static void globalSetUp() {
@@ -64,18 +64,18 @@ class ContreeDealsTest extends TestCasesManagingPlayers {
                 Collections.emptyMap()
         ));
 
+        newPlayer = mock(ContreePlayer.class);
 
         deals = new ContreeDeals(gameScore, dealScoreCalculator, biddableValuesFilter, filter, cardDealer, eventSender);
 
     }
 
-    @DisplayName("When deals are started, a current deal is available")
+    @DisplayName("When deals are started, there is an ongoing deal")
     @Test
     void getCurrentDeal() {
 
         deals.startDeals("TEST", dealPlayers);
 
-        assertNotNull(deals.getCurrentDeal());
         assertEquals(1, deals.getNbDeals());
         assertEquals(0, deals.nbOverDeals());
         assertEquals(1, deals.nbOngoingDeals());
@@ -105,12 +105,16 @@ class ContreeDealsTest extends TestCasesManagingPlayers {
     public void testCannotPlayWhenMaxScoreReached() {
 
         when(gameScore.isMaximumScoreReached()).thenReturn(true);
+        when(gameScore.getWinner()).thenReturn(Optional.of(ContreeTeam.TEAM1));
         assertTrue(deals.isMaximumScoreReached());
+
 
         assertThrows(
             RuntimeException.class,
             () -> deals.playCard(player1, ClassicalCard.JACK_DIAMOND)
         );
+        assertTrue(deals.isMaximumScoreReached());
+        assertTrue(deals.getWinner().isPresent());
 
     }
 
@@ -125,6 +129,15 @@ class ContreeDealsTest extends TestCasesManagingPlayers {
         }).when(gameScore).addDealScore(any());
 
         deals.startDeals("TEST", dealPlayers);
+
+        playFullDeal();
+
+        assertTrue(calledFlag[0]);
+        assertTrue(deals.getWinner().isEmpty());
+
+    }
+
+    private void playFullDeal() {
 
         deals.placeBid(player1, ContreeBidValue.EIGHTY, CardSuit.HEARTS);
         deals.placeBid(player2, ContreeBidValue.PASS, null);
@@ -142,8 +155,71 @@ class ContreeDealsTest extends TestCasesManagingPlayers {
 
             i++;
         }
+    }
 
-        assertTrue(calledFlag[0]);
+    @DisplayName("No exception when managing a leaving player on not started deals")
+    @Test
+    public void testManageLeavingPlayer_notStartedDeals() {
+
+        boolean exception = false;
+
+        when(player1.isBot()).thenReturn(false);
+
+        try {
+            deals.manageLeavingPlayer(player1, newPlayer);
+        }
+        catch(Exception e) {
+            exception = true;
+        }
+
+        assertFalse(exception);
+
+    }
+
+    @DisplayName("No exception when managing a leaving player on started deals")
+    @Test
+    public void testManageLeavingPlayer_startedDeals() {
+
+        boolean exception = false;
+
+        when(player1.isBot()).thenReturn(false);
+
+        deals.startDeals("TEST", dealPlayers);
+
+        try {
+            deals.manageLeavingPlayer(player1, newPlayer);
+        }
+        catch(Exception e) {
+            exception = true;
+        }
+
+        assertFalse(exception);
+
+    }
+
+    @DisplayName("No exception when managing a leaving player on started deals")
+    @Test
+    public void testManageLeavingPlayer_startedDealsAndPlayStepStarted() {
+
+        boolean exception = false;
+
+        when(player1.isBot()).thenReturn(false);
+
+        deals.startDeals("TEST", dealPlayers);
+        deals.placeBid(player1, ContreeBidValue.EIGHTY, CardSuit.DIAMONDS);
+        deals.placeBid(player2, ContreeBidValue.PASS, null);
+        deals.placeBid(player3, ContreeBidValue.PASS, null);
+        deals.placeBid(player4, ContreeBidValue.PASS, null);
+
+
+        try {
+            deals.manageLeavingPlayer(player1, newPlayer);
+        }
+        catch(Exception e) {
+            exception = true;
+        }
+
+        assertFalse(exception);
 
     }
 

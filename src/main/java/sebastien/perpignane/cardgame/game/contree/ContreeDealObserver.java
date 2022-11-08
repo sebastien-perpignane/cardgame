@@ -11,7 +11,7 @@ public interface ContreeDealObserver extends CardGameObserver {
 
     void onDealOver(String dealId, Team winnerTeam, Integer team1Score, Integer team2Score, boolean capot);
 
-    void onPlacedBid(String dealId, Player player, ContreeBidValue bidValue, CardSuit suit);
+    void onPlacedBid(String dealId, Player<?> player, ContreeBidValue bidValue, CardSuit suit);
 
     void onBidStepStarted(String dealId);
 

@@ -10,12 +10,14 @@ import sebastien.perpignane.cardgame.game.GameObserver;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class ContreeGameTest extends TestCasesManagingPlayers {
+
+    private ContreeGamePlayers gamePlayers;
 
     private ContreeDeals deals;
 
@@ -29,7 +31,7 @@ class ContreeGameTest extends TestCasesManagingPlayers {
     @BeforeEach
     public void setUp() {
 
-        ContreeGamePlayers gamePlayers = mock(ContreeGamePlayers.class);
+        gamePlayers = mock(ContreeGamePlayers.class);
         deals = mock(ContreeDeals.class);
         ContreeGameEventSender eventSender = mock(ContreeGameEventSender.class);
 
@@ -148,6 +150,147 @@ class ContreeGameTest extends TestCasesManagingPlayers {
         game.playCard(player1, ClassicalCard.JACK_HEART);
     }
 
+    @DisplayName("Leaving a not started game does not trigger currentBidder and currentPlayer replacement but newPlayer get the leaver hand")
+    @Test
+    public void testLeaveNotStartedGame() {
 
+        LeaveGameFlags flags = new LeaveGameFlags();
+
+        var leaver = player1;
+        ContreePlayer newPlayer = mock(ContreePlayer.class);
+        when(leaver.isBot()).thenReturn(false);
+        when(leaver.getHand()).thenReturn(Set.of(ClassicalCard.ACE_SPADE, ClassicalCard.TEN_SPADE));
+        when(gamePlayers.leaveGameAndReplaceWithBotPlayer(leaver)).thenReturn(newPlayer);
+
+        doAnswer(invocationOnMock -> {
+            flags.hand = invocationOnMock.getArgument(0);
+            return null;
+        }).when(newPlayer).receiveHand(anySet());
+
+        doAnswer(invocationOnMock -> {
+            flags.leavingPlayerManagement = true;
+            return null;
+        }).when(deals).manageLeavingPlayer(leaver, newPlayer);
+
+        doAnswer((invocationOnMock -> {
+            flags.updatedGame = invocationOnMock.getArgument(0);
+            return null;
+        })).when(newPlayer).setGame(any());
+
+        doAnswer((invocationOnMock -> {
+            flags.playerGameStartedEvent = true;
+            return null;
+        })).when(newPlayer).onGameStarted();
+
+        game.joinGame(leaver);
+
+        game.leaveGame(leaver);
+
+        assertEquals(leaver.getHand(), flags.hand);
+        assertFalse(flags.leavingPlayerManagement);
+        assertSame(game, flags.updatedGame);
+        assertFalse(flags.playerGameStartedEvent);
+
+    }
+
+    @DisplayName("Leaving a started game does trigger currentBidder and currentPlayer replacement, newPlayer get the leaver hand")
+    @Test
+    public void testLeaveStartedGame() {
+
+        LeaveGameFlags flags = new LeaveGameFlags();
+
+        makeTheGameStart();
+
+        var leaver = player1;
+        ContreePlayer newPlayer = mock(ContreePlayer.class);
+        when(leaver.isBot()).thenReturn(false);
+        when(leaver.getHand()).thenReturn(Set.of(ClassicalCard.ACE_SPADE, ClassicalCard.TEN_SPADE));
+        when(gamePlayers.leaveGameAndReplaceWithBotPlayer(leaver)).thenReturn(newPlayer);
+
+        doAnswer(invocationOnMock -> {
+            flags.hand = invocationOnMock.getArgument(0);
+            return null;
+        }).when(newPlayer).receiveHand(anySet());
+
+        doAnswer(invocationOnMock -> {
+            flags.leavingPlayerManagement = true;
+            return null;
+        }).when(deals).manageLeavingPlayer(leaver, newPlayer);
+
+        doAnswer((invocationOnMock -> {
+            flags.updatedGame = invocationOnMock.getArgument(0);
+            return null;
+        })).when(newPlayer).setGame(any());
+
+        doAnswer((invocationOnMock -> {
+            flags.playerGameStartedEvent = true;
+            return null;
+        })).when(newPlayer).onGameStarted();
+
+        game.joinGame(leaver);
+
+        game.leaveGame(leaver);
+
+        assertEquals(leaver.getHand(), flags.hand);
+        assertTrue(flags.leavingPlayerManagement);
+        assertSame(game, flags.updatedGame);
+        assertTrue(flags.playerGameStartedEvent);
+
+    }
+
+    @DisplayName("Leaving an over game does not trigger anything")
+    @Test
+    public void testLeaveOverGame() {
+
+        LeaveGameFlags flags = new LeaveGameFlags();
+
+        makeTheGameOver();
+
+        var leaver = player1;
+        ContreePlayer newPlayer = mock(ContreePlayer.class);
+        when(leaver.isBot()).thenReturn(false);
+        when(leaver.getHand()).thenReturn(Set.of(ClassicalCard.ACE_SPADE, ClassicalCard.TEN_SPADE));
+        when(gamePlayers.leaveGameAndReplaceWithBotPlayer(leaver)).thenReturn(newPlayer);
+
+        doAnswer(invocationOnMock -> {
+            flags.hand = invocationOnMock.getArgument(0);
+            return null;
+        }).when(newPlayer).receiveHand(anySet());
+
+        doAnswer(invocationOnMock -> {
+            flags.leavingPlayerManagement = true;
+            return null;
+        }).when(deals).manageLeavingPlayer(leaver, newPlayer);
+
+        doAnswer((invocationOnMock -> {
+            flags.updatedGame = invocationOnMock.getArgument(0);
+            return null;
+        })).when(newPlayer).setGame(any());
+
+        doAnswer((invocationOnMock -> {
+            flags.playerGameStartedEvent = true;
+            return null;
+        })).when(newPlayer).onGameStarted();
+
+        game.leaveGame(leaver);
+
+        assertNotEquals(leaver.getHand(), flags.hand);
+        assertFalse(flags.leavingPlayerManagement);
+        assertNull(flags.updatedGame);
+        assertFalse(flags.playerGameStartedEvent);
+
+    }
+
+}
+
+class LeaveGameFlags {
+
+    public boolean playerGameStartedEvent;
+
+    public boolean leavingPlayerManagement;
+
+    public Set<ClassicalCard> hand;
+
+    public ContreeGame updatedGame;
 
 }

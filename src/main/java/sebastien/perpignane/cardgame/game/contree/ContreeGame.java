@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ContreeGame extends AbstractGame {
+public class ContreeGame extends AbstractGame<ContreePlayer> {
 
     private final ContreeGamePlayers gamePlayers;
 
@@ -37,17 +37,6 @@ public class ContreeGame extends AbstractGame {
         return new ArrayList<>(gamePlayers.getGamePlayers());
     }
 
-    private void startGame() {
-        gameDeals.startDeals(getGameId(), gamePlayers.buildDealPlayers());
-    }
-
-    public synchronized void placeBid(ContreePlayer player, ContreeBidValue bidValue, CardSuit cardSuit) {
-        if (isOver()) {
-            throw new IllegalStateException("This game is over, you cannot place a bid on it");
-        }
-        gameDeals.placeBid(player, bidValue, cardSuit);
-    }
-
     public synchronized void joinGame(ContreePlayer p) {
         if (isOver()) {
             throw new IllegalStateException("This game is over, you cannot join it");
@@ -58,6 +47,30 @@ public class ContreeGame extends AbstractGame {
             updateState(GameState.STARTED);
             startGame();
         }
+    }
+
+    public synchronized void leaveGame(ContreePlayer leavingPlayer) {
+        if (isOver()) {
+            return;
+        }
+        var newPlayer = gamePlayers.leaveGameAndReplaceWithBotPlayer(leavingPlayer);
+        newPlayer.setGame(this);
+        newPlayer.receiveHand(leavingPlayer.getHand());
+        if (isStarted()) {
+            newPlayer.onGameStarted();
+            gameDeals.manageLeavingPlayer(leavingPlayer, newPlayer);
+        }
+    }
+
+    private void startGame() {
+        gameDeals.startDeals(getGameId(), gamePlayers.buildDealPlayers());
+    }
+
+    public synchronized void placeBid(ContreePlayer player, ContreeBidValue bidValue, CardSuit cardSuit) {
+        if (isOver()) {
+            throw new IllegalStateException("This game is over, you cannot place a bid on it");
+        }
+        gameDeals.placeBid(player, bidValue, cardSuit);
     }
 
     public synchronized void playCard(ContreePlayer player, ClassicalCard card) {

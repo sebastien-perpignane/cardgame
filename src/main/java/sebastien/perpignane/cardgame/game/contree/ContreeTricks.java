@@ -59,18 +59,19 @@ public class ContreeTricks {
         return deal.getDealId() + "-" + (tricks.size() + 1);
     }
 
-    private boolean maxNbOverTricksReached = false;
+    private boolean tricksAreOver = false;
 
     public void playerPlays(ContreePlayer player, ClassicalCard card) {
         currentTrick.playerPlays(player, card);
         if ( currentTrick.isOver() ) {
 
-            var displayCards = currentTrick.getPlayedCards().stream().map(pc -> String.format("Player %s : %s", pc.player(), pc.card().getCard())).collect(Collectors.joining(", "));
+            var displayCards = currentTrick.getPlayedCards().stream().map(pc -> String.format("%s : %s", pc.player(), pc.card().getCard())).collect(Collectors.joining(", "));
             // TODO send event
             System.out.printf("Trick %s won by %s. Cards : %s%n", currentTrick, currentTrick.getWinner(), displayCards);
 
             if ( tricks.size() == NB_TRICKS_PER_DEAL ) {
-                maxNbOverTricksReached = true;
+                tricksAreOver = true;
+                currentTrick = null;
             }
             else {
                 startNewTrick();
@@ -79,13 +80,20 @@ public class ContreeTricks {
         }
     }
 
-    public boolean isMaxNbOverTricksReached() {
-        return maxNbOverTricksReached;
+    public void updateCurrentPlayer(ContreePlayer newPlayer) {
+        if (currentTrick == null) {
+            throw new IllegalStateException("There is not current trick on which current player can be updated");
+        }
+        currentTrick.updateCurrentPlayer(newPlayer);
+    }
+
+    public boolean tricksAreOver() {
+        return tricksAreOver;
     }
 
     public Optional<ContreeTeam> teamWhoDidCapot() {
 
-        if  (!maxNbOverTricksReached) {
+        if  (!tricksAreOver) {
             return Optional.empty();
         }
 
@@ -134,11 +142,18 @@ public class ContreeTricks {
     }
 
     public int nbOverTricks() {
-        return (int) tricks.stream().filter(ContreeTrick::isOver).count();
+        return tricks.stream().filter(ContreeTrick::isOver).mapToInt(t -> 1).sum();
     }
 
     public int nbOngoingTricks() {
-        return (int) tricks.stream().filter(Predicate.not(ContreeTrick::isOver)).count();
+        return tricks.stream().filter(Predicate.not(ContreeTrick::isOver)).mapToInt(t -> 1).sum();
+    }
+
+    public Optional<ContreePlayer> getCurrentPlayer() {
+        if (currentTrick == null) {
+            return Optional.empty();
+        }
+        return currentTrick.getCurrentPlayer();
     }
 
 }

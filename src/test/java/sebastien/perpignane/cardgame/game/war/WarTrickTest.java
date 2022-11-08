@@ -4,7 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.Trick;
-import sebastien.perpignane.cardgame.player.Player;
+import sebastien.perpignane.cardgame.player.war.AbstractWarPlayer;
 import sebastien.perpignane.cardgame.player.war.WarBotPlayer;
 
 import java.util.ArrayList;
@@ -21,8 +21,8 @@ public class WarTrickTest {
     @DisplayName("Trick is not over when one player plays one card at the beginning of a trick")
     public void testPlayCardOnEmptyTrick() {
 
-        Player player1 = new WarBotPlayer();
-        Player player2 = new WarBotPlayer();
+        AbstractWarPlayer player1 = new WarBotPlayer();
+        AbstractWarPlayer player2 = new WarBotPlayer();
 
         player1.receiveHand(new ArrayList<>(List.of(ClassicalCard.SIX_CLUB)));
         player2.receiveHand(new ArrayList<>(List.of(ClassicalCard.SIX_DIAMOND)));
@@ -42,11 +42,11 @@ public class WarTrickTest {
 
         final int nbTurns = 1;
 
-        Player mockPlayer1 = mock(Player.class);
+        AbstractWarPlayer mockPlayer1 = mock(AbstractWarPlayer.class);
         when(mockPlayer1.play()).thenReturn(ClassicalCard.SIX_CLUB);
         when(mockPlayer1.hasNoMoreCard()).thenReturn(false);
 
-        Player mockPlayer2 = mock(Player.class);
+        AbstractWarPlayer mockPlayer2 = mock(AbstractWarPlayer.class);
         when(mockPlayer2.play()).thenReturn(ClassicalCard.TEN_DIAMOND);
         when(mockPlayer2.hasNoMoreCard()).thenReturn(false);
 
@@ -64,11 +64,11 @@ public class WarTrickTest {
 
         final int nbTurns = 3;
 
-        Player mockPlayer1 = mock(Player.class);
+        AbstractWarPlayer mockPlayer1 = mock(AbstractWarPlayer.class);
         when(mockPlayer1.play()).thenReturn(ClassicalCard.SIX_CLUB, ClassicalCard.ACE_CLUB, ClassicalCard.ACE_SPADE);
         when(mockPlayer1.hasNoMoreCard()).thenReturn(false);
 
-        Player mockPlayer2 = mock(Player.class);
+        AbstractWarPlayer mockPlayer2 = mock(AbstractWarPlayer.class);
         when(mockPlayer2.play()).thenReturn(ClassicalCard.SIX_DIAMOND, ClassicalCard.TEN_DIAMOND, ClassicalCard.TEN_SPADE);
         when(mockPlayer2.hasNoMoreCard()).thenReturn(false);
 
@@ -85,11 +85,11 @@ public class WarTrickTest {
 
         final int nbTurns = 5;
 
-        Player mockPlayer1 = mock(Player.class);
+        AbstractWarPlayer mockPlayer1 = mock(AbstractWarPlayer.class);
         when(mockPlayer1.play()).thenReturn(ClassicalCard.SIX_CLUB, ClassicalCard.ACE_CLUB, ClassicalCard.ACE_SPADE, ClassicalCard.EIGHT_CLUB, ClassicalCard.NINE_CLUB);
         when(mockPlayer1.hasNoMoreCard()).thenReturn(false);
 
-        Player mockPlayer2 = mock(Player.class);
+        AbstractWarPlayer mockPlayer2 = mock(AbstractWarPlayer.class);
         when(mockPlayer2.play()).thenReturn(ClassicalCard.SIX_DIAMOND, ClassicalCard.TEN_DIAMOND, ClassicalCard.ACE_DIAMOND, ClassicalCard.EIGHT_HEART, ClassicalCard.TEN_HEART);
         when(mockPlayer2.hasNoMoreCard()).thenReturn(false);
 
@@ -101,7 +101,7 @@ public class WarTrickTest {
 
     }
 
-    private WarTrick initAndPlayOnTrick(Player player1, Player player2, int nbTurns) {
+    private WarTrick initAndPlayOnTrick(AbstractWarPlayer player1, AbstractWarPlayer player2, int nbTurns) {
         WarTrick trick = new WarTrick("test", Arrays.asList(player1, player2), dummyEventSender());
 
         for (int i = 0; i < nbTurns;i++) {
@@ -115,8 +115,8 @@ public class WarTrickTest {
     @DisplayName("Error if a player plays a card on a ended trick")
     public void testPlayAfterEndOfTrick() {
 
-        Player player1 = new WarBotPlayer();
-        Player player2 = new WarBotPlayer();
+        AbstractWarPlayer player1 = new WarBotPlayer();
+        AbstractWarPlayer player2 = new WarBotPlayer();
 
         player1.receiveHand(new ArrayList<>(List.of(ClassicalCard.SIX_CLUB)));
         player2.receiveHand(new ArrayList<>(List.of(ClassicalCard.TEN_DIAMOND)));
@@ -142,10 +142,10 @@ public class WarTrickTest {
     @DisplayName("Trick stops if one player is out of cards during war")
     public void testPrematureEndOfTrickDuringWar() {
 
-        Player player1 = new WarBotPlayer();
+        AbstractWarPlayer player1 = new WarBotPlayer();
         player1.receiveHand(Arrays.asList(ClassicalCard.SIX_CLUB, ClassicalCard.ACE_SPADE, ClassicalCard.KING_HEART));
 
-        Player player2 = new WarBotPlayer();
+        AbstractWarPlayer player2 = new WarBotPlayer();
         player2.receiveHand(Arrays.asList(ClassicalCard.SIX_DIAMOND, ClassicalCard.FIVE_SPADE));
 
         final boolean[] warHappened = new boolean[1];

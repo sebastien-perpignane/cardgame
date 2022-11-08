@@ -1,6 +1,7 @@
 package sebastien.perpignane.cardgame.game.war;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import sebastien.perpignane.cardgame.card.CardSet;
 import sebastien.perpignane.cardgame.card.CardSetShuffler;
@@ -8,7 +9,7 @@ import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.BlockingQueueGameObserver;
 import sebastien.perpignane.cardgame.game.GameTextDisplayer;
 import sebastien.perpignane.cardgame.game.WarPlayer1WinShuffler;
-import sebastien.perpignane.cardgame.player.Player;
+import sebastien.perpignane.cardgame.player.war.AbstractWarPlayer;
 import sebastien.perpignane.cardgame.player.war.WarBotPlayer;
 
 import java.util.Arrays;
@@ -19,14 +20,15 @@ import java.util.concurrent.BlockingQueue;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Tag(("integration-test"))
 public class WarGameIT {
 
     @Test
     @DisplayName("Player 1 has only superior cards and must win the game")
     public void testPlayer1HasBestCardsAndWins() throws InterruptedException {
 
-        Player player1 = new WarBotPlayer();
-        Player player2 = new WarBotPlayer();
+        AbstractWarPlayer player1 = new WarBotPlayer();
+        AbstractWarPlayer player2 = new WarBotPlayer();
 
         WarGame warGame = new WarGame();
         warGame.joinGame(player1);
@@ -49,8 +51,8 @@ public class WarGameIT {
     @DisplayName("Player 1 wins 1st trick but loses the game")
     public void testPlayer1Win1TrickButLoses() throws InterruptedException {
 
-        Player player1 = new WarBotPlayer();
-        Player player2 = new WarBotPlayer();
+        AbstractWarPlayer player1 = new WarBotPlayer();
+        AbstractWarPlayer player2 = new WarBotPlayer();
 
         WarGame warGame = new WarGame();
         warGame.joinGame(player1);

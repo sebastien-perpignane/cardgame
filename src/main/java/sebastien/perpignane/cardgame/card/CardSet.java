@@ -1,6 +1,7 @@
 package sebastien.perpignane.cardgame.card;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -40,6 +41,10 @@ public enum CardSet {
 
     public SortedSet<ClassicalCard> getGameCards() {
         return gameCards;
+    }
+
+    public Collection<ClassicalCard> allOf(CardSuit cardSuit) {
+        return gameCards.stream().filter(c -> c.getSuit() == cardSuit).toList();
     }
 
 }
