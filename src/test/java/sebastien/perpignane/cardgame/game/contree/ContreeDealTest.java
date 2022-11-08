@@ -7,14 +7,18 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.AdditionalAnswers;
 import sebastien.perpignane.cardgame.card.CardDealer;
+import sebastien.perpignane.cardgame.card.CardSet;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -67,6 +71,12 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
         ContreeDealScore score = mock(ContreeDealScore.class);
 
         CardDealer cardDealer = mock(CardDealer.class);
+        when(cardDealer.dealCards(anyList(), anyInt())).thenReturn(List.of(
+                new ArrayList<>(CardSet.GAME_32.allOf(CardSuit.SPADES)),
+                new ArrayList<>(CardSet.GAME_32.allOf(CardSuit.HEARTS)),
+                new ArrayList<>(CardSet.GAME_32.allOf(CardSuit.CLUBS)),
+                new ArrayList<>(CardSet.GAME_32.allOf(CardSuit.DIAMONDS))
+        ));
 
         deal = new ContreeDeal(bids, tricks, cardDealer, score, eventSender);
 
@@ -169,7 +179,7 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
 
         goToPlayStep();
 
-        when(tricks.isMaxNbOverTricksReached()).thenReturn(true);
+        when(tricks.tricksAreOver()).thenReturn(true);
 
         deal.playerPlays(player1, ClassicalCard.JACK_DIAMOND);
 
@@ -183,7 +193,7 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
 
         goToPlayStep();
 
-        when(tricks.isMaxNbOverTricksReached()).thenReturn(false);
+        when(tricks.tricksAreOver()).thenReturn(false);
 
         deal.playerPlays(player1, ClassicalCard.JACK_DIAMOND);
 
@@ -203,6 +213,7 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
         assertTrue(deal.isPlayStep());
     }
 
+    @DisplayName("When only bid is 180 HEART, the deal is not doubled nor redoubled")
     @Test
     public void testDealIsNotDoubleNorRedouble() {
 
@@ -213,6 +224,39 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
         assertFalse(deal.isDoubleBidExists());
         assertFalse(deal.isRedoubleBidExists());
         assertTrue(deal.isBidStep());
+    }
+
+    @DisplayName("getCurrentPlayer behavior is consistent with tricks returned values")
+    @Test
+    public void testGetCurrentPlayer_isConsistentWithTricks() {
+
+        when(tricks.getCurrentPlayer()).thenReturn(Optional.empty());
+
+        assertTrue(deal.getCurrentPlayer().isEmpty());
+
+        when(tricks.getCurrentPlayer()).thenReturn(Optional.of(player1));
+
+        assertTrue(deal.getCurrentPlayer().isPresent());
+
+        when(tricks.getCurrentPlayer()).thenReturn(Optional.of(player1));
+
+        when(tricks.tricksAreOver()).thenReturn(true);
+        assertTrue(deal.getCurrentPlayer().isEmpty());
+
+    }
+
+    @DisplayName("getCurrentBidder behavior is consistent with bids returned values")
+    @Test
+    public void testGetCurrentBidder_isConsistentWithBids() {
+
+        when(bids.getCurrentBidder()).thenReturn(Optional.empty());
+
+        assertTrue(deal.getCurrentBidder().isEmpty());
+
+        when(bids.getCurrentBidder()).thenReturn(Optional.of(player1));
+
+        assertTrue(deal.getCurrentBidder().isPresent());
+
     }
 
 }

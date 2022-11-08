@@ -91,9 +91,7 @@ public enum ClassicalCard implements Card {
 
     @Override
     public String toString() {
-        return "Card{" +
-                value + suit +
-                '}';
+        return value.toString() + suit.toString();
     }
 
 }

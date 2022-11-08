@@ -47,7 +47,10 @@ public class ContreeDealBids {
             maxBids = Math.max(INITIAL_MAX_BIDS, bids.size() + ContreePlayers.NB_PLAYERS - 1);
         }
 
-        if (!bidsAreOver()) {
+        if (bidsAreOver()) {
+            currentBidder = null;
+        }
+        else {
             bidPlayers.goToNextBidder();
             currentBidder = bidPlayers.getCurrentBidder();
             currentBidderFilterResult = biddableValuesFilter.biddableValues(currentBidder, this);
@@ -58,6 +61,14 @@ public class ContreeDealBids {
 
     public boolean bidsAreOver() {
         return bids.size() == maxBids || bids.stream().anyMatch(ContreeBid::isRedouble);
+    }
+
+    public void updateCurrentBidder(ContreePlayer newPlayer) {
+        if (currentBidder == null) {
+            throw new IllegalStateException("There is no current bidder, it cannot be updated");
+        }
+        currentBidder = newPlayer;
+        currentBidder.onPlayerTurnToBid(currentBidderFilterResult.biddableValues());
     }
 
     static class BidNotAllowedException extends RuntimeException  {
@@ -129,6 +140,10 @@ public class ContreeDealBids {
 
     public boolean containsBidValue(final ContreeBidValue bidValue) {
         return bids.stream().anyMatch(cb -> cb.bidValue() == bidValue);
+    }
+
+    public Optional<ContreePlayer> getCurrentBidder() {
+        return Optional.ofNullable(currentBidder);
     }
 
 }

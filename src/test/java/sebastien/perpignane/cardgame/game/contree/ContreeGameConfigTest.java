@@ -47,7 +47,7 @@ class ContreeGameConfigTest  {
         assertEquals(List.of(12, 6, 22), mappedIntegerList);
     }
 
-    @DisplayName("If a contree game config cannot log the config file, fileNotFound flag is true")
+    @DisplayName("If a contree game config cannot load the config file, fileNotFound flag is true")
     @Test
     void testCreateConfigWithBadFileName() {
         ContreeGameConfig gameConfig = new ContreeGameConfig("non-existing-file");

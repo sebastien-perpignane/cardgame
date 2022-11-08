@@ -8,6 +8,7 @@ import org.mockito.AdditionalAnswers;
 import sebastien.perpignane.cardgame.card.CardSet;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
+import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 
 import java.util.Set;
 
@@ -128,6 +129,73 @@ public class ContreeTrickTest extends TestCasesManagingPlayers {
         assertThrows(
             RuntimeException.class,
             () -> trickWithHeartAsTrump.playerPlays(player2, ClassicalCard.JACK_CLUB)
+        );
+
+    }
+
+    @DisplayName("A not started trick has no current player")
+    @Test
+    public void testGetCurrentPlayer_notStartedTrick() {
+
+        assertTrue(trickWithHeartAsTrump.getCurrentPlayer().isEmpty());
+
+    }
+
+    @DisplayName("Updating current player of a not started trick fails")
+    @Test
+    public void testUpdateCurrentPlayer_notStartedTrick() {
+
+        ContreePlayer newPlayer = mock(ContreePlayer.class);
+        when(newPlayer.isBot()).thenReturn(false);
+
+        assertTrue(trickWithHeartAsTrump.getCurrentPlayer().isEmpty());
+
+        assertThrows(
+            RuntimeException.class,
+            () -> trickWithHeartAsTrump.updateCurrentPlayer(newPlayer)
+        );
+
+    }
+
+
+    @DisplayName("Updating current player of a started trick is OK")
+    @Test
+    public void testUpdateCurrentPlayer_startedTrick() {
+
+        trickWithHeartAsTrump.startTrick();
+
+        ContreePlayer newPlayer = mock(ContreePlayer.class);
+        when(newPlayer.isBot()).thenReturn(false);
+
+        assertTrue(trickWithHeartAsTrump.getCurrentPlayer().isPresent());
+        assertSame(player1, trickWithHeartAsTrump.getCurrentPlayer().get());
+
+        trickWithHeartAsTrump.updateCurrentPlayer(newPlayer);
+
+        assertTrue(trickWithHeartAsTrump.getCurrentPlayer().isPresent());
+        assertSame(newPlayer, trickWithHeartAsTrump.getCurrentPlayer().get());
+
+    }
+
+    @DisplayName("Updating current player of an over trick fails")
+    @Test
+    public void testUpdateCurrentPlayer_overTrick() {
+
+        trickWithHeartAsTrump.startTrick();
+
+        trickWithHeartAsTrump.playerPlays(player1, ClassicalCard.JACK_CLUB);
+        trickWithHeartAsTrump.playerPlays(player2, ClassicalCard.JACK_CLUB);
+        trickWithHeartAsTrump.playerPlays(player3, ClassicalCard.JACK_CLUB);
+        trickWithHeartAsTrump.playerPlays(player4, ClassicalCard.JACK_CLUB);
+
+        assertTrue(trickWithHeartAsTrump.isOver());
+
+        ContreePlayer newPlayer = mock(ContreePlayer.class);
+        when(newPlayer.isBot()).thenReturn(false);
+
+        assertThrows(
+            RuntimeException.class,
+            () -> trickWithHeartAsTrump.updateCurrentPlayer(newPlayer)
         );
 
     }
