@@ -1,7 +1,6 @@
 package sebastien.perpignane.cardgame.player.war;
 
 import sebastien.perpignane.cardgame.card.ClassicalCard;
-import sebastien.perpignane.cardgame.game.AbstractGame;
 import sebastien.perpignane.cardgame.game.war.WarGame;
 import sebastien.perpignane.cardgame.player.Player;
 import sebastien.perpignane.cardgame.player.PlayerState;
@@ -9,7 +8,7 @@ import sebastien.perpignane.cardgame.player.PlayerState;
 import java.util.Objects;
 
 
-public abstract class AbstractWarPlayer implements Player {
+public abstract class AbstractWarPlayer implements Player<WarGame> {
 
     private WarGame warGame;
     private PlayerState state;
@@ -30,10 +29,9 @@ public abstract class AbstractWarPlayer implements Player {
     }
 
     @Override
-    public void setGame(AbstractGame game) {
-        this.warGame = (WarGame) game;
+    public void setGame(WarGame game) {
+        this.warGame = game;
     }
-
 
     protected void play(ClassicalCard card) {
         warGame.play(this, card);

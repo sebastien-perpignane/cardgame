@@ -6,7 +6,10 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/*
+/**
+ *
+ * Card value and point configuration depending on the trump suit of the deal in which it is used.
+ *
  (!!!!!) Please note that trumpValues are increased +20 in the constructor.
 
  It makes card comparison easier -> a trump has always a higher value against a non trump card.

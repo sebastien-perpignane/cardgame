@@ -1,33 +1,27 @@
 package sebastien.perpignane.cardgame.player.contree;
 
+import com.github.javafaker.Faker;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.contree.ContreeBidValue;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.Random;
 
 
-public class ContreeBotPlayer extends AbstractLocalThreadContreePlayer implements ContreePlayer, Runnable {
+public class ContreeBotPlayer extends AbstractLocalThreadContreePlayer {
+
+    @Override
+    public boolean isBot() {
+        return true;
+    }
 
     private final String name;
 
-    private static final Deque<String> fakeNames = new LinkedList<>();
-
-    private static void addFakeNames() {
-        fakeNames.add("Yanis");
-        fakeNames.add("Matis");
-        fakeNames.add("Noé");
-        fakeNames.add("Sébastien");
-        fakeNames.add("Imène");
-        fakeNames.add("Enzo");
-    }
-
-    static {
-        addFakeNames();
-    }
+    private final static Faker faker = new Faker();
 
     public ContreeBotPlayer() {
-        this.name = fakeNames.isEmpty() ? UUID.randomUUID().toString() : fakeNames.pop();
+        this.name = faker.name().firstName();
     }
 
     protected void placeBid() {
@@ -51,8 +45,6 @@ public class ContreeBotPlayer extends AbstractLocalThreadContreePlayer implement
 
     @Override
     void managePlayMessage(PlayerMessage playerMessage) {
-        // TODO to be traced in an event manager
-        // System.err.printf("Allowed cards : %s%n", playerMessage.allowedCards().stream().map(ClassicalCard::toString).collect(Collectors.joining(",")));
         int cardIndex = new Random().nextInt(playerMessage.allowedCards().size());
         Iterator<ClassicalCard> cardIterator = playerMessage.allowedCards().iterator();
         ClassicalCard playedCard = null;

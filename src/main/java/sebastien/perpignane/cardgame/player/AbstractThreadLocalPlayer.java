@@ -1,22 +1,19 @@
 package sebastien.perpignane.cardgame.player;
 
+import sebastien.perpignane.cardgame.game.AbstractGame;
+
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-public abstract class AbstractThreadLocalPlayer<T> implements Player, Runnable {
+public abstract class AbstractThreadLocalPlayer<M, G extends AbstractGame<?>> implements Runnable, Player<G> {
 
-    private final BlockingQueue<T> gameMsgQueue = new ArrayBlockingQueue<>(54);
-
-    @Override
-    public boolean isBot() {
-        return true;
-    }
+    private final BlockingQueue<M> gameMsgQueue = new ArrayBlockingQueue<>(54);
 
     @Override
     public void run() {
         while (true) {
             try {
-                T playerMessage = gameMsgQueue.take();
+                M playerMessage = gameMsgQueue.take();
                 if (handleMessage(playerMessage)) {
                     return;
                 }
@@ -41,9 +38,9 @@ public abstract class AbstractThreadLocalPlayer<T> implements Player, Runnable {
      * @return true if the message processing must result in the end of the thread.
      *
      */
-    protected abstract boolean handleMessage(T playerMessage);
+    protected abstract boolean handleMessage(M playerMessage);
 
-    protected void receiveNewMessage(T message) {
+    protected void receiveNewMessage(M message) {
         gameMsgQueue.add(message);
     }
 

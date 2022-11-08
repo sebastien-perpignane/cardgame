@@ -4,6 +4,7 @@ import org.apache.commons.collections4.iterators.LoopingListIterator;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.*;
 import sebastien.perpignane.cardgame.player.Player;
+import sebastien.perpignane.cardgame.player.war.AbstractWarPlayer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,12 +16,12 @@ import java.util.function.Predicate;
  * TODO Refactoring needed, too much responsibilities in the same class.
  */
 //@Component
-public class WarGame extends AbstractGame {
+public class WarGame extends AbstractGame<AbstractWarPlayer> {
 
-    private final List<Player> players = new CopyOnWriteArrayList<>();
-    private Player currentPlayer = null;
-    private LoopingListIterator<Player> playerIterator = new LoopingListIterator<>(players);
-    private Player winner = null;
+    private final List<AbstractWarPlayer> players = new CopyOnWriteArrayList<>();
+    private AbstractWarPlayer currentPlayer = null;
+    private LoopingListIterator<AbstractWarPlayer> playerIterator = new LoopingListIterator<>(players);
+    private AbstractWarPlayer winner = null;
 
     private final WarGameEventSender warGameEventSender;
 
@@ -60,7 +61,7 @@ public class WarGame extends AbstractGame {
 
         int nbCards = cards.size() / players.size();
         int playerIdx = 0;
-        for (Player player : players) {
+        for (AbstractWarPlayer player : players) {
             int offset = playerIdx * nbCards;
             player.receiveHand(cards.subList(offset, offset + nbCards));
             playerIdx++;
@@ -71,7 +72,7 @@ public class WarGame extends AbstractGame {
         return getGameId() + "-" + tricks.size();
     }
 
-    public synchronized void joinGame(Player p) {
+    public synchronized void joinGame(AbstractWarPlayer p) {
         if (players.size() == 2) {
             if (hasBotPlayer()) {
                 replaceAnyBotPlayer(p);
@@ -86,7 +87,7 @@ public class WarGame extends AbstractGame {
         addPlayer(p);
     }
 
-    private void addPlayer(Player p) {
+    private void addPlayer(AbstractWarPlayer p) {
         players.add(p);
         this.playerIterator = new LoopingListIterator<>(players);
     }
@@ -95,7 +96,7 @@ public class WarGame extends AbstractGame {
         return players.stream().anyMatch(Player::isBot);
     }
 
-    private void replaceAnyBotPlayer(Player player) {
+    private void replaceAnyBotPlayer(AbstractWarPlayer player) {
         players.stream().filter(Player::isBot).findFirst().ifPresent(p -> {
             int idx = players.indexOf(p);
             players.set(idx, player);
@@ -112,7 +113,7 @@ public class WarGame extends AbstractGame {
         return currentTrick.getTrickTurn();
     }
 
-    public synchronized void play(Player player, ClassicalCard card) {
+    public synchronized void play(AbstractWarPlayer player, ClassicalCard card) {
 
         if (isInvalidPlay(player)) return;
 
@@ -135,7 +136,7 @@ public class WarGame extends AbstractGame {
         updateToNextPlayer();
     }
 
-    private boolean isInvalidPlay(Player player) {
+    private boolean isInvalidPlay(AbstractWarPlayer player) {
 
         boolean invalidPlay = !isInPlayableState();
 
@@ -172,11 +173,11 @@ public class WarGame extends AbstractGame {
         letKnowPlayers();
     }
 
-    public Player getCurrentPlayer() {
+    public AbstractWarPlayer getCurrentPlayer() {
         return currentPlayer;
     }
 
-    public Player getWinner() {
+    public AbstractWarPlayer getWinner() {
         return winner;
     }
 
@@ -200,7 +201,7 @@ public class WarGame extends AbstractGame {
                 '}';
     }
 
-    protected List<Player> getPlayers() {
+    protected List<AbstractWarPlayer> getPlayers() {
         return Collections.unmodifiableList(players);
     }
 

@@ -13,10 +13,13 @@ import sebastien.perpignane.cardgame.player.Player;
 import sebastien.perpignane.cardgame.player.Team;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
+import java.io.PrintStream;
 import java.util.List;
 
 // FIXME use loggers
 public class GameTextDisplayer implements GameObserver, WarTrickObserver, ContreeDealObserver, ContreeTrickObserver {
+
+    private final static PrintStream out = System.out;
 
     private final static GameTextDisplayer INSTANCE;
 
@@ -33,31 +36,31 @@ public class GameTextDisplayer implements GameObserver, WarTrickObserver, Contre
     }
 
     @Override
-    public void onCardPlayed(Player player, ClassicalCard card) {
-        System.out.printf("%s - Player %s played %s%n", Thread.currentThread().getName(), player, card);
+    public void onCardPlayed(Player<?> player, ClassicalCard card) {
+        out.printf("%s - Player %s played %s%n", Thread.currentThread().getName(), player, card);
         if ((player.hasNoMoreCard())) {
-            System.out.printf("Player %s has no more card%n", player);
+            out.printf("Player %s has no more card%n", player);
         }
     }
 
     @Override
     public void onStateUpdated(GameState oldState, GameState newState) {
-        System.out.printf("Game state changed from %s to %s%n", oldState, newState);
+        out.printf("Game state changed from %s to %s%n", oldState, newState);
     }
 
     @Override
-    public void onNextPlayer(Player p) {
-        System.out.printf("%s plays.%n", p);
+    public void onNextPlayer(Player<?> p) {
+        out.printf("%s plays.%n", p);
     }
 
     @Override
     public void onWonTrick(Trick trick) {
-        System.out.println("Player " + trick.getWinner() + " won trick " + trick + System.lineSeparator());
+        out.println("Player " + trick.getWinner() + " won trick " + trick + System.lineSeparator());
     }
 
     @Override
     public void onEndOfGame(WarGame warGame) {
-        System.out.printf("Game %s is over. The winner is %s!!%n", warGame, warGame.getWinner());
+        out.printf("Game %s is over. The winner is %s!!%n", warGame, warGame.getWinner());
     }
 
     @Override
@@ -103,7 +106,7 @@ public class GameTextDisplayer implements GameObserver, WarTrickObserver, Contre
                                                                                                                                                                                                                                                                                                                                                                                                                        
                 """;
 
-        System.out.printf("Game %s is over!!%n", contreeGame);
+        out.printf("Game %s is over!!%n", contreeGame);
 
         String ascii;
         if (contreeGame.getWinner().orElseThrow() == ContreeTeam.TEAM1) {
@@ -113,7 +116,7 @@ public class GameTextDisplayer implements GameObserver, WarTrickObserver, Contre
             ascii = team2WinnerAscii;
         }
 
-        System.out.println(ascii);
+        out.println(ascii);
 
 
     }
@@ -121,14 +124,14 @@ public class GameTextDisplayer implements GameObserver, WarTrickObserver, Contre
     @Override
     public void onWar(List<WarPlayedCard> cardsTriggeringWar) {
 
-        System.out.println(" !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  WAR !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        cardsTriggeringWar.forEach(pc -> System.out.printf("Player %s : %s ; ", pc.player(), pc.card()));
-        System.out.println();
+        out.println(" !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  WAR !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        cardsTriggeringWar.forEach(pc -> out.printf("Player %s : %s ; GameTextDisplayer", pc.player(), pc.card()));
+        out.println();
     }
 
     @Override
     public void onDealStarted(String dealId) {
-        System.out.printf("""
+        out.printf("""
 ************************************************************************************************************************
 Deal %s is started%n
 ************************************************************************************************************************
@@ -142,7 +145,7 @@ Deal %s is started%n
 
         if (capot) {
 
-            System.out.println("""
+            out.println("""
                                                                                                                                      
                     ###      ###      ###              # ###                                                ###      ###      ###
                      ###      ###      ###           /  /###  /                                              ###      ###      ###
@@ -167,7 +170,7 @@ Deal %s is started%n
                                        """);
         }
 
-        System.out.printf("""
+        out.printf("""
 ************************************************************************************************************************
 Deal %s is over. %s%n
 Deal score :
@@ -183,13 +186,13 @@ Deal score :
     }
 
     @Override
-    public void onPlacedBid(String dealId, Player player, ContreeBidValue bidValue, CardSuit suit) {
-        System.out.printf("Deal %s : Bid (%s, %s) placed by %s%n", dealId, bidValue, suit, player);
+    public void onPlacedBid(String dealId, Player<?> player, ContreeBidValue bidValue, CardSuit suit) {
+        out.printf("Deal %s : Bid (%s, %s) placed by %s%n", dealId, bidValue, suit, player);
     }
 
     @Override
     public void onBidStepStarted(String dealId) {
-        System.out.printf("""
+        out.printf("""
 
 ***********************************************************************
 * BID STEP started on deal %s
@@ -200,12 +203,12 @@ Deal score :
 
     @Override
     public void onBidStepEnded(String dealId) {
-        System.out.printf("Bid step is over on deal %s%n", dealId);
+        out.printf("Bid step is over on deal %s%n", dealId);
     }
 
     @Override
     public void onPlayStepStarted(String dealId, CardSuit trumpSuit) {
-        System.out.printf("""
+        out.printf("""
 
 ***********************************************************************
 * PLAY STEP started on deal %s. TRUMP is %s
@@ -216,17 +219,17 @@ Deal score :
 
     @Override
     public void onPlayStepEnded(String dealId) {
-        System.out.printf("Play step is over on deal %s%n", dealId);
+        out.printf("Play step is over on deal %s%n", dealId);
     }
 
     @Override
     public void onTrumpedTrick(String trickId) {
-        System.out.printf("Trick #%s is trumped!%n", trickId);
+        out.printf("Trick #%s is trumped!%n", trickId);
     }
 
     @Override
     public void onNewTrick(String trickId, CardSuit trumpSuit) {
-        System.out.printf("""
+        out.printf("""
                                 
 ***********************************************************************
 * NEW TRICK #%s - Trump is %s

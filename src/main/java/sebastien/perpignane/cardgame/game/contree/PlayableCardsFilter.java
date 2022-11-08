@@ -2,13 +2,13 @@ package sebastien.perpignane.cardgame.game.contree;
 
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.card.contree.ContreeCard;
-import sebastien.perpignane.cardgame.player.Player;
+import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 
 import java.util.*;
 
 public class PlayableCardsFilter {
 
-    Collection<ClassicalCard> playableCards(ContreeTrick trick, Player player) {
+    Collection<ClassicalCard> playableCards(ContreeTrick trick, ContreePlayer player) {
 
         Objects.requireNonNull(player);
 
@@ -37,7 +37,7 @@ public class PlayableCardsFilter {
 
     }
 
-    private Collection<ClassicalCard> computeAllowedCardsForTrickWithTrumpCards(ContreeTrick trick, Player player) {
+    private Collection<ClassicalCard> computeAllowedCardsForTrickWithTrumpCards(ContreeTrick trick, ContreePlayer player) {
 
         Collection<ClassicalCard> allHand = new ArrayList<>(player.getHand());
 
@@ -66,13 +66,13 @@ public class PlayableCardsFilter {
         }
     }
 
-    private Collection<ClassicalCard> playerTrumpCards(ContreeTrick trick, Player player) {
+    private Collection<ClassicalCard> playerTrumpCards(ContreeTrick trick, ContreePlayer player) {
         return ContreeCard.of(trick.getTrumpSuit(), new HashSet<>(player.getHand())).stream()
                 .filter(ContreeCard::isTrump)
                 .map(ContreeCard::getCard).toList();
     }
 
-    private Collection<ClassicalCard> computeAllowedCardsWhenPlayerLacksSuit(ContreeTrick trick, Player player) {
+    private Collection<ClassicalCard> computeAllowedCardsWhenPlayerLacksSuit(ContreeTrick trick, ContreePlayer player) {
 
         Collection<ClassicalCard> allHand = new ArrayList<>(player.getHand());
 

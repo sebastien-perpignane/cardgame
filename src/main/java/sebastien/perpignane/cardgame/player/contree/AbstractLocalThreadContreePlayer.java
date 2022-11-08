@@ -1,11 +1,9 @@
 package sebastien.perpignane.cardgame.player.contree;
 
 import sebastien.perpignane.cardgame.card.ClassicalCard;
-import sebastien.perpignane.cardgame.game.AbstractGame;
 import sebastien.perpignane.cardgame.game.contree.ContreeBidValue;
 import sebastien.perpignane.cardgame.game.contree.ContreeGame;
 import sebastien.perpignane.cardgame.player.AbstractThreadLocalPlayer;
-import sebastien.perpignane.cardgame.player.Player;
 import sebastien.perpignane.cardgame.player.Team;
 
 import java.util.Collection;
@@ -13,7 +11,7 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
-public abstract class AbstractLocalThreadContreePlayer extends AbstractThreadLocalPlayer<AbstractLocalThreadContreePlayer.PlayerMessage> implements ContreePlayer {
+public abstract class AbstractLocalThreadContreePlayer extends AbstractThreadLocalPlayer<PlayerMessage, ContreeGame> implements ContreePlayer {
 
     private ContreeTeam team;
 
@@ -27,13 +25,6 @@ public abstract class AbstractLocalThreadContreePlayer extends AbstractThreadLoc
         END_OF_GAME
     }
 
-    public record PlayerMessage(
-            MessageType messageType,
-            Collection<ClassicalCard> allowedCards,
-            Collection<ContreeBidValue> allowedBidValues) {
-    }
-
-    @Override
     public void receiveHand(Collection<ClassicalCard> cards) {
         this.hand = cards;
     }
@@ -44,8 +35,8 @@ public abstract class AbstractLocalThreadContreePlayer extends AbstractThreadLoc
     }
 
     @Override
-    public void setGame(AbstractGame game) {
-        this.contreeGame = (ContreeGame) game;
+    public void setGame(ContreeGame game) {
+        this.contreeGame = game;
     }
 
     @Override
@@ -53,7 +44,6 @@ public abstract class AbstractLocalThreadContreePlayer extends AbstractThreadLoc
         return hand.isEmpty();
     }
 
-    @Override
     public void receiveNewCards(Collection<ClassicalCard> cards) {
 
     }
@@ -104,7 +94,7 @@ public abstract class AbstractLocalThreadContreePlayer extends AbstractThreadLoc
     }
 
     @Override
-    public boolean sameTeam(Player otherPlayer) {
+    public boolean sameTeam(ContreePlayer otherPlayer) {
         return getTeam().orElseThrow() == otherPlayer.getTeam().orElseThrow();
     }
 
