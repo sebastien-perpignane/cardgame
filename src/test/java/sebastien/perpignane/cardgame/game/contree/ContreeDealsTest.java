@@ -56,6 +56,7 @@ class ContreeDealsTest extends TestCasesManagingPlayers {
 
         gameScore = mock(ContreeGameScore.class);
         DealScoreCalculator dealScoreCalculator = mock(DealScoreCalculator.class);
+        when(dealScoreCalculator.computeDealScores(any())).thenReturn(new DealScoreResult(Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap()));
 
         CardDealer cardDealer = mock(CardDealer.class);
 

@@ -8,6 +8,10 @@ import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 import java.util.*;
 import java.util.stream.Collectors;
 
+record DealScoreResult(Map<ContreeTeam, Integer> rawScoreByTeam, Map<ContreeTeam, Integer> finalScoreBeforeRound, Map<ContreeTeam, Integer> finalRoundedScore) {
+
+}
+
 class DealScoreCalculator {
 
     final int EXPECTED_CARD_SCORE_SUM = 162;
@@ -18,14 +22,19 @@ class DealScoreCalculator {
 
     private Map<Team, ? extends Collection<ContreeCard>> cardsByTeam = new HashMap<>();
 
-    public Map<Team, Integer> computeDealScores(ContreeDeal deal) {
+    public DealScoreResult computeDealScores(ContreeDeal deal) {
 
-        Map<Team, Integer> scoreByTeam = new HashMap<>();
+        Map<ContreeTeam, Integer> scoreByTeam = new HashMap<>();
 
         Set<ContreeTeam> allTeams = ContreeTeam.getTeams();
 
         if (deal.hasOnlyPassBids()) {
-            return allTeams.stream().collect(Collectors.toMap(t -> t, t -> 0));
+            var zeroScore = Map.of(ContreeTeam.TEAM1, 0, ContreeTeam.TEAM2, 0);
+            return new DealScoreResult(
+                    zeroScore,
+                    zeroScore,
+                    zeroScore
+            );
         }
 
         dixDeDerTeam = deal.lastTrick().orElseThrow().getWinnerTeam();
@@ -37,7 +46,7 @@ class DealScoreCalculator {
 
         cardsByTeam = deal.wonCardsByTeam();
 
-        Map<Team, Integer> cardScoreByTeam = allTeams.stream().collect(Collectors.toMap(
+        Map<ContreeTeam, Integer> cardScoreByTeam = allTeams.stream().collect(Collectors.toMap(
                 team -> team,
                 team -> computeCardPoints(cardsByTeam.get(team)) + (team == dixDeDerTeam ? DIX_DE_DER_BONUS : 0)
         ));
@@ -49,7 +58,8 @@ class DealScoreCalculator {
         }
 
         if ( deal.isDoubleBidExists() || deal.isRedoubleBidExists() || deal.isAnnouncedCapot() || deal.isCapot() ) {
-            return computeDoubledOrRedoubledOrCapotDeal(deal, cardScoreByTeam);
+            Map<ContreeTeam, Integer> doubledOrRedoubledOrCapotScore = computeDoubledOrRedoubledOrCapotDeal(deal, cardScoreByTeam);
+            return new DealScoreResult(cardScoreByTeam, doubledOrRedoubledOrCapotScore, doubledOrRedoubledOrCapotScore);
         }
         else if (!contractIsReached(deal, cardScoreByTeam)) {
             scoreByTeam.put(deal.getAttackTeam().orElseThrow(), 0);
@@ -60,8 +70,13 @@ class DealScoreCalculator {
             scoreByTeam.putAll(cardScoreByTeam);
         }
 
+        Map<ContreeTeam, Integer> finalScoreBeforeRound = new HashMap<>(scoreByTeam);
+
         roundScores(scoreByTeam);
-        return scoreByTeam;
+
+        return new DealScoreResult(cardScoreByTeam, finalScoreBeforeRound, scoreByTeam);
+
+        //return scoreByTeam;
 
     }
 
@@ -69,9 +84,9 @@ class DealScoreCalculator {
         return contreeCards.stream().mapToInt(ValuableCard::getGamePoints).sum();
     }
 
-    private Map<Team, Integer> computeDoubledOrRedoubledOrCapotDeal(ContreeDeal deal, Map<Team, Integer> cardScoreByTeam) {
-        Team winnerTeam;
-        Team loserTeam;
+    private Map<ContreeTeam, Integer> computeDoubledOrRedoubledOrCapotDeal(ContreeDeal deal, Map<ContreeTeam, Integer> cardScoreByTeam) {
+        ContreeTeam winnerTeam;
+        ContreeTeam loserTeam;
         if (contractIsReached(deal, cardScoreByTeam)) {
             winnerTeam = deal.getAttackTeam().orElseThrow();
             loserTeam = deal.getDefenseTeam().orElseThrow();
@@ -97,7 +112,7 @@ class DealScoreCalculator {
             winnerBaseScore = ContreeBidValue.CAPOT.getExpectedScore() * 2;
         }
 
-        Map<Team, Integer> scoreByTeam = new HashMap<>();
+        Map<ContreeTeam, Integer> scoreByTeam = new HashMap<>();
 
         scoreByTeam.put(winnerTeam, winnerBaseScore * multiplier);
         scoreByTeam.put(loserTeam, 0);
@@ -106,7 +121,7 @@ class DealScoreCalculator {
 
     }
 
-    private boolean contractIsReached(ContreeDeal deal, Map<Team, Integer> cardScoreByTeam) {
+    private boolean contractIsReached(ContreeDeal deal, Map<ContreeTeam, Integer> cardScoreByTeam) {
         var attackTeam = deal.getAttackTeam().orElseThrow();
         if (deal.getContractBid().isEmpty()) {
             throw new IllegalStateException("Computing score for a no bid deal does not make sense");
@@ -117,8 +132,8 @@ class DealScoreCalculator {
         return cardScoreByTeam.get(attackTeam) >= deal.getContractBid().get().bidValue().getExpectedScore();
     }
 
-    private void roundScores(Map<Team, Integer> scoreByTeam) {
-        for (Team t : scoreByTeam.keySet()) {
+    private void roundScores(Map<ContreeTeam, Integer> scoreByTeam) {
+        for (ContreeTeam t : scoreByTeam.keySet()) {
             int score = scoreByTeam.get(t);
             var roundScore = ((score+5)/10)*10;
             scoreByTeam.put(t, roundScore);

@@ -1,13 +1,14 @@
 package sebastien.perpignane.cardgame.game.contree;
 
 import sebastien.perpignane.cardgame.player.Team;
+import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
 import java.util.Map;
 import java.util.Optional;
 
 public class ContreeDealScore {
 
-    private Map<Team, Integer> scoreByTeam;
+    private Map<ContreeTeam, Integer> scoreByTeam;
 
     private final DealScoreCalculator scoreCalculator;
 
@@ -16,10 +17,10 @@ public class ContreeDealScore {
     }
 
     public void computeScore(ContreeDeal deal) {
-        this.scoreByTeam = scoreCalculator.computeDealScores(deal);
+        this.scoreByTeam = scoreCalculator.computeDealScores(deal).finalRoundedScore();
     }
 
-    public Integer getTeamScore(Team team) {
+    public Integer getTeamScore(ContreeTeam team) {
         return scoreByTeam.get(team);
     }
 

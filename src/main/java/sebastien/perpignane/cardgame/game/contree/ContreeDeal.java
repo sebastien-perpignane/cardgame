@@ -251,7 +251,7 @@ class ContreeDeal {
         return tricks.lastTrick();
     }
 
-    public int getTeamScore(Team t) {
+    public int getTeamScore(ContreeTeam t) {
         return score.getTeamScore(t);
     }
 
