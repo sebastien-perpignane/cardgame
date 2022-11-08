@@ -1,9 +1,11 @@
 package sebastien.perpignane.cardgame.game.contree;
 
 import sebastien.perpignane.cardgame.card.ClassicalCard;
+import sebastien.perpignane.cardgame.player.contree.ContreeBotPlayer;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -30,25 +32,37 @@ class ContreeGamePlayersImpl implements ContreeGamePlayers {
             throw new IllegalArgumentException( String.format("Player %s already joined the game", joiningPlayer) );
         }
 
+        boolean wantedTeamIsFull = wantedTeam == null ? isFull() : wantedTeamIsFull(wantedTeam);
+
         boolean joined = false;
         for (int i = 0 ; i < NB_PLAYERS ; i++) {
 
             boolean isExpectedTeam = wantedTeam == null || teamByPlayerIndex(i) == wantedTeam;
 
-            if ( isExpectedTeam && (players.get(i) == null || players.get(i).isBot())) {
-                var presentPlayer = players.get(i);
-                boolean noPresentPlayer = presentPlayer == null;
+            if (!isExpectedTeam) {
+                continue;
+            }
 
-                if ( noPresentPlayer || ( !joiningPlayer.isBot() && presentPlayer.isBot() ) ) {
-                    players.set(i, joiningPlayer);
-                    assignTeamToPlayer(i);
-                    joined = true;
-                    if (noPresentPlayer) {
-                        nbPlayers++;
-                    }
+            boolean currentIndexIsJoinable;
 
-                    break;
+            if (wantedTeamIsFull && !joiningPlayer.isBot()) {
+                currentIndexIsJoinable = players.get(i).isBot();
+            }
+            else {
+                currentIndexIsJoinable = players.get(i) == null;
+            }
+
+            boolean noPresentPlayer = players.get(i) == null;
+
+            if ( currentIndexIsJoinable) {
+
+                players.set(i, joiningPlayer);
+                assignTeamToPlayer(i);
+                joined = true;
+                if (noPresentPlayer) {
+                    nbPlayers++;
                 }
+                break;
 
             }
         }
@@ -60,7 +74,6 @@ class ContreeGamePlayersImpl implements ContreeGamePlayers {
             }
             else {
                 exceptionMessage = String.format("No slot available in the wanted team: %s", wantedTeam);
-
             }
             throw new IllegalStateException(exceptionMessage);
 
@@ -123,8 +136,11 @@ class ContreeGamePlayersImpl implements ContreeGamePlayers {
         return playerIndex % 2 == 0 ? ContreeTeam.TEAM1 : ContreeTeam.TEAM2;
     }
 
+    /**
+     * @return an unmodifiable list of the players
+     */
     public List<ContreePlayer> getGamePlayers() {
-        return players;
+        return Collections.unmodifiableList(players);
     }
 
     @Override

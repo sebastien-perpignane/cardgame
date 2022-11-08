@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -122,7 +124,7 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
     }
 
-    @DisplayName("Joining a full game with multiple bots")
+    @DisplayName("Joining a full game with multiple bots must succeed")
     @Test
     public void testJoinFullGameWithMultipleBots() {
 
@@ -158,6 +160,21 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
     }
 
+    @DisplayName("When a human joins 3 bots waiting, the game is full")
+    @Test
+    public void testHumanJoinGameWithOnlyOneMissingPlayer_onlyBotAlreadyJoined() {
+
+        for (int i = 0 ; i < 3 ; i++ ) {
+            ContreePlayer player = botPlayer();
+            gamePlayers.joinGame(player);
+        }
+
+        gamePlayers.joinGame(humanPlayer());
+
+        assertTrue(gamePlayers.isFull());
+
+    }
+
     @DisplayName("Joining a team with only bots must succeed")
     @Test
     public void testJoinTeamWhenTeamFullOfBotPlayers() {
@@ -167,12 +184,13 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
         ContreePlayer humanPlayer = humanPlayer();
 
+        when(botPlayer1.getTeam()).thenReturn(Optional.of(ContreeTeam.TEAM1));
+        when(botPlayer2.getTeam()).thenReturn(Optional.of(ContreeTeam.TEAM1));
+
         gamePlayers.joinGame(botPlayer1, ContreeTeam.TEAM1);
         gamePlayers.joinGame(botPlayer2, ContreeTeam.TEAM1);
 
         gamePlayers.joinGame(humanPlayer, ContreeTeam.TEAM1);
-
-
 
         assertEquals(2, gamePlayers.getNbPlayers());
         assertSame(humanPlayer, gamePlayers.getGamePlayers().get(0));

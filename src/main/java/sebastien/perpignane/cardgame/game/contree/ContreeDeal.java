@@ -119,15 +119,13 @@ class ContreeDeal {
     private void manageEndOfDeal() {
 
         Consumer<String> endOfStepEventSender;
-        if (isPlayStep()) {
-            endOfStepEventSender = eventSender::sendPlayStepEndedEvent;
+
+        switch (dealStep) {
+            case BID -> endOfStepEventSender = eventSender::sendBidStepEndedEvent;
+            case PLAY -> endOfStepEventSender = eventSender::sendPlayStepEndedEvent;
+            default -> throw new IllegalStateException(String.format("Unexpected deal step while managing end of deal : %s", dealStep));
         }
-        else if (isBidStep()) {
-            endOfStepEventSender = eventSender::sendBidStepEndedEvent;
-        }
-        else {
-            throw new IllegalStateException(String.format("Unexpected deal step while managing end of deal : %s", dealStep));
-        }
+
         score.computeScore(this);
         dealStep = DealStep.OVER;
         endOfStepEventSender.accept(dealId);
@@ -159,10 +157,29 @@ class ContreeDeal {
 
         tricks.playerPlays(player, card);
 
-        if (tricks.isMaxNbOverTricksReached()) {
+        if (tricks.tricksAreOver()) {
             manageEndOfDeal();
         }
 
+    }
+
+    public void updateCurrentBidder(ContreePlayer newPlayer) {
+        bids.updateCurrentBidder(newPlayer);
+    }
+
+    public void updateCurrentPlayer(ContreePlayer newPlayer) {
+        tricks.updateCurrentPlayer(newPlayer);
+    }
+
+    public Optional<ContreePlayer> getCurrentPlayer() {
+        if (tricks.tricksAreOver()) {
+            return Optional.empty();
+        }
+        return tricks.getCurrentPlayer();
+    }
+
+    public Optional<ContreePlayer> getCurrentBidder() {
+        return bids.getCurrentBidder();
     }
 
     public String getDealId() {
