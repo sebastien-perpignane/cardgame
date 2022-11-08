@@ -220,4 +220,61 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
     }
 
+    @DisplayName("A human player who previously joined the game leaves it")
+    @Test
+    public void testLeaveGame_playerExists() {
+
+        var leaver = humanPlayer();
+
+        gamePlayers.joinGame(leaver);
+        gamePlayers.joinGame(botPlayer());
+        gamePlayers.joinGame(botPlayer());
+        gamePlayers.joinGame(botPlayer());
+
+        gamePlayers.leaveGameAndReplaceWithBotPlayer(leaver);
+
+        assertNotSame(gamePlayers.getGamePlayers().get(0), leaver);
+        assertFalse(leaver.isBot());
+        assertTrue(gamePlayers.getGamePlayers().get(0).isBot());
+
+    }
+
+    @DisplayName("Exception if a human player who didn't joined the game try to leave it")
+    @Test
+    public void testLeaveGame_playerDoesNotExist() {
+
+        var leaver = humanPlayer();
+
+        var joiner = humanPlayer();
+
+        gamePlayers.joinGame(joiner);
+        gamePlayers.joinGame(botPlayer());
+        gamePlayers.joinGame(botPlayer());
+        gamePlayers.joinGame(botPlayer());
+
+        assertThrows(
+            RuntimeException.class,
+            () -> gamePlayers.leaveGameAndReplaceWithBotPlayer(leaver)
+        );
+
+    }
+
+    @DisplayName("Exception if a bot player who joined the game try to leave it")
+    @Test
+    public void testLeaveGame_leavingPlayerIsBot() {
+
+        var leaver = botPlayer();
+
+        gamePlayers.joinGame(leaver);
+        gamePlayers.joinGame(botPlayer());
+        gamePlayers.joinGame(botPlayer());
+        gamePlayers.joinGame(botPlayer());
+
+        assertThrows(
+            RuntimeException.class,
+            () -> gamePlayers.leaveGameAndReplaceWithBotPlayer(leaver)
+        );
+
+    }
+
 }

@@ -12,6 +12,16 @@ public interface ContreeGamePlayers extends ContreePlayers {
 
     void joinGame(ContreePlayer joiningPlayer, ContreeTeam wantedTeam);
 
+    void receiveHandForPlayer(int playerIndex, List<ClassicalCard> hand);
+
+    /**
+     *
+     * @param player player leaving the game
+     * @return the player who replaced the leaving player
+     * @throws IllegalArgumentException if the player is not playing this game
+     */
+    ContreePlayer leaveGameAndReplaceWithBotPlayer(ContreePlayer player) throws IllegalArgumentException;
+
     boolean isFull();
 
     boolean isJoinableByHumanPlayers();
@@ -22,6 +32,5 @@ public interface ContreeGamePlayers extends ContreePlayers {
 
     ContreeDealPlayers buildDealPlayers();
 
-    void receiveHandForPlayer(int playerIndex, List<ClassicalCard> hand);
 
 }

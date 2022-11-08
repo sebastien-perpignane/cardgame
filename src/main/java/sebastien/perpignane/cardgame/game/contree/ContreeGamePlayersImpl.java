@@ -68,6 +68,27 @@ class ContreeGamePlayersImpl implements ContreeGamePlayers {
 
     }
 
+    public boolean wantedTeamIsFull(ContreeTeam wantedTeam) {
+        return players.stream().filter(cp -> cp != null && cp.getTeam().isPresent() &&  cp.getTeam().get() == wantedTeam).toList().size() == 2;
+    }
+
+    @Override
+    public synchronized ContreePlayer leaveGameAndReplaceWithBotPlayer(ContreePlayer player) {
+        if (player.isBot()) {
+            throw new IllegalArgumentException("WTF ? A bot wants to leave the game ?");
+        }
+        if (!players.contains(player)) {
+            throw new IllegalArgumentException(String.format("The player %s does not play in this game", player));
+        }
+        int playerIndex = players.indexOf(player);
+        ContreePlayer newBotPlayer = new ContreeBotPlayer();
+        players.set(playerIndex, newBotPlayer);
+        assignTeamToPlayer(playerIndex);
+
+        return newBotPlayer;
+
+    }
+
     public synchronized void joinGame(ContreePlayer joiningPlayer) {
         joinGame(joiningPlayer, null);
     }

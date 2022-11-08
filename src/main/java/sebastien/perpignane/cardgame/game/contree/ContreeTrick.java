@@ -55,7 +55,7 @@ class ContreeTrick implements Trick {
         trickPlayers.notifyCurrentPlayerTurn(currentPlayerPlayableCards);
     }
 
-    private void updateCurrentPlayer() {
+    private void nextPlayer() {
         trickPlayers.gotToNextPlayer();
         currentPlayer = trickPlayers.getCurrentPlayer();
         currentPlayerPlayableCards = this.playableCardsFilter.playableCards(this, currentPlayer);
@@ -83,9 +83,10 @@ class ContreeTrick implements Trick {
         playedCards.add(playedCard);
         if (isOver()) {
             winner = winningPlayer();
+            currentPlayer = null;
         }
         else {
-            updateCurrentPlayer();
+            nextPlayer();
         }
     }
 
@@ -105,6 +106,14 @@ class ContreeTrick implements Trick {
             String allowedCardsStr = currentPlayerPlayableCards.stream().map( ClassicalCard::toString ).collect( Collectors.joining(",") );
             throw new IllegalArgumentException( String.format("Player %s : cheater detected -> %s is not an allowed card. Allowed cards are : %s", player, card, allowedCardsStr) );
         }
+    }
+
+    public void updateCurrentPlayer(ContreePlayer newPlayer) {
+        if (currentPlayer == null) {
+            throw new IllegalArgumentException("There is no current player, it cannot be updated");
+        }
+        currentPlayer = newPlayer;
+        currentPlayer.onPlayerTurn(currentPlayerPlayableCards);
     }
 
     @Override
@@ -148,6 +157,10 @@ class ContreeTrick implements Trick {
 
     public String getTrickId() {
         return trickId;
+    }
+
+    public Optional<ContreePlayer> getCurrentPlayer() {
+        return Optional.ofNullable(currentPlayer);
     }
 
 }

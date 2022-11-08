@@ -105,8 +105,41 @@ public class ContreeDeals {
         }
     }
 
-    public ContreeDeal getCurrentDeal() {
-        return currentDeal;
+    public void manageLeavingPlayer(ContreePlayer leavingPlayer, ContreePlayer newPlayer) {
+        updateCurrentBidderIfRequired(leavingPlayer, newPlayer);
+        updateCurrentPlayerIfRequired(leavingPlayer, newPlayer);
+    }
+
+    private void updateCurrentPlayerIfRequired(ContreePlayer oldPlayer, ContreePlayer newPlayer) {
+        if (isCurrentPlayer(oldPlayer)) {
+            currentDeal.updateCurrentPlayer(newPlayer);
+        }
+    }
+
+    private void updateCurrentBidderIfRequired(ContreePlayer oldPlayer, ContreePlayer newPlayer) {
+        if (isCurrentBidder(oldPlayer)) {
+            currentDeal.updateCurrentBidder(newPlayer);
+        }
+    }
+
+    private boolean isCurrentBidder(ContreePlayer player) {
+        if (currentDeal == null) {
+            return false;
+        }
+        if (currentDeal.getCurrentBidder().isEmpty()) {
+            return false;
+        }
+        return currentDeal.getCurrentBidder().get() == player;
+    }
+
+    private boolean isCurrentPlayer(ContreePlayer player) {
+        if (currentDeal == null) {
+            return false;
+        }
+        if (currentDeal.getCurrentPlayer().isEmpty()) {
+            return false;
+        }
+        return currentDeal.getCurrentPlayer().get() == player;
     }
 
     public int getNbDeals() {
