@@ -8,7 +8,7 @@ import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 import java.util.*;
 import java.util.stream.Collectors;
 
-record DealScoreResult(Map<ContreeTeam, Integer> rawScoreByTeam, Map<ContreeTeam, Integer> finalScoreBeforeRound, Map<ContreeTeam, Integer> finalRoundedScore) {
+record DealScoreResult(Map<ContreeTeam, Integer> rawScoreByTeam, Map<ContreeTeam, Integer> finalNotRoundedScoreByTeam, Map<ContreeTeam, Integer> finalRoundedScoreByTeam, boolean contractIsReached) {
 
 }
 
@@ -24,6 +24,8 @@ class DealScoreCalculator {
 
     public DealScoreResult computeDealScores(ContreeDeal deal) {
 
+        Objects.requireNonNull(deal);
+
         Map<ContreeTeam, Integer> scoreByTeam = new HashMap<>();
 
         Set<ContreeTeam> allTeams = ContreeTeam.getTeams();
@@ -33,7 +35,8 @@ class DealScoreCalculator {
             return new DealScoreResult(
                     zeroScore,
                     zeroScore,
-                    zeroScore
+                    zeroScore,
+                    false
             );
         }
 
@@ -51,6 +54,8 @@ class DealScoreCalculator {
                 team -> computeCardPoints(cardsByTeam.get(team)) + (team == dixDeDerTeam ? DIX_DE_DER_BONUS : 0)
         ));
 
+        boolean contractIsReached = contractIsReached(deal, cardScoreByTeam);
+
         int cardScoreSum = cardScoreByTeam.values().stream().mapToInt(i -> i).sum();
 
         if (cardScoreSum != EXPECTED_CARD_SCORE_SUM) {
@@ -59,24 +64,22 @@ class DealScoreCalculator {
 
         if ( deal.isDoubleBidExists() || deal.isRedoubleBidExists() || deal.isAnnouncedCapot() || deal.isCapot() ) {
             Map<ContreeTeam, Integer> doubledOrRedoubledOrCapotScore = computeDoubledOrRedoubledOrCapotDeal(deal, cardScoreByTeam);
-            return new DealScoreResult(cardScoreByTeam, doubledOrRedoubledOrCapotScore, doubledOrRedoubledOrCapotScore);
+            return new DealScoreResult(cardScoreByTeam, doubledOrRedoubledOrCapotScore, doubledOrRedoubledOrCapotScore, contractIsReached);
         }
-        else if (!contractIsReached(deal, cardScoreByTeam)) {
+        else if (!contractIsReached) {
             scoreByTeam.put(deal.getAttackTeam().orElseThrow(), 0);
             var winnerScore = deal.isCapot() ? ContreeBidValue.CAPOT.getExpectedScore() : ContreeBidValue.HUNDRED_SIXTY.getExpectedScore();
             scoreByTeam.put(deal.getDefenseTeam().orElseThrow(), winnerScore);
         }
         else {
-            scoreByTeam.putAll(cardScoreByTeam);
+            scoreByTeam = new HashMap<>(cardScoreByTeam);
         }
 
         Map<ContreeTeam, Integer> finalScoreBeforeRound = new HashMap<>(scoreByTeam);
 
         roundScores(scoreByTeam);
 
-        return new DealScoreResult(cardScoreByTeam, finalScoreBeforeRound, scoreByTeam);
-
-        //return scoreByTeam;
+        return new DealScoreResult(cardScoreByTeam, finalScoreBeforeRound, scoreByTeam, contractIsReached);
 
     }
 

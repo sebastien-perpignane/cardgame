@@ -21,7 +21,7 @@ class ContreeDealScoreTest extends TestCasesManagingPlayers {
         var fakeScore = Map.of(ContreeTeam.TEAM1, 130, ContreeTeam.TEAM2, 30);
         when(calculator.computeDealScores(deal)).thenReturn(
             new DealScoreResult(
-                    fakeScore, fakeScore, fakeScore
+                    fakeScore, fakeScore, fakeScore, true
             )
         );
 

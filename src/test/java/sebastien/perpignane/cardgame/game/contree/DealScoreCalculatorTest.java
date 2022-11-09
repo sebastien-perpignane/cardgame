@@ -29,11 +29,12 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
     private DealScoreCalculator dealScoreCalculator;
 
-    record CardSuitTypicalTricks(CardSuit cardSuit,
-             List<ClassicalCard> standardStrongTrick_27points, // gives 27
-             List<ClassicalCard> standardWeakTrick_3points, // gives 3
-             List<ClassicalCard> trumpStrongTrick_55points, // gives 55
-             List<ClassicalCard> trumpWeakTrick_7points // gives 7
+    record CardSuitTypicalTricks(
+            CardSuit cardSuit,
+            List<ClassicalCard> standardStrongTrick_28points, // gives 28
+            List<ClassicalCard> standardWeakTrick_2points, // gives 2
+            List<ClassicalCard> trumpStrongTrick_55points, // gives 55
+            List<ClassicalCard> trumpWeakTrick_7points // gives 7
     ) {}
 
     @BeforeAll
@@ -218,16 +219,16 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
         Set<ClassicalCard> team1Cards = new HashSet<>();
         team1Cards.addAll(typicalTricksBySuit.get(CardSuit.HEARTS).trumpStrongTrick_55points);
         team1Cards.addAll(typicalTricksBySuit.get(CardSuit.HEARTS).trumpWeakTrick_7points); // 62
-        team1Cards.addAll(typicalTricksBySuit.get(CardSuit.SPADES).standardStrongTrick_27points); // 89
+        team1Cards.addAll(typicalTricksBySuit.get(CardSuit.SPADES).standardStrongTrick_28points); // 90
 
 
         Set<ClassicalCard> team2Cards = new HashSet<>();
 
-        team2Cards.addAll(typicalTricksBySuit.get(CardSuit.CLUBS).standardStrongTrick_27points);
-        team2Cards.addAll(typicalTricksBySuit.get(CardSuit.SPADES).standardWeakTrick_3points); // 30
-        team2Cards.addAll(typicalTricksBySuit.get(CardSuit.CLUBS).standardWeakTrick_3points); // 33
-        team2Cards.addAll(typicalTricksBySuit.get(CardSuit.DIAMONDS).standardStrongTrick_27points); // 60
-        team2Cards.addAll(typicalTricksBySuit.get(CardSuit.DIAMONDS).standardWeakTrick_3points); // 63
+        team2Cards.addAll(typicalTricksBySuit.get(CardSuit.CLUBS).standardStrongTrick_28points);
+        team2Cards.addAll(typicalTricksBySuit.get(CardSuit.SPADES).standardWeakTrick_2points); // 30
+        team2Cards.addAll(typicalTricksBySuit.get(CardSuit.CLUBS).standardWeakTrick_2points); // 32
+        team2Cards.addAll(typicalTricksBySuit.get(CardSuit.DIAMONDS).standardStrongTrick_28points); // 60
+        team2Cards.addAll(typicalTricksBySuit.get(CardSuit.DIAMONDS).standardWeakTrick_2points); // 62
 
         return Map.of(
                 ContreeTeam.TEAM1, ContreeCard.of(CardSuit.HEARTS, team1Cards),
@@ -253,10 +254,15 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
                 .build();
 
         var result = dealScoreCalculator.computeDealScores(deal);
-        // 89
-        assertEquals(90, result.finalRoundedScore().get(contractPlayer.getTeam().orElseThrow()));
-        // 63 + dix de der, rounded
-        assertEquals(70, result.finalRoundedScore().get(ContreeTeam.TEAM2));
+
+        assertEquals(72, result.rawScoreByTeam().get(ContreeTeam.TEAM2));
+        assertEquals(90, result.rawScoreByTeam().get(contractPlayer.getTeam().orElseThrow()));
+
+        // 90
+        assertEquals(90, result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow()));
+        // 62 + dix de der, rounded
+        assertEquals(70, result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM2));
+
     }
 
     @DisplayName("Compute score when attack team reached the contract, with double but no redouble or capot")
@@ -282,8 +288,8 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
         var result = dealScoreCalculator.computeDealScores(deal);
 
-        assertEquals(320, result.finalRoundedScore().get(contractPlayer.getTeam().orElseThrow()));
-        assertEquals(0, result.finalRoundedScore().get(ContreeTeam.TEAM2));
+        assertEquals(320, result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow()));
+        assertEquals(0, result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM2));
     }
 
     @DisplayName("Compute score when attack team reached the contract with double and redouble, but no capot announced")
@@ -309,8 +315,8 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
         var result = dealScoreCalculator.computeDealScores(deal);
         // 88 + dix de der, rounded
-        assertEquals(640, result.finalRoundedScore().get(contractPlayer.getTeam().orElseThrow()));
-        assertEquals(0, result.finalRoundedScore().get(ContreeTeam.TEAM2));
+        assertEquals(640, result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow()));
+        assertEquals(0, result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM2));
     }
 
     @DisplayName("Compute score when attack team failed to reach the contract")
@@ -339,8 +345,8 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
         var result = dealScoreCalculator.computeDealScores(deal);
 
-        assertEquals(0, result.finalRoundedScore().get(contractPlayer.getTeam().orElseThrow()));
-        assertEquals(160, result.finalRoundedScore().get(ContreeTeam.TEAM2));
+        assertEquals(0, result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow()));
+        assertEquals(160, result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM2));
     }
 
     @DisplayName("Compute score when attack team announces capot and reach the contract, without double nor redouble")
@@ -379,8 +385,8 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
         var result = dealScoreCalculator.computeDealScores(deal);
 
-        assertEquals(500, result.finalRoundedScore().get(contractPlayer.getTeam().orElseThrow()));
-        assertEquals(0, result.finalRoundedScore().get(ContreeTeam.TEAM2));
+        assertEquals(500, result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow()));
+        assertEquals(0, result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM2));
     }
 
     @DisplayName("A capot made by attack team that was not announced gives 250 points to attack team")
@@ -414,8 +420,8 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
         var result = dealScoreCalculator.computeDealScores(deal);
 
-        assertEquals(250, result.finalRoundedScore().get(contractPlayer.getTeam().orElseThrow()));
-        assertEquals(0, result.finalRoundedScore().get(firstOpponent.getTeam().orElseThrow()));
+        assertEquals(250, result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow()));
+        assertEquals(0, result.finalRoundedScoreByTeam().get(firstOpponent.getTeam().orElseThrow()));
 
     }
 
@@ -445,13 +451,10 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
                 .withCardsByTeam(cardsByTeam)
                 .build();
 
-        // To make sure that buildPlayers() always return different teams for player 1 and player 2
-        assertNotEquals(contractPlayer.getTeam(), firstOpponent.getTeam());
-
         var result = dealScoreCalculator.computeDealScores(deal);
 
-        assertEquals(0, result.finalRoundedScore().get(contractPlayer.getTeam().orElseThrow()));
-        assertEquals(250, result.finalRoundedScore().get(firstOpponent.getTeam().orElseThrow()));
+        assertEquals(0, result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow()));
+        assertEquals(250, result.finalRoundedScoreByTeam().get(firstOpponent.getTeam().orElseThrow()));
 
     }
 
@@ -471,7 +474,7 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
                 .withIsDouble(false)
                 .withIsRedouble(false)
                 .withDealContractBid(
-                        new ContreeBid(contractPlayer, ContreeBidValue.CAPOT, CardSuit.HEARTS)
+                    new ContreeBid(contractPlayer, ContreeBidValue.CAPOT, CardSuit.HEARTS)
                 )
                 .withAttackTeam(ContreeTeam.TEAM1)
                 .withDefenseTeam(ContreeTeam.TEAM2)
@@ -484,11 +487,11 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
         var result = dealScoreCalculator.computeDealScores(deal);
 
-        assertEquals(0, result.finalRoundedScore().get(contractPlayer.getTeam().orElseThrow()));
-        assertEquals(500, result.finalRoundedScore().get(firstOpponent.getTeam().orElseThrow()));
+        assertEquals(0, result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow()));
+        assertEquals(500, result.finalRoundedScoreByTeam().get(firstOpponent.getTeam().orElseThrow()));
     }
 
-    @DisplayName("Compute score when attack team announces capot and reach the contract, without double nor redouble")
+    @DisplayName("When adding the points from both team, the sum must always be 152")
     @Test
     public void testExceptionIfCardScoreSumIsNot162() {
 
@@ -499,14 +502,14 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
         Set<ClassicalCard> team1Cards = new HashSet<>();
         team1Cards.addAll(typicalTricksBySuit.get(CardSuit.HEARTS).trumpStrongTrick_55points);
         team1Cards.addAll(typicalTricksBySuit.get(CardSuit.HEARTS).trumpWeakTrick_7points); // 62
-        team1Cards.addAll(typicalTricksBySuit.get(CardSuit.SPADES).standardStrongTrick_27points); // 89
-        team1Cards.addAll(typicalTricksBySuit.get(CardSuit.SPADES).standardWeakTrick_3points); // 92
+        team1Cards.addAll(typicalTricksBySuit.get(CardSuit.SPADES).standardStrongTrick_28points); // 89
+        team1Cards.addAll(typicalTricksBySuit.get(CardSuit.SPADES).standardWeakTrick_2points); // 92
 
         Set<ClassicalCard> team2Cards = new HashSet<>();
-        team2Cards.addAll(typicalTricksBySuit.get(CardSuit.DIAMONDS).standardStrongTrick_27points); // 119
-        team2Cards.addAll(typicalTricksBySuit.get(CardSuit.DIAMONDS).standardWeakTrick_3points); // 122
-        team2Cards.addAll(typicalTricksBySuit.get(CardSuit.CLUBS).standardStrongTrick_27points); // 149
-        // Missing trick :  team2Cards.addAll(typicalTricksBySuit.get(CardSuit.CLUBS).standardWeakTrick_3points);
+        team2Cards.addAll(typicalTricksBySuit.get(CardSuit.DIAMONDS).standardStrongTrick_28points); // 119
+        team2Cards.addAll(typicalTricksBySuit.get(CardSuit.DIAMONDS).standardWeakTrick_2points); // 122
+        team2Cards.addAll(typicalTricksBySuit.get(CardSuit.CLUBS).standardStrongTrick_28points); // 149
+        // Missing trick :  team2Cards.addAll(typicalTricksBySuit.get(CardSuit.CLUBS).standardWeakTrick_2points);
 
 
         Map<Team, Set<ContreeCard>> cardsByTeam = Map.of(
@@ -533,6 +536,108 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
     }
 
+    @DisplayName("Test all intermediate scores when attack team reaches his contract, without double nor redouble")
+    @Test
+    public void testAllScoreTypesWhenContractIsReached() {
+
+        var contractPlayer = player1;
+
+        CardSuit trumpSuit = CardSuit.HEARTS;
+
+        Set<ClassicalCard> team1Cards = new HashSet<>();
+        team1Cards.addAll(typicalTricksBySuit.get(CardSuit.HEARTS).trumpStrongTrick_55points);
+        team1Cards.addAll(typicalTricksBySuit.get(CardSuit.HEARTS).trumpWeakTrick_7points); // 62
+        team1Cards.addAll(typicalTricksBySuit.get(CardSuit.SPADES).standardStrongTrick_28points); // 89
+        team1Cards.addAll(typicalTricksBySuit.get(CardSuit.SPADES).standardWeakTrick_2points); // 92
+        team1Cards.addAll(typicalTricksBySuit.get(CardSuit.DIAMONDS).standardWeakTrick_2points); // 94
+        team1Cards.addAll(typicalTricksBySuit.get(CardSuit.CLUBS).standardWeakTrick_2points); // 96
+
+        Set<ClassicalCard> team2Cards = new HashSet<>();
+        team2Cards.addAll(typicalTricksBySuit.get(CardSuit.DIAMONDS).standardStrongTrick_28points);
+        team2Cards.addAll(typicalTricksBySuit.get(CardSuit.CLUBS).standardStrongTrick_28points); // 56
+
+
+
+        Map<Team, Set<ContreeCard>> cardsByTeam = Map.of(
+                ContreeTeam.TEAM1, ContreeCard.of( trumpSuit, team1Cards ),
+                ContreeTeam.TEAM2, ContreeCard.of( trumpSuit, team2Cards )
+        );
+
+        ContreeDeal deal = MockDealBuilder.builder()
+                .withDealContractBid(
+                        new ContreeBid(contractPlayer, ContreeBidValue.HUNDRED, CardSuit.HEARTS)
+                )
+                .withAttackTeam(ContreeTeam.TEAM1)
+                .withDefenseTeam(ContreeTeam.TEAM2)
+                .withLastTrickWinnerTeam(ContreeTeam.TEAM1)
+                .withCardsByTeam(cardsByTeam)
+                .build();
+
+        var result = dealScoreCalculator.computeDealScores(deal);
+
+        // Dix de der
+        assertEquals(96 + 10, result.rawScoreByTeam().get(ContreeTeam.TEAM1) );
+        assertEquals(56, result.rawScoreByTeam().get(ContreeTeam.TEAM2) );
+
+        assertEquals(96 + 10, result.finalNotRoundedScoreByTeam().get(ContreeTeam.TEAM1) );
+        assertEquals(56, result.finalNotRoundedScoreByTeam().get(ContreeTeam.TEAM2) );
+
+        assertEquals(110, result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM1) );
+        assertEquals(60, result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM2) );
+
+    }
+
+    @DisplayName("Test all intermediate scores when attack team does not reach his contract, even if the contract seems reached once score is rounded")
+    @Test
+    public void testAllScoreTypesWhenContractIsNotReached() {
+
+        var contractPlayer = player1;
+
+        CardSuit trumpSuit = CardSuit.HEARTS;
+
+        Set<ClassicalCard> team1Cards = new HashSet<>();
+        team1Cards.addAll(typicalTricksBySuit.get(CardSuit.HEARTS).trumpStrongTrick_55points);
+        team1Cards.addAll(typicalTricksBySuit.get(CardSuit.HEARTS).trumpWeakTrick_7points); // 62
+        team1Cards.addAll(typicalTricksBySuit.get(CardSuit.SPADES).standardStrongTrick_28points); // 89
+        team1Cards.addAll(typicalTricksBySuit.get(CardSuit.SPADES).standardWeakTrick_2points); // 92
+        team1Cards.addAll(typicalTricksBySuit.get(CardSuit.DIAMONDS).standardWeakTrick_2points); // 94
+        team1Cards.addAll(typicalTricksBySuit.get(CardSuit.CLUBS).standardWeakTrick_2points); // 96
+
+        Set<ClassicalCard> team2Cards = new HashSet<>();
+        team2Cards.addAll(typicalTricksBySuit.get(CardSuit.DIAMONDS).standardStrongTrick_28points);
+        team2Cards.addAll(typicalTricksBySuit.get(CardSuit.CLUBS).standardStrongTrick_28points); // 56
+
+
+
+        Map<Team, Set<ContreeCard>> cardsByTeam = Map.of(
+                ContreeTeam.TEAM1, ContreeCard.of( trumpSuit, team1Cards ),
+                ContreeTeam.TEAM2, ContreeCard.of( trumpSuit, team2Cards )
+        );
+
+        ContreeDeal deal = MockDealBuilder.builder()
+                .withDealContractBid(
+                        new ContreeBid(contractPlayer, ContreeBidValue.HUNDRED_TEN, CardSuit.HEARTS)
+                )
+                .withAttackTeam(ContreeTeam.TEAM1)
+                .withDefenseTeam(ContreeTeam.TEAM2)
+                .withLastTrickWinnerTeam(ContreeTeam.TEAM1)
+                .withCardsByTeam(cardsByTeam)
+                .build();
+
+        var result = dealScoreCalculator.computeDealScores(deal);
+
+        // Dix de der
+        assertEquals(96 + 10, result.rawScoreByTeam().get(ContreeTeam.TEAM1) );
+        assertEquals(56, result.rawScoreByTeam().get(ContreeTeam.TEAM2) );
+
+        assertEquals(0, result.finalNotRoundedScoreByTeam().get(ContreeTeam.TEAM1) );
+        assertEquals(160, result.finalNotRoundedScoreByTeam().get(ContreeTeam.TEAM2) );
+
+        assertEquals(0, result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM1) );
+        assertEquals(160, result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM2) );
+
+    }
+
     @DisplayName("When only PASS bids are placed on a deal, expected scores are 0")
     @Test
     public void testComputeScoreOnDealWithOnlyPassBids() {
@@ -545,7 +650,7 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
         var result = dealScoreCalculator.computeDealScores(onlyPassBidsDeal);
 
-        assertTrue(result.finalRoundedScore().values().stream().allMatch(i -> i == 0));
+        assertTrue(result.finalRoundedScoreByTeam().values().stream().allMatch(i -> i == 0));
 
     }
 

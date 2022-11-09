@@ -130,10 +130,7 @@ class ContreeDeal {
         dealStep = DealStep.OVER;
         endOfStepEventSender.accept(dealId);
 
-        Integer team1Score = score.getTeamScore(ContreeTeam.TEAM1);
-        Integer team2Score = score.getTeamScore(ContreeTeam.TEAM2);
-
-        eventSender.sendEndOfDealEvent(dealId, score.winnerTeam().orElse(null), team1Score, team2Score, tricks.isCapot());
+        eventSender.sendEndOfDealEvent(dealId, score.winnerTeam().orElse(null), score, tricks.isCapot());
     }
 
     private void startPlay() {
