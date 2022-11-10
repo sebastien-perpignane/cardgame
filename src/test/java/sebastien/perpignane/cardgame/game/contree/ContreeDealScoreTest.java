@@ -18,8 +18,11 @@ class ContreeDealScoreTest extends TestCasesManagingPlayers {
 
         ContreeDeal deal = mock(ContreeDeal.class);
         DealScoreCalculator calculator = mock(DealScoreCalculator.class);
+        var fakeScore = Map.of(ContreeTeam.TEAM1, 130, ContreeTeam.TEAM2, 30);
         when(calculator.computeDealScores(deal)).thenReturn(
-            Map.of(ContreeTeam.TEAM1, 130, ContreeTeam.TEAM2, 30)
+            new DealScoreResult(
+                    fakeScore, fakeScore, fakeScore, true
+            )
         );
 
         ContreeDealScore dealScore = new ContreeDealScore(calculator);
