@@ -52,7 +52,7 @@ public class ContreeGameEventSender extends AbstractGameEventSender {
 
     }
 
-    void sendPlayedCardEvent(Player player, ClassicalCard card) {
+    void sendPlayedCardEvent(Player<?> player, ClassicalCard card) {
         gameObservers.forEach(observer -> observer.onCardPlayed(player, card));
     }
 
@@ -60,8 +60,8 @@ public class ContreeGameEventSender extends AbstractGameEventSender {
         dealObservers.forEach(cdo -> cdo.onDealStarted(dealId));
     }
 
-    void sendEndOfDealEvent(String dealId, Team winnerTeam, Integer team1Score, Integer team2Score, boolean capot) {
-        dealObservers.forEach(cdo -> cdo.onDealOver(dealId, winnerTeam, team1Score, team2Score, capot));
+    void sendEndOfDealEvent(String dealId, Team winnerTeam, ContreeDealScore dealScore, boolean capot) {
+        dealObservers.forEach(cdo -> cdo.onEndOfDeal(dealId, winnerTeam, dealScore, capot));
     }
 
     void sendPlacedBidEvent(String dealId, ContreeBid bid) {

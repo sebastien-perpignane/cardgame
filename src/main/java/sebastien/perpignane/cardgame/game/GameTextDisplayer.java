@@ -2,10 +2,7 @@ package sebastien.perpignane.cardgame.game;
 
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
-import sebastien.perpignane.cardgame.game.contree.ContreeBidValue;
-import sebastien.perpignane.cardgame.game.contree.ContreeDealObserver;
-import sebastien.perpignane.cardgame.game.contree.ContreeGame;
-import sebastien.perpignane.cardgame.game.contree.ContreeTrickObserver;
+import sebastien.perpignane.cardgame.game.contree.*;
 import sebastien.perpignane.cardgame.game.war.WarGame;
 import sebastien.perpignane.cardgame.game.war.WarPlayedCard;
 import sebastien.perpignane.cardgame.game.war.WarTrickObserver;
@@ -140,7 +137,7 @@ Deal %s is started%n
     }
 
     @Override
-    public void onDealOver(String dealId, Team winnerTeam, Integer team1Score, Integer team2Score, boolean capot) {
+    public void onEndOfDeal(String dealId, Team winnerTeam, ContreeDealScore dealScore, boolean capot) {
         String winnerText = winnerTeam == null ? "No winner." : String.format("Winner is %s.", winnerTeam);
 
         if (capot) {
@@ -173,15 +170,26 @@ Deal %s is started%n
         out.printf("""
 ************************************************************************************************************************
 Deal %s is over. %s%n
-Deal score :
+Raw score :
     Team 1: %d
     Team 2: %d
+%s. Score before rounding :
+    Team 1: %d
+    Team 2: %d
+Final score :
+    Team 1: %s
+    Team 2: %s
 ************************************************************************************************************************
 """,
-                dealId,
-                winnerText,
-                team1Score,
-                team2Score
+            dealId,
+            winnerText,
+            dealScore.getRawTeamScore(ContreeTeam.TEAM1),
+            dealScore.getRawTeamScore(ContreeTeam.TEAM2),
+            dealScore.isContractReached() ? "Contract is reached" : "Contract is not reached",
+            dealScore.getTeamNotRoundedScore(ContreeTeam.TEAM1),
+            dealScore.getTeamNotRoundedScore(ContreeTeam.TEAM2),
+            dealScore.getTeamScore(ContreeTeam.TEAM1),
+            dealScore.getTeamScore(ContreeTeam.TEAM2)
         );
     }
 
