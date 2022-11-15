@@ -122,13 +122,10 @@ public class ContreeTrickTest extends TestCasesManagingPlayers {
 
         trickWithHeartAsTrump.startTrick();
 
-        // When player1 plays his card, the trick compute and store the allowed cards for the next player
         when(playableCardsFilter.playableCards(any(), any())).thenReturn(Set.of(ClassicalCard.JACK_HEART));
-        trickWithHeartAsTrump.playerPlays(player1, ClassicalCard.SEVEN_CLUB);
-
         assertThrows(
             RuntimeException.class,
-            () -> trickWithHeartAsTrump.playerPlays(player2, ClassicalCard.JACK_CLUB)
+                () -> trickWithHeartAsTrump.playerPlays(player1, ClassicalCard.SEVEN_CLUB)
         );
 
     }

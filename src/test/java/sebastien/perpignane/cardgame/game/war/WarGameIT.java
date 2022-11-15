@@ -9,7 +9,7 @@ import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.BlockingQueueGameObserver;
 import sebastien.perpignane.cardgame.game.GameTextDisplayer;
 import sebastien.perpignane.cardgame.game.WarPlayer1WinShuffler;
-import sebastien.perpignane.cardgame.player.war.AbstractWarPlayer;
+import sebastien.perpignane.cardgame.player.war.AbstracLocalThreadWarPlayer;
 import sebastien.perpignane.cardgame.player.war.WarBotPlayer;
 
 import java.util.Arrays;
@@ -27,8 +27,8 @@ public class WarGameIT {
     @DisplayName("Player 1 has only superior cards and must win the game")
     public void testPlayer1HasBestCardsAndWins() throws InterruptedException {
 
-        AbstractWarPlayer player1 = new WarBotPlayer();
-        AbstractWarPlayer player2 = new WarBotPlayer();
+        AbstracLocalThreadWarPlayer player1 = new WarBotPlayer();
+        AbstracLocalThreadWarPlayer player2 = new WarBotPlayer();
 
         WarGame warGame = new WarGame();
         warGame.joinGame(player1);
@@ -51,8 +51,8 @@ public class WarGameIT {
     @DisplayName("Player 1 wins 1st trick but loses the game")
     public void testPlayer1Win1TrickButLoses() throws InterruptedException {
 
-        AbstractWarPlayer player1 = new WarBotPlayer();
-        AbstractWarPlayer player2 = new WarBotPlayer();
+        AbstracLocalThreadWarPlayer player1 = new WarBotPlayer();
+        AbstracLocalThreadWarPlayer player2 = new WarBotPlayer();
 
         WarGame warGame = new WarGame();
         warGame.joinGame(player1);

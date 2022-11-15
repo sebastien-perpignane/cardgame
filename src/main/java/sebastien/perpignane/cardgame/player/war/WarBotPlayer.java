@@ -1,36 +1,16 @@
 package sebastien.perpignane.cardgame.player.war;
 
+import com.github.javafaker.Faker;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
-import sebastien.perpignane.cardgame.player.Team;
 
 import java.util.*;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-enum MessageType {
-    PLAY,
-    END_OF_GAME
-}
 
-public class WarBotPlayer extends AbstractWarPlayer implements Runnable {
 
-    private static final Deque<String> fakeNames = new LinkedList<>();
+public class WarBotPlayer extends AbstracLocalThreadWarPlayer {
 
-    private static void addFakeNames() {
-        fakeNames.add("Yanis");
-        fakeNames.add("Matis");
-        fakeNames.add("Noé");
-        fakeNames.add("Sébastien");
-        fakeNames.add("Imène");
-        fakeNames.add("Enzo");
-    }
-
-    static {
-        addFakeNames();
-    }
-
-    private final BlockingQueue<String> gameMsgQueue = new ArrayBlockingQueue<>(54);
+    private final static Faker faker = new Faker();
 
     private Deque<ClassicalCard> hand;
     private final List<ClassicalCard> cardStock = new CopyOnWriteArrayList<>();
@@ -39,10 +19,10 @@ public class WarBotPlayer extends AbstractWarPlayer implements Runnable {
 
     public WarBotPlayer() {
         super();
-        this.name = fakeNames.isEmpty() ? UUID.randomUUID().toString() : fakeNames.pop();
+        this.name = faker.name().firstName();
     }
 
-    private String getName() {
+    public String getName() {
         return name;
     }
 
@@ -61,25 +41,12 @@ public class WarBotPlayer extends AbstractWarPlayer implements Runnable {
         cardStock.addAll(cards);
     }
 
-    public ClassicalCard play() {
-        manageEmptyHandIfRelevant();
-        return hand.pop();
-    }
-
     private void manageEmptyHandIfRelevant() {
         if (hand.isEmpty() && !cardStock.isEmpty()) {
             Collections.shuffle(cardStock);
             hand.addAll(cardStock);
             cardStock.clear();
         }
-    }
-    public void onPlayerTurn() {
-        gameMsgQueue.add("PLAY");
-    }
-
-    @Override
-    public void onGameOver() {
-        gameMsgQueue.add("END_OF_GAME");
     }
 
     @Override
@@ -111,48 +78,12 @@ public class WarBotPlayer extends AbstractWarPlayer implements Runnable {
     }
 
     @Override
-    public void run() {
-
-        while (!gameIsOver()) {
-            try {
-                String msg = gameMsgQueue.take();
-                MessageType messageType = MessageType.valueOf(msg);
-                switch (messageType) {
-                    case PLAY:
-                        if (isCurrentPlayer()) {
-                            play(play());
-                        }
-                        break;
-                    case END_OF_GAME:
-                        return;
-                    default:
-                        System.err.println("Unknown message : " + msg);
-                }
-            }
-            catch (InterruptedException ie) {
-                System.out.println("I'm interrupted");
-                return;
-            }
-        }
-    }
-
-    @Override
-    public void onGameStarted() {
-        new Thread(this).start();
-    }
-
-    @Override
-    public Optional<Team> getTeam() {
-        return Optional.empty();
-    }
-
-    @Override
-    public void setTeam(Team team) {
-
-    }
-
-    @Override
     public boolean isBot() {
         return true;
+    }
+
+    @Override
+    public void playCard(ClassicalCard card) {
+
     }
 }

@@ -45,7 +45,7 @@ public class ContreeTrickLifeCycleTest extends TestCasesManagingPlayers {
         trickWithHeartTrump.playerPlays(player1, ClassicalCard.ACE_CLUB);
 
         assertFalse(trickWithHeartTrump.isOver());
-        assertNull(trickWithHeartTrump.getWinner());
+        assertTrue(trickWithHeartTrump.getWinner().isEmpty());
 
     }
 
@@ -59,7 +59,7 @@ public class ContreeTrickLifeCycleTest extends TestCasesManagingPlayers {
         trickWithHeartTrump.playerPlays(player2, ClassicalCard.SEVEN_CLUB);
 
         assertFalse(trickWithHeartTrump.isOver());
-        assertNull(trickWithHeartTrump.getWinner());
+        assertTrue(trickWithHeartTrump.getWinner().isEmpty());
 
     }
 
@@ -73,7 +73,7 @@ public class ContreeTrickLifeCycleTest extends TestCasesManagingPlayers {
         trickWithHeartTrump.playerPlays(player3, ClassicalCard.TEN_CLUB);
 
         assertFalse(trickWithHeartTrump.isOver());
-        assertNull(trickWithHeartTrump.getWinner());
+        assertTrue(trickWithHeartTrump.getWinner().isEmpty());
 
     }
 
@@ -89,8 +89,8 @@ public class ContreeTrickLifeCycleTest extends TestCasesManagingPlayers {
         trickWithHeartTrump.playerPlays(player4, ClassicalCard.JACK_CLUB);
 
         assertTrue(trickWithHeartTrump.isOver());
-        assertNotNull(trickWithHeartTrump.getWinner());
-        assertSame(player1, trickWithHeartTrump.getWinner());
+        assertTrue(trickWithHeartTrump.getWinner().isPresent());
+        assertSame(player1, trickWithHeartTrump.getWinner().orElseThrow());
 
     }
 

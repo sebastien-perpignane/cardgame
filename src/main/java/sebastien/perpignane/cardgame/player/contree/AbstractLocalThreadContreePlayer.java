@@ -4,7 +4,6 @@ import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.contree.ContreeBidValue;
 import sebastien.perpignane.cardgame.game.contree.ContreeGame;
 import sebastien.perpignane.cardgame.player.AbstractThreadLocalPlayer;
-import sebastien.perpignane.cardgame.player.Team;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -74,17 +73,12 @@ public abstract class AbstractLocalThreadContreePlayer extends AbstractThreadLoc
     }
 
     @Override
-    public ClassicalCard play() {
-        return null;
-    }
-
-    @Override
     public void onPlayerTurn() {
 
     }
 
     @Override
-    public void onPlayerTurn(Collection<ClassicalCard> allowedCards) {
+    public void onPlayerTurn(Set<ClassicalCard> allowedCards) {
         receiveNewMessage(new PlayerMessage(MessageType.PLAY, allowedCards, Collections.emptyList()));
     }
 
@@ -105,7 +99,7 @@ public abstract class AbstractLocalThreadContreePlayer extends AbstractThreadLoc
 
     @Override
     public void onGameOver() {
-        receiveNewMessage( new PlayerMessage( MessageType.END_OF_GAME, null, null ) );
+        receiveNewMessage( new PlayerMessage( MessageType.GAME_OVER, null, null ) );
     }
 
     @Override
@@ -116,7 +110,11 @@ public abstract class AbstractLocalThreadContreePlayer extends AbstractThreadLoc
         switch (playerMessage.messageType()) {
             case PLAY -> managePlayMessage(playerMessage);
             case BID -> manageBidMessage(playerMessage);
-            case END_OF_GAME ->  mustExit = true;
+            case GAME_OVER ->  mustExit = true;
+            case GAME_STARTED -> {
+                // Managed by the onGameStarted method
+            }
+            default -> throw new IllegalArgumentException( String.format( "Unknown message type: %s", playerMessage.messageType() ) );
         }
         return mustExit;
     }

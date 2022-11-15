@@ -61,4 +61,9 @@ public class ContreeBotPlayer extends AbstractLocalThreadContreePlayer {
     void manageBidMessage(PlayerMessage bidMessage) {
         placeBid();
     }
+
+    @Override
+    public void playCard(ClassicalCard card) {
+        getGame().playCard(this, card);
+    }
 }

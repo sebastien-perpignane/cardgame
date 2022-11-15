@@ -8,6 +8,8 @@ import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.game.BlockingQueueGameObserver;
 import sebastien.perpignane.cardgame.game.GameTextDisplayer;
 import sebastien.perpignane.cardgame.player.contree.ContreeBotPlayer;
+import sebastien.perpignane.cardgame.player.contree.refactor.ContreeBotPlayerEventHandler;
+import sebastien.perpignane.cardgame.player.contree.refactor.RefactoredContreePlayer;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -27,9 +29,9 @@ public class ContreeGameIT {
         ContreeBotPlayer player1 = new BiddingContreeBotPlayer(ContreeBidValue.EIGHTY, CardSuit.HEARTS);
 
         game.joinGame(player1);
-        game.joinGame(new ContreeBotPlayer());
-        game.joinGame(new ContreeBotPlayer());
-        game.joinGame(new ContreeBotPlayer());
+        game.joinGame(new RefactoredContreePlayer(new ContreeBotPlayerEventHandler()));
+        game.joinGame(new RefactoredContreePlayer(new ContreeBotPlayerEventHandler()));
+        game.joinGame(new RefactoredContreePlayer(new ContreeBotPlayerEventHandler()));
         var endOfGame = waitForEndOfGameEvent(game);
         assertTrue(endOfGame);
 

@@ -7,6 +7,7 @@ import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -31,6 +32,7 @@ class ContreeDealScoreTest extends TestCasesManagingPlayers {
 
         assertEquals(130, dealScore.getTeamScore(ContreeTeam.TEAM1));
         assertEquals( 30, dealScore.getTeamScore(ContreeTeam.TEAM2));
+        assertTrue(dealScore.isContractReached());
 
     }
 }

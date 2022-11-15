@@ -52,7 +52,7 @@ public class GameTextDisplayer implements GameObserver, WarTrickObserver, Contre
 
     @Override
     public void onWonTrick(Trick trick) {
-        out.println("Player " + trick.getWinner() + " won trick " + trick + System.lineSeparator());
+        out.println("Player " + trick.getWinner().orElseThrow() + " won trick " + trick + System.lineSeparator());
     }
 
     @Override

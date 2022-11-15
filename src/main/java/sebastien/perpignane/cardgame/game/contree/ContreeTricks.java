@@ -67,7 +67,7 @@ public class ContreeTricks {
 
             var displayCards = currentTrick.getPlayedCards().stream().map(pc -> String.format("%s : %s", pc.player(), pc.card().getCard())).collect(Collectors.joining(", "));
             // TODO send event
-            System.out.printf("Trick %s won by %s. Cards : %s%n", currentTrick, currentTrick.getWinner(), displayCards);
+            System.out.printf("Trick %s won by %s. Cards : %s%n", currentTrick, currentTrick.getWinner().orElseThrow(), displayCards);
 
             if ( tricks.size() == NB_TRICKS_PER_DEAL ) {
                 tricksAreOver = true;
@@ -98,7 +98,7 @@ public class ContreeTricks {
         }
 
         var teamsWinningTrick = tricks.stream()
-                .map(ContreeTrick::getWinner)
+                .map(t -> t.getWinner().orElseThrow())
                 .map(ContreePlayer::getTeam)
                 .map(Optional::orElseThrow)
                 .collect(Collectors.toSet());

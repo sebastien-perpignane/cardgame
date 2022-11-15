@@ -23,9 +23,6 @@ public interface Player<G extends AbstractGame<?>> {
 
     void onGameOver();
 
-    // FIXME should not be in the public interface
-    ClassicalCard play();
-
     // FIXME to be replaced with the "allowed cards" version
     void onPlayerTurn();
 
@@ -38,5 +35,7 @@ public interface Player<G extends AbstractGame<?>> {
     void setTeam(Team team);
 
     boolean isBot();
+
+    void playCard(ClassicalCard card);
 
 }

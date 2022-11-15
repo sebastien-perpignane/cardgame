@@ -3,8 +3,10 @@ package sebastien.perpignane.cardgame.game.contree;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.game.GameTextDisplayer;
 import sebastien.perpignane.cardgame.player.contree.ContreeBotPlayer;
-import sebastien.perpignane.cardgame.player.contree.ContreeLocalConsoleHumanPlayer;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
+import sebastien.perpignane.cardgame.player.contree.refactor.ContreeBotPlayerEventHandler;
+import sebastien.perpignane.cardgame.player.contree.refactor.ContreeLocalPlayerEventHandler;
+import sebastien.perpignane.cardgame.player.contree.refactor.RefactoredContreePlayer;
 
 import java.util.Scanner;
 
@@ -27,7 +29,8 @@ public class ContreeGameMain {
 
             int i = 0;
             while (i < 3) {
-                game.joinGame(new ContreeBotPlayer());
+
+                game.joinGame(new RefactoredContreePlayer(new ContreeBotPlayerEventHandler()));
                 i++;
             }
 
@@ -65,7 +68,9 @@ public class ContreeGameMain {
             humanPlayerName = scanner.nextLine();
         }
 
-        return new ContreeLocalConsoleHumanPlayer(humanPlayerName);
+        return new RefactoredContreePlayer(new ContreeLocalPlayerEventHandler(humanPlayerName));
+
+        //return new ContreeLocalConsoleHumanPlayer(humanPlayerName);
 
     }
 
