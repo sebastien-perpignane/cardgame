@@ -6,7 +6,7 @@ import sebastien.perpignane.cardgame.game.contree.ContreeBidValue;
 import java.util.Collection;
 
 public record PlayerMessage(
-        AbstractLocalThreadContreePlayer.MessageType messageType,
+        MessageType messageType,
         Collection<ClassicalCard> allowedCards,
         Collection<ContreeBidValue> allowedBidValues) {
 

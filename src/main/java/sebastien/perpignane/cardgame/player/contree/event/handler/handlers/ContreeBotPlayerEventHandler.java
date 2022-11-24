@@ -1,6 +1,5 @@
-package sebastien.perpignane.cardgame.player.contree.refactor;
+package sebastien.perpignane.cardgame.player.contree.event.handler.handlers;
 
-import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.contree.ContreeBidValue;
 import sebastien.perpignane.cardgame.player.contree.PlayerMessage;
@@ -24,16 +23,11 @@ public class ContreeBotPlayerEventHandler extends ThreadLocalContreePlayerEventH
             playedCard = cardIterator.next();
             i++;
         }
-        getGame().playCard(getPlayer(), playedCard);
+        getPlayer().playCard(playedCard);
     }
 
-    protected final void placePassBid(ContreeBidValue bidValue, CardSuit cardSuit) {
-        // FIXME create a placeBid method on contree player
-        getGame().placeBid(getPlayer(), bidValue, cardSuit);
-    }
-
-    protected void placePassBid() {
-        placePassBid(ContreeBidValue.PASS, null);
+    private void placePassBid() {
+        getPlayer().placeBid(ContreeBidValue.PASS, null);
     }
 
     @Override

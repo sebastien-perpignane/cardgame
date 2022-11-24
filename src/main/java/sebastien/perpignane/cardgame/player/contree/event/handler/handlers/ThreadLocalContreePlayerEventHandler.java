@@ -1,15 +1,15 @@
-package sebastien.perpignane.cardgame.player.contree.refactor;
+package sebastien.perpignane.cardgame.player.contree.event.handler.handlers;
 
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.contree.ContreeBidValue;
-import sebastien.perpignane.cardgame.game.contree.ContreeGame;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 import sebastien.perpignane.cardgame.player.contree.MessageType;
 import sebastien.perpignane.cardgame.player.contree.PlayerMessage;
+import sebastien.perpignane.cardgame.player.contree.event.handler.ContreePlayerEventHandler;
 
 import java.util.Set;
 
-public abstract class ThreadLocalContreePlayerEventHandler extends LocalThreadPlayerEventHandler<ContreePlayer, ContreeGame, PlayerMessage> {
+public abstract class ThreadLocalContreePlayerEventHandler extends ThreadPlayerEventHandler<ContreePlayer, PlayerMessage> implements ContreePlayerEventHandler {
 
     private ContreePlayer player;
 
@@ -65,4 +65,8 @@ public abstract class ThreadLocalContreePlayerEventHandler extends LocalThreadPl
 
     abstract void manageBidMessage(PlayerMessage bidMessage);
 
+    @Override
+    protected String getName() {
+        return getPlayer().getName();
+    }
 }

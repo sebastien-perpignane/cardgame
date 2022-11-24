@@ -5,7 +5,7 @@ import sebastien.perpignane.cardgame.game.AbstractGame;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-public abstract class AbstractThreadLocalPlayer<M, G extends AbstractGame<?>> implements Runnable, Player<G> {
+public abstract class AbstractThreadLocalPlayer<M, G extends AbstractGame<?>, T extends Team> implements Runnable, Player<G, T> {
 
     private final BlockingQueue<M> gameMsgQueue = new ArrayBlockingQueue<>(54);
 

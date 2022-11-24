@@ -1,5 +1,7 @@
-package sebastien.perpignane.cardgame.player.contree.refactor;
+package sebastien.perpignane.cardgame.player.contree.event.handler;
 
+import com.github.javafaker.Faker;
+import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.contree.ContreeBidValue;
 import sebastien.perpignane.cardgame.game.contree.ContreeGame;
@@ -10,9 +12,12 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 
-public class RefactoredContreePlayer implements ContreePlayer {
+public class ContreePlayerEventHandlerImpl implements ContreePlayer {
 
-    private final PlayerEventHandler<ContreePlayer, ContreeGame> playerEventHandler;
+    private final static Faker faker = new Faker();
+
+    private final ContreePlayerEventHandler playerEventHandler;
+    private final String name;
 
     private Collection<ClassicalCard> hand;
 
@@ -20,9 +25,14 @@ public class RefactoredContreePlayer implements ContreePlayer {
 
     private ContreeTeam team;
 
-    public RefactoredContreePlayer(PlayerEventHandler<ContreePlayer, ContreeGame> playerEventHandler) {
+    public ContreePlayerEventHandlerImpl(String name, ContreePlayerEventHandler playerEventHandler) {
+        this.name = name;
         this.playerEventHandler = playerEventHandler;
         this.playerEventHandler.setPlayer(this);
+    }
+
+    public ContreePlayerEventHandlerImpl(ContreePlayerEventHandler playerEventHandler) {
+        this(faker.name().firstName(), playerEventHandler);
     }
 
     @Override
@@ -38,7 +48,6 @@ public class RefactoredContreePlayer implements ContreePlayer {
     @Override
     public void setGame(ContreeGame game) {
         this.game = game;
-        playerEventHandler.setGame(game);
     }
 
     @Override
@@ -102,7 +111,7 @@ public class RefactoredContreePlayer implements ContreePlayer {
     }
 
     @Override
-    public boolean sameTeam(ContreePlayer otherPlayer) {
+    public boolean sameTeam(sebastien.perpignane.cardgame.player.contree.ContreePlayer otherPlayer) {
         if (team == null || otherPlayer.getTeam().isEmpty()) {
             return false;
         }
@@ -117,5 +126,26 @@ public class RefactoredContreePlayer implements ContreePlayer {
     @Override
     public void playCard(ClassicalCard card) {
         game.playCard(this, card);
+    }
+
+    @Override
+    public void placeBid(ContreeBidValue bidValue, CardSuit cardSuit) {
+        game.placeBid(this, bidValue, cardSuit);
+    }
+
+    @Override
+    public void leaveGame() {
+        game.leaveGame(this);
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
+        String formatString = isBot() ? "%s-Bot (%s)" : "* %s (%s) *";
+        return String.format(formatString, getName(), team);
     }
 }

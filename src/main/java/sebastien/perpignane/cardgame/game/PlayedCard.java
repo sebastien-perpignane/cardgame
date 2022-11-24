@@ -5,7 +5,7 @@ import sebastien.perpignane.cardgame.player.Player;
 
 import java.util.Objects;
 
-public class PlayedCard<P extends Player<?>, C extends Card> {
+public class PlayedCard<P extends Player<?, ?>, C extends Card> {
     private final C card;
     private final P player;
 

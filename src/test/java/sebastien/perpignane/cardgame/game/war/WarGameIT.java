@@ -9,8 +9,8 @@ import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.BlockingQueueGameObserver;
 import sebastien.perpignane.cardgame.game.GameTextDisplayer;
 import sebastien.perpignane.cardgame.game.WarPlayer1WinShuffler;
-import sebastien.perpignane.cardgame.player.war.AbstracLocalThreadWarPlayer;
-import sebastien.perpignane.cardgame.player.war.WarBotPlayer;
+import sebastien.perpignane.cardgame.player.war.local.thread.AbstracLocalThreadWarPlayer;
+import sebastien.perpignane.cardgame.player.war.local.thread.WarBotPlayer;
 
 import java.util.Arrays;
 import java.util.List;

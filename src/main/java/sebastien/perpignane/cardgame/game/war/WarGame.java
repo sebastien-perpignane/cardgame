@@ -4,8 +4,8 @@ import org.apache.commons.collections4.iterators.LoopingListIterator;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.*;
 import sebastien.perpignane.cardgame.player.Player;
-import sebastien.perpignane.cardgame.player.war.AbstracLocalThreadWarPlayer;
 import sebastien.perpignane.cardgame.player.war.WarPlayer;
+import sebastien.perpignane.cardgame.player.war.local.thread.AbstracLocalThreadWarPlayer;
 
 import java.util.ArrayList;
 import java.util.Collections;

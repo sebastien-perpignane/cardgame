@@ -1,16 +1,14 @@
-package sebastien.perpignane.cardgame.player.contree.refactor;
+package sebastien.perpignane.cardgame.player.contree.event.handler.handlers;
 
-import sebastien.perpignane.cardgame.game.AbstractGame;
 import sebastien.perpignane.cardgame.player.Player;
+import sebastien.perpignane.cardgame.player.event.handler.PlayerEventHandler;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-public abstract class LocalThreadPlayerEventHandler<P extends Player<G, ?>, G extends AbstractGame<P>, M> implements PlayerEventHandler<P, G>, Runnable {
+public abstract class ThreadPlayerEventHandler<P extends Player<?, ?>, M> implements PlayerEventHandler<P>, Runnable {
 
     private final BlockingQueue<M> gameMsgQueue = new ArrayBlockingQueue<>(54);
-
-    private G game;
 
     @Override
     public void run() {
@@ -31,22 +29,15 @@ public abstract class LocalThreadPlayerEventHandler<P extends Player<G, ?>, G ex
 
     protected abstract boolean handleMessage(M playerMessage);
 
+    protected abstract String getName();
+
     protected void receiveNewMessage(M message) {
         gameMsgQueue.add(message);
     }
 
     protected void startPlayerEventHandlerThread() {
         // FIXME find a way to name the thread properly
-        var thread = new Thread(this, "PlayerThread-prout");
+        var thread = new Thread(this, "PlayerThread-" + getName());
         thread.start();
-    }
-
-    protected G getGame() {
-        return game;
-    }
-
-    @Override
-    public void setGame(G game) {
-        this.game = game;
     }
 }

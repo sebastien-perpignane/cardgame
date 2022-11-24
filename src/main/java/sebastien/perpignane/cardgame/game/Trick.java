@@ -9,7 +9,7 @@ public interface Trick {
 
     boolean isOver();
 
-    Player<?> getWinner();
+    Optional<? extends Player<?, ?>> getWinner();
 
     Collection<? extends PlayedCard<?, ?>> getPlayedCards();
 

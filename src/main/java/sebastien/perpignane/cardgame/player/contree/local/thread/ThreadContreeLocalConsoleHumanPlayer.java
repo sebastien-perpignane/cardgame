@@ -1,4 +1,4 @@
-package sebastien.perpignane.cardgame.player.contree.refactor;
+package sebastien.perpignane.cardgame.player.contree.local.thread;
 
 import sebastien.perpignane.cardgame.card.CardSet;
 import sebastien.perpignane.cardgame.card.CardSuit;
@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 
 import static java.lang.System.out;
 
-public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEventHandler {
+public class ThreadContreeLocalConsoleHumanPlayer extends AbstractLocalThreadContreePlayer {
 
     private final static Map<String, ClassicalCard> cardByLabel;
 
@@ -45,11 +45,7 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
 
     private final String name;
 
-    public String getName() {
-        return name;
-    }
-
-    public ContreeLocalPlayerEventHandler(String name) {
+    public ThreadContreeLocalConsoleHumanPlayer(String name) {
         this.name = name;
     }
 
@@ -59,7 +55,13 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
     }
 
     @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
     void managePlayMessage(PlayerMessage playMessage) {
+
         boolean leaver = false;
         boolean cardPlayed = false;
         int nbTries = 0;
@@ -87,7 +89,7 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
                     String selectedCard = scanner.nextLine();
 
                     if ("leave".equalsIgnoreCase(selectedCard)) {
-                        getGame().leaveGame(getPlayer());
+                        getGame().leaveGame(this);
                         leaver = true;
                         break playLoop;
                     }
@@ -99,7 +101,7 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
                         playedCard = null;
                     }
                 }
-                getPlayer().playCard(playedCard);
+                getGame().playCard(this, playedCard);
                 cardPlayed = true;
             }
             catch(Exception e) {
@@ -111,6 +113,7 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
             System.err.println("It looks like you cannot play. Is it a technical issue ? Please create an issue at https://github.com/sebastien-perpignane/cardgame/");
             System.exit(1);
         }
+
     }
 
     @Override
@@ -126,14 +129,14 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
         final String allowedBiValues = streamToJoinedStr(bidMessage.allowedBidValues().stream().sorted());
 
         final String allBidValues = streamToJoinedStr(
-                Arrays.stream(ContreeBidValue.values()).sorted()
+            Arrays.stream(ContreeBidValue.values()).sorted()
         );
 
         final String cardSuitValues =
                 streamToJoinedStr(
-                        Arrays.stream(CardSuit.values())
-                                .filter(Predicate.not(cs -> cs == CardSuit.NONE))
-                                .sorted()
+                    Arrays.stream(CardSuit.values())
+                        .filter(Predicate.not(cs -> cs == CardSuit.NONE))
+                        .sorted()
                 );
 
         out.printf("Your turn to bid, %s.%n", getName());
@@ -150,7 +153,7 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
                     out.printf("Select a bid value. Allowed values are : %s%n : ", allowedBiValues);
                     String selectedBid = scanner.nextLine();
                     if ("leave".equalsIgnoreCase(selectedBid)) {
-                        getGame().leaveGame(getPlayer());
+                        getGame().leaveGame(this);
                         leaver = true;
                         break bidLoop;
                     }
@@ -160,7 +163,7 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
                 }
 
                 if ( !bidValue.isCardSuitRequired() ) {
-                    getGame().placeBid(getPlayer(), bidValue, null);
+                    getGame().placeBid(this, bidValue, null);
                     return;
                 }
 
@@ -168,14 +171,14 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
                     out.printf("Select a card suit. Allowed values are : %s%n : ", cardSuitValues);
                     String selectedSuit = scanner.nextLine();
                     if ("leave".equalsIgnoreCase(selectedSuit)) {
-                        getGame().leaveGame(getPlayer());
+                        getGame().leaveGame(this);
                         leaver = true;
                         break bidLoop;
                     }
                     bidSuit = cardSuitByLabel.get(selectedSuit);
                 }
 
-                getGame().placeBid(getPlayer(), bidValue, bidSuit);
+                getGame().placeBid(this, bidValue, bidSuit);
                 bidPlaced = true;
             }
             catch (Exception e) {
@@ -192,9 +195,10 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
         }
 
     }
+
     private String playerHandAsSortedJoinedStr() {
         return collectionToJoinedStr(
-                ClassicalCard.sort( getPlayer().getHand() )
+                ClassicalCard.sort( getHand() )
         );
     }
 
@@ -209,5 +213,20 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
 
     private String streamToJoinedStr(Stream<?> stream) {
         return stream.map(Object::toString).collect(Collectors.joining(", "));
+    }
+
+    @Override
+    public void playCard(ClassicalCard card) {
+        getGame().playCard(this, card);
+    }
+
+    @Override
+    public void placeBid(ContreeBidValue bidValue, CardSuit cardSuit) {
+        getGame().placeBid(this, bidValue, cardSuit);
+    }
+
+    @Override
+    public void leaveGame() {
+        getGame().leaveGame(this);
     }
 }

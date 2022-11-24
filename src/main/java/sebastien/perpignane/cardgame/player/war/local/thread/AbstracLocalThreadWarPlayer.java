@@ -1,20 +1,24 @@
-package sebastien.perpignane.cardgame.player.war;
+package sebastien.perpignane.cardgame.player.war.local.thread;
 
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.war.WarGame;
 import sebastien.perpignane.cardgame.player.AbstractThreadLocalPlayer;
 import sebastien.perpignane.cardgame.player.PlayerState;
 import sebastien.perpignane.cardgame.player.Team;
+import sebastien.perpignane.cardgame.player.war.MessageType;
+import sebastien.perpignane.cardgame.player.war.WarPlayer;
 
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-
-public abstract class AbstractWarPlayer implements Player<WarGame> {
+public abstract class AbstracLocalThreadWarPlayer extends AbstractThreadLocalPlayer<MessageType, WarGame, Team> implements WarPlayer {
 
     private WarGame warGame;
     private PlayerState state;
+
+    protected Deque<ClassicalCard> hand;
+
+    private final List<ClassicalCard> cardStock = new CopyOnWriteArrayList<>();
 
     public AbstracLocalThreadWarPlayer() {
         state = PlayerState.WAITING;
@@ -83,22 +87,20 @@ public abstract class AbstractWarPlayer implements Player<WarGame> {
         return mustExit;
     }
 
+    protected void manageEmptyHandIfRelevant() {
+        if (hand.isEmpty() && !cardStock.isEmpty()) {
+            Collections.shuffle(cardStock);
+            hand.addAll(cardStock);
+            cardStock.clear();
+        }
+    }
+
+    @Override
+    public void removeCardFromHand(ClassicalCard card) {
+        hand.remove(card);
+    }
+
     abstract void managePlayMessage(MessageType playMessage);
-
-    @Override
-    public void receiveHand(Collection<ClassicalCard> cards) {
-
-    }
-
-    @Override
-    public boolean hasNoMoreCard() {
-        return false;
-    }
-
-    @Override
-    public void receiveNewCards(Collection<ClassicalCard> cards) {
-
-    }
 
     @Override
     public void onGameStarted() {
@@ -106,18 +108,8 @@ public abstract class AbstractWarPlayer implements Player<WarGame> {
     }
 
     @Override
-    public int nbAvailableCards() {
-        return 0;
-    }
-
-    @Override
     public Collection<ClassicalCard> getHand() {
-        return null;
-    }
-
-    @Override
-    public void removeCardFromHand(ClassicalCard card) {
-
+        return hand;
     }
 
     @Override
@@ -128,5 +120,30 @@ public abstract class AbstractWarPlayer implements Player<WarGame> {
     @Override
     public void setTeam(Team team) {
 
+    }
+
+    @Override
+    public void playCard() {
+        warGame.play(this, hand.getLast());
+    }
+
+    @Override
+    public boolean hasNoMoreCard() {
+        return (hand == null || hand.isEmpty()) && cardStock.isEmpty();
+    }
+
+    @Override
+    public int nbAvailableCards() {
+        return cardStock.size() + (hand == null ? 0 : hand.size());
+    }
+
+    @Override
+    public void receiveHand(Collection<ClassicalCard> hand) {
+        this.hand = new LinkedList<>(hand);
+    }
+
+    @Override
+    public void receiveNewCards(Collection<ClassicalCard> cards) {
+        cardStock.addAll(cards);
     }
 }
