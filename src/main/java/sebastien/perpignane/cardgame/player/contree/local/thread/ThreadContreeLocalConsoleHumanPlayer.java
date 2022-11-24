@@ -1,9 +1,10 @@
-package sebastien.perpignane.cardgame.player.contree;
+package sebastien.perpignane.cardgame.player.contree.local.thread;
 
 import sebastien.perpignane.cardgame.card.CardSet;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.contree.ContreeBidValue;
+import sebastien.perpignane.cardgame.player.contree.PlayerMessage;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,7 +16,7 @@ import java.util.stream.Stream;
 
 import static java.lang.System.out;
 
-public class ContreeLocalConsoleHumanPlayer extends AbstractLocalThreadContreePlayer {
+public class ThreadContreeLocalConsoleHumanPlayer extends AbstractLocalThreadContreePlayer {
 
     private final static Map<String, ClassicalCard> cardByLabel;
 
@@ -44,7 +45,7 @@ public class ContreeLocalConsoleHumanPlayer extends AbstractLocalThreadContreePl
 
     private final String name;
 
-    public ContreeLocalConsoleHumanPlayer(String name) {
+    public ThreadContreeLocalConsoleHumanPlayer(String name) {
         this.name = name;
     }
 
@@ -100,7 +101,6 @@ public class ContreeLocalConsoleHumanPlayer extends AbstractLocalThreadContreePl
                         playedCard = null;
                     }
                 }
-                getHand().remove(playedCard);
                 getGame().playCard(this, playedCard);
                 cardPlayed = true;
             }
@@ -215,4 +215,18 @@ public class ContreeLocalConsoleHumanPlayer extends AbstractLocalThreadContreePl
         return stream.map(Object::toString).collect(Collectors.joining(", "));
     }
 
+    @Override
+    public void playCard(ClassicalCard card) {
+        getGame().playCard(this, card);
+    }
+
+    @Override
+    public void placeBid(ContreeBidValue bidValue, CardSuit cardSuit) {
+        getGame().placeBid(this, bidValue, cardSuit);
+    }
+
+    @Override
+    public void leaveGame() {
+        getGame().leaveGame(this);
+    }
 }

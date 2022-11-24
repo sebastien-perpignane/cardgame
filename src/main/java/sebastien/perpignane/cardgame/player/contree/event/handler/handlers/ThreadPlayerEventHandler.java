@@ -1,11 +1,12 @@
-package sebastien.perpignane.cardgame.player;
+package sebastien.perpignane.cardgame.player.contree.event.handler.handlers;
 
-import sebastien.perpignane.cardgame.game.AbstractGame;
+import sebastien.perpignane.cardgame.player.Player;
+import sebastien.perpignane.cardgame.player.event.handler.PlayerEventHandler;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-public abstract class AbstractThreadLocalPlayer<M, G extends AbstractGame<?>, T extends Team> implements Runnable, Player<G, T> {
+public abstract class ThreadPlayerEventHandler<P extends Player<?, ?>, M> implements PlayerEventHandler<P>, Runnable {
 
     private final BlockingQueue<M> gameMsgQueue = new ArrayBlockingQueue<>(54);
 
@@ -26,22 +27,17 @@ public abstract class AbstractThreadLocalPlayer<M, G extends AbstractGame<?>, T 
         }
     }
 
-    public abstract String getName();
-
-    protected void startPlayerThread() {
-        var thread = new Thread(this, "PlayerThread-" + getName());
-        thread.start();
-    }
-
-    /**
-     *
-     * @return true if the message processing must result in the end of the thread.
-     *
-     */
     protected abstract boolean handleMessage(M playerMessage);
+
+    protected abstract String getName();
 
     protected void receiveNewMessage(M message) {
         gameMsgQueue.add(message);
     }
 
+    protected void startPlayerEventHandlerThread() {
+        // FIXME find a way to name the thread properly
+        var thread = new Thread(this, "PlayerThread-" + getName());
+        thread.start();
+    }
 }

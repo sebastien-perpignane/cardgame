@@ -2,9 +2,10 @@ package sebastien.perpignane.cardgame.game.contree;
 
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.game.GameTextDisplayer;
-import sebastien.perpignane.cardgame.player.contree.ContreeBotPlayer;
-import sebastien.perpignane.cardgame.player.contree.ContreeLocalConsoleHumanPlayer;
-import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
+import sebastien.perpignane.cardgame.player.contree.event.handler.ContreePlayerEventHandlerImpl;
+import sebastien.perpignane.cardgame.player.contree.event.handler.handlers.ContreeBotPlayerEventHandler;
+import sebastien.perpignane.cardgame.player.contree.event.handler.handlers.ContreeLocalPlayerEventHandler;
+import sebastien.perpignane.cardgame.player.contree.local.thread.ThreadContreeBotPlayer;
 
 import java.util.Scanner;
 
@@ -27,15 +28,16 @@ public class ContreeGameMain {
 
             int i = 0;
             while (i < 3) {
-                game.joinGame(new ContreeBotPlayer());
+
+                game.joinGame(new ContreePlayerEventHandlerImpl(new ContreeBotPlayerEventHandler()));
                 i++;
             }
 
             boolean onlyBots = Boolean.getBoolean("only-bots");
 
-            ContreePlayer lastPlayer;
+            sebastien.perpignane.cardgame.player.contree.ContreePlayer lastPlayer;
             if (onlyBots) {
-                lastPlayer = new ContreeBotPlayer() {
+                lastPlayer = new ThreadContreeBotPlayer() {
                     @Override
                     protected void placeBid() {
                         placeBid(ContreeBidValue.EIGHTY, CardSuit.HEARTS);
@@ -55,7 +57,7 @@ public class ContreeGameMain {
 
     }
 
-    private static ContreePlayer manageHumanPlayer() {
+    private static sebastien.perpignane.cardgame.player.contree.ContreePlayer manageHumanPlayer() {
 
         Scanner scanner = new Scanner(System.in);
 
@@ -65,7 +67,9 @@ public class ContreeGameMain {
             humanPlayerName = scanner.nextLine();
         }
 
-        return new ContreeLocalConsoleHumanPlayer(humanPlayerName);
+        return new ContreePlayerEventHandlerImpl(humanPlayerName, new ContreeLocalPlayerEventHandler(humanPlayerName));
+
+        //return new ContreeLocalConsoleHumanPlayer(humanPlayerName);
 
     }
 

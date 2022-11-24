@@ -1,15 +1,16 @@
-package sebastien.perpignane.cardgame.player.contree;
+package sebastien.perpignane.cardgame.player.contree.local.thread;
 
 import com.github.javafaker.Faker;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.contree.ContreeBidValue;
+import sebastien.perpignane.cardgame.player.contree.PlayerMessage;
 
 import java.util.Iterator;
 import java.util.Random;
 
 
-public class ContreeBotPlayer extends AbstractLocalThreadContreePlayer {
+public class ThreadContreeBotPlayer extends AbstractLocalThreadContreePlayer {
 
     @Override
     public boolean isBot() {
@@ -20,7 +21,7 @@ public class ContreeBotPlayer extends AbstractLocalThreadContreePlayer {
 
     private final static Faker faker = new Faker();
 
-    public ContreeBotPlayer() {
+    public ThreadContreeBotPlayer() {
         this.name = faker.name().firstName();
     }
 
@@ -28,7 +29,7 @@ public class ContreeBotPlayer extends AbstractLocalThreadContreePlayer {
         placeBid(ContreeBidValue.PASS, null);
     }
 
-    protected final void placeBid(ContreeBidValue bidValue, CardSuit cardSuit) {
+    public void placeBid(ContreeBidValue bidValue, CardSuit cardSuit) {
         getGame().placeBid(this, bidValue, cardSuit);
     }
 
@@ -53,12 +54,21 @@ public class ContreeBotPlayer extends AbstractLocalThreadContreePlayer {
             playedCard = cardIterator.next();
             i++;
         }
-        getHand().remove(playedCard);
         getGame().playCard(this, playedCard);
     }
 
     @Override
     void manageBidMessage(PlayerMessage bidMessage) {
         placeBid();
+    }
+
+    @Override
+    public void playCard(ClassicalCard card) {
+        getGame().playCard(this, card);
+    }
+
+    @Override
+    public void leaveGame() {
+        getGame().leaveGame(this);
     }
 }

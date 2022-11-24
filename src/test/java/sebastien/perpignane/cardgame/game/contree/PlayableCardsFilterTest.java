@@ -12,6 +12,8 @@ import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -28,7 +30,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
     private ContreePlayer testedPlayer;
 
-    private List<ClassicalCard> testedPlayerHand;
+    private Set<ClassicalCard> testedPlayerHand;
 
     private PlayableCardsFilter playableCardsFilter;
 
@@ -66,7 +68,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
         trickPlayedCards = Collections.emptyList();
 
         testedPlayer = player1;
-        testedPlayerHand = List.of(ClassicalCard.SEVEN_CLUB, ClassicalCard.ACE_CLUB, ClassicalCard.ACE_SPADE);
+        testedPlayerHand = Set.of(ClassicalCard.SEVEN_CLUB, ClassicalCard.ACE_CLUB, ClassicalCard.ACE_SPADE);
 
 
         var playableCards = buildMocksAndRunTestOnTestedPlayer();
@@ -87,11 +89,11 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
         );
 
         testedPlayer = player2;
-        testedPlayerHand = List.of(ClassicalCard.SEVEN_CLUB, ClassicalCard.ACE_CLUB, ClassicalCard.ACE_SPADE);
+        testedPlayerHand = Set.of(ClassicalCard.SEVEN_CLUB, ClassicalCard.ACE_CLUB, ClassicalCard.ACE_SPADE);
 
         var playableCards = buildMocksAndRunTestOnTestedPlayer();
 
-        assertEquals(testedPlayerHand.stream().filter(c -> c.getSuit() == CardSuit.CLUBS).toList(), playableCards);
+        assertEquals(testedPlayerHand.stream().filter(c -> c.getSuit() == CardSuit.CLUBS).collect(Collectors.toSet()), playableCards);
 
 
     }
@@ -105,7 +107,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
         ContreePlayer opponent = player1;
 
         testedPlayer = player2;
-        testedPlayerHand = List.of(ClassicalCard.SEVEN_CLUB, ClassicalCard.ACE_CLUB, ClassicalCard.ACE_SPADE);
+        testedPlayerHand = Set.of(ClassicalCard.SEVEN_CLUB, ClassicalCard.ACE_CLUB, ClassicalCard.ACE_SPADE);
 
         trickPlayedCards = List.of(
                 new ContreePlayedCard(opponent, new ContreeCard(ClassicalCard.JACK_DIAMOND, trickTrumpSuit))
@@ -125,7 +127,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
         ContreePlayer opponent = player1;
 
         testedPlayer = player2;
-        testedPlayerHand = List.of(ClassicalCard.SEVEN_CLUB, ClassicalCard.ACE_CLUB, ClassicalCard.ACE_HEART);
+        testedPlayerHand = Set.of(ClassicalCard.SEVEN_CLUB, ClassicalCard.ACE_CLUB, ClassicalCard.ACE_HEART);
 
         trickPlayedCards = List.of(
                 new ContreePlayedCard(opponent, new ContreeCard(ClassicalCard.JACK_DIAMOND, trickTrumpSuit))
@@ -133,7 +135,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
         var playableCards = buildMocksAndRunTestOnTestedPlayer();
 
-        assertEquals(List.of(ClassicalCard.ACE_HEART), playableCards);
+        assertEquals(Set.of(ClassicalCard.ACE_HEART), playableCards);
 
     }
 
@@ -147,7 +149,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
         ContreePlayer opponent = player2;
 
         testedPlayer = player3;
-        testedPlayerHand = List.of(ClassicalCard.SEVEN_CLUB, ClassicalCard.ACE_CLUB, ClassicalCard.EIGHT_HEART, ClassicalCard.ACE_HEART);
+        testedPlayerHand = Set.of(ClassicalCard.SEVEN_CLUB, ClassicalCard.ACE_CLUB, ClassicalCard.EIGHT_HEART, ClassicalCard.ACE_HEART);
 
         trickPlayedCards = List.of(
                 new ContreePlayedCard(teammate, new ContreeCard(ClassicalCard.JACK_DIAMOND, trickTrumpSuit)),
@@ -158,7 +160,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
         var playableCards = buildMocksAndRunTestOnTestedPlayer();
 
-        assertEquals(List.of(ClassicalCard.ACE_HEART), playableCards);
+        assertEquals(Set.of(ClassicalCard.ACE_HEART), playableCards);
 
     }
 
@@ -172,7 +174,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
         ContreePlayer opponent = player2;
 
         testedPlayer = player3;
-        testedPlayerHand = List.of(ClassicalCard.SEVEN_CLUB, ClassicalCard.ACE_CLUB, ClassicalCard.EIGHT_HEART);
+        testedPlayerHand = Set.of(ClassicalCard.SEVEN_CLUB, ClassicalCard.ACE_CLUB, ClassicalCard.EIGHT_HEART);
 
         trickPlayedCards = List.of(
                 new ContreePlayedCard(teammate, new ContreeCard(ClassicalCard.JACK_DIAMOND, trickTrumpSuit)),
@@ -183,7 +185,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
         var playableCards = buildMocksAndRunTestOnTestedPlayer();
 
-        assertEquals(List.of(ClassicalCard.EIGHT_HEART), playableCards);
+        assertEquals(Set.of(ClassicalCard.EIGHT_HEART), playableCards);
     }
 
     @DisplayName("An opponent played trump against the player teammate, player has no trump, he can play any card in his hand")
@@ -197,7 +199,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
         ContreePlayer opponent = player2;
 
         testedPlayer = player3;
-        testedPlayerHand = List.of(ClassicalCard.SEVEN_CLUB, ClassicalCard.ACE_CLUB, ClassicalCard.EIGHT_SPADE);
+        testedPlayerHand = Set.of(ClassicalCard.SEVEN_CLUB, ClassicalCard.ACE_CLUB, ClassicalCard.EIGHT_SPADE);
 
         trickPlayedCards = List.of(
                 new ContreePlayedCard(teammate, new ContreeCard(ClassicalCard.JACK_DIAMOND, trickTrumpSuit)),
@@ -232,7 +234,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
         testedPlayer = player4;
 
-        testedPlayerHand = List.of(ClassicalCard.SEVEN_CLUB, ClassicalCard.ACE_CLUB, ClassicalCard.ACE_SPADE, ClassicalCard.EIGHT_HEART);
+        testedPlayerHand = Set.of(ClassicalCard.SEVEN_CLUB, ClassicalCard.ACE_CLUB, ClassicalCard.ACE_SPADE, ClassicalCard.EIGHT_HEART);
 
         var playableCards = buildMocksAndRunTestOnTestedPlayer();
 
@@ -261,7 +263,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
         testedPlayer = player4;
 
-        testedPlayerHand = List.of(ClassicalCard.SEVEN_CLUB, ClassicalCard.ACE_CLUB, ClassicalCard.ACE_SPADE, ClassicalCard.EIGHT_HEART);
+        testedPlayerHand = Set.of(ClassicalCard.SEVEN_CLUB, ClassicalCard.ACE_CLUB, ClassicalCard.ACE_SPADE, ClassicalCard.EIGHT_HEART);
 
         var playableCards = buildMocksAndRunTestOnTestedPlayer();
 

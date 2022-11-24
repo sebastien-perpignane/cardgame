@@ -3,7 +3,7 @@ package sebastien.perpignane.cardgame.game.war;
 import sebastien.perpignane.cardgame.card.CardRank;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.Trick;
-import sebastien.perpignane.cardgame.player.war.AbstractWarPlayer;
+import sebastien.perpignane.cardgame.player.war.WarPlayer;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -16,19 +16,19 @@ public class WarTrick implements Trick {
 
     private int cardLimit = 1;
 
-    private final List<AbstractWarPlayer> players;
+    private final List<WarPlayer> players;
 
-    private final Map<AbstractWarPlayer, Integer> nbPlayedCardsByPlayer = new HashMap<>();
+    private final Map<WarPlayer, Integer> nbPlayedCardsByPlayer = new HashMap<>();
 
-    private final Map<AbstractWarPlayer, List<WarPlayedCard>> playedCardsByPlayer = new HashMap<>();
+    private final Map<WarPlayer, List<WarPlayedCard>> playedCardsByPlayer = new HashMap<>();
 
-    private AbstractWarPlayer winner = null;
+    private WarPlayer winner = null;
 
     private final String trickId;
 
     private final WarGameEventSender warGameEventSender;
 
-    public WarTrick(String trickId, List<AbstractWarPlayer> players, WarGameEventSender warGameEventSender) {
+    public WarTrick(String trickId, List<WarPlayer> players, WarGameEventSender warGameEventSender) {
         if (players.size() != 2) {
             throw new IllegalArgumentException("Only 2 players are allowed");
         }
@@ -60,7 +60,7 @@ public class WarTrick implements Trick {
 
     }
 
-    public void playerPlay(AbstractWarPlayer player, ClassicalCard card) {
+    public void playerPlay(WarPlayer player, ClassicalCard card) {
         Objects.requireNonNull(player);
         Objects.requireNonNull(card);
         playerPlay(new WarPlayedCard(player, card));
@@ -95,9 +95,9 @@ public class WarTrick implements Trick {
             return;
         }
         ClassicalCard bestCard = null;
-        AbstractWarPlayer bestCardPlayer = null;
+        WarPlayer bestCardPlayer = null;
 
-        for (AbstractWarPlayer player : players) {
+        for (WarPlayer player : players) {
 
             if (player.hasNoMoreCard() && prematureEndOfTrick) {
                 continue;
@@ -145,8 +145,8 @@ public class WarTrick implements Trick {
     }
 
     @Override
-    public AbstractWarPlayer getWinner() {
-        return winner;
+    public Optional<WarPlayer> getWinner() {
+        return Optional.ofNullable(winner);
     }
 
     public Set<ClassicalCard> getAllCards() {
@@ -166,7 +166,7 @@ public class WarTrick implements Trick {
     }
 
     private boolean onePlayerHasNoMoreCardsAndCardsToPlay() {
-        for (AbstractWarPlayer player : players) {
+        for (WarPlayer player : players) {
             int nbPlayedCards = nbPlayedCardsByPlayer.get(player);
             if (player.hasNoMoreCard() && nbPlayedCards < cardLimit) {
                 return true;

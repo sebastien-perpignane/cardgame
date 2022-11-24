@@ -79,12 +79,10 @@ public class ContreeGame extends AbstractGame<ContreePlayer> {
         }
         gameEventSender.sendPlayedCardEvent(player, card);
         gameDeals.playCard(player, card);
-
         if (gameDeals.isMaximumScoreReached()) {
             updateState(GameState.OVER);
             gameEventSender.sendEndOfGameEvent(this);
         }
-
     }
 
     public void registerAsGameObserver(GameObserver observer) {

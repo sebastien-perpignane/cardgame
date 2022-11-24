@@ -18,8 +18,6 @@ class ContreeTrick implements Trick {
 
     private ContreeCard firstPlayedCard = null;
 
-    private Collection<ClassicalCard> currentPlayerPlayableCards;
-
     private final CardSuit trumpSuit;
 
     private ContreePlayer winner;
@@ -32,14 +30,6 @@ class ContreeTrick implements Trick {
 
     private ContreePlayer currentPlayer;
 
-    public ContreeTrick(String trickId, ContreeTrickPlayers trickPlayers, CardSuit trumpSuit,  ContreeGameEventSender eventSender) {
-        this.trickId = trickId;
-        this.eventSender = eventSender;
-        this.trumpSuit = trumpSuit;
-        this.trickPlayers = trickPlayers;
-        this.playableCardsFilter = new PlayableCardsFilter();
-    }
-
     public ContreeTrick(ContreeDeal deal, String trickId, ContreeTrickPlayers trickPlayers, PlayableCardsFilter playableCardsFilter) {
         this.trickId = trickId;
         this.eventSender = deal.getEventSender();
@@ -50,16 +40,19 @@ class ContreeTrick implements Trick {
 
     public void startTrick() {
         trickPlayers.setCurrentTrick(this);
-        currentPlayer = trickPlayers.getCurrentPlayer();
-        currentPlayerPlayableCards = this.playableCardsFilter.playableCards(this, currentPlayer);
-        trickPlayers.notifyCurrentPlayerTurn(currentPlayerPlayableCards);
+        configureCurrentPlayer();
     }
 
     private void nextPlayer() {
         trickPlayers.gotToNextPlayer();
+        configureCurrentPlayer();
+    }
+
+    private void configureCurrentPlayer() {
         currentPlayer = trickPlayers.getCurrentPlayer();
-        currentPlayerPlayableCards = this.playableCardsFilter.playableCards(this, currentPlayer);
-        trickPlayers.notifyCurrentPlayerTurn(currentPlayerPlayableCards);
+        trickPlayers.notifyCurrentPlayerTurn(
+                playableCardsFilter.playableCards(this, currentPlayer)
+        );
     }
 
     public boolean isTrumpTrick() {
@@ -81,6 +74,7 @@ class ContreeTrick implements Trick {
             }
         }
         playedCards.add(playedCard);
+        player.removeCardFromHand(card);
         if (isOver()) {
             winner = winningPlayer();
             currentPlayer = null;
@@ -102,6 +96,8 @@ class ContreeTrick implements Trick {
             throw new IllegalArgumentException( String.format("Cheater detected -> %s is not current player!. Current player is %s%n", player, currentPlayer) );
         }
 
+        var currentPlayerPlayableCards = playableCardsFilter.playableCards(this, player);
+
         if (!currentPlayerPlayableCards.contains(card) ) {
             String allowedCardsStr = currentPlayerPlayableCards.stream().map( ClassicalCard::toString ).collect( Collectors.joining(",") );
             throw new IllegalArgumentException( String.format("Player %s : cheater detected -> %s is not an allowed card. Allowed cards are : %s", player, card, allowedCardsStr) );
@@ -109,11 +105,14 @@ class ContreeTrick implements Trick {
     }
 
     public void updateCurrentPlayer(ContreePlayer newPlayer) {
+        // TODO would be better to reference the currentPlayerIndex, replacing a leaving player would be dynamic
         if (currentPlayer == null) {
             throw new IllegalArgumentException("There is no current player, it cannot be updated");
         }
         currentPlayer = newPlayer;
-        currentPlayer.onPlayerTurn(currentPlayerPlayableCards);
+        currentPlayer.onPlayerTurn(
+            playableCardsFilter.playableCards(this, currentPlayer)
+        );
     }
 
     @Override
@@ -122,8 +121,8 @@ class ContreeTrick implements Trick {
     }
 
     @Override
-    public ContreePlayer getWinner() {
-        return winner;
+    public Optional<ContreePlayer> getWinner() {
+        return Optional.ofNullable(winner);
     }
 
     public ContreeTeam getWinnerTeam() {
@@ -163,4 +162,10 @@ class ContreeTrick implements Trick {
         return Optional.ofNullable(currentPlayer);
     }
 
+    @Override
+    public String toString() {
+        return "ContreeTrick{" +
+                "trickId='" + trickId + '\'' +
+                '}';
+    }
 }

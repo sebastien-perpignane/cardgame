@@ -3,7 +3,7 @@ package sebastien.perpignane.cardgame.game.contree;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 
-import java.util.Collection;
+import java.util.Set;
 
 public interface ContreeTrickPlayers extends ContreePlayers {
 
@@ -13,6 +13,6 @@ public interface ContreeTrickPlayers extends ContreePlayers {
 
     void gotToNextPlayer();
 
-    void notifyCurrentPlayerTurn(Collection<ClassicalCard> allowedCards);
+    void notifyCurrentPlayerTurn(Set<ClassicalCard> allowedCards);
 
 }

@@ -3,7 +3,7 @@ package sebastien.perpignane.cardgame.game.contree;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 
-import java.util.Collection;
+import java.util.Set;
 
 public class ContreeTrickPlayersImpl implements ContreeTrickPlayers {
 
@@ -23,7 +23,7 @@ public class ContreeTrickPlayersImpl implements ContreeTrickPlayers {
             currentPlayerIndex = 0;
         }
         else {
-            currentPlayerIndex = dealPlayers.getCurrentDealPlayers().indexOf(this.currentTrick.getWinner());
+            currentPlayerIndex = dealPlayers.getCurrentDealPlayers().indexOf(this.currentTrick.getWinner().orElseThrow());
         }
         this.currentTrick = currentTrick;
     }
@@ -45,7 +45,7 @@ public class ContreeTrickPlayersImpl implements ContreeTrickPlayers {
     }
 
     @Override
-    public void notifyCurrentPlayerTurn(Collection<ClassicalCard> allowedCards) {
+    public void notifyCurrentPlayerTurn(Set<ClassicalCard> allowedCards) {
         var currentPlayer = dealPlayers.getCurrentDealPlayers().get(currentPlayerIndex);
         currentPlayer.onPlayerTurn(allowedCards);
     }

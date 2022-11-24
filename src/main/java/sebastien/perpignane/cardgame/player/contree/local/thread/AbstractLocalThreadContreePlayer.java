@@ -1,17 +1,20 @@
-package sebastien.perpignane.cardgame.player.contree;
+package sebastien.perpignane.cardgame.player.contree.local.thread;
 
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.contree.ContreeBidValue;
 import sebastien.perpignane.cardgame.game.contree.ContreeGame;
 import sebastien.perpignane.cardgame.player.AbstractThreadLocalPlayer;
-import sebastien.perpignane.cardgame.player.Team;
+import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
+import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
+import sebastien.perpignane.cardgame.player.contree.MessageType;
+import sebastien.perpignane.cardgame.player.contree.PlayerMessage;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
-public abstract class AbstractLocalThreadContreePlayer extends AbstractThreadLocalPlayer<PlayerMessage, ContreeGame> implements ContreePlayer {
+public abstract class AbstractLocalThreadContreePlayer extends AbstractThreadLocalPlayer<PlayerMessage, ContreeGame, ContreeTeam> implements ContreePlayer {
 
     private ContreeTeam team;
 
@@ -19,14 +22,14 @@ public abstract class AbstractLocalThreadContreePlayer extends AbstractThreadLoc
 
     private ContreeGame contreeGame;
 
-    protected enum MessageType {
-        PLAY,
-        BID,
-        END_OF_GAME
-    }
-
+    @Override
     public void receiveHand(Collection<ClassicalCard> cards) {
         this.hand = cards;
+    }
+
+    @Override
+    public void removeCardFromHand(ClassicalCard card) {
+        hand.remove(card);
     }
 
     @Override
@@ -45,7 +48,7 @@ public abstract class AbstractLocalThreadContreePlayer extends AbstractThreadLoc
     }
 
     public void receiveNewCards(Collection<ClassicalCard> cards) {
-
+        throw new UnsupportedOperationException("receiveNewCards does not make sense for Contree players");
     }
 
     @Override
@@ -59,13 +62,8 @@ public abstract class AbstractLocalThreadContreePlayer extends AbstractThreadLoc
     }
 
     @Override
-    public void setTeam(Team team) {
-        if (team instanceof ContreeTeam ct) {
-            this.team = ct;
-        }
-        else {
-            throw new IllegalArgumentException("ContreeTeam expected");
-        }
+    public void setTeam(ContreeTeam team) {
+        this.team = team;
     }
 
     @Override
@@ -74,17 +72,12 @@ public abstract class AbstractLocalThreadContreePlayer extends AbstractThreadLoc
     }
 
     @Override
-    public ClassicalCard play() {
-        return null;
-    }
-
-    @Override
     public void onPlayerTurn() {
 
     }
 
     @Override
-    public void onPlayerTurn(Collection<ClassicalCard> allowedCards) {
+    public void onPlayerTurn(Set<ClassicalCard> allowedCards) {
         receiveNewMessage(new PlayerMessage(MessageType.PLAY, allowedCards, Collections.emptyList()));
     }
 
@@ -105,7 +98,7 @@ public abstract class AbstractLocalThreadContreePlayer extends AbstractThreadLoc
 
     @Override
     public void onGameOver() {
-        receiveNewMessage( new PlayerMessage( MessageType.END_OF_GAME, null, null ) );
+        receiveNewMessage( new PlayerMessage( MessageType.GAME_OVER, null, null ) );
     }
 
     @Override
@@ -116,7 +109,11 @@ public abstract class AbstractLocalThreadContreePlayer extends AbstractThreadLoc
         switch (playerMessage.messageType()) {
             case PLAY -> managePlayMessage(playerMessage);
             case BID -> manageBidMessage(playerMessage);
-            case END_OF_GAME ->  mustExit = true;
+            case GAME_OVER ->  mustExit = true;
+            case GAME_STARTED -> {
+                // Managed by the onGameStarted method
+            }
+            default -> throw new IllegalArgumentException( String.format( "Unknown message type: %s", playerMessage.messageType() ) );
         }
         return mustExit;
     }
