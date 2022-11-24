@@ -33,7 +33,7 @@ public class GameTextDisplayer implements GameObserver, WarTrickObserver, Contre
     }
 
     @Override
-    public void onCardPlayed(Player<?> player, ClassicalCard card) {
+    public void onCardPlayed(Player<?, ?> player, ClassicalCard card) {
         out.printf("%s - Player %s played %s%n", Thread.currentThread().getName(), player, card);
         if ((player.hasNoMoreCard())) {
             out.printf("Player %s has no more card%n", player);
@@ -46,13 +46,13 @@ public class GameTextDisplayer implements GameObserver, WarTrickObserver, Contre
     }
 
     @Override
-    public void onNextPlayer(Player<?> p) {
+    public void onNextPlayer(Player<?, ?> p) {
         out.printf("%s plays.%n", p);
     }
 
     @Override
     public void onWonTrick(Trick trick) {
-        out.println("Player " + trick.getWinner() + " won trick " + trick + System.lineSeparator());
+        out.println("Player " + trick.getWinner().orElseThrow() + " won trick " + trick + System.lineSeparator());
     }
 
     @Override
@@ -194,7 +194,7 @@ Final score :
     }
 
     @Override
-    public void onPlacedBid(String dealId, Player<?> player, ContreeBidValue bidValue, CardSuit suit) {
+    public void onPlacedBid(String dealId, Player<?, ?> player, ContreeBidValue bidValue, CardSuit suit) {
         out.printf("Deal %s : Bid (%s, %s) placed by %s%n", dealId, bidValue, suit, player);
     }
 

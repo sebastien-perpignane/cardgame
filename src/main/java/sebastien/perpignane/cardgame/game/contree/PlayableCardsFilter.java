@@ -4,15 +4,19 @@ import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.card.contree.ContreeCard;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class PlayableCardsFilter {
 
-    Collection<ClassicalCard> playableCards(ContreeTrick trick, ContreePlayer player) {
+    Set<ClassicalCard> playableCards(ContreeTrick trick, ContreePlayer player) {
 
         Objects.requireNonNull(player);
 
-        Collection<ClassicalCard> allHand = new ArrayList<>(player.getHand());
+        Set<ClassicalCard> allHand = new HashSet<>(player.getHand());
 
         if (trick.getPlayedCards().isEmpty()) {
             return allHand;
@@ -26,20 +30,19 @@ public class PlayableCardsFilter {
             return computeAllowedCardsForTrickWithTrumpCards(trick, player);
         }
 
-        var sameSuitCardStream = player.getHand().stream().filter(c -> c.getSuit() == firstPlayedCard.getSuit());
-        var sameSuitCard = sameSuitCardStream.toList();
-        if (sameSuitCard.isEmpty()) {
+        var sameSuitCards = player.getHand().stream().filter(c -> c.getSuit() == firstPlayedCard.getSuit()).collect(Collectors.toSet());
+        if (sameSuitCards.isEmpty()) {
             return computeAllowedCardsWhenPlayerLacksSuit(trick, player);
         }
         else {
-            return sameSuitCard;
+            return sameSuitCards;
         }
 
     }
 
-    private Collection<ClassicalCard> computeAllowedCardsForTrickWithTrumpCards(ContreeTrick trick, ContreePlayer player) {
+    private Set<ClassicalCard> computeAllowedCardsForTrickWithTrumpCards(ContreeTrick trick, ContreePlayer player) {
 
-        Collection<ClassicalCard> allHand = new ArrayList<>(player.getHand());
+        Set<ClassicalCard> allHand = new HashSet<>(player.getHand());
 
         var optionalHighestTrump = findHighestPlayedTrumpCard(trick);
         if (optionalHighestTrump.isEmpty()) {
@@ -60,21 +63,21 @@ public class PlayableCardsFilter {
         var higherPlayerTrumps = playerTrumps.stream().filter(c -> c.getGameValue() > highestTrump.card().getGameValue()).toList();
 
         if (higherPlayerTrumps.isEmpty()) {
-            return playerTrumps.isEmpty() ? allHand : playerTrumps.stream().map(ContreeCard::getCard).toList();
+            return playerTrumps.isEmpty() ? allHand : playerTrumps.stream().map(ContreeCard::getCard).collect(Collectors.toSet());
         } else {
-            return higherPlayerTrumps.stream().map(ContreeCard::getCard).toList();
+            return higherPlayerTrumps.stream().map(ContreeCard::getCard).collect(Collectors.toSet());
         }
     }
 
-    private Collection<ClassicalCard> playerTrumpCards(ContreeTrick trick, ContreePlayer player) {
+    private Set<ClassicalCard> playerTrumpCards(ContreeTrick trick, ContreePlayer player) {
         return ContreeCard.of(trick.getTrumpSuit(), new HashSet<>(player.getHand())).stream()
                 .filter(ContreeCard::isTrump)
-                .map(ContreeCard::getCard).toList();
+                .map(ContreeCard::getCard).collect(Collectors.toSet());
     }
 
-    private Collection<ClassicalCard> computeAllowedCardsWhenPlayerLacksSuit(ContreeTrick trick, ContreePlayer player) {
+    private Set<ClassicalCard> computeAllowedCardsWhenPlayerLacksSuit(ContreeTrick trick, ContreePlayer player) {
 
-        Collection<ClassicalCard> allHand = new ArrayList<>(player.getHand());
+        Set<ClassicalCard> allHand = new HashSet<>(player.getHand());
 
         var winningPlayer = trick.winningPlayer();
         if (winningPlayer != null && winningPlayer.getTeam().orElseThrow() == player.getTeam().orElseThrow()) {

@@ -27,11 +27,12 @@ public abstract class AbstractGameEventSender {
         gameObservers.forEach(go -> go.onStateUpdated(oldState, newState));
     }
 
-    public void sendGameStartedEvent(List<? extends Player> players) {
+    public <P extends Player<?, ?>> void sendGameStartedEvent(List<P> players) {
         players.forEach(Player::onGameStarted);
     }
 
-    public void sendNextPlayerEvent(Player currentPlayer) {
+    public void sendNextPlayerEvent(Player<?, ?> currentPlayer) {
         gameObservers.forEach(go -> go.onNextPlayer(currentPlayer));
     }
+
 }

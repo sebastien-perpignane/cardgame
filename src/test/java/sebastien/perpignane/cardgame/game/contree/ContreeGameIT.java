@@ -7,7 +7,9 @@ import org.junit.jupiter.api.Timeout;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.game.BlockingQueueGameObserver;
 import sebastien.perpignane.cardgame.game.GameTextDisplayer;
-import sebastien.perpignane.cardgame.player.contree.ContreeBotPlayer;
+import sebastien.perpignane.cardgame.player.contree.event.handler.ContreePlayerEventHandlerImpl;
+import sebastien.perpignane.cardgame.player.contree.event.handler.handlers.ContreeBotPlayerEventHandler;
+import sebastien.perpignane.cardgame.player.contree.local.thread.ThreadContreeBotPlayer;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -24,12 +26,12 @@ public class ContreeGameIT {
     public void testRunGameWithBotsPlayingRandomCards() throws InterruptedException {
         ContreeGame game = ContreeGameFactory.createGame(500);
         game.registerAsGameObserver(GameTextDisplayer.getInstance());
-        ContreeBotPlayer player1 = new BiddingContreeBotPlayer(ContreeBidValue.EIGHTY, CardSuit.HEARTS);
+        ThreadContreeBotPlayer player1 = new BiddingThreadContreeBotPlayer(ContreeBidValue.EIGHTY, CardSuit.HEARTS);
 
         game.joinGame(player1);
-        game.joinGame(new ContreeBotPlayer());
-        game.joinGame(new ContreeBotPlayer());
-        game.joinGame(new ContreeBotPlayer());
+        game.joinGame(new ContreePlayerEventHandlerImpl(new ContreeBotPlayerEventHandler()));
+        game.joinGame(new ContreePlayerEventHandlerImpl(new ContreeBotPlayerEventHandler()));
+        game.joinGame(new ContreePlayerEventHandlerImpl(new ContreeBotPlayerEventHandler()));
         var endOfGame = waitForEndOfGameEvent(game);
         assertTrue(endOfGame);
 

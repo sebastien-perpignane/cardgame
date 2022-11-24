@@ -52,7 +52,7 @@ public class ContreeGameEventSender extends AbstractGameEventSender {
 
     }
 
-    void sendPlayedCardEvent(Player<?> player, ClassicalCard card) {
+    void sendPlayedCardEvent(Player<?, ?> player, ClassicalCard card) {
         gameObservers.forEach(observer -> observer.onCardPlayed(player, card));
     }
 

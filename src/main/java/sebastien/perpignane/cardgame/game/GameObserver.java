@@ -9,9 +9,9 @@ public interface GameObserver extends CardGameObserver {
 
     void onStateUpdated(GameState oldState, GameState newState);
 
-    void onCardPlayed(Player<?> player, ClassicalCard card);
+    void onCardPlayed(Player<?, ?> player, ClassicalCard card);
 
-    void onNextPlayer(Player<?> p);
+    void onNextPlayer(Player<?, ?> p);
 
     void onWonTrick(Trick trick);
 

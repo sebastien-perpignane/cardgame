@@ -1,9 +1,9 @@
 package sebastien.perpignane.cardgame.game.contree;
 
 import sebastien.perpignane.cardgame.card.ClassicalCard;
-import sebastien.perpignane.cardgame.player.contree.ContreeBotPlayer;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
+import sebastien.perpignane.cardgame.player.contree.local.thread.ThreadContreeBotPlayer;
 
 import java.util.Collections;
 import java.util.List;
@@ -94,7 +94,7 @@ class ContreeGamePlayersImpl implements ContreeGamePlayers {
             throw new IllegalArgumentException(String.format("The player %s does not play in this game", player));
         }
         int playerIndex = players.indexOf(player);
-        ContreePlayer newBotPlayer = new ContreeBotPlayer();
+        ContreePlayer newBotPlayer = new ThreadContreeBotPlayer();
         players.set(playerIndex, newBotPlayer);
         assignTeamToPlayer(playerIndex);
 

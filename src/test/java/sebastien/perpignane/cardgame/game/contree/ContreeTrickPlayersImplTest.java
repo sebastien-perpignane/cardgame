@@ -6,7 +6,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 
-import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -70,7 +71,7 @@ class ContreeTrickPlayersImplTest extends TestCasesManagingPlayers {
             expectedCalledPlayers[testedPlayerIndex] = true;
 
             mockOnPlayerTurnCall(testedPlayerIndex, calledPlayers);
-            trickPlayers.notifyCurrentPlayerTurn(List.of(ClassicalCard.ACE_SPADE));
+            trickPlayers.notifyCurrentPlayerTurn(Set.of(ClassicalCard.ACE_SPADE));
             assertArrayEquals(expectedCalledPlayers, calledPlayers);
             trickPlayers.gotToNextPlayer();
         }
@@ -99,7 +100,7 @@ class ContreeTrickPlayersImplTest extends TestCasesManagingPlayers {
     public void testGetCurrentPlayerWhenSecondCurrentTrickSet() {
 
         ContreeTrick firstTrick = mock(ContreeTrick.class);
-        when(firstTrick.getWinner()).thenReturn(player4);
+        when(firstTrick.getWinner()).thenReturn(Optional.ofNullable(player4));
 
         ContreeTrick secondTrick = mock(ContreeTrick.class);
 
