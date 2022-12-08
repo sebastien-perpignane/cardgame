@@ -33,7 +33,7 @@ public class ContreeGame extends AbstractGame<ContreePlayer> {
     }
 
     @Override
-    protected List<ContreePlayer> getPlayers() {
+    public List<ContreePlayer> getPlayers() {
         return new ArrayList<>(gamePlayers.getGamePlayers());
     }
 
