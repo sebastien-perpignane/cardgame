@@ -138,6 +138,7 @@ class DealScoreCalculator {
     private void roundScores(Map<ContreeTeam, Integer> scoreByTeam) {
         for (ContreeTeam t : scoreByTeam.keySet()) {
             int score = scoreByTeam.get(t);
+            // round to the ten
             var roundScore = ((score+5)/10)*10;
             scoreByTeam.put(t, roundScore);
         }
