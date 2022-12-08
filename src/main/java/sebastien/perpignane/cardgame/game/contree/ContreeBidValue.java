@@ -6,7 +6,7 @@ import java.util.function.Predicate;
 
 public enum ContreeBidValue {
 
-    PASS(null, false),
+    PASS("Pass"),
     EIGHTY(80),
     NINETY(90),
     HUNDRED(100),
@@ -17,20 +17,35 @@ public enum ContreeBidValue {
     HUNDRED_FIFTY(150),
     HUNDRED_SIXTY(160),
     CAPOT(250),
-    DOUBLE(null, false),
-    REDOUBLE(null, false);
+    DOUBLE("Double"),
+    REDOUBLE("Redouble");
 
     private final boolean cardSuitRequired;
 
     private final Integer expectedScore;
 
+    private final String label;
+
     ContreeBidValue(Integer expectedScore) {
-        this( expectedScore,true);
+        this( expectedScore,true, null);
     }
 
-    ContreeBidValue(Integer expectedScore, boolean cardSuitRequired) {
+    ContreeBidValue(String label) {
+        this(null, false, label);
+    }
+
+    ContreeBidValue(Integer expectedScore, boolean cardSuitRequired, String label) {
         this.expectedScore = expectedScore;
         this.cardSuitRequired = cardSuitRequired;
+        if (label != null) {
+            this.label = label;
+        }
+        else if (expectedScore != null) {
+            this.label = expectedScore.toString();
+        }
+        else {
+            throw new IllegalArgumentException("A non null value is required for expectedScore or label");
+        }
     }
 
     public boolean isCardSuitRequired() {
@@ -39,6 +54,10 @@ public enum ContreeBidValue {
 
     public Integer getExpectedScore() {
         return expectedScore;
+    }
+
+    public String getLabel() {
+        return label;
     }
 
     public static Collection<ContreeBidValue> bidValuesNotRequiringCardSuit() {
