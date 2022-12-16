@@ -16,7 +16,7 @@ public enum ContreeBidValue {
     HUNDRED_FORTY(140),
     HUNDRED_FIFTY(150),
     HUNDRED_SIXTY(160),
-    CAPOT(250),
+    CAPOT(250, true, "Capot"),
     DOUBLE("Double"),
     REDOUBLE("Redouble");
 
@@ -56,6 +56,7 @@ public enum ContreeBidValue {
         return expectedScore;
     }
 
+    @SuppressWarnings("unused")
     public String getLabel() {
         return label;
     }
