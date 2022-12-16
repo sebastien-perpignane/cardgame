@@ -242,7 +242,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
     }
 
-    @DisplayName("The teammate trumped and is winning the trick, any card can be played")
+    @DisplayName("The teammate trumped and is winning the trick, wanted suit not available, any card can be played")
     @Test
     public void testFirstCardPlayed_notTrumpTrick_teamMateIsWinning() {
         trickTrumpSuit = CardSuit.HEARTS;
@@ -268,6 +268,35 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
         var playableCards = buildMocksAndRunTestOnTestedPlayer();
 
         assertEquals(testedPlayerHand, playableCards);
+
+    }
+
+    @DisplayName("The teammate trumped and is winning the trick, the tested player has the wanted color, he must play the wanted color")
+    @Test
+    public void testFirstCardPlayed_trumpedTrick_teamMateIsWinning_playerHasWantedColor() {
+        trickTrumpSuit = CardSuit.HEARTS;
+
+        ContreePlayer opponent1 = player1;
+        ContreePlayer teamMate = player2;
+        ContreePlayer opponent2 = player3;
+
+        trickPlayedCards = List.of(
+                new ContreePlayedCard(opponent1, new ContreeCard(ClassicalCard.JACK_DIAMOND, trickTrumpSuit)),
+                new ContreePlayedCard(teamMate, new ContreeCard(ClassicalCard.TEN_HEART, trickTrumpSuit)),
+                new ContreePlayedCard(opponent2, new ContreeCard(ClassicalCard.SEVEN_HEART, trickTrumpSuit))
+        );
+
+        trickWinningPlayer = teamMate;
+
+        isTrumpTrick = false;
+
+        testedPlayer = player4;
+
+        testedPlayerHand = Set.of(ClassicalCard.SEVEN_CLUB, ClassicalCard.TEN_DIAMOND, ClassicalCard.ACE_SPADE, ClassicalCard.EIGHT_HEART);
+
+        var playableCards = buildMocksAndRunTestOnTestedPlayer();
+
+        assertEquals(Set.of(ClassicalCard.TEN_DIAMOND), playableCards);
 
     }
 
