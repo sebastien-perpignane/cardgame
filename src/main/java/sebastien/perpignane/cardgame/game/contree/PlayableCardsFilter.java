@@ -24,18 +24,20 @@ public class PlayableCardsFilter {
 
         var firstPlayedCard = trick.getPlayedCards().get(0).card();
 
+        var sameSuitCards = player.getHand().stream().filter(c -> c.getSuit() == firstPlayedCard.getSuit()).collect(Collectors.toSet());
+        boolean hasWantedSuit = !sameSuitCards.isEmpty();
+
         boolean trumpCardPlayed = trick.getPlayedCards().stream().anyMatch(pc -> pc.card().isTrump());
 
-        if (trick.isTrumpTrick() || trumpCardPlayed) {
+        if (trick.isTrumpTrick() || (trumpCardPlayed && !hasWantedSuit)) {
             return computeAllowedCardsForTrickWithTrumpCards(trick, player);
         }
 
-        var sameSuitCards = player.getHand().stream().filter(c -> c.getSuit() == firstPlayedCard.getSuit()).collect(Collectors.toSet());
-        if (sameSuitCards.isEmpty()) {
-            return computeAllowedCardsWhenPlayerLacksSuit(trick, player);
+        if (hasWantedSuit) {
+            return sameSuitCards;
         }
         else {
-            return sameSuitCards;
+            return computeAllowedCardsWhenPlayerLacksSuit(trick, player);
         }
 
     }
