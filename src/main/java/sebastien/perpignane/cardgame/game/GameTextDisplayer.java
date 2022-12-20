@@ -55,6 +55,8 @@ public class GameTextDisplayer implements GameObserver, WarTrickObserver, Contre
         out.println("Player " + trick.getWinner().orElseThrow() + " won trick " + trick + System.lineSeparator());
     }
 
+    
+
     @Override
     public void onEndOfGame(WarGame warGame) {
         out.printf("Game %s is over. The winner is %s!!%n", warGame, warGame.getWinner());
@@ -246,4 +248,11 @@ Final score :
 """,
         trickId, trumpSuit);
     }
+
+    @Override
+    public void onEndOfTrick(String trickId, ContreeTeam winner) {
+        String winnerText = winner == null ? "" : String.format(" Winner is %s", winner.name());
+        out.printf("Trick %s is over.%s", trickId, winnerText);
+    }
+
 }
