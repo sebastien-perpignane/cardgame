@@ -36,7 +36,6 @@ public abstract class ThreadPlayerEventHandler<P extends Player<?, ?>, M> implem
     }
 
     protected void startPlayerEventHandlerThread() {
-        // FIXME find a way to name the thread properly
         var thread = new Thread(this, "PlayerThread-" + getName());
         thread.start();
     }
