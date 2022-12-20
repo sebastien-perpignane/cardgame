@@ -59,17 +59,15 @@ public class ContreeGameMain {
 
     private static sebastien.perpignane.cardgame.player.contree.ContreePlayer manageHumanPlayer() {
 
-        Scanner scanner = new Scanner(System.in);
+        try (Scanner scanner = new Scanner(System.in)) {
+            String humanPlayerName = "";
+            while (humanPlayerName.isBlank()) {
+                System.out.println("Please enter your player name :");
+                humanPlayerName = scanner.nextLine();
+            }
 
-        String humanPlayerName = "";
-        while (humanPlayerName.isBlank()) {
-            System.out.println("Please enter your player name :");
-            humanPlayerName = scanner.nextLine();
+            return new ContreePlayerEventHandlerImpl(humanPlayerName, new ContreeLocalPlayerEventHandler(humanPlayerName));
         }
-
-        return new ContreePlayerEventHandlerImpl(humanPlayerName, new ContreeLocalPlayerEventHandler(humanPlayerName));
-
-        //return new ContreeLocalConsoleHumanPlayer(humanPlayerName);
 
     }
 
