@@ -55,6 +55,7 @@ class ContreeDeal {
     }
 
     void startDeal(
+            int dealNumber,
             String dealId,
             ContreeDealPlayers dealPlayers
     ) {
@@ -64,7 +65,7 @@ class ContreeDeal {
 
         dealStep = DealStep.BID;
 
-        eventSender.sendStartOfDealEvent(dealId);
+        eventSender.sendStartOfDealEvent(dealNumber, dealId);
         eventSender.sendBidStepStartedEvent(dealId);
 
         CardSetShuffler shuffler    = new CardSetShufflerImpl();
