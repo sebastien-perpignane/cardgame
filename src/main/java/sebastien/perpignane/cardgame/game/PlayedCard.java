@@ -27,20 +27,6 @@ public class PlayedCard<P extends Player<?, ?>, C extends Card> {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (PlayedCard<?, ?>) obj;
-        return Objects.equals(this.card, that.card) &&
-                Objects.equals(this.player, that.player);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(card, player);
-    }
-
-    @Override
     public String toString() {
         return "PlayedCard[" +
                 "player=" + player + ", " +
