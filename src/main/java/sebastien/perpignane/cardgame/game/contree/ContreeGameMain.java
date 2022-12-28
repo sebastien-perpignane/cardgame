@@ -11,6 +11,8 @@ import java.util.Scanner;
 
 public class ContreeGameMain {
 
+    private final static Scanner scanner = new Scanner(System.in);
+
     public static void main(String[] args) {
         startAGame();
     }
@@ -59,15 +61,13 @@ public class ContreeGameMain {
 
     private static sebastien.perpignane.cardgame.player.contree.ContreePlayer manageHumanPlayer() {
 
-        try (Scanner scanner = new Scanner(System.in)) {
-            String humanPlayerName = "";
-            while (humanPlayerName.isBlank()) {
-                System.out.println("Please enter your player name :");
-                humanPlayerName = scanner.nextLine();
-            }
-
-            return new ContreePlayerEventHandlerImpl(humanPlayerName, new ContreeLocalPlayerEventHandler(humanPlayerName));
+        String humanPlayerName = "";
+        while (humanPlayerName.isBlank()) {
+            System.out.println("Please enter your player name :");
+            humanPlayerName = scanner.nextLine();
         }
+
+        return new ContreePlayerEventHandlerImpl(humanPlayerName, new ContreeLocalPlayerEventHandler(scanner, humanPlayerName));
 
     }
 
