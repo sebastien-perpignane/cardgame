@@ -7,7 +7,7 @@ import sebastien.perpignane.cardgame.player.Team;
 
 public interface ContreeDealObserver extends CardGameObserver {
 
-    void onDealStarted(String dealId);
+    void onDealStarted(int dealNumber, String dealId);
 
     void onEndOfDeal(String dealId, Team winnerTeam, ContreeDealScore dealScore, boolean capot);
 

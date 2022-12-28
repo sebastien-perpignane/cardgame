@@ -90,7 +90,7 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
 
         assertThrows(
                 RuntimeException.class,
-                () -> deal.startDeal("TEST", dealPlayers)
+                () -> deal.startDeal(-1,"TEST", dealPlayers)
         );
 
     }
@@ -103,7 +103,7 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
 
         assertThrows(
                 RuntimeException.class,
-                () -> deal.startDeal("TEST", dealPlayers)
+                () -> deal.startDeal(-1,"TEST", dealPlayers)
         );
 
     }
@@ -111,7 +111,7 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
     @DisplayName("After deal.startDeal(), the deal is in bid step")
     @Test
     public void testDealIsInBidStepAfterStart() {
-        deal.startDeal("TEST", dealPlayers);
+        deal.startDeal(-1,"TEST", dealPlayers);
 
         assertTrue( deal.isBidStep() );
         assertFalse( deal.isPlayStep() );
@@ -120,7 +120,7 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
     @DisplayName("When bids are over, the deal is in play step. Trump suit is defined.")
     @Test
     public void testDealIsInPlayStepWhenBidsAreOver() {
-        deal.startDeal("TEST", dealPlayers);
+        deal.startDeal(-1,"TEST", dealPlayers);
         ContreeBid bid = new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.DIAMONDS);
         when(bids.bidsAreOver()).thenReturn(true);
         when(bids.highestBid()).thenReturn(Optional.of(bid));
@@ -137,7 +137,7 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
     @DisplayName("Players cannot play a card in BID step ")
     @Test
     public void testExceptionWhenPlayingWhileBidStep() {
-        deal.startDeal("TEST", dealPlayers);
+        deal.startDeal(-1,"TEST", dealPlayers);
 
         assertTrue(deal.isBidStep());
 
@@ -154,7 +154,7 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
 
         // Given
 
-        deal.startDeal("TEST", dealPlayers);
+        deal.startDeal(-1,"TEST", dealPlayers);
 
         ContreeBid bid = new ContreeBid(player1, ContreeBidValue.HUNDRED, CardSuit.DIAMONDS);
         when(bids.bidsAreOver()).thenReturn(true);
@@ -206,7 +206,7 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
         when(bids.bidsAreOver()).thenReturn(true);
         when(bids.highestBid()).thenReturn(Optional.of(bid));// When bids are over, startPlay method is called and gets the trump suit.
 
-        deal.startDeal("TEST", dealPlayers);
+        deal.startDeal(-1,"TEST", dealPlayers);
 
         deal.placeBid(new ContreeBid( player1 ));
 
@@ -217,7 +217,7 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
     @Test
     public void testDealIsNotDoubleNorRedouble() {
 
-        deal.startDeal("TEST", dealPlayers);
+        deal.startDeal(-1,"TEST", dealPlayers);
 
         deal.placeBid(new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.HEARTS));
 

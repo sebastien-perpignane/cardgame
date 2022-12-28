@@ -76,7 +76,7 @@ public class ContreeDeals {
         dealPlayers.setCurrentDeal(currentDeal);
 
         String dealId = gameId + "-" + deals.size();
-        currentDeal.startDeal(dealId, dealPlayers);
+        currentDeal.startDeal(deals.size(), dealId, dealPlayers);
     }
 
     public void placeBid(ContreePlayer player, ContreeBidValue bidValue, CardSuit cardSuit) {

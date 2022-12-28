@@ -129,13 +129,13 @@ public class GameTextDisplayer implements GameObserver, WarTrickObserver, Contre
     }
 
     @Override
-    public void onDealStarted(String dealId) {
+    public void onDealStarted(int dealNumber, String dealId) {
         out.printf("""
 ************************************************************************************************************************
-Deal %s is started%n
+Deal #%d (%s) is started%n
 ************************************************************************************************************************
 """,
-                dealId);
+                dealNumber, dealId);
     }
 
     @Override

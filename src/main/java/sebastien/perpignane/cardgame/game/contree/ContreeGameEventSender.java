@@ -57,8 +57,8 @@ public class ContreeGameEventSender extends AbstractGameEventSender {
         gameObservers.forEach(observer -> observer.onCardPlayed(player, card));
     }
 
-    void sendStartOfDealEvent(String dealId) {
-        dealObservers.forEach(cdo -> cdo.onDealStarted(dealId));
+    void sendStartOfDealEvent(int dealNumber, String dealId) {
+        dealObservers.forEach(cdo -> cdo.onDealStarted(dealNumber, dealId));
     }
 
     void sendEndOfDealEvent(String dealId, Team winnerTeam, ContreeDealScore dealScore, boolean capot) {
