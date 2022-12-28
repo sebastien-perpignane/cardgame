@@ -24,7 +24,7 @@ class ContreeGamePlayersImpl implements ContreeGamePlayers {
         }
     }
 
-    public synchronized void joinGame(ContreePlayer joiningPlayer, ContreeTeam wantedTeam) {
+    public synchronized int joinGame(ContreePlayer joiningPlayer, ContreeTeam wantedTeam) {
 
         Objects.requireNonNull(joiningPlayer, "joiningPlayer cannot be null");
 
@@ -35,6 +35,7 @@ class ContreeGamePlayersImpl implements ContreeGamePlayers {
         boolean wantedTeamIsFull = wantedTeam == null ? isFull() : wantedTeamIsFull(wantedTeam);
 
         boolean joined = false;
+        int playerIndex = -1;
         for (int i = 0 ; i < NB_PLAYERS ; i++) {
 
             boolean isExpectedTeam = wantedTeam == null || teamByPlayerIndex(i) == wantedTeam;
@@ -55,7 +56,7 @@ class ContreeGamePlayersImpl implements ContreeGamePlayers {
             boolean noPresentPlayer = players.get(i) == null;
 
             if ( currentIndexIsJoinable) {
-
+                playerIndex = i;
                 players.set(i, joiningPlayer);
                 assignTeamToPlayer(i);
                 joined = true;
@@ -76,8 +77,9 @@ class ContreeGamePlayersImpl implements ContreeGamePlayers {
                 exceptionMessage = String.format("No slot available in the wanted team: %s", wantedTeam);
             }
             throw new IllegalStateException(exceptionMessage);
-
         }
+
+        return playerIndex;
 
     }
 
@@ -102,8 +104,8 @@ class ContreeGamePlayersImpl implements ContreeGamePlayers {
 
     }
 
-    public synchronized void joinGame(ContreePlayer joiningPlayer) {
-        joinGame(joiningPlayer, null);
+    public synchronized int joinGame(ContreePlayer joiningPlayer) {
+        return joinGame(joiningPlayer, null);
     }
 
     @Override

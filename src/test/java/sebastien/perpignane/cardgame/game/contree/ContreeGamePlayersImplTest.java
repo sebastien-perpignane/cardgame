@@ -27,14 +27,27 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
         gamePlayers = new ContreeGamePlayersImpl();
     }
 
+    private ContreePlayer botPlayer() {
+        ContreePlayer botPlayer = mock(ContreePlayer.class);
+        when(botPlayer.isBot()).thenReturn(true);
+        return botPlayer;
+    }
+
+    private ContreePlayer humanPlayer() {
+        ContreePlayer botPlayer = mock(ContreePlayer.class);
+        when(botPlayer.isBot()).thenReturn(false);
+        return botPlayer;
+    }
+
     @DisplayName("Join a specific team in a game that no player joined yet")
     @Test
     public void testJoinAnyTeamEmptyGame() {
 
         ContreePlayer newPlayer = humanPlayer();
 
-        gamePlayers.joinGame(newPlayer);
+        int playerIndex = gamePlayers.joinGame(newPlayer);
 
+        assertEquals(0, playerIndex);
         assertFalse(gamePlayers.isFull());
         assertTrue(gamePlayers.isJoinableByHumanPlayers());
     }
@@ -45,8 +58,9 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
         ContreePlayer newPlayer = humanPlayer();
 
-        gamePlayers.joinGame(newPlayer, ContreeTeam.TEAM1);
+        int playerIndex = gamePlayers.joinGame(newPlayer, ContreeTeam.TEAM1);
 
+        assertEquals(0, playerIndex);
         assertFalse(gamePlayers.isFull());
         assertTrue(gamePlayers.isJoinableByHumanPlayers());
     }
@@ -57,8 +71,9 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
         ContreePlayer newPlayer = humanPlayer();
 
-        gamePlayers.joinGame(newPlayer, ContreeTeam.TEAM2);
+        int playerIndex = gamePlayers.joinGame(newPlayer, ContreeTeam.TEAM2);
 
+        assertEquals(1, playerIndex);
         assertFalse(gamePlayers.isFull());
         assertTrue(gamePlayers.isJoinableByHumanPlayers());
     }
@@ -128,8 +143,8 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
     @Test
     public void testJoinFullGameWithMultipleBots() {
 
-        ContreePlayer notBotPlayer = humanPlayer();
-        gamePlayers.joinGame(notBotPlayer);
+        ContreePlayer humanPlayer = humanPlayer();
+        gamePlayers.joinGame(humanPlayer);
         for (int i = 0 ; i < 3 ; i++ ) {
             ContreePlayer player = botPlayer();
             gamePlayers.joinGame(player);
@@ -138,22 +153,26 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
         assertTrue(gamePlayers.isJoinableByHumanPlayers());
 
         ContreePlayer newPlayer = humanPlayer();
-        gamePlayers.joinGame(newPlayer);
+        int playerIndex = gamePlayers.joinGame(newPlayer);
 
+        // player with index 0 is a human
+        assertEquals(1, playerIndex);
         assertTrue(gamePlayers.isFull());
         assertTrue(gamePlayers.isJoinableByHumanPlayers());
         assertSame(newPlayer, gamePlayers.getGamePlayers().get(1));
 
     }
 
-    @DisplayName("Joining a full game with bots must succeed")
+    @DisplayName("Joining an empty game in a specific team must succeed")
     @Test
     public void testJoinTeam2onEmptyPlayerList() {
 
         ContreePlayer player = humanPlayer();
 
-        gamePlayers.joinGame(player, ContreeTeam.TEAM2);
+        int playerIndex = gamePlayers.joinGame(player, ContreeTeam.TEAM2);
 
+        // first team 2 slot is index 1
+        assertEquals(1, playerIndex);
         assertEquals(1, gamePlayers.getNbPlayers());
         assertSame(player, gamePlayers.getGamePlayers().get(1));
         assertNull(gamePlayers.getGamePlayers().get(0));
@@ -165,8 +184,7 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
     public void testHumanJoinGameWithOnlyOneMissingPlayer_onlyBotAlreadyJoined() {
 
         for (int i = 0 ; i < 3 ; i++ ) {
-            ContreePlayer player = botPlayer();
-            gamePlayers.joinGame(player);
+            gamePlayers.joinGame(botPlayer());
         }
 
         gamePlayers.joinGame(humanPlayer());
@@ -190,8 +208,9 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
         gamePlayers.joinGame(botPlayer1, ContreeTeam.TEAM1);
         gamePlayers.joinGame(botPlayer2, ContreeTeam.TEAM1);
 
-        gamePlayers.joinGame(humanPlayer, ContreeTeam.TEAM1);
+        int playerIndex = gamePlayers.joinGame(humanPlayer, ContreeTeam.TEAM1);
 
+        assertEquals(0, playerIndex);
         assertEquals(2, gamePlayers.getNbPlayers());
         assertSame(humanPlayer, gamePlayers.getGamePlayers().get(0));
         assertNull(gamePlayers.getGamePlayers().get(1));
@@ -199,17 +218,7 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
     }
 
-    private ContreePlayer botPlayer() {
-        ContreePlayer botPlayer = mock(ContreePlayer.class);
-        when(botPlayer.isBot()).thenReturn(true);
-        return botPlayer;
-    }
 
-    private ContreePlayer humanPlayer() {
-        ContreePlayer botPlayer = mock(ContreePlayer.class);
-        when(botPlayer.isBot()).thenReturn(false);
-        return botPlayer;
-    }
 
     @Test
     @DisplayName("Building a ContreeDealPlayers on a valid ContreeGamePlayers must succeed and build a consistent object")
@@ -227,7 +236,7 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
     @DisplayName("Building a ContreeDealPlayers on an invalid ContreeGamePlayers must fail")
     @Test
-    public void testBuildDealPlayersOnNonFullGame() {
+    public void testBuildDealPlayersOnNonFullGameMustFail() {
 
         gamePlayers.joinGame(botPlayer());
 

@@ -8,9 +8,18 @@ import java.util.List;
 
 public interface ContreeGamePlayers extends ContreePlayers {
 
-    void joinGame(ContreePlayer joiningPlayer);
+    /**
+     * @param joiningPlayer the player who joins the game
+     * @return the index of the joining player in the game
+     */
+    int joinGame(ContreePlayer joiningPlayer);
 
-    void joinGame(ContreePlayer joiningPlayer, ContreeTeam wantedTeam);
+    /**
+     * @param joiningPlayer the player who joins the game
+     * @param wantedTeam the team the player wants to join
+     * @return the index of the joining player in the game
+     */
+    int joinGame(ContreePlayer joiningPlayer, ContreeTeam wantedTeam);
 
     void receiveHandForPlayer(int playerIndex, List<ClassicalCard> hand);
 

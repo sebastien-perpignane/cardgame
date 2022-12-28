@@ -4,6 +4,7 @@ import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.contree.ContreeGame;
 import sebastien.perpignane.cardgame.game.war.WarGame;
 import sebastien.perpignane.cardgame.player.Player;
+import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 
 public interface GameObserver extends CardGameObserver {
 
@@ -20,5 +21,7 @@ public interface GameObserver extends CardGameObserver {
     void onEndOfGame(WarGame warGame);
 
     void onEndOfGame(ContreeGame contreeGame);
+
+    void onJoinedGame(ContreeGame contreeGame, int playerIndex, ContreePlayer player);
 
 }

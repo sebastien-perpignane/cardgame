@@ -8,6 +8,7 @@ import sebastien.perpignane.cardgame.game.war.WarPlayedCard;
 import sebastien.perpignane.cardgame.game.war.WarTrickObserver;
 import sebastien.perpignane.cardgame.player.Player;
 import sebastien.perpignane.cardgame.player.Team;
+import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
 import java.io.PrintStream;
@@ -30,6 +31,11 @@ public class GameTextDisplayer implements GameObserver, WarTrickObserver, Contre
 
     private GameTextDisplayer() {
 
+    }
+
+    @Override
+    public void onJoinedGame(ContreeGame contreeGame, int playerIndex, ContreePlayer player) {
+        out.printf("Player #%d (%s) joined the game %s%n", playerIndex + 1, player.getName(), contreeGame.getGameId());
     }
 
     @Override

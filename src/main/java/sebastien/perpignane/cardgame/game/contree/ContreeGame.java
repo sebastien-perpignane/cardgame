@@ -41,8 +41,9 @@ public class ContreeGame extends AbstractGame<ContreePlayer> {
         if (isOver()) {
             throw new IllegalStateException("This game is over, you cannot join it");
         }
-        gamePlayers.joinGame(p);
+        int playerIndex = gamePlayers.joinGame(p);
         p.setGame(this);
+        gameEventSender.sendJoinedGameEvent(this, playerIndex, p);
         if (gamePlayers.isFull()) {
             updateState(GameState.STARTED);
             startGame();

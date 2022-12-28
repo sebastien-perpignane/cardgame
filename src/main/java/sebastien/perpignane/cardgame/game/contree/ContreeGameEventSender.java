@@ -7,6 +7,7 @@ import sebastien.perpignane.cardgame.game.CardGameObserver;
 import sebastien.perpignane.cardgame.game.GameObserver;
 import sebastien.perpignane.cardgame.player.Player;
 import sebastien.perpignane.cardgame.player.Team;
+import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
 import java.util.Arrays;
@@ -45,12 +46,8 @@ public class ContreeGameEventSender extends AbstractGameEventSender {
     }
 
     void sendEndOfGameEvent(ContreeGame contreeGame) {
-
         gameObservers.forEach(go -> go.onEndOfGame(contreeGame));
-
-        // FIXME a player should be an observer but all events cannot be sent to all players. Example : onPlayerTurn with the allowed cards
         contreeGame.getPlayers().forEach(Player::onGameOver);
-
     }
 
     void sendPlayedCardEvent(Player<?, ?> player, ClassicalCard card) {
@@ -95,6 +92,10 @@ public class ContreeGameEventSender extends AbstractGameEventSender {
 
     void sendEndOfTrickEvent(String trickId, ContreeTeam winner) {
         trickObservers.forEach(to -> to.onEndOfTrick(trickId, winner));
+    }
+
+    void sendJoinedGameEvent(ContreeGame game, int playerIndex, ContreePlayer player) {
+        gameObservers.forEach(go -> go.onJoinedGame(game, playerIndex, player));
     }
 
 }
