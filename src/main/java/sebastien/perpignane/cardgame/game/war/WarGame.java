@@ -131,6 +131,7 @@ public class WarGame extends AbstractGame<WarPlayer> {
                 updateState(GameState.OVER);
                 computeWinner();
                 warGameEventSender.sendEndOfGameEvent(this);
+                getPlayers().forEach(WarPlayer::onGameOver);
                 return;
             }
             currentTrick = new WarTrick(trickId(), players, warGameEventSender);

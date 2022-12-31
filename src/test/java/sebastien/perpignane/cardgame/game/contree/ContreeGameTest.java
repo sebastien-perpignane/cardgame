@@ -35,7 +35,18 @@ class ContreeGameTest extends TestCasesManagingPlayers {
         deals = mock(ContreeDeals.class);
         ContreeGameEventSender eventSender = mock(ContreeGameEventSender.class);
 
-        when(gamePlayers.isFull()).thenAnswer(AdditionalAnswers.returnsElementsOf(List.of(false, false, false, true)));
+        when(gamePlayers.joinGame(any())).thenReturn(new JoinGameResult(0, null));
+
+        when(gamePlayers.isFull()).thenAnswer(
+            AdditionalAnswers.returnsElementsOf(
+                List.of(
+                        false,
+                        false,
+                        false,
+                        true
+                )
+            )
+        );
 
         game = new ContreeGame(gamePlayers, deals, eventSender);
     }
@@ -52,7 +63,7 @@ class ContreeGameTest extends TestCasesManagingPlayers {
         assertTrue(game.isStarted());
     }
 
-    @DisplayName("A game is waiting for players until 4 players joined it")
+    @DisplayName("A game is waiting for players until gamePlayers is full")
     @Test
     public void testGameWithoutPlayersHasExpectedState() {
 
@@ -64,7 +75,6 @@ class ContreeGameTest extends TestCasesManagingPlayers {
 
         game.joinGame(player3);
         assertTrue(game.isWaitingForPlayers());
-
 
         game.joinGame(player4);
 
@@ -170,7 +180,7 @@ class ContreeGameTest extends TestCasesManagingPlayers {
         doAnswer(invocationOnMock -> {
             flags.leavingPlayerManagement = true;
             return null;
-        }).when(deals).manageLeavingPlayer(leaver, newPlayer);
+        }).when(deals).manageReplacedPlayer(leaver, newPlayer);
 
         doAnswer((invocationOnMock -> {
             flags.updatedGame = invocationOnMock.getArgument(0);
@@ -215,7 +225,7 @@ class ContreeGameTest extends TestCasesManagingPlayers {
         doAnswer(invocationOnMock -> {
             flags.leavingPlayerManagement = true;
             return null;
-        }).when(deals).manageLeavingPlayer(leaver, newPlayer);
+        }).when(deals).manageReplacedPlayer(leaver, newPlayer);
 
         doAnswer((invocationOnMock -> {
             flags.updatedGame = invocationOnMock.getArgument(0);
@@ -226,8 +236,6 @@ class ContreeGameTest extends TestCasesManagingPlayers {
             flags.playerGameStartedEvent = true;
             return null;
         })).when(newPlayer).onGameStarted();
-
-        game.joinGame(leaver);
 
         game.leaveGame(leaver);
 
@@ -260,7 +268,7 @@ class ContreeGameTest extends TestCasesManagingPlayers {
         doAnswer(invocationOnMock -> {
             flags.leavingPlayerManagement = true;
             return null;
-        }).when(deals).manageLeavingPlayer(leaver, newPlayer);
+        }).when(deals).manageReplacedPlayer(leaver, newPlayer);
 
         doAnswer((invocationOnMock -> {
             flags.updatedGame = invocationOnMock.getArgument(0);

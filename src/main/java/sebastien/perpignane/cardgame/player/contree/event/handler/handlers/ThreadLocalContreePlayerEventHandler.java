@@ -46,13 +46,18 @@ public abstract class ThreadLocalContreePlayerEventHandler extends ThreadPlayerE
     }
 
     @Override
+    public void onEjection() {
+        receiveNewMessage(new PlayerMessage(MessageType.EJECTED));
+    }
+
+    @Override
     protected boolean handleMessage(PlayerMessage playerMessage) {
         boolean mustExit = false;
 
         switch (playerMessage.messageType()) {
             case PLAY -> managePlayMessage(playerMessage);
             case BID -> manageBidMessage(playerMessage);
-            case GAME_OVER ->  mustExit = true;
+            case GAME_OVER, EJECTED ->  mustExit = true;
             case GAME_STARTED -> {
                 // Directly managed by the onGameStarted method
             }

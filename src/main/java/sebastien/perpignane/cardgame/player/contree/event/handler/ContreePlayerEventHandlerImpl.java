@@ -76,6 +76,11 @@ public class ContreePlayerEventHandlerImpl implements ContreePlayer {
     }
 
     @Override
+    public void onGameEjection() {
+        playerEventHandler.onEjection();
+    }
+
+    @Override
     public int nbAvailableCards() {
         return hand == null ? 0 : hand.size();
     }

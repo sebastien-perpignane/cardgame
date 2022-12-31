@@ -106,6 +106,7 @@ public class ThreadContreeLocalConsoleHumanPlayer extends AbstractLocalThreadCon
             }
             catch(Exception e) {
                 System.err.printf("Error occurred when playing your card: %s. Please try again.%n", e.getMessage());
+                e.printStackTrace(System.err);
                 nbTries++;
             }
         }
@@ -183,6 +184,7 @@ public class ThreadContreeLocalConsoleHumanPlayer extends AbstractLocalThreadCon
             }
             catch (Exception e) {
                 System.err.printf("Error occurred when placing your bid: %s. Please try again.%n", e.getMessage());
+                e.printStackTrace(System.err);
             }
             finally {
                 nbTries++;

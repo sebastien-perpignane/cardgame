@@ -55,14 +55,16 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
     }
 
     private final String name;
+    private final Scanner scanner;
 
     @Override
     public String getName() {
         return name;
     }
 
-    public ContreeLocalPlayerEventHandler(String name) {
+    public ContreeLocalPlayerEventHandler(Scanner scanner, String name) {
         this.name = name;
+        this.scanner = scanner;
     }
 
     @Override
@@ -75,8 +77,6 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
         boolean leaver = false;
         boolean cardPlayed = false;
         int nbTries = 0;
-
-        Scanner scanner = new Scanner(System.in);
 
         final String allowedCards = collectionToJoinedStr(
                 ClassicalCard.sort(playMessage.allowedCards())
@@ -132,8 +132,6 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
 
         int nbTries = 0;
         boolean bidPlaced = false;
-
-        Scanner scanner = new Scanner(System.in);
 
         final String allowedBiValues = streamToJoinedStr(bidMessage.allowedBidValues().stream().sorted());
 
@@ -192,6 +190,7 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
             }
             catch (Exception e) {
                 System.err.printf("Error occurred when placing your bid: %s. Please try again.%n", e.getMessage());
+                e.printStackTrace(System.err);
             }
             finally {
                 nbTries++;

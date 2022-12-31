@@ -41,13 +41,12 @@ class WarGameEventSender extends AbstractGameEventSender {
         trickObservers.add(observer);
     }
 
-    void sendPlayedCardEvent(Player player, ClassicalCard card) {
+    void sendPlayedCardEvent(Player<?, ?> player, ClassicalCard card) {
         gameObservers.forEach(observer -> observer.onCardPlayed(player, card));
     }
 
     void sendEndOfGameEvent(WarGame warGame) {
         gameObservers.forEach(go -> go.onEndOfGame(warGame));
-        warGame.getPlayers().forEach(Player::onGameOver);
     }
 
     void sendWonTrickEvent(Trick trick) {

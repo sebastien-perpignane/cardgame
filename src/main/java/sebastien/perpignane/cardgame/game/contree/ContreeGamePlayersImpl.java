@@ -24,7 +24,7 @@ class ContreeGamePlayersImpl implements ContreeGamePlayers {
         }
     }
 
-    public synchronized void joinGame(ContreePlayer joiningPlayer, ContreeTeam wantedTeam) {
+    public synchronized JoinGameResult joinGame(ContreePlayer joiningPlayer, ContreeTeam wantedTeam) {
 
         Objects.requireNonNull(joiningPlayer, "joiningPlayer cannot be null");
 
@@ -32,9 +32,12 @@ class ContreeGamePlayersImpl implements ContreeGamePlayers {
             throw new IllegalArgumentException( String.format("Player %s already joined the game", joiningPlayer) );
         }
 
+        ContreePlayer replacedPlayer = null;
+
         boolean wantedTeamIsFull = wantedTeam == null ? isFull() : wantedTeamIsFull(wantedTeam);
 
         boolean joined = false;
+        int playerIndex = -1;
         for (int i = 0 ; i < NB_PLAYERS ; i++) {
 
             boolean isExpectedTeam = wantedTeam == null || teamByPlayerIndex(i) == wantedTeam;
@@ -55,15 +58,15 @@ class ContreeGamePlayersImpl implements ContreeGamePlayers {
             boolean noPresentPlayer = players.get(i) == null;
 
             if ( currentIndexIsJoinable) {
-
-                players.set(i, joiningPlayer);
-                assignTeamToPlayer(i);
+                playerIndex = i;
+                replacedPlayer = players.get(playerIndex);
+                assignPlayerToIndex(playerIndex, joiningPlayer);
                 joined = true;
+
                 if (noPresentPlayer) {
                     nbPlayers++;
                 }
                 break;
-
             }
         }
 
@@ -76,8 +79,9 @@ class ContreeGamePlayersImpl implements ContreeGamePlayers {
                 exceptionMessage = String.format("No slot available in the wanted team: %s", wantedTeam);
             }
             throw new IllegalStateException(exceptionMessage);
-
         }
+
+        return new JoinGameResult(playerIndex, replacedPlayer);
 
     }
 
@@ -90,20 +94,26 @@ class ContreeGamePlayersImpl implements ContreeGamePlayers {
         if (player.isBot()) {
             throw new IllegalArgumentException("WTF ? A bot wants to leave the game ?");
         }
-        if (!players.contains(player)) {
-            throw new IllegalArgumentException(String.format("The player %s does not play in this game", player));
-        }
-        int playerIndex = players.indexOf(player);
         ContreePlayer newBotPlayer = new ThreadContreeBotPlayer();
-        players.set(playerIndex, newBotPlayer);
-        assignTeamToPlayer(playerIndex);
-
+        replacePlayer(player, newBotPlayer);
         return newBotPlayer;
-
     }
 
-    public synchronized void joinGame(ContreePlayer joiningPlayer) {
-        joinGame(joiningPlayer, null);
+    private void replacePlayer(ContreePlayer replacedPlayer, ContreePlayer newPlayer) {
+        if (!players.contains(replacedPlayer)) {
+            throw new IllegalArgumentException(String.format("The player %s does not play in this game", replacedPlayer));
+        }
+        int replacedPlayerIndex = players.indexOf(replacedPlayer);
+        assignPlayerToIndex(replacedPlayerIndex, newPlayer);
+    }
+
+    private void assignPlayerToIndex(int playerIndex, ContreePlayer player) {
+        players.set(playerIndex, player);
+        assignTeamToPlayer(playerIndex);
+    }
+
+    public synchronized JoinGameResult joinGame(ContreePlayer joiningPlayer) {
+        return joinGame(joiningPlayer, null);
     }
 
     @Override

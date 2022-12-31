@@ -4,6 +4,7 @@ import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.contree.ContreeGame;
 import sebastien.perpignane.cardgame.game.war.WarGame;
 import sebastien.perpignane.cardgame.player.Player;
+import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 
 import java.util.concurrent.BlockingQueue;
 
@@ -21,7 +22,7 @@ public class BlockingQueueGameObserver implements GameObserver {
     }
 
     @Override
-    public void onNextPlayer(Player p) {
+    public void onNextPlayer(Player<?, ?> p) {
 
     }
 
@@ -41,7 +42,12 @@ public class BlockingQueueGameObserver implements GameObserver {
     }
 
     @Override
-    public void onCardPlayed(Player player, ClassicalCard card) {
+    public void onCardPlayed(Player<?, ?> player, ClassicalCard card) {
+
+    }
+
+    @Override
+    public void onJoinedGame(ContreeGame contreeGame, int playerIndex, ContreePlayer player) {
 
     }
 }
