@@ -105,7 +105,7 @@ public class ContreeDeals {
         }
     }
 
-    public void manageLeavingPlayer(ContreePlayer leavingPlayer, ContreePlayer newPlayer) {
+    public void manageReplacedPlayer(ContreePlayer leavingPlayer, ContreePlayer newPlayer) {
         updateCurrentBidderIfRequired(leavingPlayer, newPlayer);
         updateCurrentPlayerIfRequired(leavingPlayer, newPlayer);
     }

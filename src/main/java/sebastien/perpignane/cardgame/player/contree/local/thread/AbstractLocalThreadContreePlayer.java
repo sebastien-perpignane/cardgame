@@ -98,7 +98,12 @@ public abstract class AbstractLocalThreadContreePlayer extends AbstractThreadLoc
 
     @Override
     public void onGameOver() {
-        receiveNewMessage( new PlayerMessage( MessageType.GAME_OVER, null, null ) );
+        receiveNewMessage( new PlayerMessage( MessageType.GAME_OVER) );
+    }
+
+    @Override
+    public void onGameEjection() {
+        receiveNewMessage(new PlayerMessage(MessageType.EJECTED));
     }
 
     @Override
@@ -109,7 +114,7 @@ public abstract class AbstractLocalThreadContreePlayer extends AbstractThreadLoc
         switch (playerMessage.messageType()) {
             case PLAY -> managePlayMessage(playerMessage);
             case BID -> manageBidMessage(playerMessage);
-            case GAME_OVER ->  mustExit = true;
+            case GAME_OVER, EJECTED ->  mustExit = true;
             case GAME_STARTED -> {
                 // Managed by the onGameStarted method
             }

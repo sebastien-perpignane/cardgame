@@ -23,6 +23,8 @@ public interface Player<G extends AbstractGame<?>, T extends Team> {
 
     void onGameOver();
 
+    void onGameEjection();
+
     // FIXME to be replaced with the "allowed cards" version
     void onPlayerTurn();
 

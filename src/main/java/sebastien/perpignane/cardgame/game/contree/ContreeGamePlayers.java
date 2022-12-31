@@ -6,20 +6,22 @@ import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
 import java.util.List;
 
+record JoinGameResult(int playerIndex, ContreePlayer replacedPlayer) {}
+
 public interface ContreeGamePlayers extends ContreePlayers {
 
     /**
      * @param joiningPlayer the player who joins the game
      * @return the index of the joining player in the game
      */
-    int joinGame(ContreePlayer joiningPlayer);
+    JoinGameResult joinGame(ContreePlayer joiningPlayer);
 
     /**
      * @param joiningPlayer the player who joins the game
      * @param wantedTeam the team the player wants to join
      * @return the index of the joining player in the game
      */
-    int joinGame(ContreePlayer joiningPlayer, ContreeTeam wantedTeam);
+    JoinGameResult joinGame(ContreePlayer joiningPlayer, ContreeTeam wantedTeam);
 
     void receiveHandForPlayer(int playerIndex, List<ClassicalCard> hand);
 

@@ -158,16 +158,16 @@ class ContreeDealsTest extends TestCasesManagingPlayers {
         }
     }
 
-    @DisplayName("No exception when managing a leaving player on not started deals")
+    @DisplayName("No exception when managing a replaced player on not started deals")
     @Test
-    public void testManageLeavingPlayer_notStartedDeals() {
+    public void testManageReplacedPlayer_notStartedDeals() {
 
         boolean exception = false;
 
         when(player1.isBot()).thenReturn(false);
 
         try {
-            deals.manageLeavingPlayer(player1, newPlayer);
+            deals.manageReplacedPlayer(player1, newPlayer);
         }
         catch(Exception e) {
             exception = true;
@@ -177,9 +177,9 @@ class ContreeDealsTest extends TestCasesManagingPlayers {
 
     }
 
-    @DisplayName("No exception when managing a leaving player on started deals")
+    @DisplayName("No exception when managing a replaced player on started deals")
     @Test
-    public void testManageLeavingPlayer_startedDeals() {
+    public void testManageReplacedPlayer_startedDeals() {
 
         boolean exception = false;
 
@@ -188,7 +188,7 @@ class ContreeDealsTest extends TestCasesManagingPlayers {
         deals.startDeals("TEST", dealPlayers);
 
         try {
-            deals.manageLeavingPlayer(player1, newPlayer);
+            deals.manageReplacedPlayer(player1, newPlayer);
         }
         catch(Exception e) {
             exception = true;
@@ -198,9 +198,9 @@ class ContreeDealsTest extends TestCasesManagingPlayers {
 
     }
 
-    @DisplayName("No exception when managing a leaving player on started deals")
+    @DisplayName("No exception when managing a replaced player on started deals")
     @Test
-    public void testManageLeavingPlayer_startedDealsAndPlayStepStarted() {
+    public void testManageReplacedPlayer_startedDealsAndPlayStepStarted() {
 
         boolean exception = false;
 
@@ -214,7 +214,7 @@ class ContreeDealsTest extends TestCasesManagingPlayers {
 
 
         try {
-            deals.manageLeavingPlayer(player1, newPlayer);
+            deals.manageReplacedPlayer(player1, newPlayer);
         }
         catch(Exception e) {
             exception = true;

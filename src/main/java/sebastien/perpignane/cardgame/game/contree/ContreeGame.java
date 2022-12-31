@@ -41,10 +41,23 @@ public class ContreeGame extends AbstractGame<ContreePlayer> {
         if (isOver()) {
             throw new IllegalStateException("This game is over, you cannot join it");
         }
-        int playerIndex = gamePlayers.joinGame(p);
+        JoinGameResult joinGameResult = gamePlayers.joinGame(p);
         p.setGame(this);
-        gameEventSender.sendJoinedGameEvent(this, playerIndex, p);
-        if (gamePlayers.isFull()) {
+        if (joinGameResult.replacedPlayer() != null) {
+            p.receiveHand(joinGameResult.replacedPlayer().getHand());
+        }
+        gameEventSender.sendJoinedGameEvent(this, joinGameResult.playerIndex(), p);
+        if (isStarted()) {
+
+            if (joinGameResult.replacedPlayer() == null) {
+                throw new IllegalStateException("When game is already started, if a new player joins the game, joinGameResult.replacedPlayer must not be null");
+            }
+
+            gameDeals.manageReplacedPlayer(joinGameResult.replacedPlayer(), p);
+            joinGameResult.replacedPlayer().onGameEjection();
+            p.onGameStarted();
+        }
+        if (gamePlayers.isFull() && !isStarted()) {
             updateState(GameState.STARTED);
             startGame();
         }
@@ -59,7 +72,7 @@ public class ContreeGame extends AbstractGame<ContreePlayer> {
         newPlayer.receiveHand(leavingPlayer.getHand());
         if (isStarted()) {
             newPlayer.onGameStarted();
-            gameDeals.manageLeavingPlayer(leavingPlayer, newPlayer);
+            gameDeals.manageReplacedPlayer(leavingPlayer, newPlayer);
         }
     }
 
@@ -82,6 +95,7 @@ public class ContreeGame extends AbstractGame<ContreePlayer> {
         gameDeals.playCard(player, card);
         if (gameDeals.isMaximumScoreReached()) {
             updateState(GameState.OVER);
+            getPlayers().forEach(ContreePlayer::onGameOver);
             gameEventSender.sendEndOfGameEvent(this);
         }
     }

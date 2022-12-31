@@ -45,6 +45,11 @@ public abstract class AbstracLocalThreadWarPlayer extends AbstractThreadLocalPla
     }
 
     @Override
+    public void onGameEjection() {
+        receiveNewMessage(MessageType.EJECTION);
+    }
+
+    @Override
     public void setGame(WarGame game) {
         this.warGame = game;
     }
@@ -80,7 +85,7 @@ public abstract class AbstracLocalThreadWarPlayer extends AbstractThreadLocalPla
 
         switch (playerMessage) {
             case PLAY -> managePlayMessage(playerMessage);
-            case END_OF_GAME -> mustExit = true;
+            case END_OF_GAME, EJECTION -> mustExit = true;
             default -> throw new IllegalArgumentException("Unknown");
         }
 

@@ -45,9 +45,10 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
         ContreePlayer newPlayer = humanPlayer();
 
-        int playerIndex = gamePlayers.joinGame(newPlayer);
+        JoinGameResult joinGameResult = gamePlayers.joinGame(newPlayer);
 
-        assertEquals(0, playerIndex);
+        assertEquals(0, joinGameResult.playerIndex());
+        assertNull(joinGameResult.replacedPlayer());
         assertFalse(gamePlayers.isFull());
         assertTrue(gamePlayers.isJoinableByHumanPlayers());
     }
@@ -58,9 +59,10 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
         ContreePlayer newPlayer = humanPlayer();
 
-        int playerIndex = gamePlayers.joinGame(newPlayer, ContreeTeam.TEAM1);
+        JoinGameResult joinGameResult = gamePlayers.joinGame(newPlayer, ContreeTeam.TEAM1);
 
-        assertEquals(0, playerIndex);
+        assertEquals(0, joinGameResult.playerIndex());
+        assertNull(joinGameResult.replacedPlayer());
         assertFalse(gamePlayers.isFull());
         assertTrue(gamePlayers.isJoinableByHumanPlayers());
     }
@@ -71,9 +73,10 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
         ContreePlayer newPlayer = humanPlayer();
 
-        int playerIndex = gamePlayers.joinGame(newPlayer, ContreeTeam.TEAM2);
+        JoinGameResult joinGameResult = gamePlayers.joinGame(newPlayer, ContreeTeam.TEAM2);
 
-        assertEquals(1, playerIndex);
+        assertEquals(1, joinGameResult.playerIndex());
+        assertNull(joinGameResult.replacedPlayer());
         assertFalse(gamePlayers.isFull());
         assertTrue(gamePlayers.isJoinableByHumanPlayers());
     }
@@ -153,10 +156,12 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
         assertTrue(gamePlayers.isJoinableByHumanPlayers());
 
         ContreePlayer newPlayer = humanPlayer();
-        int playerIndex = gamePlayers.joinGame(newPlayer);
+        JoinGameResult joinGameResult = gamePlayers.joinGame(newPlayer);
 
         // player with index 0 is a human
-        assertEquals(1, playerIndex);
+        assertEquals(1, joinGameResult.playerIndex());
+        assertNotNull(joinGameResult.replacedPlayer());
+        assertNotSame(newPlayer, joinGameResult.replacedPlayer());
         assertTrue(gamePlayers.isFull());
         assertTrue(gamePlayers.isJoinableByHumanPlayers());
         assertSame(newPlayer, gamePlayers.getGamePlayers().get(1));
@@ -169,10 +174,11 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
         ContreePlayer player = humanPlayer();
 
-        int playerIndex = gamePlayers.joinGame(player, ContreeTeam.TEAM2);
+        JoinGameResult joinGameResult = gamePlayers.joinGame(player, ContreeTeam.TEAM2);
 
         // first team 2 slot is index 1
-        assertEquals(1, playerIndex);
+        assertEquals(1, joinGameResult.playerIndex());
+        assertNull(joinGameResult.replacedPlayer());
         assertEquals(1, gamePlayers.getNbPlayers());
         assertSame(player, gamePlayers.getGamePlayers().get(1));
         assertNull(gamePlayers.getGamePlayers().get(0));
@@ -208,9 +214,10 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
         gamePlayers.joinGame(botPlayer1, ContreeTeam.TEAM1);
         gamePlayers.joinGame(botPlayer2, ContreeTeam.TEAM1);
 
-        int playerIndex = gamePlayers.joinGame(humanPlayer, ContreeTeam.TEAM1);
+        JoinGameResult joinGameResult = gamePlayers.joinGame(humanPlayer, ContreeTeam.TEAM1);
 
-        assertEquals(0, playerIndex);
+        assertEquals(0, joinGameResult.playerIndex());
+        assertSame(botPlayer1, joinGameResult.replacedPlayer());
         assertEquals(2, gamePlayers.getNbPlayers());
         assertSame(humanPlayer, gamePlayers.getGamePlayers().get(0));
         assertNull(gamePlayers.getGamePlayers().get(1));
@@ -258,9 +265,10 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
         gamePlayers.joinGame(botPlayer());
         gamePlayers.joinGame(botPlayer());
 
-        gamePlayers.leaveGameAndReplaceWithBotPlayer(leaver);
+        var newPlayer = gamePlayers.leaveGameAndReplaceWithBotPlayer(leaver);
 
         assertNotSame(gamePlayers.getGamePlayers().get(0), leaver);
+        assertNotSame(newPlayer, leaver);
         assertFalse(leaver.isBot());
         assertTrue(gamePlayers.getGamePlayers().get(0).isBot());
 

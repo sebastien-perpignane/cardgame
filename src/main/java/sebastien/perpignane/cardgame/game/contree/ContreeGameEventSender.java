@@ -47,7 +47,6 @@ public class ContreeGameEventSender extends AbstractGameEventSender {
 
     void sendEndOfGameEvent(ContreeGame contreeGame) {
         gameObservers.forEach(go -> go.onEndOfGame(contreeGame));
-        contreeGame.getPlayers().forEach(Player::onGameOver);
     }
 
     void sendPlayedCardEvent(Player<?, ?> player, ClassicalCard card) {

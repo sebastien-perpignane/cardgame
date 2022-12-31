@@ -13,4 +13,6 @@ public interface ContreePlayerEventHandler extends PlayerEventHandler<ContreePla
 
     void onPlayerTurn(Set<ClassicalCard> allowedCards);
 
+    void onEjection();
+
 }

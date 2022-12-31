@@ -4,6 +4,7 @@ public enum MessageType {
 
     PLAY(true, false),
     BID(false, true),
+    EJECTED,
     GAME_STARTED,
     GAME_OVER;
 
