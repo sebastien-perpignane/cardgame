@@ -8,18 +8,18 @@ import java.util.UUID;
 public abstract class AbstractGame<P extends Player<?, ?>> {
 
     private final String gameId;
-    private GameState state;
+    private GameStatus status;
 
     public AbstractGame() {
         gameId = UUID.randomUUID().toString();
     }
 
-    protected void updateState(GameState newState) {
+    protected void updateState(GameStatus newState) {
 
-        GameState oldState = state;
-        state = newState;
-        getEventSender().sendStateEvent(oldState, state);
-        if (newState == GameState.STARTED) {
+        GameStatus oldState = status;
+        status = newState;
+        getEventSender().sendStateEvent(oldState, status);
+        if (newState == GameStatus.STARTED) {
             getEventSender().sendGameStartedEvent(getPlayers());
         }
     }
@@ -27,27 +27,31 @@ public abstract class AbstractGame<P extends Player<?, ?>> {
     protected abstract List<P> getPlayers();
 
     public boolean isInPlayableState() {
-        return state.isPlayable();
+        return status.isPlayable();
     }
 
     public boolean isInitialized() {
-        return state == GameState.INITIALIZED;
+        return status == GameStatus.INITIALIZED;
     }
 
     public boolean isWaitingForPlayers() {
-        return state == GameState.WAITING_FOR_PLAYERS;
+        return status == GameStatus.WAITING_FOR_PLAYERS;
     }
 
     public boolean isStarted() {
-        return state == GameState.STARTED;
+        return status == GameStatus.STARTED;
     }
 
     public boolean isOver() {
-        return state == GameState.OVER;
+        return status == GameStatus.OVER;
     }
 
     public String getGameId() {
         return gameId;
+    }
+
+    public GameStatus getStatus() {
+        return status;
     }
 
     protected abstract AbstractGameEventSender getEventSender();

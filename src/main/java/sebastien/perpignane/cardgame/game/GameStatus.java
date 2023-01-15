@@ -1,6 +1,6 @@
 package sebastien.perpignane.cardgame.game;
 
-public enum GameState {
+public enum GameStatus {
     NOT_INITIALIZED(false),
     INITIALIZED(false),
     STARTING(false),
@@ -10,7 +10,7 @@ public enum GameState {
 
     private final boolean playable;
 
-    GameState(boolean playable) {
+    GameStatus(boolean playable) {
         this.playable = playable;
     }
 

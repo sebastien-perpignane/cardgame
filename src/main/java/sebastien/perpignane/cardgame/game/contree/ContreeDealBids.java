@@ -1,11 +1,12 @@
 package sebastien.perpignane.cardgame.game.contree;
 
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
+import sebastien.perpignane.cardgame.player.util.PlayerSlot;
 
 import java.util.*;
 import java.util.function.Predicate;
 
-public class ContreeDealBids {
+class ContreeDealBids {
 
     private final static int INITIAL_MAX_BIDS = 4;
 
@@ -15,7 +16,9 @@ public class ContreeDealBids {
 
     private ContreeBidPlayers bidPlayers;
 
-    private ContreePlayer currentBidder;
+    //private ContreePlayer currentBidder;
+
+    private PlayerSlot<ContreePlayer> currentBidderSlot = new PlayerSlot<>();
 
     private BiddableValuesFilter.BidFilterResult currentBidderFilterResult;
 
@@ -28,9 +31,9 @@ public class ContreeDealBids {
 
     public void startBids(ContreeBidPlayers bidPlayers) {
         this.bidPlayers = bidPlayers;
-        currentBidder = bidPlayers.getCurrentBidder();
-        currentBidderFilterResult = biddableValuesFilter.biddableValues(currentBidder, this);
-        currentBidder.onPlayerTurnToBid(currentBidderFilterResult.biddableValues());
+        currentBidderSlot = bidPlayers.getCurrentBidderSlot();
+        currentBidderFilterResult = biddableValuesFilter.biddableValues(currentBidderSlot.getPlayer().orElseThrow(), this);
+        currentBidderSlot.getPlayer().orElseThrow().onPlayerTurnToBid(currentBidderFilterResult.biddableValues());
     }
 
     public void placeBid(ContreeBid bid) {
@@ -48,27 +51,19 @@ public class ContreeDealBids {
         }
 
         if (bidsAreOver()) {
-            currentBidder = null;
+            currentBidderSlot = new PlayerSlot<>();
         }
         else {
             bidPlayers.goToNextBidder();
-            currentBidder = bidPlayers.getCurrentBidder();
-            currentBidderFilterResult = biddableValuesFilter.biddableValues(currentBidder, this);
-            currentBidder.onPlayerTurnToBid(currentBidderFilterResult.biddableValues());
+            currentBidderSlot = bidPlayers.getCurrentBidderSlot();
+            currentBidderFilterResult = biddableValuesFilter.biddableValues(currentBidderSlot.getPlayer().orElseThrow(), this);
+            currentBidderSlot.getPlayer().orElseThrow().onPlayerTurnToBid(currentBidderFilterResult.biddableValues());
         }
 
     }
 
     public boolean bidsAreOver() {
         return bids.size() == maxBids || bids.stream().anyMatch(ContreeBid::isRedouble);
-    }
-
-    public void updateCurrentBidder(ContreePlayer newPlayer) {
-        if (currentBidder == null) {
-            throw new IllegalStateException("There is no current bidder, it cannot be updated");
-        }
-        currentBidder = newPlayer;
-        currentBidder.onPlayerTurnToBid(currentBidderFilterResult.biddableValues());
     }
 
     static class BidNotAllowedException extends RuntimeException  {
@@ -97,8 +92,8 @@ public class ContreeDealBids {
             throw new BidNotAllowedException("Bids are over", true);
         }
 
-        if (currentBidder != bid.player()) {
-            throw new BidNotAllowedException(String.format("Cheater detected : player %s is not the current bidder. Current bidder is: %s", bid.player(), currentBidder ), true);
+        if (currentBidderSlot.getPlayer().orElseThrow() != bid.player()) {
+            throw new BidNotAllowedException(String.format("Cheater detected : player %s is not the current bidder. Current bidder is: %s", bid.player(), currentBidderSlot.getPlayer().orElseThrow() ), true);
         }
 
         if (exclusionCauseByBidValue.containsKey(bid.bidValue())) {
@@ -143,7 +138,7 @@ public class ContreeDealBids {
     }
 
     public Optional<ContreePlayer> getCurrentBidder() {
-        return Optional.ofNullable(currentBidder);
+        return currentBidderSlot.getPlayer();
     }
 
 }

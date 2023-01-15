@@ -23,7 +23,7 @@ public abstract class AbstractGameEventSender {
         gameObservers.add(observer);
     }
 
-    public void sendStateEvent(GameState oldState, GameState newState) {
+    public void sendStateEvent(GameStatus oldState, GameStatus newState) {
         gameObservers.forEach(go -> go.onStateUpdated(oldState, newState));
     }
 

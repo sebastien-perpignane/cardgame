@@ -10,6 +10,8 @@ import java.util.Set;
 
 public interface ContreePlayer extends Player<ContreeGame, ContreeTeam> {
 
+    String getId();
+
     void onPlayerTurnToBid(Set<ContreeBidValue> allowedBidValues);
 
     void onPlayerTurn(Set<ClassicalCard> allowedCards);
@@ -23,5 +25,17 @@ public interface ContreePlayer extends Player<ContreeGame, ContreeTeam> {
     void leaveGame();
 
     String getName();
+
+    /**
+     * Provide minimal state data about the player state useful for client app. Can be sent to other players of the game.
+     * @return minimal player state
+     */
+    ContreePlayerState toState();
+
+    /**
+     * Provide complete state data about the player state useful for client app. Must be sent to the given player only.
+     * @return full player state
+     */
+    FullContreePlayerState toFullState();
 
 }

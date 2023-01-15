@@ -11,6 +11,7 @@ import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
+import sebastien.perpignane.cardgame.player.util.PlayerSlot;
 
 import java.util.*;
 
@@ -25,8 +26,6 @@ class ContreeDealsTest extends TestCasesManagingPlayers {
 
     private ContreeDeals deals;
 
-    private ContreePlayer newPlayer;
-
     @BeforeAll
     public static void globalSetUp() {
         initPlayers();
@@ -38,15 +37,15 @@ class ContreeDealsTest extends TestCasesManagingPlayers {
         ContreeGameEventSender eventSender = mock(ContreeGameEventSender.class);
 
         ContreeBidPlayers bidPlayers = mock(ContreeBidPlayers.class);
-        when(bidPlayers.getCurrentBidder()).thenAnswer(AdditionalAnswers.returnsElementsOf(players));
+        when(bidPlayers.getCurrentBidderSlot()).thenAnswer(AdditionalAnswers.returnsElementsOf(playerSlots));
 
         dealPlayers = mock(ContreeDealPlayers.class);
         when(dealPlayers.getNumberOfPlayers()).thenReturn(ContreePlayers.NB_PLAYERS);
         when(dealPlayers.buildBidPlayers()).thenReturn(bidPlayers);
 
         ContreeTrickPlayers trickPlayers = mock(ContreeTrickPlayers.class);
-        List<ContreePlayer> multipliedPlayers = loopingPlayers(8);
-        when(trickPlayers.getCurrentPlayer()).thenAnswer(AdditionalAnswers.returnsElementsOf(multipliedPlayers));
+        List<PlayerSlot<ContreePlayer>> multipliedPlayerSlots = loopingPlayerSlots(8);
+        when(trickPlayers.getCurrentPlayerSlot()).thenAnswer(AdditionalAnswers.returnsElementsOf(multipliedPlayerSlots));
         when(dealPlayers.buildTrickPlayers()).thenReturn(trickPlayers);
 
         BiddableValuesFilter biddableValuesFilter = mock(BiddableValuesFilter.class);
@@ -64,8 +63,6 @@ class ContreeDealsTest extends TestCasesManagingPlayers {
                 new HashSet<>(Arrays.stream(ContreeBidValue.values()).toList()),
                 Collections.emptyMap()
         ));
-
-        newPlayer = mock(ContreePlayer.class);
 
         deals = new ContreeDeals(gameScore, dealScoreCalculator, biddableValuesFilter, filter, cardDealer, eventSender);
 
@@ -156,72 +153,6 @@ class ContreeDealsTest extends TestCasesManagingPlayers {
 
             i++;
         }
-    }
-
-    @DisplayName("No exception when managing a replaced player on not started deals")
-    @Test
-    public void testManageReplacedPlayer_notStartedDeals() {
-
-        boolean exception = false;
-
-        when(player1.isBot()).thenReturn(false);
-
-        try {
-            deals.manageReplacedPlayer(player1, newPlayer);
-        }
-        catch(Exception e) {
-            exception = true;
-        }
-
-        assertFalse(exception);
-
-    }
-
-    @DisplayName("No exception when managing a replaced player on started deals")
-    @Test
-    public void testManageReplacedPlayer_startedDeals() {
-
-        boolean exception = false;
-
-        when(player1.isBot()).thenReturn(false);
-
-        deals.startDeals("TEST", dealPlayers);
-
-        try {
-            deals.manageReplacedPlayer(player1, newPlayer);
-        }
-        catch(Exception e) {
-            exception = true;
-        }
-
-        assertFalse(exception);
-
-    }
-
-    @DisplayName("No exception when managing a replaced player on started deals")
-    @Test
-    public void testManageReplacedPlayer_startedDealsAndPlayStepStarted() {
-
-        boolean exception = false;
-
-        when(player1.isBot()).thenReturn(false);
-
-        deals.startDeals("TEST", dealPlayers);
-        deals.placeBid(player1, ContreeBidValue.EIGHTY, CardSuit.DIAMONDS);
-        deals.placeBid(player2, ContreeBidValue.PASS, null);
-        deals.placeBid(player3, ContreeBidValue.PASS, null);
-        deals.placeBid(player4, ContreeBidValue.PASS, null);
-
-
-        try {
-            deals.manageReplacedPlayer(player1, newPlayer);
-        }
-        catch(Exception e) {
-            exception = true;
-        }
-
-        assertFalse(exception);
-
     }
 
 }

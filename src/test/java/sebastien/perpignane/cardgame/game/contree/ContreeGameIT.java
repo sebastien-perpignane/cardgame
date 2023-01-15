@@ -4,12 +4,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.game.BlockingQueueGameObserver;
 import sebastien.perpignane.cardgame.game.GameTextDisplayer;
-import sebastien.perpignane.cardgame.player.contree.event.handler.ContreePlayerEventHandlerImpl;
-import sebastien.perpignane.cardgame.player.contree.event.handler.handlers.ContreeBotPlayerEventHandler;
-import sebastien.perpignane.cardgame.player.contree.local.thread.ThreadContreeBotPlayer;
+import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
+import sebastien.perpignane.cardgame.player.contree.ContreePlayerImpl;
+import sebastien.perpignane.cardgame.player.contree.handlers.BiddingBotEventHandler;
+import sebastien.perpignane.cardgame.player.contree.handlers.ContreeBotPlayerEventHandler;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -26,12 +26,12 @@ public class ContreeGameIT {
     public void testRunGameWithBotsPlayingRandomCards() throws InterruptedException {
         ContreeGame game = ContreeGameFactory.createGame(500);
         game.registerAsGameObserver(GameTextDisplayer.getInstance());
-        ThreadContreeBotPlayer player1 = new BiddingThreadContreeBotPlayer(ContreeBidValue.EIGHTY, CardSuit.HEARTS);
+        ContreePlayer player1 = new ContreePlayerImpl(new BiddingBotEventHandler());
 
         game.joinGame(player1);
-        game.joinGame(new ContreePlayerEventHandlerImpl(new ContreeBotPlayerEventHandler()));
-        game.joinGame(new ContreePlayerEventHandlerImpl(new ContreeBotPlayerEventHandler()));
-        game.joinGame(new ContreePlayerEventHandlerImpl(new ContreeBotPlayerEventHandler()));
+        game.joinGame(new ContreePlayerImpl(new ContreeBotPlayerEventHandler()));
+        game.joinGame(new ContreePlayerImpl(new ContreeBotPlayerEventHandler()));
+        game.joinGame(new ContreePlayerImpl(new ContreeBotPlayerEventHandler()));
         var endOfGame = waitForEndOfGameEvent(game);
         assertTrue(endOfGame);
 
@@ -42,7 +42,6 @@ public class ContreeGameIT {
 
         BlockingQueue<String> msgQueue = new ArrayBlockingQueue<>(1);
         game.registerAsGameObserver(new BlockingQueueGameObserver(msgQueue));
-
 
         String msg = msgQueue.poll(10, TimeUnit.SECONDS);
         if ("END_OF_GAME".equals(msg)) {

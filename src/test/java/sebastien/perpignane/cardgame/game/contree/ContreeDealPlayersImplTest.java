@@ -30,20 +30,25 @@ public class ContreeDealPlayersImplTest extends TestCasesManagingPlayers {
         ContreeGamePlayers gamePlayers = mock(ContreeGamePlayers.class);
         when(gamePlayers.getGamePlayers()).thenReturn(players);
 
+        ContreeGamePlayerSlots playerSlots = new ContreeGamePlayerSlots();
+        for (int i = 0; i < players.size(); i++) {
+            playerSlots.addPlayerToSlotIndex(i, players.get(i));
+        }
+        when(gamePlayers.getPlayerSlots()).thenReturn(playerSlots);
+
         dealPlayers =  new ContreeDealPlayersImpl(gamePlayers);
 
         dealWith80_club_contract_by_player1 = MockDealBuilder.builder()
                 .withDealContractBid(
-                        new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.CLUBS)
+                    new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.CLUBS)
                 )
                 .build();
 
         dealWith80_club_contract_by_player2 = MockDealBuilder.builder()
                 .withDealContractBid(
-                        new ContreeBid(player2, ContreeBidValue.EIGHTY, CardSuit.CLUBS)
+                    new ContreeBid(player2, ContreeBidValue.EIGHTY, CardSuit.CLUBS)
                 )
                 .build();
-
     }
 
     @DisplayName("When the contract bid is owned by a team 1 player, team 1 is the attack team and team 2 is the defense team")
@@ -98,6 +103,16 @@ public class ContreeDealPlayersImplTest extends TestCasesManagingPlayers {
 
     }
 
+    @DisplayName("prout")
+    @Test
+    public void testGetPlayerSlots() {
+
+        dealPlayers.setCurrentDeal(dealWith80_club_contract_by_player1);
+
+        assertEquals(players, dealPlayers.getCurrentDealPlayerSlots().stream().map(ps -> ps.getPlayer().orElseThrow()).toList());
+
+    }
+
     @DisplayName("setCurrentDeal throws an exception if the same deal is set multiple times")
     @Test
     public void testSetSameCurrentDealTwiceThrowsException() {
@@ -128,8 +143,8 @@ public class ContreeDealPlayersImplTest extends TestCasesManagingPlayers {
         ContreeTrickPlayers trickPlayers = dealPlayers.buildTrickPlayers();
 
         assertNotNull(trickPlayers);
-        assertNotNull(trickPlayers.getCurrentPlayer());
-        assertSame(player1, trickPlayers.getCurrentPlayer());
+        assertTrue(trickPlayers.getCurrentPlayerSlot().getPlayer().isPresent());
+        assertSame(player1, trickPlayers.getCurrentPlayerSlot().getPlayer().get());
     }
 
     @DisplayName("buildTrickPlayers builds a valid object, with expected current bidder")
@@ -139,9 +154,18 @@ public class ContreeDealPlayersImplTest extends TestCasesManagingPlayers {
         ContreeBidPlayers bidPlayers = dealPlayers.buildBidPlayers();
 
         assertNotNull(bidPlayers);
-        assertNotNull(bidPlayers.getCurrentBidder());
-        assertSame(player1, bidPlayers.getCurrentBidder());
+        assertTrue(bidPlayers.getCurrentBidderSlot().getPlayer().isPresent());
+        assertSame(player1, bidPlayers.getCurrentBidderSlot().getPlayer().get());
 
+    }
+
+    @DisplayName("indexOf returns the expected index of the player")
+    @Test
+    public void testIndexOf() {
+        assertEquals(0, dealPlayers.indexOf(player1));
+        assertEquals(1, dealPlayers.indexOf(player2));
+        assertEquals(2, dealPlayers.indexOf(player3));
+        assertEquals(3, dealPlayers.indexOf(player4));
     }
 
 }

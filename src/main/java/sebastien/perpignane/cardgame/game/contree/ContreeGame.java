@@ -4,7 +4,7 @@ import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.AbstractGame;
 import sebastien.perpignane.cardgame.game.GameObserver;
-import sebastien.perpignane.cardgame.game.GameState;
+import sebastien.perpignane.cardgame.game.GameStatus;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
@@ -29,7 +29,7 @@ public class ContreeGame extends AbstractGame<ContreePlayer> {
         this.gamePlayers = gamePlayers;
         this.gameDeals = gameDeals;
         this.gameEventSender = eventSender;
-        updateState(GameState.WAITING_FOR_PLAYERS);
+        updateState(GameStatus.WAITING_FOR_PLAYERS);
     }
 
     @Override
@@ -43,27 +43,26 @@ public class ContreeGame extends AbstractGame<ContreePlayer> {
         }
         JoinGameResult joinGameResult = gamePlayers.joinGame(p);
         p.setGame(this);
-        if (joinGameResult.replacedPlayer() != null) {
-            p.receiveHand(joinGameResult.replacedPlayer().getHand());
+        if (joinGameResult.replacedPlayer().isPresent()) {
+            p.receiveHand(joinGameResult.replacedPlayer().get().getHand());
         }
         gameEventSender.sendJoinedGameEvent(this, joinGameResult.playerIndex(), p);
         if (isStarted()) {
 
-            if (joinGameResult.replacedPlayer() == null) {
+            if ( joinGameResult.replacedPlayer().isEmpty() ) {
                 throw new IllegalStateException("When game is already started, if a new player joins the game, joinGameResult.replacedPlayer must not be null");
             }
-
-            gameDeals.manageReplacedPlayer(joinGameResult.replacedPlayer(), p);
-            joinGameResult.replacedPlayer().onGameEjection();
+            joinGameResult.replacedPlayer().get().onGameEjection();
             p.onGameStarted();
         }
         if (gamePlayers.isFull() && !isStarted()) {
-            updateState(GameState.STARTED);
+            updateState(GameStatus.STARTED);
             startGame();
         }
     }
 
     public synchronized void leaveGame(ContreePlayer leavingPlayer) {
+
         if (isOver()) {
             return;
         }
@@ -72,8 +71,8 @@ public class ContreeGame extends AbstractGame<ContreePlayer> {
         newPlayer.receiveHand(leavingPlayer.getHand());
         if (isStarted()) {
             newPlayer.onGameStarted();
-            gameDeals.manageReplacedPlayer(leavingPlayer, newPlayer);
         }
+
     }
 
     private void startGame() {
@@ -94,7 +93,7 @@ public class ContreeGame extends AbstractGame<ContreePlayer> {
         gameEventSender.sendPlayedCardEvent(player, card);
         gameDeals.playCard(player, card);
         if (gameDeals.isMaximumScoreReached()) {
-            updateState(GameState.OVER);
+            updateState(GameStatus.OVER);
             getPlayers().forEach(ContreePlayer::onGameOver);
             gameEventSender.sendEndOfGameEvent(this);
         }
@@ -129,6 +128,17 @@ public class ContreeGame extends AbstractGame<ContreePlayer> {
 
     public int getNbDeals() {
         return gameDeals.getNbDeals();
+    }
+
+    public ContreeGameState toState() {
+        return new ContreeGameState(
+                getGameId(),
+                getStatus(),
+                gamePlayers.getGamePlayers().stream().map(p -> p == null ? null : p.toState()).toList(),
+                gameDeals.getGameScore().getTeamScore(ContreeTeam.TEAM1),
+                gameDeals.getGameScore().getTeamScore(ContreeTeam.TEAM2),
+                gameDeals.getGameScore().getMaxScore()
+        );
     }
 
 }

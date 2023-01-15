@@ -64,11 +64,7 @@ public class ContreeTricks {
     public void playerPlays(ContreePlayer player, ClassicalCard card) {
         currentTrick.playerPlays(player, card);
         if ( currentTrick.isOver() ) {
-
-            var displayCards = currentTrick.getPlayedCards().stream().map(pc -> String.format("%s : %s", pc.player(), pc.card().getCard())).collect(Collectors.joining(", "));
-            eventSender.sendEndOfTrickEvent(currentTrick.getTrickId(), currentTrick.getWinnerTeam());
-            //System.out.printf("Trick %s won by %s. Cards : %s%n", currentTrick, currentTrick.getWinner().orElseThrow(), displayCards);
-
+            eventSender.sendEndOfTrickEvent(currentTrick.getTrickId(), currentTrick.getWinner().orElseThrow());
             if ( tricks.size() == NB_TRICKS_PER_DEAL ) {
                 tricksAreOver = true;
                 currentTrick = null;
@@ -78,13 +74,6 @@ public class ContreeTricks {
             }
 
         }
-    }
-
-    public void updateCurrentPlayer(ContreePlayer newPlayer) {
-        if (currentTrick == null) {
-            throw new IllegalStateException("There is not current trick on which current player can be updated");
-        }
-        currentTrick.updateCurrentPlayer(newPlayer);
     }
 
     public boolean tricksAreOver() {
@@ -124,16 +113,10 @@ public class ContreeTricks {
     }
 
     Optional<ContreeTrick> lastTrick() {
-        if (tricks.isEmpty()) {
-            return Optional.empty();
-        }
-        return Optional.of(tricks.get(tricks.size() - 1));
+        return tricks.isEmpty() ? Optional.empty() : Optional.of(tricks.get(tricks.size() - 1));
     }
 
     public boolean isCapot() {
-        if (teamWhoDidCapot().isEmpty()) {
-            return false;
-        }
         return teamWhoDidCapot().isPresent();
     }
 
@@ -150,10 +133,7 @@ public class ContreeTricks {
     }
 
     public Optional<ContreePlayer> getCurrentPlayer() {
-        if (currentTrick == null) {
-            return Optional.empty();
-        }
-        return currentTrick.getCurrentPlayer();
+        return currentTrick == null ? Optional.empty() : currentTrick.getCurrentPlayer();
     }
 
 }

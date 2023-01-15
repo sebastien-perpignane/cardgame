@@ -25,7 +25,7 @@ public class ContreeTrickLifeCycleTest extends TestCasesManagingPlayers {
     void setUp() {
 
         ContreeTrickPlayers trickPlayers = mock(ContreeTrickPlayers.class);
-        when(trickPlayers.getCurrentPlayer()).thenAnswer(AdditionalAnswers.returnsElementsOf(players));
+        when(trickPlayers.getCurrentPlayerSlot()).thenAnswer(AdditionalAnswers.returnsElementsOf(playerSlots));
 
         ContreeDeal deal = mock(ContreeDeal.class);
         when(deal.getTrumpSuit()).thenReturn(CardSuit.HEARTS);

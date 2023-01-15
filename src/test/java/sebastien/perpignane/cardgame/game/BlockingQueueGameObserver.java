@@ -17,7 +17,7 @@ public class BlockingQueueGameObserver implements GameObserver {
     }
 
     @Override
-    public void onStateUpdated(GameState oldState, GameState newState) {
+    public void onStateUpdated(GameStatus oldState, GameStatus newState) {
 
     }
 

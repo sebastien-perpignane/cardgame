@@ -8,7 +8,7 @@ import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 
 public interface GameObserver extends CardGameObserver {
 
-    void onStateUpdated(GameState oldState, GameState newState);
+    void onStateUpdated(GameStatus oldState, GameStatus newState);
 
     void onCardPlayed(Player<?, ?> player, ClassicalCard card);
 

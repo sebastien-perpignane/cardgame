@@ -2,6 +2,7 @@ package sebastien.perpignane.cardgame.game.contree;
 
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
+import sebastien.perpignane.cardgame.player.util.PlayerSlot;
 
 import java.util.Set;
 
@@ -23,19 +24,19 @@ public class ContreeTrickPlayersImpl implements ContreeTrickPlayers {
             currentPlayerIndex = 0;
         }
         else {
-            currentPlayerIndex = dealPlayers.getCurrentDealPlayers().indexOf(this.currentTrick.getWinner().orElseThrow());
+            currentPlayerIndex = dealPlayers.indexOf(this.currentTrick.getWinner().orElseThrow());
         }
         this.currentTrick = currentTrick;
     }
 
     @Override
-    public ContreePlayer getCurrentPlayer() {
-        return dealPlayers.getCurrentDealPlayers().get(currentPlayerIndex);
+    public PlayerSlot<ContreePlayer> getCurrentPlayerSlot() {
+        return dealPlayers.getCurrentDealPlayerSlots().get(currentPlayerIndex);
     }
 
     @Override
     public void gotToNextPlayer() {
-        if (currentPlayerIndex + 1 == dealPlayers.getCurrentDealPlayers().size()) {
+        if (currentPlayerIndex + 1 == dealPlayers.getCurrentDealPlayerSlots().size()) {
             currentPlayerIndex = 0;
         }
         else {
@@ -46,7 +47,7 @@ public class ContreeTrickPlayersImpl implements ContreeTrickPlayers {
 
     @Override
     public void notifyCurrentPlayerTurn(Set<ClassicalCard> allowedCards) {
-        var currentPlayer = dealPlayers.getCurrentDealPlayers().get(currentPlayerIndex);
+        var currentPlayer = dealPlayers.getCurrentDealPlayerSlots().get(currentPlayerIndex).getPlayer().orElseThrow();
         currentPlayer.onPlayerTurn(allowedCards);
     }
 }

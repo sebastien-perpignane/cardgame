@@ -1,15 +1,15 @@
-package sebastien.perpignane.cardgame.player.contree.event.handler.handlers;
+package sebastien.perpignane.cardgame.player.contree.handlers;
 
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.contree.ContreeBidValue;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
+import sebastien.perpignane.cardgame.player.contree.ContreePlayerEventHandler;
 import sebastien.perpignane.cardgame.player.contree.MessageType;
 import sebastien.perpignane.cardgame.player.contree.PlayerMessage;
-import sebastien.perpignane.cardgame.player.contree.event.handler.ContreePlayerEventHandler;
 
 import java.util.Set;
 
-public abstract class ThreadLocalContreePlayerEventHandler extends ThreadPlayerEventHandler<ContreePlayer, PlayerMessage> implements ContreePlayerEventHandler {
+public abstract class ThreadLocalContreePlayerEventHandler extends AbstractThreadPlayerEventHandler<ContreePlayer, PlayerMessage> implements ContreePlayerEventHandler {
 
     private ContreePlayer player;
 
@@ -59,7 +59,7 @@ public abstract class ThreadLocalContreePlayerEventHandler extends ThreadPlayerE
             case BID -> manageBidMessage(playerMessage);
             case GAME_OVER, EJECTED ->  mustExit = true;
             case GAME_STARTED -> {
-                // Directly managed by the onGameStarted method
+                // Directly managed by the onGameStarted method, to start the thread
             }
             default -> throw new IllegalArgumentException( String.format( "Unknown message type: %s", playerMessage.messageType() ) );
         }

@@ -6,7 +6,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class BiddableValuesFilter {
+class BiddableValuesFilter {
 
     public record BidFilterResult(Set<ContreeBidValue> biddableValues, Map<ContreeBidValue, String> exclusionCauseByBidValue) {
         public BidFilterResult {
