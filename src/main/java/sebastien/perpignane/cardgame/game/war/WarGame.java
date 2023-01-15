@@ -32,8 +32,8 @@ public class WarGame extends AbstractGame<WarPlayer> {
     public WarGame(CardGameObserver... observers) {
         super();
         warGameEventSender = new WarGameEventSender(observers);
-        updateState(GameState.NOT_INITIALIZED);
-        updateState(GameState.INITIALIZED);
+        updateState(GameStatus.NOT_INITIALIZED);
+        updateState(GameStatus.INITIALIZED);
     }
 
     public void startGame(List<ClassicalCard> shuffledCards) {
@@ -42,14 +42,14 @@ public class WarGame extends AbstractGame<WarPlayer> {
             throw new IllegalStateException("2 players are required");
         }
 
-        updateState(GameState.STARTING);
+        updateState(GameStatus.STARTING);
 
         distributeCardsToPlayers(shuffledCards);
         currentPlayer = playerIterator.next();
 
         currentTrick = new WarTrick(trickId(), players, warGameEventSender);
 
-        updateState(GameState.STARTED);
+        updateState(GameStatus.STARTED);
         warGameEventSender.sendNextPlayerEvent(currentPlayer);
         letKnowPlayers();
     }
@@ -128,7 +128,7 @@ public class WarGame extends AbstractGame<WarPlayer> {
 
             tricks.add(currentTrick);
             if (endOfGameCondition()) {
-                updateState(GameState.OVER);
+                updateState(GameStatus.OVER);
                 computeWinner();
                 warGameEventSender.sendEndOfGameEvent(this);
                 getPlayers().forEach(WarPlayer::onGameOver);

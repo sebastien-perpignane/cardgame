@@ -5,8 +5,9 @@ import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
 import java.util.List;
+import java.util.Optional;
 
-record JoinGameResult(int playerIndex, ContreePlayer replacedPlayer) {}
+record JoinGameResult(int playerIndex, Optional<ContreePlayer> replacedPlayer) {}
 
 public interface ContreeGamePlayers extends ContreePlayers {
 
@@ -38,6 +39,8 @@ public interface ContreeGamePlayers extends ContreePlayers {
     boolean isJoinableByHumanPlayers();
 
     List<ContreePlayer> getGamePlayers();
+
+    ContreeGamePlayerSlots getPlayerSlots();
 
     int getNbPlayers();
 

@@ -26,6 +26,12 @@ class ContreeTrickPlayersImplTest extends TestCasesManagingPlayers {
 
         ContreeDealPlayers dealPlayers = mock(ContreeDealPlayers.class);
         when(dealPlayers.getCurrentDealPlayers()).thenReturn(players);
+        when(dealPlayers.getCurrentDealPlayerSlots()).thenReturn(playerSlots);
+        when(dealPlayers.indexOf(player1)).thenReturn(0);
+        when(dealPlayers.indexOf(player2)).thenReturn(1);
+        when(dealPlayers.indexOf(player3)).thenReturn(2);
+        when(dealPlayers.indexOf(player4)).thenReturn(3);
+
 
         trickPlayers = new ContreeTrickPlayersImpl(dealPlayers);
 
@@ -35,7 +41,8 @@ class ContreeTrickPlayersImplTest extends TestCasesManagingPlayers {
     @Test
     public void testCurrentPlayerAfterConstruction() {
 
-        assertSame(player1, trickPlayers.getCurrentPlayer());
+        assertTrue(trickPlayers.getCurrentPlayerSlot().getPlayer().isPresent());
+        assertSame(player1, trickPlayers.getCurrentPlayerSlot().getPlayer().get());
 
     }
 
@@ -43,7 +50,8 @@ class ContreeTrickPlayersImplTest extends TestCasesManagingPlayers {
     @Test
     public void testCurrentPlayerAfterCallToNext() {
         trickPlayers.gotToNextPlayer();
-        assertSame(player2, trickPlayers.getCurrentPlayer());
+        assertTrue(trickPlayers.getCurrentPlayerSlot().getPlayer().isPresent());
+        assertSame(player2, trickPlayers.getCurrentPlayerSlot().getPlayer().get());
     }
 
     @DisplayName("After four calls to next, current player is player1")
@@ -54,7 +62,8 @@ class ContreeTrickPlayersImplTest extends TestCasesManagingPlayers {
         trickPlayers.gotToNextPlayer();
         trickPlayers.gotToNextPlayer();
 
-        assertSame(player1, trickPlayers.getCurrentPlayer());
+        assertTrue(trickPlayers.getCurrentPlayerSlot().getPlayer().isPresent());
+        assertSame(player1, trickPlayers.getCurrentPlayerSlot().getPlayer().get());
     }
 
     @DisplayName("The expected current player is notified when notifyCurrentPlayerTurn is called")
@@ -65,7 +74,8 @@ class ContreeTrickPlayersImplTest extends TestCasesManagingPlayers {
 
         boolean[] expectedCalledPlayers = {false, false, false, false};
 
-        assertSame(player1, trickPlayers.getCurrentPlayer());
+        assertTrue(trickPlayers.getCurrentPlayerSlot().getPlayer().isPresent());
+        assertSame(player1, trickPlayers.getCurrentPlayerSlot().getPlayer().get());
 
         for (int testedPlayerIndex = 0 ; testedPlayerIndex < 4 ; testedPlayerIndex++) {
             expectedCalledPlayers[testedPlayerIndex] = true;
@@ -92,7 +102,8 @@ class ContreeTrickPlayersImplTest extends TestCasesManagingPlayers {
 
         trickPlayers.setCurrentTrick(firstTrick);
 
-        assertEquals(player1, trickPlayers.getCurrentPlayer());
+        assertTrue(trickPlayers.getCurrentPlayerSlot().getPlayer().isPresent());
+        assertEquals(player1, trickPlayers.getCurrentPlayerSlot().getPlayer().get());
     }
 
     @DisplayName("When setting second current trick, currentPlayer is the winner of the first trick")
@@ -105,12 +116,14 @@ class ContreeTrickPlayersImplTest extends TestCasesManagingPlayers {
         ContreeTrick secondTrick = mock(ContreeTrick.class);
 
         trickPlayers.setCurrentTrick(firstTrick);
+
+
         trickPlayers.setCurrentTrick(secondTrick);
 
-        assertSame(player4, trickPlayers.getCurrentPlayer());
+        assertSame(player4, trickPlayers.getCurrentPlayerSlot().getPlayer().orElseThrow());
 
         trickPlayers.gotToNextPlayer();
-        assertSame(player1, trickPlayers.getCurrentPlayer());
+        assertSame(player1, trickPlayers.getCurrentPlayerSlot().getPlayer().orElseThrow());
 
     }
 

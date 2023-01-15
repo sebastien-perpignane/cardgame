@@ -1,4 +1,4 @@
-package sebastien.perpignane.cardgame.player.contree.event.handler.handlers;
+package sebastien.perpignane.cardgame.player.contree.handlers;
 
 import sebastien.perpignane.cardgame.card.CardRank;
 import sebastien.perpignane.cardgame.card.CardSet;
@@ -65,6 +65,11 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
     public ContreeLocalPlayerEventHandler(Scanner scanner, String name) {
         this.name = name;
         this.scanner = scanner;
+    }
+
+    @Override
+    public void onReceivedHand(Collection<ClassicalCard> hand) {
+        // Do nothing, hand is displayed every time it is needed by the manage* methods
     }
 
     @Override

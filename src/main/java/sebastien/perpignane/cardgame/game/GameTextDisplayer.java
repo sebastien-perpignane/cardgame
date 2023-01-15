@@ -47,7 +47,7 @@ public class GameTextDisplayer implements GameObserver, WarTrickObserver, Contre
     }
 
     @Override
-    public void onStateUpdated(GameState oldState, GameState newState) {
+    public void onStateUpdated(GameStatus oldState, GameStatus newState) {
         out.printf("Game state changed from %s to %s%n", oldState, newState);
     }
 
@@ -256,9 +256,9 @@ Final score :
     }
 
     @Override
-    public void onEndOfTrick(String trickId, ContreeTeam winner) {
-        String winnerText = winner == null ? "" : String.format(" Winner is %s", winner.name());
-        out.printf("Trick %s is over.%s", trickId, winnerText);
+    public void onEndOfTrick(String trickId, ContreePlayer winner) {
+        String winnerText = winner == null ? "" : String.format(" Winner is %s (%s)", winner.getName(), winner.getTeam().orElseThrow());
+        out.printf("Trick %s is over.%s%n", trickId, winnerText);
     }
 
 }

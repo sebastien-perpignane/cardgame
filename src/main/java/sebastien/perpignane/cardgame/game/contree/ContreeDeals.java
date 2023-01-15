@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-public class ContreeDeals {
+class ContreeDeals {
 
     private String gameId;
 
@@ -105,43 +105,6 @@ public class ContreeDeals {
         }
     }
 
-    public void manageReplacedPlayer(ContreePlayer leavingPlayer, ContreePlayer newPlayer) {
-        updateCurrentBidderIfRequired(leavingPlayer, newPlayer);
-        updateCurrentPlayerIfRequired(leavingPlayer, newPlayer);
-    }
-
-    private void updateCurrentPlayerIfRequired(ContreePlayer oldPlayer, ContreePlayer newPlayer) {
-        if (isCurrentPlayer(oldPlayer)) {
-            currentDeal.updateCurrentPlayer(newPlayer);
-        }
-    }
-
-    private void updateCurrentBidderIfRequired(ContreePlayer oldPlayer, ContreePlayer newPlayer) {
-        if (isCurrentBidder(oldPlayer)) {
-            currentDeal.updateCurrentBidder(newPlayer);
-        }
-    }
-
-    private boolean isCurrentBidder(ContreePlayer player) {
-        if (currentDeal == null) {
-            return false;
-        }
-        if (currentDeal.getCurrentBidder().isEmpty()) {
-            return false;
-        }
-        return currentDeal.getCurrentBidder().get() == player;
-    }
-
-    private boolean isCurrentPlayer(ContreePlayer player) {
-        if (currentDeal == null) {
-            return false;
-        }
-        if (currentDeal.getCurrentPlayer().isEmpty()) {
-            return false;
-        }
-        return currentDeal.getCurrentPlayer().get() == player;
-    }
-
     public int getNbDeals() {
         return deals.size();
     }
@@ -162,4 +125,7 @@ public class ContreeDeals {
         return gameScore.getWinner();
     }
 
+    ContreeGameScore getGameScore() {
+        return gameScore;
+    }
 }

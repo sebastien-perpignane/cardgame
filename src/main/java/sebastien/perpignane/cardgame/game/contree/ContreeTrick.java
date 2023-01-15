@@ -6,6 +6,7 @@ import sebastien.perpignane.cardgame.card.contree.ContreeCard;
 import sebastien.perpignane.cardgame.game.Trick;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
+import sebastien.perpignane.cardgame.player.util.PlayerSlot;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,7 +29,7 @@ class ContreeTrick implements Trick {
 
     private final PlayableCardsFilter playableCardsFilter;
 
-    private ContreePlayer currentPlayer;
+    private PlayerSlot<ContreePlayer> currentPlayerSlot = new PlayerSlot<>();
 
     public ContreeTrick(ContreeDeal deal, String trickId, ContreeTrickPlayers trickPlayers, PlayableCardsFilter playableCardsFilter) {
         this.trickId = trickId;
@@ -49,9 +50,9 @@ class ContreeTrick implements Trick {
     }
 
     private void configureCurrentPlayer() {
-        currentPlayer = trickPlayers.getCurrentPlayer();
+        currentPlayerSlot = trickPlayers.getCurrentPlayerSlot();
         trickPlayers.notifyCurrentPlayerTurn(
-                playableCardsFilter.playableCards(this, currentPlayer)
+                playableCardsFilter.playableCards(this, currentPlayerSlot.getPlayer().orElseThrow())
         );
     }
 
@@ -77,7 +78,7 @@ class ContreeTrick implements Trick {
         player.removeCardFromHand(card);
         if (isOver()) {
             winner = winningPlayer();
-            currentPlayer = null;
+            currentPlayerSlot = new PlayerSlot<>(-1, null);
         }
         else {
             nextPlayer();
@@ -92,8 +93,8 @@ class ContreeTrick implements Trick {
             throw new IllegalStateException(String.format("Cheater detected : trick is over, player %s cannot play%n", player));
         }
 
-        if (player != currentPlayer) {
-            throw new IllegalArgumentException( String.format("Cheater detected -> %s is not current player!. Current player is %s%n", player, currentPlayer) );
+        if (player != currentPlayerSlot.getPlayer().orElseThrow()) {
+            throw new IllegalArgumentException( String.format("Cheater detected -> %s is not current player!. Current player is %s%n", player, currentPlayerSlot.getPlayer().orElseThrow()) );
         }
 
         var currentPlayerPlayableCards = playableCardsFilter.playableCards(this, player);
@@ -102,17 +103,6 @@ class ContreeTrick implements Trick {
             String allowedCardsStr = currentPlayerPlayableCards.stream().map( ClassicalCard::toString ).collect( Collectors.joining(",") );
             throw new IllegalArgumentException( String.format("Player %s : cheater detected -> %s is not an allowed card. Allowed cards are : %s", player, card, allowedCardsStr) );
         }
-    }
-
-    public void updateCurrentPlayer(ContreePlayer newPlayer) {
-        // TODO would be better to reference the currentPlayerIndex, replacing a leaving player would be dynamic
-        if (currentPlayer == null) {
-            throw new IllegalArgumentException("There is no current player, it cannot be updated");
-        }
-        currentPlayer = newPlayer;
-        currentPlayer.onPlayerTurn(
-            playableCardsFilter.playableCards(this, currentPlayer)
-        );
     }
 
     @Override
@@ -159,7 +149,7 @@ class ContreeTrick implements Trick {
     }
 
     public Optional<ContreePlayer> getCurrentPlayer() {
-        return Optional.ofNullable(currentPlayer);
+        return currentPlayerSlot.getPlayer();
     }
 
     @Override
@@ -168,4 +158,5 @@ class ContreeTrick implements Trick {
                 "trickId='" + trickId + '\'' +
                 '}';
     }
+
 }

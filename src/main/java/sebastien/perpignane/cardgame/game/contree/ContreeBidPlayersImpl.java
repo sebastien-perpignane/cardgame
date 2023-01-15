@@ -1,34 +1,39 @@
 package sebastien.perpignane.cardgame.game.contree;
 
-import org.apache.commons.collections4.iterators.LoopingListIterator;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
+import sebastien.perpignane.cardgame.player.util.PlayerSlot;
 
 import java.util.Set;
 
-public class ContreeBidPlayersImpl implements ContreeBidPlayers {
+class ContreeBidPlayersImpl implements ContreeBidPlayers {
 
-    private ContreePlayer currentBidder;
+    private final ContreeDealPlayers dealPlayers;
 
-    private final LoopingListIterator<ContreePlayer> biddersIterator;
+    private int currentBidderIndex;
 
     public ContreeBidPlayersImpl(ContreeDealPlayers dealPlayers) {
-        biddersIterator = new LoopingListIterator<>(dealPlayers.getCurrentDealPlayers());
-        currentBidder = biddersIterator.next();
+        this.dealPlayers = dealPlayers;
+        currentBidderIndex = 0;
     }
 
     @Override
     public void goToNextBidder() {
-        currentBidder = biddersIterator.next();
+        if (currentBidderIndex + 1 == dealPlayers.getCurrentDealPlayerSlots().size()) {
+            currentBidderIndex = 0;
+        }
+        else {
+            currentBidderIndex++;
+        }
     }
 
     @Override
-    public ContreePlayer getCurrentBidder() {
-        return currentBidder;
+    public PlayerSlot<ContreePlayer> getCurrentBidderSlot() {
+        return dealPlayers.getCurrentDealPlayerSlots().get(currentBidderIndex);
     }
 
     @Override
     public void onCurrentBidderTurnToBid(Set<ContreeBidValue> allowedBidValues) {
-        currentBidder.onPlayerTurnToBid(allowedBidValues);
+        getCurrentBidderSlot().getPlayer().orElseThrow().onPlayerTurnToBid(allowedBidValues);
     }
 
 }

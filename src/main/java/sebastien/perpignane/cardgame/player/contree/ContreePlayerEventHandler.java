@@ -1,13 +1,14 @@
-package sebastien.perpignane.cardgame.player.contree.event.handler;
+package sebastien.perpignane.cardgame.player.contree;
 
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.contree.ContreeBidValue;
-import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
-import sebastien.perpignane.cardgame.player.event.handler.PlayerEventHandler;
 
+import java.util.Collection;
 import java.util.Set;
 
 public interface ContreePlayerEventHandler extends PlayerEventHandler<ContreePlayer> {
+
+    void onReceivedHand(Collection<ClassicalCard> hand);
 
     void onPlayerTurnToBid(Set<ContreeBidValue> allowedBidValues);
 

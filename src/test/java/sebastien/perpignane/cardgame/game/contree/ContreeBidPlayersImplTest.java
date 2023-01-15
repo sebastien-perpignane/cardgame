@@ -25,6 +25,7 @@ class ContreeBidPlayersImplTest extends TestCasesManagingPlayers {
 
         ContreeDealPlayers dealPlayers = mock(ContreeDealPlayers.class);
         when(dealPlayers.getCurrentDealPlayers()).thenReturn(players);
+        when(dealPlayers.getCurrentDealPlayerSlots()).thenReturn(playerSlots);
 
         bidPlayers = new ContreeBidPlayersImpl(dealPlayers);
 
@@ -35,23 +36,28 @@ class ContreeBidPlayersImplTest extends TestCasesManagingPlayers {
     void testGoToNextBidder() {
 
         bidPlayers.goToNextBidder();
-        assertSame( player2, bidPlayers.getCurrentBidder() );
+        assertTrue(bidPlayers.getCurrentBidderSlot().getPlayer().isPresent());
+        assertSame( player2, bidPlayers.getCurrentBidderSlot().getPlayer().get() );
 
         bidPlayers.goToNextBidder();
-        assertSame( player3, bidPlayers.getCurrentBidder() );
+        assertTrue(bidPlayers.getCurrentBidderSlot().getPlayer().isPresent());
+        assertSame( player3, bidPlayers.getCurrentBidderSlot().getPlayer().get() );
 
         bidPlayers.goToNextBidder();
-        assertSame( player4, bidPlayers.getCurrentBidder() );
+        assertTrue(bidPlayers.getCurrentBidderSlot().getPlayer().isPresent());
+        assertSame( player4, bidPlayers.getCurrentBidderSlot().getPlayer().get() );
 
         bidPlayers.goToNextBidder();
-        assertSame( player1, bidPlayers.getCurrentBidder() );
+        assertTrue(bidPlayers.getCurrentBidderSlot().getPlayer().isPresent());
+        assertSame( player1, bidPlayers.getCurrentBidderSlot().getPlayer().get() );
 
     }
 
     @DisplayName("After construction, current bidder is the player1 in the player list")
     @Test
     void testGetInitialCurrentBidder() {
-        assertSame( player1, bidPlayers.getCurrentBidder() );
+        assertTrue(bidPlayers.getCurrentBidderSlot().getPlayer().isPresent());
+        assertSame( player1, bidPlayers.getCurrentBidderSlot().getPlayer().get() );
     }
 
     @Test

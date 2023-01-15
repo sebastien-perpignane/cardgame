@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.GameObserver;
-import sebastien.perpignane.cardgame.game.GameState;
+import sebastien.perpignane.cardgame.game.GameStatus;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -211,7 +211,7 @@ class ContreeGameEventSenderTest extends TestCasesManagingPlayers {
 
         gameEventSender.registerAsGameObserver(gameObserver);
 
-        gameEventSender.sendStateEvent(GameState.WAITING_FOR_PLAYERS, GameState.OVER);
+        gameEventSender.sendStateEvent(GameStatus.WAITING_FOR_PLAYERS, GameStatus.OVER);
 
         assertTrue(calledFlag[0]);
 

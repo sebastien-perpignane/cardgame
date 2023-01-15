@@ -1,11 +1,11 @@
 package sebastien.perpignane.cardgame.game.contree;
 
-import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.game.GameTextDisplayer;
-import sebastien.perpignane.cardgame.player.contree.event.handler.ContreePlayerEventHandlerImpl;
-import sebastien.perpignane.cardgame.player.contree.event.handler.handlers.ContreeBotPlayerEventHandler;
-import sebastien.perpignane.cardgame.player.contree.event.handler.handlers.ContreeLocalPlayerEventHandler;
-import sebastien.perpignane.cardgame.player.contree.local.thread.ThreadContreeBotPlayer;
+import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
+import sebastien.perpignane.cardgame.player.contree.ContreePlayerImpl;
+import sebastien.perpignane.cardgame.player.contree.handlers.BiddingBotEventHandler;
+import sebastien.perpignane.cardgame.player.contree.handlers.ContreeBotPlayerEventHandler;
+import sebastien.perpignane.cardgame.player.contree.handlers.ContreeLocalPlayerEventHandler;
 
 import java.util.Scanner;
 
@@ -31,7 +31,7 @@ public class ContreeGameMain {
             int i = 0;
             while (i < 3) {
 
-                game.joinGame(new ContreePlayerEventHandlerImpl(new ContreeBotPlayerEventHandler()));
+                game.joinGame(createBotPlayer());
                 i++;
             }
 
@@ -39,12 +39,7 @@ public class ContreeGameMain {
 
             sebastien.perpignane.cardgame.player.contree.ContreePlayer lastPlayer;
             if (onlyBots) {
-                lastPlayer = new ThreadContreeBotPlayer() {
-                    @Override
-                    protected void placeBid() {
-                        placeBid(ContreeBidValue.EIGHTY, CardSuit.HEARTS);
-                    }
-                };
+                lastPlayer = new ContreePlayerImpl(new BiddingBotEventHandler());
 
             }
             else {
@@ -59,7 +54,11 @@ public class ContreeGameMain {
 
     }
 
-    private static sebastien.perpignane.cardgame.player.contree.ContreePlayer manageHumanPlayer() {
+    private static ContreePlayer createBotPlayer() {
+        return new ContreePlayerImpl(new ContreeBotPlayerEventHandler());
+    }
+
+    private static ContreePlayer manageHumanPlayer() {
 
         String humanPlayerName = "";
         while (humanPlayerName.isBlank()) {
@@ -67,7 +66,7 @@ public class ContreeGameMain {
             humanPlayerName = scanner.nextLine();
         }
 
-        return new ContreePlayerEventHandlerImpl(humanPlayerName, new ContreeLocalPlayerEventHandler(scanner, humanPlayerName));
+        return new ContreePlayerImpl(humanPlayerName, new ContreeLocalPlayerEventHandler(scanner, humanPlayerName));
 
     }
 

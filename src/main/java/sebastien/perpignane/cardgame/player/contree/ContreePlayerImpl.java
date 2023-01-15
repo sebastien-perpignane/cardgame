@@ -1,43 +1,44 @@
-package sebastien.perpignane.cardgame.player.contree.event.handler;
+package sebastien.perpignane.cardgame.player.contree;
 
 import com.github.javafaker.Faker;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.contree.ContreeBidValue;
 import sebastien.perpignane.cardgame.game.contree.ContreeGame;
-import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
-import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
-import java.util.Collection;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
-public class ContreePlayerEventHandlerImpl implements ContreePlayer {
+public class ContreePlayerImpl implements ContreePlayer {
 
     private final static Faker faker = new Faker();
 
+    private final String id;
+
     private final ContreePlayerEventHandler playerEventHandler;
+
     private final String name;
 
-    private Collection<ClassicalCard> hand;
+    private Collection<ClassicalCard> hand = new ArrayList<>();
 
     private ContreeGame game;
 
     private ContreeTeam team;
 
-    public ContreePlayerEventHandlerImpl(String name, ContreePlayerEventHandler playerEventHandler) {
+    public ContreePlayerImpl(String name, ContreePlayerEventHandler playerEventHandler) {
+        id = UUID.randomUUID().toString();
         this.name = name;
         this.playerEventHandler = playerEventHandler;
         this.playerEventHandler.setPlayer(this);
     }
 
-    public ContreePlayerEventHandlerImpl(ContreePlayerEventHandler playerEventHandler) {
+    public ContreePlayerImpl(ContreePlayerEventHandler playerEventHandler) {
         this(faker.name().firstName(), playerEventHandler);
     }
 
     @Override
     public void receiveHand(Collection<ClassicalCard> cards) {
         this.hand = cards;
+        playerEventHandler.onReceivedHand(hand);
     }
 
     @Override
@@ -57,7 +58,7 @@ public class ContreePlayerEventHandlerImpl implements ContreePlayer {
 
     @Override
     public void receiveNewCards(Collection<ClassicalCard> cards) {
-        throw new UnsupportedOperationException("");
+        throw new UnsupportedOperationException("ContreePlayer can receive new full hand bot not new cards");
     }
 
     @Override
@@ -87,7 +88,7 @@ public class ContreePlayerEventHandlerImpl implements ContreePlayer {
 
     @Override
     public Collection<ClassicalCard> getHand() {
-        return hand;
+        return Collections.unmodifiableCollection(hand);
     }
 
     @Override
@@ -149,8 +150,26 @@ public class ContreePlayerEventHandlerImpl implements ContreePlayer {
     }
 
     @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
     public String toString() {
         String formatString = isBot() ? "%s-Bot (%s)" : "* %s (%s) *";
         return String.format(formatString, getName(), team);
     }
+
+    @Override
+    public ContreePlayerState toState() {
+        // TODO implement player status management
+        return new ContreePlayerState(getName(), ContreePlayerStatus.WAITING);
+    }
+
+    @Override
+    public FullContreePlayerState toFullState() {
+        // TODO implement player status management
+        return new FullContreePlayerState(getName(), ContreePlayerStatus.WAITING, id, hand);
+    }
+
 }

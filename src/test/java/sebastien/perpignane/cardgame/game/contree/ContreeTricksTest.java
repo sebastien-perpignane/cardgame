@@ -12,6 +12,7 @@ import sebastien.perpignane.cardgame.card.contree.ContreeCard;
 import sebastien.perpignane.cardgame.player.Team;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
+import sebastien.perpignane.cardgame.player.util.PlayerSlot;
 
 import java.util.List;
 import java.util.Map;
@@ -76,11 +77,8 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
     }
 
     private void configureTrickPlayersForNumberOfTricks(int nbTricks) {
-
-        List<ContreePlayer> multipliedPlayers = loopingPlayers(nbTricks);
-
-        when(trickPlayers.getCurrentPlayer()).thenAnswer(AdditionalAnswers.returnsElementsOf(multipliedPlayers));
-
+        List<PlayerSlot<ContreePlayer>> multipliedPlayerSlots = loopingPlayerSlots(nbTricks);
+        when(trickPlayers.getCurrentPlayerSlot()).thenAnswer(AdditionalAnswers.returnsElementsOf(multipliedPlayerSlots));
     }
 
     @DisplayName("Test state of not started tricks")
@@ -253,7 +251,7 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
 
     }
 
-    @DisplayName("When tricks are started, there is a current player so it can be updated")
+    /*@DisplayName("When tricks are started, there is a current player so it can be updated")
     @Test
     public void testUpdateCurrentPlayer_startedTricks() {
         tricksWithHeartAsTrumpSuit.startTricks(deal, trickPlayers);
@@ -282,6 +280,6 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
             () -> tricksWithHeartAsTrumpSuit.updateCurrentPlayer(newPlayer)
         );
 
-    }
+    }*/
 
 }

@@ -2,7 +2,7 @@ package sebastien.perpignane.cardgame.game.contree;
 
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.game.CardGameObserver;
-import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
+import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 
 public interface ContreeTrickObserver extends CardGameObserver {
 
@@ -10,6 +10,6 @@ public interface ContreeTrickObserver extends CardGameObserver {
 
     void onTrumpedTrick(String trickId);
 
-    void onEndOfTrick(String trickId, ContreeTeam winner);
+    void onEndOfTrick(String trickId, ContreePlayer winner);
 
 }

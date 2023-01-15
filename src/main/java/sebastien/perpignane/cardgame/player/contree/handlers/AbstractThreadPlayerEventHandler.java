@@ -1,12 +1,12 @@
-package sebastien.perpignane.cardgame.player.contree.event.handler.handlers;
+package sebastien.perpignane.cardgame.player.contree.handlers;
 
 import sebastien.perpignane.cardgame.player.Player;
-import sebastien.perpignane.cardgame.player.event.handler.PlayerEventHandler;
+import sebastien.perpignane.cardgame.player.contree.PlayerEventHandler;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-public abstract class ThreadPlayerEventHandler<P extends Player<?, ?>, M> implements PlayerEventHandler<P>, Runnable {
+public abstract class AbstractThreadPlayerEventHandler<P extends Player<?, ?>, M> implements PlayerEventHandler<P>, Runnable {
 
     private final BlockingQueue<M> gameMsgQueue = new ArrayBlockingQueue<>(54);
 

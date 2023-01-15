@@ -161,14 +161,6 @@ class ContreeDeal {
 
     }
 
-    public void updateCurrentBidder(ContreePlayer newPlayer) {
-        bids.updateCurrentBidder(newPlayer);
-    }
-
-    public void updateCurrentPlayer(ContreePlayer newPlayer) {
-        tricks.updateCurrentPlayer(newPlayer);
-    }
-
     public Optional<ContreePlayer> getCurrentPlayer() {
         if (tricks.tricksAreOver()) {
             return Optional.empty();

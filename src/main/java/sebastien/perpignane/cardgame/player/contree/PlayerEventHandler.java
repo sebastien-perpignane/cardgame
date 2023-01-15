@@ -1,4 +1,4 @@
-package sebastien.perpignane.cardgame.player.event.handler;
+package sebastien.perpignane.cardgame.player.contree;
 
 import sebastien.perpignane.cardgame.player.Player;
 

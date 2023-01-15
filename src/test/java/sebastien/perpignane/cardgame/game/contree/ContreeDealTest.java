@@ -56,8 +56,8 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
         ContreeBidPlayers bidPlayers = mock(ContreeBidPlayers.class);
         ContreeTrickPlayers trickPlayers = mock(ContreeTrickPlayers.class);
 
-        when(bidPlayers.getCurrentBidder()).thenAnswer(AdditionalAnswers.returnsElementsOf(players));
-        when(trickPlayers.getCurrentPlayer()).thenAnswer(AdditionalAnswers.returnsElementsOf(players));
+        when(bidPlayers.getCurrentBidderSlot()).thenAnswer(AdditionalAnswers.returnsElementsOf(playerSlots));
+        when(trickPlayers.getCurrentPlayerSlot()).thenAnswer(AdditionalAnswers.returnsElementsOf(playerSlots));
 
         dealPlayers = mock(ContreeDealPlayers.class);
         when(dealPlayers.buildBidPlayers()).thenReturn(bidPlayers);

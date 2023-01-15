@@ -1,9 +1,10 @@
-package sebastien.perpignane.cardgame.player.contree.event.handler.handlers;
+package sebastien.perpignane.cardgame.player.contree.handlers;
 
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.contree.ContreeBidValue;
 import sebastien.perpignane.cardgame.player.contree.PlayerMessage;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -33,6 +34,11 @@ public class ContreeBotPlayerEventHandler extends ThreadLocalContreePlayerEventH
     @Override
     void manageBidMessage(PlayerMessage bidMessage) {
         placePassBid();
+    }
+
+    @Override
+    public void onReceivedHand(Collection<ClassicalCard> hand) {
+        // Do nothing
     }
 
     @Override

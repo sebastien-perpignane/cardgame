@@ -8,7 +8,6 @@ import sebastien.perpignane.cardgame.game.GameObserver;
 import sebastien.perpignane.cardgame.player.Player;
 import sebastien.perpignane.cardgame.player.Team;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
-import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -89,7 +88,7 @@ public class ContreeGameEventSender extends AbstractGameEventSender {
         trickObservers.forEach(to -> to.onNewTrick(trickId, trumpSuit));
     }
 
-    void sendEndOfTrickEvent(String trickId, ContreeTeam winner) {
+    void sendEndOfTrickEvent(String trickId, ContreePlayer winner) {
         trickObservers.forEach(to -> to.onEndOfTrick(trickId, winner));
     }
 

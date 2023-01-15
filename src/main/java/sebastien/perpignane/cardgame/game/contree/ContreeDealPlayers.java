@@ -3,11 +3,12 @@ package sebastien.perpignane.cardgame.game.contree;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
+import sebastien.perpignane.cardgame.player.util.PlayerSlot;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface ContreeDealPlayers extends ContreePlayers {
+interface ContreeDealPlayers extends ContreePlayers {
 
     void setCurrentDeal(ContreeDeal deal);
 
@@ -21,8 +22,12 @@ public interface ContreeDealPlayers extends ContreePlayers {
 
     List<ContreePlayer> getCurrentDealPlayers();
 
+    List<PlayerSlot<ContreePlayer>> getCurrentDealPlayerSlots();
+
     ContreeBidPlayers buildBidPlayers();
 
     ContreeTrickPlayers buildTrickPlayers();
+
+    int indexOf(ContreePlayer player);
 
 }

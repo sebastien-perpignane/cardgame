@@ -1,14 +1,15 @@
 package sebastien.perpignane.cardgame.game.contree;
 
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
+import sebastien.perpignane.cardgame.player.util.PlayerSlot;
 
 import java.util.Set;
 
-public interface ContreeBidPlayers extends ContreePlayers {
+interface ContreeBidPlayers extends ContreePlayers {
 
     void goToNextBidder();
 
-    ContreePlayer getCurrentBidder();
+    PlayerSlot<ContreePlayer> getCurrentBidderSlot();
 
     void onCurrentBidderTurnToBid(Set<ContreeBidValue> allowedBidValues);
 

@@ -1,15 +1,14 @@
 package sebastien.perpignane.cardgame.game.contree;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.AdditionalAnswers;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.GameObserver;
+import sebastien.perpignane.cardgame.game.GameStatus;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,11 +30,15 @@ class ContreeGameTest extends TestCasesManagingPlayers {
     @BeforeEach
     public void setUp() {
 
+        ContreeGameScore score = mock(ContreeGameScore.class);
         gamePlayers = mock(ContreeGamePlayers.class);
         deals = mock(ContreeDeals.class);
+
+        when(deals.getGameScore()).thenReturn(score);
+
         ContreeGameEventSender eventSender = mock(ContreeGameEventSender.class);
 
-        when(gamePlayers.joinGame(any())).thenReturn(new JoinGameResult(0, null));
+        when(gamePlayers.joinGame(any())).thenReturn(new JoinGameResult(0, Optional.empty()));
 
         when(gamePlayers.isFull()).thenAnswer(
             AdditionalAnswers.returnsElementsOf(
@@ -47,6 +50,9 @@ class ContreeGameTest extends TestCasesManagingPlayers {
                 )
             )
         );
+
+
+
 
         game = new ContreeGame(gamePlayers, deals, eventSender);
     }
@@ -177,11 +183,6 @@ class ContreeGameTest extends TestCasesManagingPlayers {
             return null;
         }).when(newPlayer).receiveHand(anySet());
 
-        doAnswer(invocationOnMock -> {
-            flags.leavingPlayerManagement = true;
-            return null;
-        }).when(deals).manageReplacedPlayer(leaver, newPlayer);
-
         doAnswer((invocationOnMock -> {
             flags.updatedGame = invocationOnMock.getArgument(0);
             return null;
@@ -197,7 +198,6 @@ class ContreeGameTest extends TestCasesManagingPlayers {
         game.leaveGame(leaver);
 
         assertEquals(leaver.getHand(), flags.hand);
-        assertFalse(flags.leavingPlayerManagement);
         assertSame(game, flags.updatedGame);
         assertFalse(flags.playerGameStartedEvent);
 
@@ -222,11 +222,6 @@ class ContreeGameTest extends TestCasesManagingPlayers {
             return null;
         }).when(newPlayer).receiveHand(anySet());
 
-        doAnswer(invocationOnMock -> {
-            flags.leavingPlayerManagement = true;
-            return null;
-        }).when(deals).manageReplacedPlayer(leaver, newPlayer);
-
         doAnswer((invocationOnMock -> {
             flags.updatedGame = invocationOnMock.getArgument(0);
             return null;
@@ -240,7 +235,6 @@ class ContreeGameTest extends TestCasesManagingPlayers {
         game.leaveGame(leaver);
 
         assertEquals(leaver.getHand(), flags.hand);
-        assertTrue(flags.leavingPlayerManagement);
         assertSame(game, flags.updatedGame);
         assertTrue(flags.playerGameStartedEvent);
 
@@ -265,11 +259,6 @@ class ContreeGameTest extends TestCasesManagingPlayers {
             return null;
         }).when(newPlayer).receiveHand(anySet());
 
-        doAnswer(invocationOnMock -> {
-            flags.leavingPlayerManagement = true;
-            return null;
-        }).when(deals).manageReplacedPlayer(leaver, newPlayer);
-
         doAnswer((invocationOnMock -> {
             flags.updatedGame = invocationOnMock.getArgument(0);
             return null;
@@ -283,10 +272,43 @@ class ContreeGameTest extends TestCasesManagingPlayers {
         game.leaveGame(leaver);
 
         assertNotEquals(leaver.getHand(), flags.hand);
-        assertFalse(flags.leavingPlayerManagement);
         assertNull(flags.updatedGame);
         assertFalse(flags.playerGameStartedEvent);
 
+    }
+
+    @Test
+    @DisplayName("on a just initialized game, toState() returns a ContreeGameState object with expected data")
+    public void testGameToState_game_initialized() {
+        ContreeGameState gameState = game.toState();
+        assertNotNull(gameState);
+        assertNotNull(gameState.gameId());
+        assertSame(GameStatus.WAITING_FOR_PLAYERS, gameState.status());
+        gameState.players().forEach(Assertions::assertNull);
+    }
+
+    @Test
+    @DisplayName("on a started game, toState() returns a ContreeGameState object with expected data")
+    public void testGameToState_game_started() {
+        makeTheGameStart();
+
+        ContreeGameState gameState = game.toState();
+        assertNotNull(gameState);
+        assertNotNull(gameState.gameId());
+        assertSame(GameStatus.STARTED, gameState.status());
+        gameState.players().forEach(Assertions::assertNotNull);
+    }
+
+    @Test
+    @DisplayName("on a over game, toState() returns a ContreeGameState object with expected data")
+    public void testGameToState_game_over() {
+        makeTheGameOver();
+
+        ContreeGameState gameState = game.toState();
+        assertNotNull(gameState);
+        assertNotNull(gameState.gameId());
+        assertSame(GameStatus.OVER, gameState.status());
+        gameState.players().forEach(Assertions::assertNotNull);
     }
 
 }
@@ -294,8 +316,6 @@ class ContreeGameTest extends TestCasesManagingPlayers {
 class LeaveGameFlags {
 
     public boolean playerGameStartedEvent;
-
-    public boolean leavingPlayerManagement;
 
     public Set<ClassicalCard> hand;
 

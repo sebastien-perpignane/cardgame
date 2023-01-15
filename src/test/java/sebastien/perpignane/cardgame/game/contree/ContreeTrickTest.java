@@ -8,7 +8,6 @@ import org.mockito.AdditionalAnswers;
 import sebastien.perpignane.cardgame.card.CardSet;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
-import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 
 import java.util.Set;
 
@@ -30,7 +29,7 @@ public class ContreeTrickTest extends TestCasesManagingPlayers {
     @BeforeEach
     public void setUp() {
         ContreeTrickPlayers trickPlayers = mock(ContreeTrickPlayers.class);
-        when(trickPlayers.getCurrentPlayer()).thenAnswer(AdditionalAnswers.returnsElementsOf(players));
+        when(trickPlayers.getCurrentPlayerSlot()).thenAnswer(AdditionalAnswers.returnsElementsOf(playerSlots));
 
         var deal = MockDealBuilder.builder().withMockedGameEventSender().withTrumpSuit(CardSuit.HEARTS)
             .build();
@@ -138,7 +137,7 @@ public class ContreeTrickTest extends TestCasesManagingPlayers {
 
     }
 
-    @DisplayName("Updating current player of a not started trick fails")
+    /*@DisplayName("Updating current player of a not started trick fails")
     @Test
     public void testUpdateCurrentPlayer_notStartedTrick() {
 
@@ -195,6 +194,6 @@ public class ContreeTrickTest extends TestCasesManagingPlayers {
             () -> trickWithHeartAsTrump.updateCurrentPlayer(newPlayer)
         );
 
-    }
+    }*/
 
 }

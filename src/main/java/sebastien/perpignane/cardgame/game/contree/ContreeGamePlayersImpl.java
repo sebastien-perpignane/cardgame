@@ -2,37 +2,29 @@ package sebastien.perpignane.cardgame.game.contree;
 
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
+import sebastien.perpignane.cardgame.player.contree.ContreePlayerImpl;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
-import sebastien.perpignane.cardgame.player.contree.local.thread.ThreadContreeBotPlayer;
+import sebastien.perpignane.cardgame.player.contree.handlers.ContreeBotPlayerEventHandler;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Optional;
 
 class ContreeGamePlayersImpl implements ContreeGamePlayers {
 
-    final static int NB_MAX_PLAYERS = 4;
-
-    private final List<ContreePlayer> players = new CopyOnWriteArrayList<>();
+    private final ContreeGamePlayerSlots playerSlots = new ContreeGamePlayerSlots();
 
     private volatile int nbPlayers = 0;
-
-    public ContreeGamePlayersImpl() {
-        for (int i = 0 ; i < NB_PLAYERS ; i++) {
-            players.add(null);
-        }
-    }
 
     public synchronized JoinGameResult joinGame(ContreePlayer joiningPlayer, ContreeTeam wantedTeam) {
 
         Objects.requireNonNull(joiningPlayer, "joiningPlayer cannot be null");
 
-        if (players.contains(joiningPlayer)) {
+        if (playerSlots.contains(joiningPlayer)) {
             throw new IllegalArgumentException( String.format("Player %s already joined the game", joiningPlayer) );
         }
 
-        ContreePlayer replacedPlayer = null;
+        Optional<ContreePlayer> replacedPlayer = Optional.empty();
 
         boolean wantedTeamIsFull = wantedTeam == null ? isFull() : wantedTeamIsFull(wantedTeam);
 
@@ -46,20 +38,23 @@ class ContreeGamePlayersImpl implements ContreeGamePlayers {
                 continue;
             }
 
+            var currentSlot = playerSlots.getSlot(i);
+
             boolean currentIndexIsJoinable;
 
             if (wantedTeamIsFull && !joiningPlayer.isBot()) {
-                currentIndexIsJoinable = players.get(i).isBot();
+                currentIndexIsJoinable = currentSlot.getPlayer().orElseThrow().isBot();
             }
             else {
-                currentIndexIsJoinable = players.get(i) == null;
+                currentIndexIsJoinable = currentSlot.getPlayer().isEmpty();
             }
 
-            boolean noPresentPlayer = players.get(i) == null;
+            //boolean noPresentPlayer = players.get(i) == null;
+            boolean noPresentPlayer = currentSlot.getPlayer().isEmpty();
 
             if ( currentIndexIsJoinable) {
                 playerIndex = i;
-                replacedPlayer = players.get(playerIndex);
+                replacedPlayer = currentSlot.getPlayer();
                 assignPlayerToIndex(playerIndex, joiningPlayer);
                 joined = true;
 
@@ -86,7 +81,9 @@ class ContreeGamePlayersImpl implements ContreeGamePlayers {
     }
 
     public boolean wantedTeamIsFull(ContreeTeam wantedTeam) {
-        return players.stream().filter(cp -> cp != null && cp.getTeam().isPresent() &&  cp.getTeam().get() == wantedTeam).toList().size() == 2;
+        return playerSlots.stream().filter(ps -> ps.getPlayer().isPresent()
+                && ps.getPlayer().get().getTeam().isPresent()
+                && ps.getPlayer().get().getTeam().get() == wantedTeam).toList().size() == 2;
     }
 
     @Override
@@ -94,21 +91,22 @@ class ContreeGamePlayersImpl implements ContreeGamePlayers {
         if (player.isBot()) {
             throw new IllegalArgumentException("WTF ? A bot wants to leave the game ?");
         }
-        ContreePlayer newBotPlayer = new ThreadContreeBotPlayer();
+        // TODO #45 : find a way to not instantiate the bot player there, so that this class is not aware of ContreePlayer implementation
+        ContreePlayer newBotPlayer = new ContreePlayerImpl(new ContreeBotPlayerEventHandler());
         replacePlayer(player, newBotPlayer);
         return newBotPlayer;
     }
 
     private void replacePlayer(ContreePlayer replacedPlayer, ContreePlayer newPlayer) {
-        if (!players.contains(replacedPlayer)) {
+        if (!playerSlots.contains(replacedPlayer)) {
             throw new IllegalArgumentException(String.format("The player %s does not play in this game", replacedPlayer));
         }
-        int replacedPlayerIndex = players.indexOf(replacedPlayer);
+        int replacedPlayerIndex = playerSlots.getSlot(replacedPlayer).getSlotNumber();
         assignPlayerToIndex(replacedPlayerIndex, newPlayer);
     }
 
     private void assignPlayerToIndex(int playerIndex, ContreePlayer player) {
-        players.set(playerIndex, player);
+        playerSlots.addPlayerToSlotIndex(playerIndex, player);
         assignTeamToPlayer(playerIndex);
     }
 
@@ -130,16 +128,16 @@ class ContreeGamePlayersImpl implements ContreeGamePlayers {
     }
 
     public boolean isFull() {
-        return nbPlayers == NB_MAX_PLAYERS;
+        return playerSlots.isFull();
     }
 
     public boolean isJoinableByHumanPlayers() {
-        return !isFull() || players.stream().anyMatch(ContreePlayer::isBot);
+        return playerSlots.isJoinable();
     }
 
     private void assignTeamToPlayer(int playerIndex) {
         ContreeTeam team = teamByPlayerIndex(playerIndex);
-        players.get(playerIndex).setTeam(team);
+        playerSlots.getSlot(playerIndex).getPlayer().orElseThrow().setTeam(team);
     }
 
     private ContreeTeam teamByPlayerIndex(int playerIndex) {
@@ -150,11 +148,16 @@ class ContreeGamePlayersImpl implements ContreeGamePlayers {
      * @return an unmodifiable list of the players
      */
     public List<ContreePlayer> getGamePlayers() {
-        return Collections.unmodifiableList(players);
+        return  playerSlots.stream().map(ps -> ps.getPlayer().orElse(null)).toList();
+    }
+
+    @Override
+    public ContreeGamePlayerSlots getPlayerSlots() {
+        return playerSlots;
     }
 
     @Override
     public void receiveHandForPlayer(int playerIndex, List<ClassicalCard> hand) {
-        players.get(playerIndex).receiveHand(hand);
+        playerSlots.getSlot(playerIndex).getPlayer().orElseThrow().receiveHand(hand);
     }
 }

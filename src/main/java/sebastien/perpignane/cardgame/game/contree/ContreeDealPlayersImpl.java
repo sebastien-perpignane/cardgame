@@ -3,12 +3,13 @@ package sebastien.perpignane.cardgame.game.contree;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
+import sebastien.perpignane.cardgame.player.util.PlayerSlot;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ContreeDealPlayersImpl implements ContreeDealPlayers {
+class ContreeDealPlayersImpl implements ContreeDealPlayers {
 
     private final ContreeGamePlayers gamePlayers;
 
@@ -102,20 +103,41 @@ public class ContreeDealPlayersImpl implements ContreeDealPlayers {
 
     }
 
-    private int nextPlayerIndex(int playerIndex) {
+    List<PlayerSlot<ContreePlayer>> rollPlayerSlotsFromIndex(int playerIndex) {
 
+        if (playerIndex + 1 > ContreeGamePlayers.NB_PLAYERS) {
+            throw new IllegalArgumentException(String.format("Player index %d is not valid", playerIndex));
+        }
+
+        List<PlayerSlot<ContreePlayer>> newPlayerList = new ArrayList<>();
+
+        for (int i = playerIndex ; newPlayerList.size() < ContreeGamePlayers.NB_PLAYERS ; ) {
+            newPlayerList.add(gamePlayers.getPlayerSlots().getSlot(i));
+            i = nextPlayerIndex(i);
+        }
+
+        return newPlayerList;
+
+    }
+
+    private int nextPlayerIndex(int playerIndex) {
         if (playerIndex + 1 == NB_PLAYERS) {
             return 0;
         }
         else {
             return playerIndex + 1;
         }
-
     }
 
     @Override
     public List<ContreePlayer> getCurrentDealPlayers() {
-        return rollPlayerFromIndex(nextPlayerIndex(currentDealerIndex));
+        return rollPlayerFromIndex( nextPlayerIndex(currentDealerIndex) );
+    }
+
+    @Override
+    public List<PlayerSlot<ContreePlayer>> getCurrentDealPlayerSlots() {
+        return rollPlayerSlotsFromIndex(nextPlayerIndex(currentDealerIndex));
+        //return gamePlayers.getPlayerSlots().stream().toList();
     }
 
     @Override
@@ -126,6 +148,11 @@ public class ContreeDealPlayersImpl implements ContreeDealPlayers {
     @Override
     public ContreeTrickPlayers buildTrickPlayers() {
         return new ContreeTrickPlayersImpl(this);
+    }
+
+    @Override
+    public int indexOf(ContreePlayer player) {
+        return getCurrentDealPlayers().indexOf(player);
     }
 
 }

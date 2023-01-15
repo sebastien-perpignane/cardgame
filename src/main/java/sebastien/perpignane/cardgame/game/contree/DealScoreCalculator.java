@@ -8,9 +8,11 @@ import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 import java.util.*;
 import java.util.stream.Collectors;
 
-record DealScoreResult(Map<ContreeTeam, Integer> rawScoreByTeam, Map<ContreeTeam, Integer> finalNotRoundedScoreByTeam, Map<ContreeTeam, Integer> finalRoundedScoreByTeam, boolean contractIsReached) {
-
-}
+record DealScoreResult(
+        Map<ContreeTeam, Integer> rawScoreByTeam,
+        Map<ContreeTeam, Integer> finalNotRoundedScoreByTeam,
+        Map<ContreeTeam, Integer> finalRoundedScoreByTeam,
+        boolean contractIsReached) {}
 
 class DealScoreCalculator {
 

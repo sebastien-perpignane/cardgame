@@ -2,6 +2,7 @@ package sebastien.perpignane.cardgame.game.contree;
 
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
+import sebastien.perpignane.cardgame.player.util.PlayerSlot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,13 +15,15 @@ public abstract class TestCasesManagingPlayers {
 
     protected static List<ContreePlayer> players;
 
+    protected static List<PlayerSlot<ContreePlayer>> playerSlots;
+
     protected static ContreePlayer player1;
     protected static ContreePlayer player2;
     protected static ContreePlayer player3;
     protected static ContreePlayer player4;
 
     protected static void initPlayers() {
-        players = buildPlayers();
+        buildPlayersAndPlayerSlots();
 
         int playerIndex = 0;
         player1 = players.get(playerIndex++);
@@ -37,35 +40,50 @@ public abstract class TestCasesManagingPlayers {
     }
 
     protected static List<ContreePlayer> loopingPlayers(int nbLoops) {
-        List<ContreePlayer> loopingPlayers = new ArrayList<>();
-
-        for (int i = 0 ; i < nbLoops ; i++) {
-            loopingPlayers.addAll(players);
-        }
-
-        return loopingPlayers;
-
+        return loopingAnything(nbLoops, players);
     }
 
-    private static List<ContreePlayer> buildPlayers() {
+    protected static List<PlayerSlot<ContreePlayer>> loopingPlayerSlots(int nbLoops) {
+        return loopingAnything(nbLoops, playerSlots);
+    }
+
+    private static <T> List<T> loopingAnything(int nbLoops, List<T> elements) {
+        List<T> loopingElements = new ArrayList<>();
+        for (int i = 0 ; i < nbLoops ; i++) {
+            loopingElements.addAll(elements);
+        }
+        return loopingElements;
+    }
+
+    private static void buildPlayersAndPlayerSlots() {
 
         ContreePlayer player1 = mock(ContreePlayer.class);
         when(player1.getTeam()).thenReturn(Optional.of(ContreeTeam.TEAM1));
         when(player1.toString()).thenReturn("player 1");
 
+        PlayerSlot<ContreePlayer> player1Slot = new PlayerSlot<>(0, player1);
+
         ContreePlayer player2 = mock(ContreePlayer.class);
         when(player2.getTeam()).thenReturn(Optional.of(ContreeTeam.TEAM2));
         when(player2.toString()).thenReturn("player 2");
+
+        PlayerSlot<ContreePlayer> player2Slot = new PlayerSlot<>(1, player2);
 
         ContreePlayer player3 = mock(ContreePlayer.class);
         when(player3.getTeam()).thenReturn(Optional.of(ContreeTeam.TEAM1));
         when(player3.toString()).thenReturn("player 3");
 
+        PlayerSlot<ContreePlayer> player3Slot = new PlayerSlot<>(2, player3);
+
         ContreePlayer player4 = mock(ContreePlayer.class);
         when(player4.getTeam()).thenReturn(Optional.of(ContreeTeam.TEAM2));
         when(player4.toString()).thenReturn("player 4");
 
-        return List.of(player1, player2, player3, player4);
+        PlayerSlot<ContreePlayer> player4Slot = new PlayerSlot<>(3, player4);
+
+        players = List.of(player1, player2, player3, player4);
+
+        playerSlots = List.of(player1Slot, player2Slot, player3Slot, player4Slot);
 
     }
 
