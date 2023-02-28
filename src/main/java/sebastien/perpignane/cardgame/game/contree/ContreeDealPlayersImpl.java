@@ -8,6 +8,8 @@ import sebastien.perpignane.cardgame.player.util.PlayerSlot;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 class ContreeDealPlayersImpl implements ContreeDealPlayers {
 
@@ -137,7 +139,6 @@ class ContreeDealPlayersImpl implements ContreeDealPlayers {
     @Override
     public List<PlayerSlot<ContreePlayer>> getCurrentDealPlayerSlots() {
         return rollPlayerSlotsFromIndex(nextPlayerIndex(currentDealerIndex));
-        //return gamePlayers.getPlayerSlots().stream().toList();
     }
 
     @Override
@@ -155,4 +156,19 @@ class ContreeDealPlayersImpl implements ContreeDealPlayers {
         return getCurrentDealPlayers().indexOf(player);
     }
 
+    @Override
+    public void setBiddingPlayer(ContreePlayer biddingPlayer) {
+        allPlayersExcept(biddingPlayer).forEach(ContreePlayer::setWaiting);
+        biddingPlayer.setBidding();
+    }
+
+    @Override
+    public void setPlayingPlayer(ContreePlayer playingPlayer) {
+        allPlayersExcept(playingPlayer).forEach(ContreePlayer::setWaiting);
+        playingPlayer.setPlaying();
+    }
+
+    private Stream<ContreePlayer> allPlayersExcept(ContreePlayer player) {
+        return getCurrentDealPlayers().stream().filter(Predicate.not(p -> p == player));
+    }
 }

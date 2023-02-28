@@ -53,7 +53,6 @@ public class ContreeGameConfig {
                 .collect(Collectors.toList());
     }
 
-
     public int maxScore() {
         return maxScore;
     }

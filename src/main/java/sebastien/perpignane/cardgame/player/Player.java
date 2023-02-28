@@ -40,6 +40,4 @@ public interface Player<G extends AbstractGame<?>, T extends Team> {
 
     boolean isBot();
 
-
-
 }

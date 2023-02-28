@@ -8,7 +8,8 @@ import java.util.Collection;
 public record PlayerMessage(
         MessageType messageType,
         Collection<ClassicalCard> allowedCards,
-        Collection<ContreeBidValue> allowedBidValues) {
+        Collection<ContreeBidValue> allowedBidValues,
+        ContreePlayerStatus newStatus) {
 
     public PlayerMessage {
 
@@ -23,6 +24,6 @@ public record PlayerMessage(
     }
 
     public PlayerMessage(MessageType messageType) {
-        this(messageType, null, null);
+        this(messageType, null, null, null);
     }
 }

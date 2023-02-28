@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 class PlayableCardsFilterTest extends TestCasesManagingPlayers {
@@ -73,7 +73,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
         var playableCards = buildMocksAndRunTestOnTestedPlayer();
 
-        assertEquals(testedPlayerHand, playableCards);
+        assertThat(playableCards).isEqualTo(testedPlayerHand);
 
     }
 
@@ -93,7 +93,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
         var playableCards = buildMocksAndRunTestOnTestedPlayer();
 
-        assertEquals(testedPlayerHand.stream().filter(c -> c.getSuit() == CardSuit.CLUBS).collect(Collectors.toSet()), playableCards);
+        assertThat(playableCards).isEqualTo(testedPlayerHand.stream().filter(c -> c.getSuit() == CardSuit.CLUBS).collect(Collectors.toSet()));
 
 
     }
@@ -115,7 +115,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
         var playableCards = buildMocksAndRunTestOnTestedPlayer();
 
-        assertEquals(testedPlayerHand, playableCards);
+        assertThat(playableCards).isEqualTo(testedPlayerHand);
     }
 
     @Test
@@ -135,7 +135,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
         var playableCards = buildMocksAndRunTestOnTestedPlayer();
 
-        assertEquals(Set.of(ClassicalCard.ACE_HEART), playableCards);
+        assertThat(playableCards).isEqualTo(Set.of(ClassicalCard.ACE_HEART));
 
     }
 
@@ -160,7 +160,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
         var playableCards = buildMocksAndRunTestOnTestedPlayer();
 
-        assertEquals(Set.of(ClassicalCard.ACE_HEART), playableCards);
+        assertThat(playableCards).isEqualTo(Set.of(ClassicalCard.ACE_HEART));
 
     }
 
@@ -185,7 +185,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
         var playableCards = buildMocksAndRunTestOnTestedPlayer();
 
-        assertEquals(Set.of(ClassicalCard.EIGHT_HEART), playableCards);
+        assertThat(playableCards).isEqualTo(Set.of(ClassicalCard.EIGHT_HEART));
     }
 
     @DisplayName("An opponent played trump against the player teammate, player has no trump, he can play any card in his hand")
@@ -210,7 +210,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
         var playableCards = buildMocksAndRunTestOnTestedPlayer();
 
-        assertEquals(testedPlayerHand, playableCards);
+        assertThat(playableCards).isEqualTo(testedPlayerHand);
 
     }
 
@@ -238,7 +238,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
         var playableCards = buildMocksAndRunTestOnTestedPlayer();
 
-        assertEquals(testedPlayerHand, playableCards);
+        assertThat(playableCards).isEqualTo(testedPlayerHand);
 
     }
 
@@ -267,7 +267,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
         var playableCards = buildMocksAndRunTestOnTestedPlayer();
 
-        assertEquals(testedPlayerHand, playableCards);
+        assertThat(playableCards).isEqualTo(testedPlayerHand);
 
     }
 
@@ -296,7 +296,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
         var playableCards = buildMocksAndRunTestOnTestedPlayer();
 
-        assertEquals(Set.of(ClassicalCard.TEN_DIAMOND), playableCards);
+        assertThat(playableCards).isEqualTo(Set.of(ClassicalCard.TEN_DIAMOND));
 
     }
 

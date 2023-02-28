@@ -11,7 +11,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.*;
 
 class ContreeGameTest extends TestCasesManagingPlayers {
@@ -65,8 +66,8 @@ class ContreeGameTest extends TestCasesManagingPlayers {
     @Test
     public void testStartGameWith4PlayersSucceeds() {
         makeTheGameStart();
-        assertFalse(game.isWaitingForPlayers());
-        assertTrue(game.isStarted());
+        assertThat(game.isWaitingForPlayers()).isFalse();
+        assertThat(game.isStarted()).isTrue();
     }
 
     @DisplayName("A game is waiting for players until gamePlayers is full")
@@ -74,31 +75,31 @@ class ContreeGameTest extends TestCasesManagingPlayers {
     public void testGameWithoutPlayersHasExpectedState() {
 
         game.joinGame(player1);
-        assertTrue(game.isWaitingForPlayers());
+        assertThat(game.isWaitingForPlayers()).isTrue();
 
         game.joinGame(player2);
-        assertTrue(game.isWaitingForPlayers());
+        assertThat(game.isWaitingForPlayers()).isTrue();
 
         game.joinGame(player3);
-        assertTrue(game.isWaitingForPlayers());
+        assertThat(game.isWaitingForPlayers()).isTrue();
 
         game.joinGame(player4);
 
-        assertFalse(game.isWaitingForPlayers());
-        assertTrue(game.isStarted());
+        assertThat(game.isWaitingForPlayers()).isFalse();
+        assertThat(game.isStarted()).isTrue();
     }
 
     @DisplayName("Winner is not available if a game is not over")
     @Test
     public void testGetWinnerOnNotOverGame() {
 
-        assertFalse(game.isOver());
-        assertTrue(game.getWinner().isEmpty());
+        assertThat(game.isOver()).isFalse();
+        assertThat(game.getWinner()).isEmpty();
 
         makeTheGameStart();
 
-        assertFalse(game.isOver());
-        assertTrue(game.getWinner().isEmpty());
+        assertThat(game.isOver()).isFalse();
+        assertThat(game.getWinner()).isEmpty();
 
     }
 
@@ -106,30 +107,24 @@ class ContreeGameTest extends TestCasesManagingPlayers {
     @Test
     public void testCannotPlayCardIfGameIsOver() {
         makeTheGameOver();
-        assertTrue(game.isOver());
+        assertThat(game.isOver()).isTrue();
 
-        assertThrows(
-                RuntimeException.class,
-                () -> game.playCard(player2, ClassicalCard.ACE_SPADE)
-        );
+        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> game.playCard(player2, ClassicalCard.ACE_SPADE));
     }
 
     @DisplayName("Exception if a player tries to bid on an over game")
     @Test
     public void testCannotBidIfGameIsOver() {
         makeTheGameOver();
-        assertTrue(game.isOver());
+        assertThat(game.isOver()).isTrue();
 
-        assertThrows(
-                RuntimeException.class,
-                () -> game.placeBid(player2, ContreeBidValue.PASS, null)
-        );
+        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> game.placeBid(player2, ContreeBidValue.PASS, null));
     }
 
     @DisplayName("No exception if a player tries to bid on ongoing game")
     @Test
     public void testCanBidIfGameIsOver() {
-        assertFalse(game.isOver());
+        assertThat(game.isOver()).isFalse();
         game.placeBid(player2, ContreeBidValue.PASS, null);
     }
 
@@ -137,27 +132,21 @@ class ContreeGameTest extends TestCasesManagingPlayers {
     @Test
     public void testCannotJoinIfGameIsOver() {
         makeTheGameOver();
-        assertTrue(game.isOver());
+        assertThat(game.isOver()).isTrue();
 
         ContreePlayer newPlayer = mock(ContreePlayer.class);
-        assertThrows(
-                RuntimeException.class,
-                () -> game.joinGame(newPlayer)
-        );
+        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> game.joinGame(newPlayer));
     }
 
     @DisplayName("Exception if a player tries to join an over game")
     @Test
     public void testCannotRegisterObserverIfGameIsOver() {
         makeTheGameOver();
-        assertTrue(game.isOver());
+        assertThat(game.isOver()).isTrue();
 
         GameObserver observer = mock(GameObserver.class);
 
-        assertThrows(
-                RuntimeException.class,
-                () -> game.registerAsGameObserver(observer)
-        );
+        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> game.registerAsGameObserver(observer));
     }
 
     private void makeTheGameOver() {
@@ -197,9 +186,9 @@ class ContreeGameTest extends TestCasesManagingPlayers {
 
         game.leaveGame(leaver);
 
-        assertEquals(leaver.getHand(), flags.hand);
-        assertSame(game, flags.updatedGame);
-        assertFalse(flags.playerGameStartedEvent);
+        assertThat(flags.hand).isEqualTo(leaver.getHand());
+        assertThat(flags.updatedGame).isSameAs(game);
+        assertThat(flags.playerGameStartedEvent).isFalse();
 
     }
 
@@ -234,9 +223,9 @@ class ContreeGameTest extends TestCasesManagingPlayers {
 
         game.leaveGame(leaver);
 
-        assertEquals(leaver.getHand(), flags.hand);
-        assertSame(game, flags.updatedGame);
-        assertTrue(flags.playerGameStartedEvent);
+        assertThat(flags.hand).isEqualTo(leaver.getHand());
+        assertThat(flags.updatedGame).isSameAs(game);
+        assertThat(flags.playerGameStartedEvent).isTrue();
 
     }
 
@@ -271,9 +260,9 @@ class ContreeGameTest extends TestCasesManagingPlayers {
 
         game.leaveGame(leaver);
 
-        assertNotEquals(leaver.getHand(), flags.hand);
-        assertNull(flags.updatedGame);
-        assertFalse(flags.playerGameStartedEvent);
+        assertThat(flags.hand).isNotEqualTo(leaver.getHand());
+        assertThat(flags.updatedGame).isNull();
+        assertThat(flags.playerGameStartedEvent).isFalse();
 
     }
 
@@ -281,9 +270,9 @@ class ContreeGameTest extends TestCasesManagingPlayers {
     @DisplayName("on a just initialized game, toState() returns a ContreeGameState object with expected data")
     public void testGameToState_game_initialized() {
         ContreeGameState gameState = game.toState();
-        assertNotNull(gameState);
-        assertNotNull(gameState.gameId());
-        assertSame(GameStatus.WAITING_FOR_PLAYERS, gameState.status());
+        assertThat(gameState).isNotNull();
+        assertThat(gameState.gameId()).isNotNull();
+        assertThat(gameState.status()).isSameAs(GameStatus.WAITING_FOR_PLAYERS);
         gameState.players().forEach(Assertions::assertNull);
     }
 
@@ -293,9 +282,9 @@ class ContreeGameTest extends TestCasesManagingPlayers {
         makeTheGameStart();
 
         ContreeGameState gameState = game.toState();
-        assertNotNull(gameState);
-        assertNotNull(gameState.gameId());
-        assertSame(GameStatus.STARTED, gameState.status());
+        assertThat(gameState).isNotNull();
+        assertThat(gameState.gameId()).isNotNull();
+        assertThat(gameState.status()).isSameAs(GameStatus.STARTED);
         gameState.players().forEach(Assertions::assertNotNull);
     }
 
@@ -305,9 +294,9 @@ class ContreeGameTest extends TestCasesManagingPlayers {
         makeTheGameOver();
 
         ContreeGameState gameState = game.toState();
-        assertNotNull(gameState);
-        assertNotNull(gameState.gameId());
-        assertSame(GameStatus.OVER, gameState.status());
+        assertThat(gameState).isNotNull();
+        assertThat(gameState.gameId()).isNotNull();
+        assertThat(gameState.status()).isSameAs(GameStatus.OVER);
         gameState.players().forEach(Assertions::assertNotNull);
     }
 

@@ -16,4 +16,6 @@ public interface ContreePlayerEventHandler extends PlayerEventHandler<ContreePla
 
     void onEjection();
 
+    void onStatusUpdate(ContreePlayerStatus oldStatus, ContreePlayerStatus newStatus);
+
 }

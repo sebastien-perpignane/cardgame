@@ -2,6 +2,7 @@ package sebastien.perpignane.cardgame.player.contree.handlers;
 
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.contree.ContreeBidValue;
+import sebastien.perpignane.cardgame.player.contree.ContreePlayerStatus;
 import sebastien.perpignane.cardgame.player.contree.PlayerMessage;
 
 import java.util.Collection;
@@ -38,6 +39,11 @@ public class ContreeBotPlayerEventHandler extends ThreadLocalContreePlayerEventH
 
     @Override
     public void onReceivedHand(Collection<ClassicalCard> hand) {
+        // Do nothing
+    }
+
+    @Override
+    public void onStatusUpdate(ContreePlayerStatus oldStatus, ContreePlayerStatus newStatus) {
         // Do nothing
     }
 

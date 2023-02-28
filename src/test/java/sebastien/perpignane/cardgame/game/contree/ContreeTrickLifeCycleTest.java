@@ -9,7 +9,7 @@ import sebastien.perpignane.cardgame.card.CardSet;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class ContreeTrickLifeCycleTest extends TestCasesManagingPlayers {
@@ -44,8 +44,8 @@ public class ContreeTrickLifeCycleTest extends TestCasesManagingPlayers {
 
         trickWithHeartTrump.playerPlays(player1, ClassicalCard.ACE_CLUB);
 
-        assertFalse(trickWithHeartTrump.isOver());
-        assertTrue(trickWithHeartTrump.getWinner().isEmpty());
+        assertThat(trickWithHeartTrump.isOver()).isFalse();
+        assertThat(trickWithHeartTrump.getWinner()).isEmpty();
 
     }
 
@@ -58,8 +58,8 @@ public class ContreeTrickLifeCycleTest extends TestCasesManagingPlayers {
         trickWithHeartTrump.playerPlays(player1, ClassicalCard.ACE_CLUB);
         trickWithHeartTrump.playerPlays(player2, ClassicalCard.SEVEN_CLUB);
 
-        assertFalse(trickWithHeartTrump.isOver());
-        assertTrue(trickWithHeartTrump.getWinner().isEmpty());
+        assertThat(trickWithHeartTrump.isOver()).isFalse();
+        assertThat(trickWithHeartTrump.getWinner()).isEmpty();
 
     }
 
@@ -72,8 +72,8 @@ public class ContreeTrickLifeCycleTest extends TestCasesManagingPlayers {
         trickWithHeartTrump.playerPlays(player2, ClassicalCard.SEVEN_CLUB);
         trickWithHeartTrump.playerPlays(player3, ClassicalCard.TEN_CLUB);
 
-        assertFalse(trickWithHeartTrump.isOver());
-        assertTrue(trickWithHeartTrump.getWinner().isEmpty());
+        assertThat(trickWithHeartTrump.isOver()).isFalse();
+        assertThat(trickWithHeartTrump.getWinner()).isEmpty();
 
     }
 
@@ -88,9 +88,9 @@ public class ContreeTrickLifeCycleTest extends TestCasesManagingPlayers {
         trickWithHeartTrump.playerPlays(player3, ClassicalCard.TEN_CLUB);
         trickWithHeartTrump.playerPlays(player4, ClassicalCard.JACK_CLUB);
 
-        assertTrue(trickWithHeartTrump.isOver());
-        assertTrue(trickWithHeartTrump.getWinner().isPresent());
-        assertSame(player1, trickWithHeartTrump.getWinner().orElseThrow());
+        assertThat(trickWithHeartTrump.isOver()).isTrue();
+        assertThat(trickWithHeartTrump.getWinner()).isPresent();
+        assertThat(trickWithHeartTrump.getWinner().orElseThrow()).isSameAs(player1);
 
     }
 

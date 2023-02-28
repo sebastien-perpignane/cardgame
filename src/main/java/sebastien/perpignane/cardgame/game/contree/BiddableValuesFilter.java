@@ -26,12 +26,14 @@ class BiddableValuesFilter {
 
     public BidFilterResult biddableValues(ContreePlayer currentPlayer, ContreeDealBids bids) {
 
+        // TODO refactoring required, this method is hard to read
+
         Set<ContreeBidValue> biddableValues = new HashSet<>();
         Map<ContreeBidValue, String> exclusionCauseByBidValue = new HashMap<>();
 
         biddableValues.add(ContreeBidValue.PASS);
 
-        exclusionCauseByBidValue.put(ContreeBidValue.DOUBLE, "Double is is only possible if an opponent bade before and this opponent made the highest bid");
+        exclusionCauseByBidValue.put(ContreeBidValue.DOUBLE, "Double is only possible if an opponent bade before and this opponent made the highest bid");
         exclusionCauseByBidValue.put(ContreeBidValue.REDOUBLE, "Redouble is only possible if an opponent doubled before");
 
         biddableValues.add(ContreeBidValue.PASS);

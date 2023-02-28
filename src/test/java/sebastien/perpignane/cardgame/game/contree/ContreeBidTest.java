@@ -4,7 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 
 public class ContreeBidTest {
@@ -14,7 +14,9 @@ public class ContreeBidTest {
     public void testFirstBid_invalid_EIGHTY() {
 
         ContreePlayer biddingPlayer = mock(ContreePlayer.class);
-        assertThrows(IllegalArgumentException.class, () -> new ContreeBid(biddingPlayer, ContreeBidValue.EIGHTY, null));
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(
+            () -> new ContreeBid(biddingPlayer, ContreeBidValue.EIGHTY, null)
+        );
 
     }
 

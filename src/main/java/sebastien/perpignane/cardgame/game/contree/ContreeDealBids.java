@@ -16,8 +16,6 @@ class ContreeDealBids {
 
     private ContreeBidPlayers bidPlayers;
 
-    //private ContreePlayer currentBidder;
-
     private PlayerSlot<ContreePlayer> currentBidderSlot = new PlayerSlot<>();
 
     private BiddableValuesFilter.BidFilterResult currentBidderFilterResult;

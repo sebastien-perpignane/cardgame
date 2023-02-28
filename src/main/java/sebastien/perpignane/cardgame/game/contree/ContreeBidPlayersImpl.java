@@ -20,10 +20,13 @@ class ContreeBidPlayersImpl implements ContreeBidPlayers {
     public void goToNextBidder() {
         if (currentBidderIndex + 1 == dealPlayers.getCurrentDealPlayerSlots().size()) {
             currentBidderIndex = 0;
+
         }
         else {
             currentBidderIndex++;
         }
+        var currentBidder = this.dealPlayers.getCurrentDealPlayers().get(currentBidderIndex);
+        dealPlayers.setBiddingPlayer(currentBidder);
     }
 
     @Override

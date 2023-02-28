@@ -3,15 +3,15 @@ package sebastien.perpignane.cardgame.player.contree;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class MessageTypeTest {
 
     @DisplayName("Enum member with default constructor does not required allowed values nor allowed cards")
     @Test
     public void testDefaultConstructor() {
-        assertFalse(MessageType.GAME_OVER.isRequiresAllowedBidValues());
-        assertFalse(MessageType.GAME_OVER.isRequiresAllowedCards());
+        assertThat(MessageType.GAME_OVER.isRequiresAllowedBidValues()).isFalse();
+        assertThat(MessageType.GAME_OVER.isRequiresAllowedCards()).isFalse();
     }
 
 }

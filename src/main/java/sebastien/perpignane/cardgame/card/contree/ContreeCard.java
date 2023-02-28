@@ -3,6 +3,7 @@ package sebastien.perpignane.cardgame.card.contree;
 import sebastien.perpignane.cardgame.card.CardRank;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
+import sebastien.perpignane.cardgame.card.ValuableCard;
 
 import java.util.Objects;
 import java.util.Set;

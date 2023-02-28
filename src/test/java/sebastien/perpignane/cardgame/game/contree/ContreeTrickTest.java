@@ -11,7 +11,8 @@ import sebastien.perpignane.cardgame.card.ClassicalCard;
 
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.*;
 
 public class ContreeTrickTest extends TestCasesManagingPlayers {
@@ -46,16 +47,13 @@ public class ContreeTrickTest extends TestCasesManagingPlayers {
     public void testThrowsExceptionWhenNotExpectedPlayerPlays() {
         trickWithHeartAsTrump.startTrick();
 
-        assertThrows(
-            RuntimeException.class,
-            () -> trickWithHeartAsTrump.playerPlays(player2, ClassicalCard.JACK_HEART)
-        );
+        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> trickWithHeartAsTrump.playerPlays(player2, ClassicalCard.JACK_HEART));
     }
 
     @DisplayName("winning player on a trick without played card is null")
     @Test
     public void testWinningPlayerWhenNoPlayedCardThrowsException() {
-        assertNull(trickWithHeartAsTrump.winningPlayer());
+        assertThat(trickWithHeartAsTrump.winningPlayer()).isNull();
     }
 
     @DisplayName("winning player on a trick with played card is consistent")
@@ -64,16 +62,16 @@ public class ContreeTrickTest extends TestCasesManagingPlayers {
         trickWithHeartAsTrump.startTrick();
 
         trickWithHeartAsTrump.playerPlays(player1, ClassicalCard.JACK_CLUB);
-        assertSame(player1, trickWithHeartAsTrump.winningPlayer());
+        assertThat(trickWithHeartAsTrump.winningPlayer()).isSameAs(player1);
 
         trickWithHeartAsTrump.playerPlays(player2, ClassicalCard.TEN_CLUB);
-        assertSame(player2, trickWithHeartAsTrump.winningPlayer());
+        assertThat(trickWithHeartAsTrump.winningPlayer()).isSameAs(player2);
 
         trickWithHeartAsTrump.playerPlays(player3, ClassicalCard.ACE_CLUB);
-        assertSame(player3, trickWithHeartAsTrump.winningPlayer());
+        assertThat(trickWithHeartAsTrump.winningPlayer()).isSameAs(player3);
 
         trickWithHeartAsTrump.playerPlays(player4, ClassicalCard.SEVEN_HEART);
-        assertSame(player4, trickWithHeartAsTrump.winningPlayer());
+        assertThat(trickWithHeartAsTrump.winningPlayer()).isSameAs(player4);
 
     }
 
@@ -87,10 +85,7 @@ public class ContreeTrickTest extends TestCasesManagingPlayers {
         trickWithHeartAsTrump.playerPlays(player3, ClassicalCard.ACE_CLUB);
         trickWithHeartAsTrump.playerPlays(player4, ClassicalCard.SEVEN_HEART);
 
-        assertThrows(
-            RuntimeException.class,
-            () -> trickWithHeartAsTrump.playerPlays(player1, ClassicalCard.JACK_HEART)
-        );
+        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> trickWithHeartAsTrump.playerPlays(player1, ClassicalCard.JACK_HEART));
 
     }
 
@@ -104,14 +99,11 @@ public class ContreeTrickTest extends TestCasesManagingPlayers {
         trickWithHeartAsTrump.playerPlays(player2, ClassicalCard.ACE_CLUB);
         trickWithHeartAsTrump.playerPlays(player3, ClassicalCard.TEN_CLUB);
 
-        assertEquals(
-            Set.of(
-                    ClassicalCard.JACK_CLUB,
-                    ClassicalCard.ACE_CLUB,
-                    ClassicalCard.TEN_CLUB
-            ),
-            trickWithHeartAsTrump.getAllCards()
-        );
+        assertThat(trickWithHeartAsTrump.getAllCards()).isEqualTo(Set.of(
+                ClassicalCard.JACK_CLUB,
+                ClassicalCard.ACE_CLUB,
+                ClassicalCard.TEN_CLUB
+        ));
 
     }
 
@@ -122,10 +114,7 @@ public class ContreeTrickTest extends TestCasesManagingPlayers {
         trickWithHeartAsTrump.startTrick();
 
         when(playableCardsFilter.playableCards(any(), any())).thenReturn(Set.of(ClassicalCard.JACK_HEART));
-        assertThrows(
-            RuntimeException.class,
-                () -> trickWithHeartAsTrump.playerPlays(player1, ClassicalCard.SEVEN_CLUB)
-        );
+        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> trickWithHeartAsTrump.playerPlays(player1, ClassicalCard.SEVEN_CLUB));
 
     }
 
@@ -133,67 +122,8 @@ public class ContreeTrickTest extends TestCasesManagingPlayers {
     @Test
     public void testGetCurrentPlayer_notStartedTrick() {
 
-        assertTrue(trickWithHeartAsTrump.getCurrentPlayer().isEmpty());
+        assertThat(trickWithHeartAsTrump.getCurrentPlayer()).isEmpty();
 
     }
-
-    /*@DisplayName("Updating current player of a not started trick fails")
-    @Test
-    public void testUpdateCurrentPlayer_notStartedTrick() {
-
-        ContreePlayer newPlayer = mock(ContreePlayer.class);
-        when(newPlayer.isBot()).thenReturn(false);
-
-        assertTrue(trickWithHeartAsTrump.getCurrentPlayer().isEmpty());
-
-        assertThrows(
-            RuntimeException.class,
-            () -> trickWithHeartAsTrump.updateCurrentPlayer(newPlayer)
-        );
-
-    }
-
-
-    @DisplayName("Updating current player of a started trick is OK")
-    @Test
-    public void testUpdateCurrentPlayer_startedTrick() {
-
-        trickWithHeartAsTrump.startTrick();
-
-        ContreePlayer newPlayer = mock(ContreePlayer.class);
-        when(newPlayer.isBot()).thenReturn(false);
-
-        assertTrue(trickWithHeartAsTrump.getCurrentPlayer().isPresent());
-        assertSame(player1, trickWithHeartAsTrump.getCurrentPlayer().get());
-
-        trickWithHeartAsTrump.updateCurrentPlayer(newPlayer);
-
-        assertTrue(trickWithHeartAsTrump.getCurrentPlayer().isPresent());
-        assertSame(newPlayer, trickWithHeartAsTrump.getCurrentPlayer().get());
-
-    }
-
-    @DisplayName("Updating current player of an over trick fails")
-    @Test
-    public void testUpdateCurrentPlayer_overTrick() {
-
-        trickWithHeartAsTrump.startTrick();
-
-        trickWithHeartAsTrump.playerPlays(player1, ClassicalCard.JACK_CLUB);
-        trickWithHeartAsTrump.playerPlays(player2, ClassicalCard.JACK_CLUB);
-        trickWithHeartAsTrump.playerPlays(player3, ClassicalCard.JACK_CLUB);
-        trickWithHeartAsTrump.playerPlays(player4, ClassicalCard.JACK_CLUB);
-
-        assertTrue(trickWithHeartAsTrump.isOver());
-
-        ContreePlayer newPlayer = mock(ContreePlayer.class);
-        when(newPlayer.isBot()).thenReturn(false);
-
-        assertThrows(
-            RuntimeException.class,
-            () -> trickWithHeartAsTrump.updateCurrentPlayer(newPlayer)
-        );
-
-    }*/
 
 }

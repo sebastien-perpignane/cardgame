@@ -7,7 +7,8 @@ import org.junit.jupiter.api.Test;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -18,7 +19,6 @@ public class ContreeDealPlayersImplTest extends TestCasesManagingPlayers {
     private ContreeDeal dealWith80_club_contract_by_player1;
 
     private ContreeDeal dealWith80_club_contract_by_player2;
-
 
     @BeforeAll
     public static void globalSetUp() {
@@ -60,8 +60,8 @@ public class ContreeDealPlayersImplTest extends TestCasesManagingPlayers {
         var attackTeam = dealPlayers.getCurrentDealAttackTeam().orElseThrow();
         var defenseTeam = dealPlayers.getCurrentDealDefenseTeam().orElseThrow();
 
-        assertSame(ContreeTeam.TEAM1, attackTeam);
-        assertSame(ContreeTeam.TEAM2, defenseTeam);
+        assertThat(attackTeam).isSameAs(ContreeTeam.TEAM1);
+        assertThat(defenseTeam).isSameAs(ContreeTeam.TEAM2);
 
     }
 
@@ -73,7 +73,7 @@ public class ContreeDealPlayersImplTest extends TestCasesManagingPlayers {
 
         var attackTeam = dealPlayers.getCurrentDealAttackTeam().orElseThrow();
 
-        assertSame(ContreeTeam.TEAM2, attackTeam);
+        assertThat(attackTeam).isSameAs(ContreeTeam.TEAM2);
 
     }
 
@@ -85,7 +85,7 @@ public class ContreeDealPlayersImplTest extends TestCasesManagingPlayers {
 
         var defenseTeam = dealPlayers.getCurrentDealDefenseTeam().orElseThrow();
 
-        assertSame(ContreeTeam.TEAM1, defenseTeam);
+        assertThat(defenseTeam).isSameAs(ContreeTeam.TEAM1);
 
     }
 
@@ -95,21 +95,21 @@ public class ContreeDealPlayersImplTest extends TestCasesManagingPlayers {
 
         dealPlayers.setCurrentDeal(dealWith80_club_contract_by_player1);
 
-        assertEquals(players, dealPlayers.getCurrentDealPlayers());
+        assertThat(dealPlayers.getCurrentDealPlayers()).isEqualTo(players);
 
         dealPlayers.setCurrentDeal(dealWith80_club_contract_by_player2);
 
-        assertSame(player2, dealPlayers.getCurrentDealPlayers().get(0));
+        assertThat(dealPlayers.getCurrentDealPlayers().get(0)).isSameAs(player2);
 
     }
 
-    @DisplayName("prout")
+    @DisplayName("On first deal, deal players are in their initial order")
     @Test
     public void testGetPlayerSlots() {
 
         dealPlayers.setCurrentDeal(dealWith80_club_contract_by_player1);
 
-        assertEquals(players, dealPlayers.getCurrentDealPlayerSlots().stream().map(ps -> ps.getPlayer().orElseThrow()).toList());
+        assertThat(dealPlayers.getCurrentDealPlayerSlots().stream().map(ps -> ps.getPlayer().orElseThrow()).toList()).isEqualTo(players);
 
     }
 
@@ -119,10 +119,7 @@ public class ContreeDealPlayersImplTest extends TestCasesManagingPlayers {
 
         dealPlayers.setCurrentDeal(dealWith80_club_contract_by_player2);
 
-        assertThrows(
-                RuntimeException.class,
-                () -> dealPlayers.setCurrentDeal(dealWith80_club_contract_by_player2)
-        );
+        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> dealPlayers.setCurrentDeal(dealWith80_club_contract_by_player2));
 
     }
 
@@ -130,42 +127,54 @@ public class ContreeDealPlayersImplTest extends TestCasesManagingPlayers {
     @DisplayName("Calculation a player list from an invalid index (>3) throw an exception")
     @Test
     public void testRollPlayerFromInvalidIndexThrowsException() {
-        assertThrows(
-            RuntimeException.class,
-            () -> dealPlayers.rollPlayerFromIndex(4)
-        );
+        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> dealPlayers.rollPlayerFromIndex(4));
+    }
+
+
+    @DisplayName("buildTrickPlayers builds a valid object, with expected current bidder")
+    @Test
+    public void testBuildTrickPlayers() {
+
+        ContreeTrickPlayers trickPlayers = dealPlayers.buildTrickPlayers();
+
+        assertThat(trickPlayers).isNotNull();
+        assertThat(trickPlayers.getCurrentPlayerSlot().getPlayer()).isPresent();
+        assertThat(trickPlayers.getCurrentPlayerSlot().getPlayer().get()).isSameAs(player1);
     }
 
     @DisplayName("buildBidPlayers builds a valid object, with expected current player")
     @Test
     public void testBuildBidPlayers() {
 
-        ContreeTrickPlayers trickPlayers = dealPlayers.buildTrickPlayers();
-
-        assertNotNull(trickPlayers);
-        assertTrue(trickPlayers.getCurrentPlayerSlot().getPlayer().isPresent());
-        assertSame(player1, trickPlayers.getCurrentPlayerSlot().getPlayer().get());
-    }
-
-    @DisplayName("buildTrickPlayers builds a valid object, with expected current bidder")
-    @Test
-    public void testBuildTrickPlayers() {
-
         ContreeBidPlayers bidPlayers = dealPlayers.buildBidPlayers();
 
-        assertNotNull(bidPlayers);
-        assertTrue(bidPlayers.getCurrentBidderSlot().getPlayer().isPresent());
-        assertSame(player1, bidPlayers.getCurrentBidderSlot().getPlayer().get());
+        assertThat(bidPlayers).isNotNull();
+        assertThat(bidPlayers.getCurrentBidderSlot().getPlayer()).isPresent();
+        assertThat(bidPlayers.getCurrentBidderSlot().getPlayer().get()).isSameAs(player1);
 
     }
 
     @DisplayName("indexOf returns the expected index of the player")
     @Test
     public void testIndexOf() {
-        assertEquals(0, dealPlayers.indexOf(player1));
-        assertEquals(1, dealPlayers.indexOf(player2));
-        assertEquals(2, dealPlayers.indexOf(player3));
-        assertEquals(3, dealPlayers.indexOf(player4));
+        assertThat(dealPlayers.indexOf(player1)).isEqualTo(0);
+        assertThat(dealPlayers.indexOf(player2)).isEqualTo(1);
+        assertThat(dealPlayers.indexOf(player3)).isEqualTo(2);
+        assertThat(dealPlayers.indexOf(player4)).isEqualTo(3);
+    }
+
+    @DisplayName("indexOf returns the expected index of the player after current dealer is updated")
+    @Test
+    public void testIndexOfAfterSecondDealRotation() {
+
+        dealPlayers.setCurrentDeal(dealWith80_club_contract_by_player1);
+        dealPlayers.setCurrentDeal(dealWith80_club_contract_by_player2);
+
+        assertThat(dealPlayers.indexOf(player2)).isEqualTo(0);
+        assertThat(dealPlayers.indexOf(player3)).isEqualTo(1);
+        assertThat(dealPlayers.indexOf(player4)).isEqualTo(2);
+        assertThat(dealPlayers.indexOf(player1)).isEqualTo(3);
+
     }
 
 }

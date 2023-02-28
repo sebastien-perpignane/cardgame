@@ -14,6 +14,8 @@ public class ContreePlayerImpl implements ContreePlayer {
 
     private final String id;
 
+    private ContreePlayerStatus status;
+
     private final ContreePlayerEventHandler playerEventHandler;
 
     private final String name;
@@ -29,6 +31,7 @@ public class ContreePlayerImpl implements ContreePlayer {
         this.name = name;
         this.playerEventHandler = playerEventHandler;
         this.playerEventHandler.setPlayer(this);
+        this.status = ContreePlayerStatus.WAITING;
     }
 
     public ContreePlayerImpl(ContreePlayerEventHandler playerEventHandler) {
@@ -155,6 +158,44 @@ public class ContreePlayerImpl implements ContreePlayer {
     }
 
     @Override
+    public void setWaiting() {
+        updateStatus(ContreePlayerStatus.WAITING);
+    }
+
+    @Override
+    public void setBidding() {
+        updateStatus(ContreePlayerStatus.BIDDING);
+    }
+
+    @Override
+    public void setPlaying() {
+        updateStatus(ContreePlayerStatus.PLAYING);
+    }
+
+    private void updateStatus(ContreePlayerStatus status) {
+        var oldStatus = this.status;
+        this.status = status;
+        if (oldStatus != this.status) {
+            playerEventHandler.onStatusUpdate(oldStatus, status);
+        }
+    }
+
+    @Override
+    public boolean isWaiting() {
+        return status == ContreePlayerStatus.WAITING;
+    }
+
+    @Override
+    public boolean isBidding() {
+        return status == ContreePlayerStatus.BIDDING;
+    }
+
+    @Override
+    public boolean isPlaying() {
+        return status == ContreePlayerStatus.PLAYING;
+    }
+
+    @Override
     public String toString() {
         String formatString = isBot() ? "%s-Bot (%s)" : "* %s (%s) *";
         return String.format(formatString, getName(), team);
@@ -162,14 +203,12 @@ public class ContreePlayerImpl implements ContreePlayer {
 
     @Override
     public ContreePlayerState toState() {
-        // TODO implement player status management
-        return new ContreePlayerState(getName(), ContreePlayerStatus.WAITING);
+        return new ContreePlayerState(getName(), status);
     }
 
     @Override
     public FullContreePlayerState toFullState() {
-        // TODO implement player status management
-        return new FullContreePlayerState(getName(), ContreePlayerStatus.WAITING, id, hand);
+        return new FullContreePlayerState(getName(), status, id, hand);
     }
 
 }

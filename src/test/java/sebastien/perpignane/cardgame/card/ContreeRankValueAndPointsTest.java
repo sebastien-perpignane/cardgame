@@ -1,20 +1,21 @@
 package sebastien.perpignane.cardgame.card;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import sebastien.perpignane.cardgame.card.contree.ContreeRankValueAndPoints;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ContreeRankValueAndPointsTest {
 
     @DisplayName("Sorting non trump cards by game value in descending order")
     @Test
     public void testStandardDescOrderingByValue() {
-        var standardCards  = Arrays.stream(ContreeRankValueAndPoints.values())
+        List<ContreeRankValueAndPoints> standardCards  = Arrays.stream(ContreeRankValueAndPoints.values())
                 .sorted(
                     Comparator.comparingInt(
                         ContreeRankValueAndPoints::getStandardGameValue
@@ -23,20 +24,20 @@ public class ContreeRankValueAndPointsTest {
 
         int idx = 0;
 
-        assertEquals(ContreeRankValueAndPoints.ACE, standardCards.get(idx++));
-        assertEquals(ContreeRankValueAndPoints.TEN, standardCards.get(idx++));
-        assertEquals(ContreeRankValueAndPoints.KING, standardCards.get(idx++));
-        assertEquals(ContreeRankValueAndPoints.QUEEN, standardCards.get(idx++));
-        assertEquals(ContreeRankValueAndPoints.JACK, standardCards.get(idx++));
-        assertEquals(ContreeRankValueAndPoints.NINE, standardCards.get(idx++));
-        assertEquals(ContreeRankValueAndPoints.EIGHT, standardCards.get(idx++));
-        assertEquals(ContreeRankValueAndPoints.SEVEN, standardCards.get(idx));
+        assertThat(standardCards.get(idx++)).isSameAs(ContreeRankValueAndPoints.ACE);
+        assertThat(standardCards.get(idx++)).isSameAs(ContreeRankValueAndPoints.TEN);
+        assertThat(standardCards.get(idx++)).isSameAs(ContreeRankValueAndPoints.KING);
+        assertThat(standardCards.get(idx++)).isSameAs(ContreeRankValueAndPoints.QUEEN);
+        assertThat(standardCards.get(idx++)).isSameAs(ContreeRankValueAndPoints.JACK);
+        assertThat(standardCards.get(idx++)).isSameAs(ContreeRankValueAndPoints.NINE);
+        assertThat(standardCards.get(idx++)).isSameAs(ContreeRankValueAndPoints.EIGHT);
+        assertThat(standardCards.get(idx)).isSameAs(ContreeRankValueAndPoints.SEVEN);
     }
 
     @DisplayName("Sorting trump cards by game value in descending order")
     @Test
     public void testTrumpDescOrderingByValue() {
-        var trumpCards  = Arrays.stream(ContreeRankValueAndPoints.values()).
+        List<ContreeRankValueAndPoints> trumpCards  = Arrays.stream(ContreeRankValueAndPoints.values()).
                 sorted(
                     Comparator.comparingInt(
                         ContreeRankValueAndPoints::getTrumpGameValue
@@ -45,14 +46,14 @@ public class ContreeRankValueAndPointsTest {
 
         int idx = 0;
 
-        assertEquals(ContreeRankValueAndPoints.JACK, trumpCards.get(idx++));
-        assertEquals(ContreeRankValueAndPoints.NINE, trumpCards.get(idx++));
-        assertEquals(ContreeRankValueAndPoints.ACE, trumpCards.get(idx++));
-        assertEquals(ContreeRankValueAndPoints.TEN, trumpCards.get(idx++));
-        assertEquals(ContreeRankValueAndPoints.KING, trumpCards.get(idx++));
-        assertEquals(ContreeRankValueAndPoints.QUEEN, trumpCards.get(idx++));
-        assertEquals(ContreeRankValueAndPoints.EIGHT, trumpCards.get(idx++));
-        assertEquals(ContreeRankValueAndPoints.SEVEN, trumpCards.get(idx));
+        assertThat(trumpCards.get(idx++)).isSameAs(ContreeRankValueAndPoints.JACK);
+        assertThat(trumpCards.get(idx++)).isSameAs(ContreeRankValueAndPoints.NINE);
+        assertThat(trumpCards.get(idx++)).isSameAs(ContreeRankValueAndPoints.ACE);
+        assertThat(trumpCards.get(idx++)).isSameAs(ContreeRankValueAndPoints.TEN);
+        assertThat(trumpCards.get(idx++)).isSameAs(ContreeRankValueAndPoints.KING);
+        assertThat(trumpCards.get(idx++)).isSameAs(ContreeRankValueAndPoints.QUEEN);
+        assertThat(trumpCards.get(idx++)).isSameAs(ContreeRankValueAndPoints.EIGHT);
+        assertThat(trumpCards.get(idx)).isSameAs(ContreeRankValueAndPoints.SEVEN);
     }
 
     @DisplayName("Sorting non trump cards by game points in descending order")
@@ -67,14 +68,14 @@ public class ContreeRankValueAndPointsTest {
 
         int idx = 0;
 
-        assertEquals(ContreeRankValueAndPoints.ACE, standardCards.get(idx++));
-        assertEquals(ContreeRankValueAndPoints.TEN, standardCards.get(idx++));
-        assertEquals(ContreeRankValueAndPoints.KING, standardCards.get(idx++));
-        assertEquals(ContreeRankValueAndPoints.QUEEN, standardCards.get(idx++));
-        assertEquals(ContreeRankValueAndPoints.JACK, standardCards.get(idx++));
-        assertEquals(ContreeRankValueAndPoints.NINE, standardCards.get(idx++));
-        assertEquals(ContreeRankValueAndPoints.EIGHT, standardCards.get(idx++));
-        assertEquals(ContreeRankValueAndPoints.SEVEN, standardCards.get(idx));
+        assertThat(standardCards.get(idx++)).isSameAs(ContreeRankValueAndPoints.ACE);
+        assertThat(standardCards.get(idx++)).isSameAs(ContreeRankValueAndPoints.TEN);
+        assertThat(standardCards.get(idx++)).isSameAs(ContreeRankValueAndPoints.KING);
+        assertThat(standardCards.get(idx++)).isSameAs(ContreeRankValueAndPoints.QUEEN);
+        assertThat(standardCards.get(idx++)).isSameAs(ContreeRankValueAndPoints.JACK);
+        assertThat(standardCards.get(idx++)).isSameAs(ContreeRankValueAndPoints.NINE);
+        assertThat(standardCards.get(idx++)).isSameAs(ContreeRankValueAndPoints.EIGHT);
+        assertThat(standardCards.get(idx)).isSameAs(ContreeRankValueAndPoints.SEVEN);
     }
 
     @DisplayName("Sorting trump cards by game points in descending order")
@@ -89,14 +90,14 @@ public class ContreeRankValueAndPointsTest {
 
         int idx = 0;
 
-        assertEquals(ContreeRankValueAndPoints.JACK, trumpCards.get(idx++));
-        assertEquals(ContreeRankValueAndPoints.NINE, trumpCards.get(idx++));
-        assertEquals(ContreeRankValueAndPoints.ACE, trumpCards.get(idx++));
-        assertEquals(ContreeRankValueAndPoints.TEN, trumpCards.get(idx++));
-        assertEquals(ContreeRankValueAndPoints.KING, trumpCards.get(idx++));
-        assertEquals(ContreeRankValueAndPoints.QUEEN, trumpCards.get(idx++));
-        assertEquals(ContreeRankValueAndPoints.EIGHT, trumpCards.get(idx++));
-        assertEquals(ContreeRankValueAndPoints.SEVEN, trumpCards.get(idx));
+        assertThat(trumpCards.get(idx++)).isSameAs(ContreeRankValueAndPoints.JACK);
+        assertThat(trumpCards.get(idx++)).isSameAs(ContreeRankValueAndPoints.NINE);
+        assertThat(trumpCards.get(idx++)).isSameAs(ContreeRankValueAndPoints.ACE);
+        assertThat(trumpCards.get(idx++)).isSameAs(ContreeRankValueAndPoints.TEN);
+        assertThat(trumpCards.get(idx++)).isSameAs(ContreeRankValueAndPoints.KING);
+        assertThat(trumpCards.get(idx++)).isSameAs(ContreeRankValueAndPoints.QUEEN);
+        assertThat(trumpCards.get(idx++)).isSameAs(ContreeRankValueAndPoints.EIGHT);
+        assertThat(trumpCards.get(idx)).isSameAs(ContreeRankValueAndPoints.SEVEN);
     }
 
 }

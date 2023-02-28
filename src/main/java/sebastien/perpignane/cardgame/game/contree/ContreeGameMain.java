@@ -30,7 +30,6 @@ public class ContreeGameMain {
 
             int i = 0;
             while (i < 3) {
-
                 game.joinGame(createBotPlayer());
                 i++;
             }
@@ -40,7 +39,6 @@ public class ContreeGameMain {
             sebastien.perpignane.cardgame.player.contree.ContreePlayer lastPlayer;
             if (onlyBots) {
                 lastPlayer = new ContreePlayerImpl(new BiddingBotEventHandler());
-
             }
             else {
                 lastPlayer = manageHumanPlayer();

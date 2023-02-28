@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class ContreeGameScoreTest extends TestCasesManagingPlayers {
 
@@ -45,8 +46,8 @@ class ContreeGameScoreTest extends TestCasesManagingPlayers {
                 gameScoreWith1000AsMax::addDealScore
         );
 
-        assertEquals(team1Score, gameScoreWith1000AsMax.getTeamScore(ContreeTeam.TEAM1));
-        assertEquals(team2Score, gameScoreWith1000AsMax.getTeamScore(ContreeTeam.TEAM2));
+        assertThat(gameScoreWith1000AsMax.getTeamScore(ContreeTeam.TEAM1)).isEqualTo(team1Score);
+        assertThat(gameScoreWith1000AsMax.getTeamScore(ContreeTeam.TEAM2)).isEqualTo(team2Score);
 
     }
 
@@ -82,8 +83,8 @@ class ContreeGameScoreTest extends TestCasesManagingPlayers {
                 gameScoreWith1000AsMax::addDealScore
         );
 
-        assertEquals(120 + 40, gameScoreWith1000AsMax.getTeamScore(ContreeTeam.TEAM1));
-        assertEquals(40 + 120, gameScoreWith1000AsMax.getTeamScore(ContreeTeam.TEAM2));
+        assertThat(gameScoreWith1000AsMax.getTeamScore(ContreeTeam.TEAM1)).isEqualTo(120 + 40);
+        assertThat(gameScoreWith1000AsMax.getTeamScore(ContreeTeam.TEAM2)).isEqualTo(40 + 120);
 
     }
 
@@ -113,8 +114,8 @@ class ContreeGameScoreTest extends TestCasesManagingPlayers {
                 gameScoreWith1000AsMax::addDealScore
         );
 
-        assertTrue(gameScoreWith1000AsMax.isMaximumScoreReached());
-        assertSame(ContreeTeam.TEAM1, gameScoreWith1000AsMax.getWinner().orElseThrow());
+        assertThat(gameScoreWith1000AsMax.isMaximumScoreReached()).isTrue();
+        assertThat(gameScoreWith1000AsMax.getWinner().orElseThrow()).isSameAs(ContreeTeam.TEAM1);
 
     }
 
@@ -124,10 +125,7 @@ class ContreeGameScoreTest extends TestCasesManagingPlayers {
 
         ContreeDeal deal = MockDealBuilder.builder().withIsOver(false).build();
 
-        assertThrows(
-            RuntimeException.class,
-            () -> gameScoreWith1000AsMax.addDealScore(deal)
-        );
+        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> gameScoreWith1000AsMax.addDealScore(deal));
 
     }
 

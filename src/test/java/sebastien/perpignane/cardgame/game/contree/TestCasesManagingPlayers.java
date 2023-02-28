@@ -39,10 +39,6 @@ public abstract class TestCasesManagingPlayers {
 
     }
 
-    protected static List<ContreePlayer> loopingPlayers(int nbLoops) {
-        return loopingAnything(nbLoops, players);
-    }
-
     protected static List<PlayerSlot<ContreePlayer>> loopingPlayerSlots(int nbLoops) {
         return loopingAnything(nbLoops, playerSlots);
     }

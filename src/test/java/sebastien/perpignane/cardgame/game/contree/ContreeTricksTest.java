@@ -19,7 +19,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.*;
 
 /*
@@ -85,10 +86,10 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
     @Test
     public void testNotStartedTricks() {
 
-        assertTrue(tricksWithHeartAsTrumpSuit.lastTrick().isEmpty());
-        assertEquals(0, tricksWithHeartAsTrumpSuit.nbOverTricks());
-        assertEquals(0, tricksWithHeartAsTrumpSuit.nbOngoingTricks());
-        assertFalse(tricksWithHeartAsTrumpSuit.tricksAreOver());
+        assertThat(tricksWithHeartAsTrumpSuit.lastTrick()).isEmpty();
+        assertThat(tricksWithHeartAsTrumpSuit.nbOverTricks()).isEqualTo(0);
+        assertThat(tricksWithHeartAsTrumpSuit.nbOngoingTricks()).isEqualTo(0);
+        assertThat(tricksWithHeartAsTrumpSuit.tricksAreOver()).isFalse();
 
     }
 
@@ -98,8 +99,8 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
 
         tricksWithHeartAsTrumpSuit.startTricks(deal, trickPlayers);
 
-        assertEquals(0, tricksWithHeartAsTrumpSuit.nbOverTricks());
-        assertEquals(1, tricksWithHeartAsTrumpSuit.nbOngoingTricks());
+        assertThat(tricksWithHeartAsTrumpSuit.nbOverTricks()).isEqualTo(0);
+        assertThat(tricksWithHeartAsTrumpSuit.nbOngoingTricks()).isEqualTo(1);
 
         tricksWithHeartAsTrumpSuit.playerPlays(player1, ClassicalCard.JACK_CLUB);
         tricksWithHeartAsTrumpSuit.playerPlays(player2, ClassicalCard.JACK_CLUB);
@@ -120,19 +121,19 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
         tricksWithHeartAsTrumpSuit.playerPlays(player3, ClassicalCard.JACK_CLUB);
         tricksWithHeartAsTrumpSuit.playerPlays(player4, ClassicalCard.JACK_CLUB);
 
-        assertEquals(1, tricksWithHeartAsTrumpSuit.nbOverTricks());
-        assertEquals(1, tricksWithHeartAsTrumpSuit.nbOngoingTricks());
+        assertThat(tricksWithHeartAsTrumpSuit.nbOverTricks()).isEqualTo(1);
+        assertThat(tricksWithHeartAsTrumpSuit.nbOngoingTricks()).isEqualTo(1);
 
         tricksWithHeartAsTrumpSuit.playerPlays(player1, ClassicalCard.JACK_HEART);
         tricksWithHeartAsTrumpSuit.playerPlays(player2, ClassicalCard.JACK_CLUB);
         tricksWithHeartAsTrumpSuit.playerPlays(player3, ClassicalCard.JACK_CLUB);
         tricksWithHeartAsTrumpSuit.playerPlays(player4, ClassicalCard.JACK_CLUB);
 
-        assertEquals(2, tricksWithHeartAsTrumpSuit.nbOverTricks());
-        assertEquals(1, tricksWithHeartAsTrumpSuit.nbOngoingTricks());
+        assertThat(tricksWithHeartAsTrumpSuit.nbOverTricks()).isEqualTo(2);
+        assertThat(tricksWithHeartAsTrumpSuit.nbOngoingTricks()).isEqualTo(1);
 
-        assertTrue(tricksWithHeartAsTrumpSuit.lastTrick().isPresent());
-        assertFalse(tricksWithHeartAsTrumpSuit.lastTrick().get().isOver());
+        assertThat(tricksWithHeartAsTrumpSuit.lastTrick()).isPresent();
+        assertThat(tricksWithHeartAsTrumpSuit.lastTrick().get().isOver()).isFalse();
 
     }
 
@@ -153,13 +154,13 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
             i++;
         }
 
-        assertTrue(tricksWithHeartAsTrumpSuit.tricksAreOver());
-        assertTrue(tricksWithHeartAsTrumpSuit.isCapot());
-        assertTrue(tricksWithHeartAsTrumpSuit.teamWhoDidCapot().isPresent());
-        assertSame(ContreeTeam.TEAM1, tricksWithHeartAsTrumpSuit.teamWhoDidCapot().get());
+        assertThat(tricksWithHeartAsTrumpSuit.tricksAreOver()).isTrue();
+        assertThat(tricksWithHeartAsTrumpSuit.isCapot()).isTrue();
+        assertThat(tricksWithHeartAsTrumpSuit.teamWhoDidCapot()).isPresent();
+        assertThat(tricksWithHeartAsTrumpSuit.teamWhoDidCapot().get()).isSameAs(ContreeTeam.TEAM1);
 
-        assertEquals(8, tricksWithHeartAsTrumpSuit.nbOverTricks());
-        assertEquals(0, tricksWithHeartAsTrumpSuit.nbOngoingTricks());
+        assertThat(tricksWithHeartAsTrumpSuit.nbOverTricks()).isEqualTo(8);
+        assertThat(tricksWithHeartAsTrumpSuit.nbOngoingTricks()).isEqualTo(0);
 
     }
 
@@ -188,19 +189,19 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
         tricksWithHeartAsTrumpSuit.playerPlays(player3, ClassicalCard.JACK_CLUB);
         tricksWithHeartAsTrumpSuit.playerPlays(player4, ClassicalCard.JACK_CLUB);
 
-        assertTrue(tricksWithHeartAsTrumpSuit.tricksAreOver());
-        assertFalse(tricksWithHeartAsTrumpSuit.isCapot());
-        assertTrue(tricksWithHeartAsTrumpSuit.teamWhoDidCapot().isEmpty());
+        assertThat(tricksWithHeartAsTrumpSuit.tricksAreOver()).isTrue();
+        assertThat(tricksWithHeartAsTrumpSuit.isCapot()).isFalse();
+        assertThat(tricksWithHeartAsTrumpSuit.teamWhoDidCapot()).isEmpty();
 
-        assertEquals(8, tricksWithHeartAsTrumpSuit.nbOverTricks());
-        assertEquals(0, tricksWithHeartAsTrumpSuit.nbOngoingTricks());
+        assertThat(tricksWithHeartAsTrumpSuit.nbOverTricks()).isEqualTo(8);
+        assertThat(tricksWithHeartAsTrumpSuit.nbOngoingTricks()).isEqualTo(0);
 
         Map<Team, Set<ContreeCard>> wonCardsByTeam = tricksWithHeartAsTrumpSuit.wonCardsByTeam();
 
         var expectedWonCards = Set.of(ClassicalCard.JACK_HEART, ClassicalCard.JACK_CLUB);
 
-        assertEquals( expectedWonCards, wonCardsByTeam.get(ContreeTeam.TEAM1).stream().map(ContreeCard::getCard).collect(Collectors.toSet()) );
-        assertEquals( expectedWonCards, wonCardsByTeam.get(ContreeTeam.TEAM2).stream().map(ContreeCard::getCard).collect(Collectors.toSet()) );
+        assertThat(wonCardsByTeam.get(ContreeTeam.TEAM1).stream().map(ContreeCard::getCard).collect(Collectors.toSet())).isEqualTo(expectedWonCards);
+        assertThat(wonCardsByTeam.get(ContreeTeam.TEAM2).stream().map(ContreeCard::getCard).collect(Collectors.toSet())).isEqualTo(expectedWonCards);
 
     }
 
@@ -209,10 +210,7 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
     public void testStartTricksMultipleTimesFails() {
         tricksWithHeartAsTrumpSuit.startTricks(deal, trickPlayers);
 
-        assertThrows(
-                RuntimeException.class,
-                () -> tricksWithHeartAsTrumpSuit.startTricks(deal, trickPlayers)
-        );
+        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> tricksWithHeartAsTrumpSuit.startTricks(deal, trickPlayers));
 
     }
 
@@ -230,14 +228,14 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
         tricksWithHeartAsTrumpSuit.playerPlays(player3, ClassicalCard.JACK_CLUB);
         tricksWithHeartAsTrumpSuit.playerPlays(player4, ClassicalCard.JACK_CLUB);
 
-        assertTrue(tricksWithHeartAsTrumpSuit.teamWhoDidCapot().isEmpty());
+        assertThat(tricksWithHeartAsTrumpSuit.teamWhoDidCapot()).isEmpty();
 
     }
 
     @DisplayName("When tricks are not started, there is no current player")
     @Test
     public void testCurrentPlayer_notStartedTrick() {
-        assertTrue(tricksWithHeartAsTrumpSuit.getCurrentPlayer().isEmpty());
+        assertThat(tricksWithHeartAsTrumpSuit.getCurrentPlayer()).isEmpty();
     }
 
     @Test
@@ -245,41 +243,10 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
 
         tricksWithHeartAsTrumpSuit.startTricks(deal, trickPlayers);
 
-        assertFalse(tricksWithHeartAsTrumpSuit.tricksAreOver());
-        assertTrue(tricksWithHeartAsTrumpSuit.getCurrentPlayer().isPresent());
-        assertSame(player1, tricksWithHeartAsTrumpSuit.getCurrentPlayer().get());
+        assertThat(tricksWithHeartAsTrumpSuit.tricksAreOver()).isFalse();
+        assertThat(tricksWithHeartAsTrumpSuit.getCurrentPlayer()).isPresent();
+        assertThat(tricksWithHeartAsTrumpSuit.getCurrentPlayer().get()).isSameAs(player1);
 
     }
-
-    /*@DisplayName("When tricks are started, there is a current player so it can be updated")
-    @Test
-    public void testUpdateCurrentPlayer_startedTricks() {
-        tricksWithHeartAsTrumpSuit.startTricks(deal, trickPlayers);
-
-        assertTrue(tricksWithHeartAsTrumpSuit.getCurrentPlayer().isPresent());
-        var existingCurrentPlayer = tricksWithHeartAsTrumpSuit.getCurrentPlayer().get();
-
-        ContreePlayer newPlayer = mock(ContreePlayer.class);
-
-        tricksWithHeartAsTrumpSuit.updateCurrentPlayer(newPlayer);
-        assertTrue(tricksWithHeartAsTrumpSuit.getCurrentPlayer().isPresent());
-        var newCurrentPlayer = tricksWithHeartAsTrumpSuit.getCurrentPlayer().get();
-
-        assertNotSame(newCurrentPlayer, existingCurrentPlayer);
-
-    }
-
-    @DisplayName("When tricks are not started, current player cannot be updated as there is none")
-    @Test
-    public void testUpdateCurrentPlayer_notStartedTricks() {
-
-        ContreePlayer newPlayer = mock(ContreePlayer.class);
-
-        assertThrows(
-            RuntimeException.class,
-            () -> tricksWithHeartAsTrumpSuit.updateCurrentPlayer(newPlayer)
-        );
-
-    }*/
 
 }

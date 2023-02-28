@@ -17,8 +17,7 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Tag(("integration-test"))
 public class WarGameIT {
@@ -34,7 +33,7 @@ public class WarGameIT {
         warGame.joinGame(player1);
         warGame.joinGame(player2);
 
-        assertTrue(warGame.isInitialized());
+        assertThat(warGame.isInitialized()).isTrue();
 
         CardSetShuffler shuffler = new WarPlayer1WinShuffler();
         List<ClassicalCard> cards = shuffler.shuffle(CardSet.GAME_32);
@@ -42,8 +41,8 @@ public class WarGameIT {
 
         boolean endOfGame = waitForEndOfGameEvent(warGame);
 
-        assertTrue(endOfGame);
-        assertSame(player1, warGame.getWinner());
+        assertThat(endOfGame).isTrue();
+        assertThat(warGame.getWinner()).isSameAs(player1);
 
     }
 
@@ -58,7 +57,7 @@ public class WarGameIT {
         warGame.joinGame(player1);
         warGame.joinGame(player2);
 
-        assertTrue(warGame.isInitialized());
+        assertThat(warGame.isInitialized()).isTrue();
         GameTextDisplayer observer = GameTextDisplayer.getInstance();
         warGame.registerAsGameObserver(observer);
         warGame.registerAsTrickObserver(observer);
@@ -79,8 +78,8 @@ public class WarGameIT {
         warGame.startGame(cards);
 
         boolean endOfGame = waitForEndOfGameEvent(warGame);
-        assertTrue(endOfGame);
-        assertSame(player2, warGame.getWinner());
+        assertThat(endOfGame).isTrue();
+        assertThat(warGame.getWinner()).isSameAs(player2);
 
     }
 

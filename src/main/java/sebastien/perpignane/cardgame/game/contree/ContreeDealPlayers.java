@@ -30,4 +30,8 @@ interface ContreeDealPlayers extends ContreePlayers {
 
     int indexOf(ContreePlayer player);
 
+    void setBiddingPlayer(ContreePlayer biddingPlayer);
+
+    void setPlayingPlayer(ContreePlayer playingPlayer);
+
 }

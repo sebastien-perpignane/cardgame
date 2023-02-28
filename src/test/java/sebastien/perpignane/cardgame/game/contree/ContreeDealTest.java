@@ -1,10 +1,10 @@
 package sebastien.perpignane.cardgame.game.contree;
 
+import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.mockito.AdditionalAnswers;
 import sebastien.perpignane.cardgame.card.CardDealer;
 import sebastien.perpignane.cardgame.card.CardSet;
@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mock;
@@ -88,8 +88,7 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
         when(dealPlayers.getNumberOfPlayers()).thenReturn(0);
         when(dealPlayers.getCurrentDealPlayers()).thenReturn(Collections.emptyList());
 
-        assertThrows(
-                RuntimeException.class,
+        assertThatExceptionOfType(RuntimeException.class).isThrownBy(
                 () -> deal.startDeal(-1,"TEST", dealPlayers)
         );
 
@@ -101,8 +100,7 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
         when(dealPlayers.getNumberOfPlayers()).thenReturn(3);
         when(dealPlayers.getCurrentDealPlayers()).thenReturn(List.of(player1, player2, player3));
 
-        assertThrows(
-                RuntimeException.class,
+        assertThatExceptionOfType(RuntimeException.class).isThrownBy(
                 () -> deal.startDeal(-1,"TEST", dealPlayers)
         );
 
@@ -113,8 +111,8 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
     public void testDealIsInBidStepAfterStart() {
         deal.startDeal(-1,"TEST", dealPlayers);
 
-        assertTrue( deal.isBidStep() );
-        assertFalse( deal.isPlayStep() );
+        assertThat( deal.isBidStep() ).isTrue();
+        assertThat( deal.isPlayStep() ).isFalse();
     }
 
     @DisplayName("When bids are over, the deal is in play step. Trump suit is defined.")
@@ -127,9 +125,9 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
 
         deal.placeBid(bid);
 
-        assertFalse( deal.isBidStep() );
-        assertTrue( deal.isPlayStep() );
-        assertNotNull( deal.getTrumpSuit() );
+        assertThat( deal.isBidStep() ).isFalse();
+        assertThat( deal.isPlayStep() ).isTrue();
+        assertThat( deal.getTrumpSuit() ).isNotNull();
 
     }
 
@@ -139,10 +137,9 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
     public void testExceptionWhenPlayingWhileBidStep() {
         deal.startDeal(-1,"TEST", dealPlayers);
 
-        assertTrue(deal.isBidStep());
+        assertThat( deal.isBidStep() ).isTrue();
 
-        assertThrows(
-            RuntimeException.class,
+        assertThatExceptionOfType(RuntimeException.class).isThrownBy(
             () -> deal.playerPlays(player1, ClassicalCard.JACK_DIAMOND)
         );
 
@@ -162,15 +159,12 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
         deal.placeBid(new ContreeBid( player1 ));
 
         // When
-        Executable placeBidAction = () -> deal.placeBid(new ContreeBid( player2 ));
+        ThrowableAssert.ThrowingCallable placeBidAction = () -> deal.placeBid(new ContreeBid( player2 ));
 
         // Then
-        assertTrue(deal.isPlayStep());
-        var ise = assertThrows(
-                RuntimeException.class,
-                placeBidAction
-        );
-        assertTrue(ise.getMessage().contains("A bid cannot be placed during PLAY step"));
+        assertThat(deal.isPlayStep()).isTrue();
+        var ise = catchThrowableOfType(placeBidAction, RuntimeException.class);
+        assertThat(ise.getMessage()).contains("A bid cannot be placed during PLAY step");
     }
 
     @DisplayName("One play step reached, deal is over when tricks are over")
@@ -183,7 +177,7 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
 
         deal.playerPlays(player1, ClassicalCard.JACK_DIAMOND);
 
-        assertTrue(deal.isOver());
+        assertThat(deal.isOver()).isTrue();
 
     }
 
@@ -197,7 +191,7 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
 
         deal.playerPlays(player1, ClassicalCard.JACK_DIAMOND);
 
-        assertFalse(deal.isOver());
+        assertThat( deal.isOver() ).isFalse();
 
     }
 
@@ -207,10 +201,9 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
         when(bids.highestBid()).thenReturn(Optional.of(bid));// When bids are over, startPlay method is called and gets the trump suit.
 
         deal.startDeal(-1,"TEST", dealPlayers);
-
         deal.placeBid(new ContreeBid( player1 ));
 
-        assertTrue(deal.isPlayStep());
+        assertThat( deal.isPlayStep() ).isTrue();
     }
 
     @DisplayName("When only bid is 180 HEART, the deal is not doubled nor redoubled")
@@ -221,41 +214,41 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
 
         deal.placeBid(new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.HEARTS));
 
-        assertFalse(deal.isDoubleBidExists());
-        assertFalse(deal.isRedoubleBidExists());
-        assertTrue(deal.isBidStep());
+        assertThat( deal.isDoubleBidExists() ).isFalse();
+        assertThat( deal.isRedoubleBidExists() ).isFalse();
+        assertThat( deal.isBidStep() ).isTrue();
     }
 
-    @DisplayName("getCurrentPlayer behavior is consistent with tricks returned values")
+    @DisplayName("getCurrentPlayer behavior is consistent with values returned by tricks")
     @Test
     public void testGetCurrentPlayer_isConsistentWithTricks() {
 
         when(tricks.getCurrentPlayer()).thenReturn(Optional.empty());
 
-        assertTrue(deal.getCurrentPlayer().isEmpty());
+        assertThat( deal.getCurrentPlayer() ).isEmpty();
 
         when(tricks.getCurrentPlayer()).thenReturn(Optional.of(player1));
 
-        assertTrue(deal.getCurrentPlayer().isPresent());
+        assertThat( deal.getCurrentPlayer() ).isPresent();
 
         when(tricks.getCurrentPlayer()).thenReturn(Optional.of(player1));
-
         when(tricks.tricksAreOver()).thenReturn(true);
-        assertTrue(deal.getCurrentPlayer().isEmpty());
+
+        assertThat( deal.getCurrentPlayer() ).isEmpty();
 
     }
 
-    @DisplayName("getCurrentBidder behavior is consistent with bids returned values")
+    @DisplayName("getCurrentBidder behavior is consistent with values returned by bids")
     @Test
     public void testGetCurrentBidder_isConsistentWithBids() {
 
         when(bids.getCurrentBidder()).thenReturn(Optional.empty());
 
-        assertTrue(deal.getCurrentBidder().isEmpty());
+        assertThat( deal.getCurrentBidder() ).isEmpty();
 
         when(bids.getCurrentBidder()).thenReturn(Optional.of(player1));
 
-        assertTrue(deal.getCurrentBidder().isPresent());
+        assertThat( deal.getCurrentBidder() ).isPresent();
 
     }
 
