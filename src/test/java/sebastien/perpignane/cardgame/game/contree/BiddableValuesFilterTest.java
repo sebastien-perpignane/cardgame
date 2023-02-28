@@ -11,15 +11,15 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static sebastien.perpignane.cardgame.game.contree.ContreeBidValue.*;
 
 @DisplayName("Unit tests for the BiddableValuesFilter class")
 class BiddableValuesFilterTest extends TestCasesManagingPlayers {
 
-    private static Set<ContreeBidValue> allValuesExceptDoubleRedouble;
+    private static Set<ContreeBidValue> allBidValuesExceptDoubleRedouble;
 
     private static ContreePlayer currentPlayer;
 
@@ -35,9 +35,9 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
         teamMate = player3;
         opponent = player2;
 
-        allValuesExceptDoubleRedouble =
+        allBidValuesExceptDoubleRedouble =
                 Arrays.stream( ContreeBidValue.values() )
-                    .filter( Predicate.not( bv -> bv == ContreeBidValue.DOUBLE || bv == ContreeBidValue.REDOUBLE ) )
+                    .filter( Predicate.not( bidValue -> bidValue == DOUBLE || bidValue == REDOUBLE ) )
                     .collect( Collectors.toSet() );
 
     }
@@ -62,16 +62,15 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
         Map<ContreeBidValue, String> exclusionCauseByBidValue = filterResult.exclusionCauseByBidValue();
         Set<ContreeBidValue> allowedBidValues = filterResult.biddableValues();
 
-        assertEquals(
-                expectedAllowedBidValues, allowedBidValues
-        );
+        assertThat(allowedBidValues).isEqualTo(expectedAllowedBidValues);
+
         checkExclusionCausesAreComplete(allowedBidValues, exclusionCauseByBidValue);
     }
 
     private void checkExclusionCausesAreComplete(Set<ContreeBidValue> allowedBidValues, Map<ContreeBidValue, String> exclusionCauseByBidValue) {
         Arrays.stream(ContreeBidValue.values()).filter(Predicate.not(allowedBidValues::contains)).forEach( bv -> {
             String assertionErrorMessage = String.format("Exclusion cause not available for bid value %s", bv);
-            assertTrue( exclusionCauseByBidValue.containsKey(bv), assertionErrorMessage );
+            assertThat(exclusionCauseByBidValue).as(assertionErrorMessage).containsKey(bv);
         });
     }
 
@@ -84,7 +83,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
         when(bids.isRedoubleBidExists()).thenReturn(false);
         when(bids.hasOnlyPassBids()).thenReturn(false);
 
-        expectedAllowedBidValues = allValuesExceptDoubleRedouble;
+        expectedAllowedBidValues = allBidValuesExceptDoubleRedouble;
 
         runTestWithCurrentPlayerAndCheckAssertions();
 
@@ -101,7 +100,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
         when(bids.isRedoubleBidExists()).thenReturn(false);
         when(bids.hasOnlyPassBids()).thenReturn(true);
 
-        expectedAllowedBidValues = allValuesExceptDoubleRedouble;
+        expectedAllowedBidValues = allBidValuesExceptDoubleRedouble;
 
         runTestWithCurrentPlayerAndCheckAssertions();
 
@@ -116,7 +115,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
         when(bids.isRedoubleBidExists()).thenReturn(false);
         when(bids.hasOnlyPassBids()).thenReturn(false);
 
-        expectedAllowedBidValues = new HashSet<>(allValuesExceptDoubleRedouble);
+        expectedAllowedBidValues = new HashSet<>(allBidValuesExceptDoubleRedouble);
         expectedAllowedBidValues.remove(ContreeBidValue.EIGHTY);
         expectedAllowedBidValues.add(ContreeBidValue.DOUBLE);
 
@@ -148,12 +147,10 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
         when(bids.isRedoubleBidExists()).thenReturn(false);
         when(bids.hasOnlyPassBids()).thenReturn(false);
 
-        expectedAllowedBidValues = new HashSet<>(allValuesExceptDoubleRedouble);
-        expectedAllowedBidValues.remove(ContreeBidValue.EIGHTY);
-        expectedAllowedBidValues.remove(ContreeBidValue.NINETY);
-        expectedAllowedBidValues.remove(ContreeBidValue.HUNDRED);
-        expectedAllowedBidValues.remove(ContreeBidValue.HUNDRED_TEN);
-        expectedAllowedBidValues.add(ContreeBidValue.DOUBLE);
+        expectedAllowedBidValues = new HashSet<>(allBidValuesExceptDoubleRedouble);
+
+        List.of(EIGHTY, NINETY, HUNDRED, HUNDRED_TEN).forEach(expectedAllowedBidValues::remove);
+        expectedAllowedBidValues.add(DOUBLE);
 
         runTestWithCurrentPlayerAndCheckAssertions();
 
@@ -163,12 +160,12 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
     @Test
     public void testHundredTenBidByOpponent_alreadyDouble() {
 
-        when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(opponent, ContreeBidValue.EIGHTY, CardSuit.HEARTS)));
+        when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(opponent, EIGHTY, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(true);
         when(bids.isRedoubleBidExists()).thenReturn(false);
         when(bids.hasOnlyPassBids()).thenReturn(false);
 
-        expectedAllowedBidValues = Set.of(ContreeBidValue.PASS);
+        expectedAllowedBidValues = Set.of(PASS);
 
         runTestWithCurrentPlayerAndCheckAssertions();
 
@@ -178,12 +175,12 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
     @Test
     public void testEightyBidByMate_noDouble() {
 
-        when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(teamMate, ContreeBidValue.EIGHTY, CardSuit.HEARTS)));
+        when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(teamMate, EIGHTY, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(false);
         when(bids.isRedoubleBidExists()).thenReturn(false);
         when(bids.hasOnlyPassBids()).thenReturn(false);
 
-        expectedAllowedBidValues = new HashSet<>(allValuesExceptDoubleRedouble);
+        expectedAllowedBidValues = new HashSet<>(allBidValuesExceptDoubleRedouble);
         expectedAllowedBidValues.remove(ContreeBidValue.EIGHTY);
 
         runTestWithCurrentPlayerAndCheckAssertions();
@@ -194,12 +191,12 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
     @Test
     public void testEightyBidByMate_withDouble() {
 
-        when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(teamMate, ContreeBidValue.EIGHTY, CardSuit.HEARTS)));
+        when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(teamMate, EIGHTY, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(true);
         when(bids.isRedoubleBidExists()).thenReturn(false);
         when(bids.hasOnlyPassBids()).thenReturn(false);
 
-        expectedAllowedBidValues = Set.of(ContreeBidValue.REDOUBLE, ContreeBidValue.PASS);
+        expectedAllowedBidValues = Set.of(REDOUBLE, PASS);
 
         runTestWithCurrentPlayerAndCheckAssertions();
 
@@ -209,16 +206,14 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
     @Test
     public void testHundredTenBidByMate_noDouble() {
 
-        when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(teamMate, ContreeBidValue.HUNDRED_TEN, CardSuit.HEARTS)));
+        when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(teamMate, HUNDRED_TEN, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(false);
         when(bids.isRedoubleBidExists()).thenReturn(false);
         when(bids.hasOnlyPassBids()).thenReturn(false);
 
-        expectedAllowedBidValues = new HashSet<>(allValuesExceptDoubleRedouble);
-        expectedAllowedBidValues.remove(ContreeBidValue.EIGHTY);
-        expectedAllowedBidValues.remove(ContreeBidValue.NINETY);
-        expectedAllowedBidValues.remove(ContreeBidValue.HUNDRED);
-        expectedAllowedBidValues.remove(ContreeBidValue.HUNDRED_TEN);
+        expectedAllowedBidValues = new HashSet<>(allBidValuesExceptDoubleRedouble);
+
+        List.of(EIGHTY, NINETY, HUNDRED, HUNDRED_TEN).forEach(expectedAllowedBidValues::remove);
 
         runTestWithCurrentPlayerAndCheckAssertions();
 

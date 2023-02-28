@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class ContreeGameConfigTest  {
 
@@ -21,10 +21,10 @@ class ContreeGameConfigTest  {
     @Test
     void testConfigParametersValuesSameAsTestConfigFile() {
 
-        assertFalse(config.isFileNotFound());
+        assertThat( config.isFileNotFound() ).isFalse();
 
-        assertEquals(1_000_000, config.maxScore());
-        assertEquals(List.of(3, 3, 2), config.distributionConfiguration());
+        assertThat( config.maxScore() ).isEqualTo(1_000_000);
+        assertThat( config.distributionConfiguration() ).isEqualTo(List.of(3, 3, 2));
 
     }
 
@@ -32,10 +32,10 @@ class ContreeGameConfigTest  {
     @Test
     void testComaSeparatedToIntegerList_noSpaces() {
 
-        assertFalse(config.isFileNotFound());
+        assertThat( config.isFileNotFound() ).isFalse();
 
         List<Integer> mappedIntegerList = config.mapComaSeparatedStringToIntegerList("12,6,22");
-        assertEquals(List.of(12, 6, 22), mappedIntegerList);
+        assertThat( mappedIntegerList ).isEqualTo( List.of(12, 6, 22) );
     }
 
     @DisplayName("Comma separated strings with spaces are correctly converted to list of Integer")
@@ -43,15 +43,15 @@ class ContreeGameConfigTest  {
     void testComaSeparatedToIntegerList_withSpaces() {
         List<Integer> mappedIntegerList = config.mapComaSeparatedStringToIntegerList("12, 6, 22");
 
-        assertFalse(config.isFileNotFound());
-        assertEquals(List.of(12, 6, 22), mappedIntegerList);
+        assertThat( config.isFileNotFound() ).isFalse();
+        assertThat(mappedIntegerList).isEqualTo( List.of(12, 6, 22) );
     }
 
     @DisplayName("If a contree game config cannot load the config file, fileNotFound flag is true")
     @Test
     void testCreateConfigWithBadFileName() {
         ContreeGameConfig gameConfig = new ContreeGameConfig("non-existing-file");
-        assertTrue(gameConfig.isFileNotFound());
+        assertThat( gameConfig.isFileNotFound() ).isTrue();
     }
 
 }

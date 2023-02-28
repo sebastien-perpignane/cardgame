@@ -12,8 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 @DisplayName("Tests for the class in charge of displaying events in the console")
@@ -55,8 +54,10 @@ public class GameTextDisplayerTest extends TestCasesManagingPlayers {
 
         var output = bout.toString(StandardCharsets.UTF_8);
 
-        assertFalse(output.isBlank());
-        assertTrue(output.contains("###      ###      ###              # ###                                                ###      ###      ###"));
+        System.err.println(output);
+
+        assertThat(output.isBlank()).isFalse();
+        assertThat(output.contains("###      ###      ###              # ###                                                ###      ###      ###")).isTrue();
 
     }
 
@@ -70,8 +71,11 @@ public class GameTextDisplayerTest extends TestCasesManagingPlayers {
         gameTextDisplayer.onEndOfDeal("TEST", ContreeTeam.TEAM1, dealScore, false);
 
         var output = bout.toString(StandardCharsets.UTF_8);
-        assertFalse(output.isBlank());
-        assertFalse(output.contains("###      ###      ###              # ###                                                ###      ###      ###"));
+
+        System.err.println(output);
+
+        assertThat(output.isBlank()).isFalse();
+        assertThat(output.contains("###      ###      ###              # ###                                                ###      ###      ###")).isFalse();
 
     }
 

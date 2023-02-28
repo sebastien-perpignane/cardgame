@@ -15,7 +15,8 @@ import sebastien.perpignane.cardgame.player.util.PlayerSlot;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.*;
 
 class ContreeDealsTest extends TestCasesManagingPlayers {
@@ -50,6 +51,7 @@ class ContreeDealsTest extends TestCasesManagingPlayers {
 
         BiddableValuesFilter biddableValuesFilter = mock(BiddableValuesFilter.class);
 
+        // All cards are playable
         PlayableCardsFilter filter = mock(PlayableCardsFilter.class);
         when(filter.playableCards(any(), any())).thenReturn(CardSet.GAME_32.getGameCards());
 
@@ -68,19 +70,19 @@ class ContreeDealsTest extends TestCasesManagingPlayers {
 
     }
 
-    @DisplayName("When deals are started, there is an ongoing deal")
+    @DisplayName("When deals are started, there is one ongoing deal")
     @Test
     void getCurrentDeal() {
 
         deals.startDeals("TEST", dealPlayers);
 
-        assertEquals(1, deals.getNbDeals());
-        assertEquals(0, deals.nbOverDeals());
-        assertEquals(1, deals.nbOngoingDeals());
+        assertThat(deals.getNbDeals()).isEqualTo(1);
+        assertThat(deals.nbOverDeals()).isEqualTo(0);
+        assertThat(deals.nbOngoingDeals()).isEqualTo(1);
 
     }
 
-    @DisplayName("When one deal is over, 2 deals exist, one is over and one is in progress")
+    @DisplayName("When the first deal is over, 2 deals exist, one is over and one is in progress")
     @Test
     void testNbDeals() {
 
@@ -91,10 +93,9 @@ class ContreeDealsTest extends TestCasesManagingPlayers {
         deals.placeBid(player3, ContreeBidValue.PASS, null);
         deals.placeBid(player4, ContreeBidValue.PASS, null);
 
-        assertEquals(2, deals.getNbDeals());
-
-        assertEquals(1, deals.nbOverDeals());
-        assertEquals(1, deals.nbOngoingDeals());
+        assertThat(deals.getNbDeals()).isEqualTo(2);
+        assertThat(deals.nbOverDeals()).isEqualTo(1);
+        assertThat(deals.nbOngoingDeals()).isEqualTo(1);
 
     }
 
@@ -102,17 +103,17 @@ class ContreeDealsTest extends TestCasesManagingPlayers {
     @Test
     public void testCannotPlayWhenMaxScoreReached() {
 
-        when(gameScore.isMaximumScoreReached()).thenReturn(true);
-        when(gameScore.getWinner()).thenReturn(Optional.of(ContreeTeam.TEAM1));
-        assertTrue(deals.isMaximumScoreReached());
+        when( gameScore.isMaximumScoreReached() ).thenReturn(true);
+        when( gameScore.getWinner() ).thenReturn(Optional.of(ContreeTeam.TEAM1));
 
+        assertThat( deals.isMaximumScoreReached() ).isTrue();
 
-        assertThrows(
-            RuntimeException.class,
+        assertThatExceptionOfType(RuntimeException.class).isThrownBy(
             () -> deals.playCard(player1, ClassicalCard.JACK_DIAMOND)
         );
-        assertTrue(deals.isMaximumScoreReached());
-        assertTrue(deals.getWinner().isPresent());
+
+        assertThat( deals.isMaximumScoreReached() ).isTrue();
+        assertThat( deals.getWinner() ).isPresent();
 
     }
 
@@ -130,8 +131,8 @@ class ContreeDealsTest extends TestCasesManagingPlayers {
 
         playFullDeal();
 
-        assertTrue(calledFlag[0]);
-        assertTrue(deals.getWinner().isEmpty());
+        assertThat(calledFlag[0]).isTrue();
+        assertThat(deals.getWinner()).isEmpty();
 
     }
 

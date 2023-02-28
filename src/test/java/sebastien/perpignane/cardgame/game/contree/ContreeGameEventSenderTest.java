@@ -9,7 +9,7 @@ import sebastien.perpignane.cardgame.game.GameObserver;
 import sebastien.perpignane.cardgame.game.GameStatus;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -54,7 +54,8 @@ class ContreeGameEventSenderTest extends TestCasesManagingPlayers {
         ContreeGame game = mock(ContreeGame.class);
         gameEventSender.sendEndOfGameEvent(game);
 
-        assertTrue(calledFlag[0]);
+        boolean endOfGameWasCalled = calledFlag[0];
+        assertThat(endOfGameWasCalled).isTrue();
 
     }
 
@@ -68,7 +69,8 @@ class ContreeGameEventSenderTest extends TestCasesManagingPlayers {
 
         gameEventSender.sendPlayedCardEvent(player1, ClassicalCard.SEVEN_CLUB);
 
-        assertTrue(calledFlag[0]);
+        boolean onCardPlayedWasCalled = calledFlag[0];
+        assertThat( onCardPlayedWasCalled ).isTrue();
 
     }
 
@@ -82,7 +84,8 @@ class ContreeGameEventSenderTest extends TestCasesManagingPlayers {
 
         gameEventSender.sendStartOfDealEvent(-1, "TEST");
 
-        assertTrue(calledFlag[0]);
+        boolean onDealStartedWasCalled = calledFlag[0];
+        assertThat(onDealStartedWasCalled).isTrue();
 
     }
 
@@ -98,7 +101,8 @@ class ContreeGameEventSenderTest extends TestCasesManagingPlayers {
 
         gameEventSender.sendEndOfDealEvent("TEST", ContreeTeam.TEAM1, dealScore, true);
 
-        assertTrue(calledFlag[0]);
+        boolean onEndOfDealWasCalled = calledFlag[0];
+        assertThat( onEndOfDealWasCalled ).isTrue();
 
     }
 
@@ -112,7 +116,8 @@ class ContreeGameEventSenderTest extends TestCasesManagingPlayers {
 
         gameEventSender.sendPlacedBidEvent("TEST", new ContreeBid(player1, ContreeBidValue.PASS, null));
 
-        assertTrue(calledFlag[0]);
+        boolean onPlacedBidWasCalled = calledFlag[0];
+        assertThat( onPlacedBidWasCalled ).isTrue();
 
     }
 
@@ -126,7 +131,8 @@ class ContreeGameEventSenderTest extends TestCasesManagingPlayers {
 
         gameEventSender.sendBidStepStartedEvent("TEST");
 
-        assertTrue(calledFlag[0]);
+        boolean onBidStepStartedWasCalled = calledFlag[0];
+        assertThat( onBidStepStartedWasCalled ).isTrue();
 
     }
 
@@ -140,7 +146,8 @@ class ContreeGameEventSenderTest extends TestCasesManagingPlayers {
 
         gameEventSender.sendBidStepEndedEvent("TEST");
 
-        assertTrue(calledFlag[0]);
+        boolean onBidStepEndedWasCalled = calledFlag[0];
+        assertThat( onBidStepEndedWasCalled ).isTrue();
 
     }
 
@@ -154,7 +161,8 @@ class ContreeGameEventSenderTest extends TestCasesManagingPlayers {
 
         gameEventSender.sendPlayStepStartedEvent("TEST", CardSuit.DIAMONDS);
 
-        assertTrue(calledFlag[0]);
+        boolean onPlayStepStartedWasCalled = calledFlag[0];
+        assertThat( onPlayStepStartedWasCalled ).isTrue();
 
     }
 
@@ -168,7 +176,8 @@ class ContreeGameEventSenderTest extends TestCasesManagingPlayers {
 
         gameEventSender.sendPlayStepEndedEvent("TEST");
 
-        assertTrue(calledFlag[0]);
+        boolean onPlayStepEndedWasCalled = calledFlag[0];
+        assertThat( onPlayStepEndedWasCalled ).isTrue();
 
     }
 
@@ -182,7 +191,8 @@ class ContreeGameEventSenderTest extends TestCasesManagingPlayers {
 
         gameEventSender.sendTrumpedTrickEvent("TEST");
 
-        assertTrue(calledFlag[0]);
+        boolean onTrumpTrickWasCalled = calledFlag[0];
+        assertThat( onTrumpTrickWasCalled ).isTrue();
 
     }
 
@@ -196,7 +206,8 @@ class ContreeGameEventSenderTest extends TestCasesManagingPlayers {
 
         gameEventSender.sendNewTrickEvent("TEST", CardSuit.HEARTS);
 
-        assertTrue(calledFlag[0]);
+        boolean onNewTrickWasCalled = calledFlag[0];
+        assertThat( onNewTrickWasCalled ).isTrue();
 
     }
 
@@ -213,7 +224,8 @@ class ContreeGameEventSenderTest extends TestCasesManagingPlayers {
 
         gameEventSender.sendStateEvent(GameStatus.WAITING_FOR_PLAYERS, GameStatus.OVER);
 
-        assertTrue(calledFlag[0]);
+        boolean onStateUpdatedWasCalled = calledFlag[0];
+        assertThat( onStateUpdatedWasCalled ).isTrue();
 
     }
 

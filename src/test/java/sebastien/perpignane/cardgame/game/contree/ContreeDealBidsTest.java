@@ -14,10 +14,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static sebastien.perpignane.cardgame.game.contree.ContreeDealBidsAssert.assertThat;
 
 class ContreeDealBidsTest extends TestCasesManagingPlayers {
 
@@ -47,13 +50,13 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
     @Test
     void testBidsJustAfterStart() {
 
-        assertFalse(dealBids.bidsAreOver());
-        assertTrue(dealBids.highestBid().isEmpty());
-        assertTrue(dealBids.findDealContractBid().isEmpty());
-        assertFalse(dealBids.isDoubleBidExists());
-        assertFalse(dealBids.isRedoubleBidExists());
-        assertFalse(dealBids.isAnnouncedCapot());
-        assertFalse(dealBids.hasOnlyPassBids());
+        assertThat(dealBids.bidsAreOver()).isFalse();
+        assertThat(dealBids.highestBid()).isEmpty();
+        assertThat(dealBids.findDealContractBid()).isEmpty();
+        assertThat(dealBids.isDoubleBidExists()).isFalse();
+        assertThat(dealBids.isRedoubleBidExists()).isFalse();
+        assertThat(dealBids.isAnnouncedCapot()).isFalse();
+        assertThat(dealBids.hasOnlyPassBids()).isFalse();
 
     }
 
@@ -65,11 +68,11 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
         dealBids.placeBid(new ContreeBid(player3, ContreeBidValue.PASS));
         dealBids.placeBid(new ContreeBid(player4, ContreeBidValue.PASS));
 
-        assertTrue(dealBids.hasOnlyPassBids());
-        assertTrue(dealBids.bidsAreOver());
+        assertThat(dealBids.hasOnlyPassBids()).isTrue();
+        assertThat(dealBids.bidsAreOver()).isTrue();
     }
 
-    @DisplayName("Exception when placing a bid after  bids are over")
+    @DisplayName("Exception when placing a bid after bids are over")
     @Test
     void testExceptionWhenPlacingBidAfterBidsAreOver() {
         dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.PASS));
@@ -77,33 +80,60 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
         dealBids.placeBid(new ContreeBid(player3, ContreeBidValue.PASS));
         dealBids.placeBid(new ContreeBid(player4, ContreeBidValue.PASS));
 
-        assertTrue(dealBids.bidsAreOver());
+        assertThat(dealBids).bidsAreOver();
 
-        var e = assertThrows(
-            ContreeDealBids.BidNotAllowedException.class,
-            () -> dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.PASS))
+        var exception = catchThrowableOfType(
+            () -> dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.PASS)),
+            ContreeDealBids.BidNotAllowedException.class
         );
-        assertTrue(e.isSuspectedCheat());
+        assertThat( exception ).isNotNull();
+
+        assertThat(
+            exception.isSuspectedCheat()
+        ).isTrue();
+
     }
 
-    @DisplayName("After first bid, highest bid state is available")
+    @DisplayName("After first bid, highest bid data is available, the state of dealBids is consistent")
     @Test
     void testBidsAfterFirstBid() {
         dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.DIAMONDS));
 
-        assertTrue(dealBids.highestBid().isPresent());
-        assertSame(dealBids.highestBid().get().bidValue(), ContreeBidValue.EIGHTY);
-        assertSame(dealBids.highestBid().get().cardSuit(), CardSuit.DIAMONDS);
+        assertThat(
+            dealBids.highestBid()
+        ).isPresent();
 
-        assertFalse(dealBids.bidsAreOver());
-        assertTrue(dealBids.findDealContractBid().isEmpty());
-        assertFalse(dealBids.isDoubleBidExists());
-        assertFalse(dealBids.isRedoubleBidExists());
-        assertFalse(dealBids.isAnnouncedCapot());
+        assertThat(
+            dealBids
+        ).hasHighestBidValueAs(ContreeBidValue.EIGHTY);
+
+        assertThat(
+            dealBids
+        ).hasHighestBidSuitAs(CardSuit.DIAMONDS);
+
+        assertThat(
+            dealBids
+        ).bidsAreNotOver();
+
+        assertThat(
+            dealBids
+        ).hasNoDealContractBidFound();
+
+        assertThat(
+            dealBids.isDoubleBidExists()
+        ).isFalse();
+
+        assertThat(
+            dealBids.isRedoubleBidExists()
+        ).isFalse();
+
+        assertThat(
+            dealBids.isAnnouncedCapot()
+        ).isFalse();
 
     }
 
-    @DisplayName("After a first valued bid and 3 PASS bids, highest bid state is available, bids are over and contract bid is available")
+    @DisplayName("After a first valued bid and 3 PASS bids, highest bid data is available, bids are over and contract bid is available")
     @Test
     void testBidsAfterFirstValuedBidAnd3PassBids() {
         dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.DIAMONDS));
@@ -111,46 +141,71 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
         dealBids.placeBid(new ContreeBid(player3, ContreeBidValue.PASS));
         dealBids.placeBid(new ContreeBid(player4, ContreeBidValue.PASS));
 
-        assertTrue(dealBids.highestBid().isPresent());
-        assertSame(dealBids.highestBid().get().bidValue(), ContreeBidValue.EIGHTY);
-        assertSame(dealBids.highestBid().get().cardSuit(), CardSuit.DIAMONDS);
-        assertTrue(dealBids.bidsAreOver());
-        assertTrue(dealBids.findDealContractBid().isPresent());
-        assertSame(dealBids.findDealContractBid().get().bidValue(), ContreeBidValue.EIGHTY);
-        assertSame(dealBids.findDealContractBid().get().cardSuit(), CardSuit.DIAMONDS);
+        assertThat(
+            dealBids.highestBid()
+        ).isPresent();
 
+        assertThat(
+            dealBids.highestBid().get().bidValue()
+        ).isSameAs(ContreeBidValue.EIGHTY);
 
-        assertFalse(dealBids.isDoubleBidExists());
-        assertFalse(dealBids.isRedoubleBidExists());
-        assertFalse(dealBids.isAnnouncedCapot());
+        assertThat(
+            dealBids.highestBid().get().cardSuit()
+        ).isSameAs(CardSuit.DIAMONDS);
+
+        assertThat(
+            dealBids.bidsAreOver()
+        ).isTrue();
+
+        assertThat(
+            dealBids
+        ).hasDealContractBidFound();
+
+        assertThat(
+            dealBids.findDealContractBid().get().bidValue()
+        ).isSameAs(ContreeBidValue.EIGHTY);
+
+        assertThat(
+            dealBids.findDealContractBid().get().cardSuit()
+        ).isSameAs(CardSuit.DIAMONDS);
+
+        assertThat(
+            dealBids.isDoubleBidExists()
+        ).isFalse();
+
+        assertThat(
+            dealBids.isRedoubleBidExists()
+        ).isFalse();
+
+        assertThat(
+            dealBids.isAnnouncedCapot()
+        ).isFalse();
 
     }
 
     @DisplayName("After multiple valued bids but only 4 bids, highest bid state is available, bids are NOT over and contract bid is NOT available")
     @Test
     void testBidsAfterMultipleValuedBids_partialBids() {
+
         dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.DIAMONDS));
         dealBids.placeBid(new ContreeBid(player2, ContreeBidValue.PASS));
         dealBids.placeBid(new ContreeBid(player3, ContreeBidValue.NINETY, CardSuit.DIAMONDS));
         dealBids.placeBid(new ContreeBid(player4, ContreeBidValue.PASS));
 
-        assertTrue(dealBids.highestBid().isPresent());
-        assertSame(dealBids.highestBid().get().bidValue(), ContreeBidValue.NINETY);
-        assertSame(dealBids.highestBid().get().cardSuit(), CardSuit.DIAMONDS);
-        assertFalse(dealBids.bidsAreOver());
-        assertTrue(dealBids.findDealContractBid().isEmpty());
-
-        assertFalse(dealBids.isDoubleBidExists());
-        assertFalse(dealBids.isRedoubleBidExists());
-        assertFalse(dealBids.isAnnouncedCapot());
+        assertThat(dealBids)
+                .hasHighestBidValueAs(ContreeBidValue.NINETY)
+                .hasHighestBidSuitAs(CardSuit.DIAMONDS)
+                .bidsAreNotOver()
+                .hasNoDealContractBidFound()
+                .doubleBidDoesNotExist()
+                .redoubleBidDoesNotExist()
+                .hasNotAnnouncedCapot();
 
     }
 
-    @DisplayName("After multiple valued bids followed by expected nbr of PASS bids, highest bid state is available, bids are over and contract bid is available")
+    @DisplayName("After multiple valued bids followed by expected nbr of PASS bids, highest bid data is available, bids are over and contract bid is available")
     @Test
     void testBidsAfterMultipleValuedBids_completeBids() {
-
-        //configureBidPlayersForNbBidTurns(2);
 
         dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.DIAMONDS));
         dealBids.placeBid(new ContreeBid(player2, ContreeBidValue.PASS));
@@ -159,17 +214,16 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
         dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.PASS));
         dealBids.placeBid(new ContreeBid(player2, ContreeBidValue.PASS));
 
-        assertTrue(dealBids.highestBid().isPresent());
-        assertSame(dealBids.highestBid().get().bidValue(), ContreeBidValue.NINETY);
-        assertSame(dealBids.highestBid().get().cardSuit(), CardSuit.DIAMONDS);
-        assertTrue(dealBids.bidsAreOver());
-        assertTrue(dealBids.findDealContractBid().isPresent());
-        assertSame(dealBids.findDealContractBid().get().bidValue(), ContreeBidValue.NINETY);
-        assertSame(dealBids.findDealContractBid().get().cardSuit(), CardSuit.DIAMONDS);
-
-        assertFalse(dealBids.isDoubleBidExists());
-        assertFalse(dealBids.isRedoubleBidExists());
-        assertFalse(dealBids.isAnnouncedCapot());
+        assertThat(dealBids)
+                .hasHighestBidValueAs(ContreeBidValue.NINETY)
+                .hasHighestBidSuitAs(CardSuit.DIAMONDS)
+                .bidsAreOver()
+                .hasDealContractBidFound()
+                .hasContractBidValueAs(ContreeBidValue.NINETY)
+                .hasContractBidSuitAs(CardSuit.DIAMONDS)
+                .doubleBidDoesNotExist()
+                .redoubleBidDoesNotExist()
+                .hasNotAnnouncedCapot();
 
     }
 
@@ -180,13 +234,17 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
         dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.CAPOT, CardSuit.HEARTS));
         dealBids.placeBid(new ContreeBid(player2, ContreeBidValue.DOUBLE));
 
-        assertFalse(dealBids.bidsAreOver());
+        assertThat(
+            dealBids.bidsAreOver()
+        ).isFalse();
 
         dealBids.placeBid(new ContreeBid(player3));
         dealBids.placeBid(new ContreeBid(player4));
         dealBids.placeBid(new ContreeBid(player1));
 
-        assertTrue(dealBids.bidsAreOver());
+        assertThat(
+            dealBids.bidsAreOver()
+        ).isTrue();
 
     }
 
@@ -198,17 +256,17 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
         dealBids.placeBid(new ContreeBid(player2, ContreeBidValue.DOUBLE));
         dealBids.placeBid(new ContreeBid(player3, ContreeBidValue.REDOUBLE));
 
-        assertTrue(dealBids.highestBid().isPresent());
-        assertSame(dealBids.highestBid().get().bidValue(), ContreeBidValue.EIGHTY);
-        assertSame(dealBids.highestBid().get().cardSuit(), CardSuit.DIAMONDS);
-        assertTrue(dealBids.bidsAreOver());
-        assertTrue(dealBids.findDealContractBid().isPresent());
-        assertSame(dealBids.findDealContractBid().get().bidValue(), ContreeBidValue.EIGHTY);
-        assertSame(dealBids.findDealContractBid().get().cardSuit(), CardSuit.DIAMONDS);
-        assertTrue(dealBids.isDoubleBidExists());
-        assertTrue(dealBids.isRedoubleBidExists());
+        assertThat(dealBids.highestBid()).isPresent();
+        assertThat(ContreeBidValue.EIGHTY).isSameAs(dealBids.highestBid().get().bidValue());
+        assertThat(CardSuit.DIAMONDS).isSameAs(dealBids.highestBid().get().cardSuit());
+        assertThat(dealBids.bidsAreOver()).isTrue();
+        assertThat(dealBids.findDealContractBid()).isPresent();
+        assertThat(ContreeBidValue.EIGHTY).isSameAs(dealBids.findDealContractBid().get().bidValue());
+        assertThat(CardSuit.DIAMONDS).isSameAs(dealBids.findDealContractBid().get().cardSuit());
+        assertThat(dealBids.isDoubleBidExists()).isTrue();
+        assertThat(dealBids.isRedoubleBidExists()).isTrue();
 
-        assertFalse(dealBids.isAnnouncedCapot());
+        assertThat(dealBids.isAnnouncedCapot()).isFalse();
 
 
     }
@@ -220,7 +278,8 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
         dealBids.placeBid(new ContreeBid(player2, ContreeBidValue.PASS));
         dealBids.placeBid(new ContreeBid(player3, ContreeBidValue.CAPOT, CardSuit.DIAMONDS));
 
-        assertTrue(dealBids.isAnnouncedCapot());
+        assertThat(dealBids).hasAnnouncedCapot();
+
     }
 
     @DisplayName("Exception if current bid value is present in the exclusion cause map returned by the biddable values filter")
@@ -232,7 +291,7 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
                 new BiddableValuesFilter.BidFilterResult(
                         Set.of(
                         ),
-                        Map.of(ContreeBidValue.NINETY, "Why do you bid shit, player 3 ????")
+                        Map.of(ContreeBidValue.NINETY, "Why do you bid shit, player 2 ????")
                 )
         );
 
@@ -243,11 +302,11 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
                 () -> dealBids.placeBid(new ContreeBid(player3, ContreeBidValue.NINETY, CardSuit.DIAMONDS))
         );
 
-        assertFalse(e.isSuspectedCheat());
+        assertThat(e.isSuspectedCheat()).isFalse();
 
     }
 
-    @DisplayName("Same player bids 2 times must trigger exception")
+    @DisplayName("When a player other than the current bidder places a bid, an exception is thrown")
     @Test
     void testBidFromUnexpectedPlayer_3rdPlayerPlacesSecondBid() {
         dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.DIAMONDS));
@@ -256,7 +315,7 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
                 () -> dealBids.placeBid(new ContreeBid(player3, ContreeBidValue.PASS))
         );
 
-        assertTrue(e.isSuspectedCheat());
+        assertThat(e.isSuspectedCheat()).isTrue();
 
     }
 
@@ -265,8 +324,8 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
     public void testDealIsNotDoubleNorRedouble() {
         dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.HEARTS));
 
-        assertFalse(dealBids.isDoubleBidExists());
-        assertFalse(dealBids.isRedoubleBidExists());
+        assertThat(dealBids.isDoubleBidExists()).isFalse();
+        assertThat(dealBids.isRedoubleBidExists()).isFalse();
     }
 
     @DisplayName("When bids are in progress, there is a current bidder")
@@ -275,8 +334,7 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
 
         dealBids.placeBid(new ContreeBid(player1));
 
-        assertTrue(dealBids.getCurrentBidder().isPresent());
-        assertSame(player2, dealBids.getCurrentBidder().get());
+        assertThat(dealBids).hasCurrentBidderAs(player2);
 
     }
 
@@ -289,27 +347,9 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
         dealBids.placeBid(new ContreeBid(player3));
         dealBids.placeBid(new ContreeBid(player4));
 
-        assertTrue(dealBids.bidsAreOver());
-        assertFalse(dealBids.getCurrentBidder().isPresent());
+        assertThat(dealBids).bidsAreOver();
+        assertThat(dealBids.getCurrentBidder()).isEmpty();
 
     }
-
-    /*@DisplayName("Current bidder is not updatable if bids are over")
-    @Test
-    public void testUpdateCurrentBidder_bidsAreOver() {
-
-        ContreePlayer newPlayer = mock(ContreePlayer.class);
-
-        dealBids.placeBid(new ContreeBid(player1));
-        dealBids.placeBid(new ContreeBid(player2));
-        dealBids.placeBid(new ContreeBid(player3));
-        dealBids.placeBid(new ContreeBid(player4));
-
-        assertThrows(
-            RuntimeException.class,
-            () -> dealBids.updateCurrentBidder(newPlayer)
-        );
-
-    }*/
 
 }

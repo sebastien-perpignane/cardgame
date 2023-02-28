@@ -5,6 +5,7 @@ import sebastien.perpignane.cardgame.card.CardSet;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.contree.ContreeBidValue;
+import sebastien.perpignane.cardgame.player.contree.ContreePlayerStatus;
 import sebastien.perpignane.cardgame.player.contree.PlayerMessage;
 
 import java.util.Arrays;
@@ -222,6 +223,11 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
                     }
                 }).collect(Collectors.toList())
         );
+    }
+
+    @Override
+    public void onStatusUpdate(ContreePlayerStatus oldStatus, ContreePlayerStatus newStatus) {
+        System.out.printf("You're now %s%n", newStatus);
     }
 
     @Override

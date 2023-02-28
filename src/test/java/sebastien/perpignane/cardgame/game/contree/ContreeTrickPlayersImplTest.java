@@ -9,7 +9,7 @@ import sebastien.perpignane.cardgame.card.ClassicalCard;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 class ContreeTrickPlayersImplTest extends TestCasesManagingPlayers {
@@ -41,8 +41,8 @@ class ContreeTrickPlayersImplTest extends TestCasesManagingPlayers {
     @Test
     public void testCurrentPlayerAfterConstruction() {
 
-        assertTrue(trickPlayers.getCurrentPlayerSlot().getPlayer().isPresent());
-        assertSame(player1, trickPlayers.getCurrentPlayerSlot().getPlayer().get());
+        assertThat(trickPlayers.getCurrentPlayerSlot().getPlayer()).isPresent();
+        assertThat(trickPlayers.getCurrentPlayerSlot().getPlayer().get()).isSameAs(player1);
 
     }
 
@@ -50,8 +50,8 @@ class ContreeTrickPlayersImplTest extends TestCasesManagingPlayers {
     @Test
     public void testCurrentPlayerAfterCallToNext() {
         trickPlayers.gotToNextPlayer();
-        assertTrue(trickPlayers.getCurrentPlayerSlot().getPlayer().isPresent());
-        assertSame(player2, trickPlayers.getCurrentPlayerSlot().getPlayer().get());
+        assertThat(trickPlayers.getCurrentPlayerSlot().getPlayer()).isPresent();
+        assertThat(trickPlayers.getCurrentPlayerSlot().getPlayer().get()).isSameAs(player2);
     }
 
     @DisplayName("After four calls to next, current player is player1")
@@ -62,8 +62,8 @@ class ContreeTrickPlayersImplTest extends TestCasesManagingPlayers {
         trickPlayers.gotToNextPlayer();
         trickPlayers.gotToNextPlayer();
 
-        assertTrue(trickPlayers.getCurrentPlayerSlot().getPlayer().isPresent());
-        assertSame(player1, trickPlayers.getCurrentPlayerSlot().getPlayer().get());
+        assertThat(trickPlayers.getCurrentPlayerSlot().getPlayer()).isPresent();
+        assertThat(trickPlayers.getCurrentPlayerSlot().getPlayer().get()).isSameAs(player1);
     }
 
     @DisplayName("The expected current player is notified when notifyCurrentPlayerTurn is called")
@@ -74,15 +74,15 @@ class ContreeTrickPlayersImplTest extends TestCasesManagingPlayers {
 
         boolean[] expectedCalledPlayers = {false, false, false, false};
 
-        assertTrue(trickPlayers.getCurrentPlayerSlot().getPlayer().isPresent());
-        assertSame(player1, trickPlayers.getCurrentPlayerSlot().getPlayer().get());
+        assertThat(trickPlayers.getCurrentPlayerSlot().getPlayer()).isPresent();
+        assertThat(trickPlayers.getCurrentPlayerSlot().getPlayer().get()).isSameAs(player1);
 
         for (int testedPlayerIndex = 0 ; testedPlayerIndex < 4 ; testedPlayerIndex++) {
             expectedCalledPlayers[testedPlayerIndex] = true;
 
             mockOnPlayerTurnCall(testedPlayerIndex, calledPlayers);
             trickPlayers.notifyCurrentPlayerTurn(Set.of(ClassicalCard.ACE_SPADE));
-            assertArrayEquals(expectedCalledPlayers, calledPlayers);
+            assertThat(calledPlayers).isEqualTo(expectedCalledPlayers);
             trickPlayers.gotToNextPlayer();
         }
 
@@ -102,8 +102,8 @@ class ContreeTrickPlayersImplTest extends TestCasesManagingPlayers {
 
         trickPlayers.setCurrentTrick(firstTrick);
 
-        assertTrue(trickPlayers.getCurrentPlayerSlot().getPlayer().isPresent());
-        assertEquals(player1, trickPlayers.getCurrentPlayerSlot().getPlayer().get());
+        assertThat(trickPlayers.getCurrentPlayerSlot().getPlayer()).isPresent();
+        assertThat(trickPlayers.getCurrentPlayerSlot().getPlayer().get()).isEqualTo(player1);
     }
 
     @DisplayName("When setting second current trick, currentPlayer is the winner of the first trick")
@@ -120,10 +120,10 @@ class ContreeTrickPlayersImplTest extends TestCasesManagingPlayers {
 
         trickPlayers.setCurrentTrick(secondTrick);
 
-        assertSame(player4, trickPlayers.getCurrentPlayerSlot().getPlayer().orElseThrow());
+        assertThat(trickPlayers.getCurrentPlayerSlot().getPlayer().orElseThrow()).isSameAs(player4);
 
         trickPlayers.gotToNextPlayer();
-        assertSame(player1, trickPlayers.getCurrentPlayerSlot().getPlayer().orElseThrow());
+        assertThat(trickPlayers.getCurrentPlayerSlot().getPlayer().orElseThrow()).isSameAs(player1);
 
     }
 

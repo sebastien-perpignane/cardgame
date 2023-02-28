@@ -6,7 +6,8 @@ import org.junit.jupiter.api.Test;
 import java.util.Collection;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class CardDealerTest {
 
@@ -14,21 +15,24 @@ public class CardDealerTest {
     @Test
     public void testDealBy3then3then2() {
 
-        final List<Integer> distribConfig = List.of(3,3,2);
+        final List<Integer> distributeConfig = List.of(3,3,2);
         final int nbPlayers = 4;
-        final int nbCardsPerPlayer = distribConfig.stream().mapToInt(Integer::intValue).sum();
+        final int nbCardsPerPlayer = distributeConfig.stream().mapToInt(Integer::intValue).sum();
 
-        CardDealer cardDealer = new CardDealer(
-            distribConfig
-        );
+        CardDealer cardDealer = new CardDealer(distributeConfig);
 
         var hands = cardDealer.dealCards(CardSet.GAME_32.getGameCards().stream().toList(), nbPlayers);
 
-        assertEquals(nbPlayers, hands.size());
-        assertEquals(nbCardsPerPlayer, hands.get(0).size());
-        assertEquals(nbCardsPerPlayer, hands.get(1).size());
-        assertEquals(nbCardsPerPlayer, hands.get(2).size());
-        assertEquals(nbCardsPerPlayer, hands.get(3).size());
+        var player1Hand = hands.get(0);
+        var player2Hand = hands.get(1);
+        var player3Hand = hands.get(2);
+        var player4Hand = hands.get(3);
+
+        assertThat(hands).hasSize(nbPlayers);
+        assertThat(player1Hand).hasSize(nbCardsPerPlayer);
+        assertThat(player2Hand).hasSize(nbCardsPerPlayer);
+        assertThat(player3Hand).hasSize(nbCardsPerPlayer);
+        assertThat(player4Hand).hasSize(nbCardsPerPlayer);
 
         checkAllHandIntersections(hands);
 
@@ -36,16 +40,15 @@ public class CardDealerTest {
 
     @DisplayName("Invalid arguments -> cannot equally deal 9 cards to 4 players with a 32 card set")
     @Test
-    public void invalidDistribConfig() {
+    public void testInvalidDistributionConfig() {
 
         // 9 (3 then 3 then 3) cards per player x 4 players != 32 cards -> invalid config
-        final List<Integer> distribConfig = List.of(3,3,3);
+        final List<Integer> distributionConfig = List.of(3,3,3);
         final int nbPlayers = 4;
 
-        CardDealer cardDealer = new CardDealer(distribConfig);
+        CardDealer cardDealer = new CardDealer(distributionConfig);
 
-        assertThrows(
-            RuntimeException.class,
+        assertThatExceptionOfType(RuntimeException.class).isThrownBy(
             () -> cardDealer.dealCards(CardSet.GAME_32.getGameCards().stream().toList(), nbPlayers)
         );
 
@@ -53,53 +56,66 @@ public class CardDealerTest {
 
     @DisplayName("32 cards cannot equally be dealt to 3 players -> exception")
     @Test
-    public void invalidNbPlayersForNumberOfCards() {
+    public void testInvalidNbPlayersForNumberOfCards() {
 
-        // 9 (3 then 3 then 3) cards per player x 4 players != 32 cards -> invalid config
-        final List<Integer> distribConfig = List.of(3,3,2);
+        final List<Integer> distributeConfig = List.of(3,3,2);
         final int nbPlayers = 3;
 
-        CardDealer cardDealer = new CardDealer(distribConfig);
+        CardDealer cardDealer = new CardDealer(distributeConfig);
 
-        assertThrows(
-            RuntimeException.class,
+        assertThatExceptionOfType(RuntimeException.class).isThrownBy(
             () -> cardDealer.dealCards(CardSet.GAME_32.getGameCards().stream().toList(), nbPlayers)
         );
-
     }
 
     private void checkAllHandIntersections(List<List<ClassicalCard>> hands) {
-        assertFalse(hasIntersection(hands.get(0), hands.get(1)));
-        assertFalse(hasIntersection(hands.get(0), hands.get(2)));
-        assertFalse(hasIntersection(hands.get(0), hands.get(3)));
 
-        assertFalse(hasIntersection(hands.get(1), hands.get(2)));
-        assertFalse(hasIntersection(hands.get(1), hands.get(3)));
+        assertThat(
+            hasIntersection(hands.get(0), hands.get(1))
+        ).isFalse();
+        assertThat(
+            hasIntersection(hands.get(0), hands.get(2))
+        ).isFalse();
+        assertThat(
+            hasIntersection(hands.get(0), hands.get(3))
+        ).isFalse();
 
-        assertFalse(hasIntersection(hands.get(2), hands.get(3)));
+
+        assertThat(
+            hasIntersection(hands.get(1), hands.get(2))
+        ).isFalse();
+        assertThat(
+            hasIntersection(hands.get(1), hands.get(3))
+        ).isFalse();
+
+
+        assertThat(
+            hasIntersection(hands.get(2), hands.get(3))
+        ).isFalse();
+
     }
 
     @DisplayName("Testing a method only used for testing :D")
     @Test
     public void testIntersection() {
 
-        assertFalse(
-                hasIntersection(
-                        List.of(ClassicalCard.ACE_SPADE, ClassicalCard.TEN_HEART),
-                        List.of(ClassicalCard.ACE_HEART, ClassicalCard.TEN_SPADE)
-                )
-        );
+        assertThat(
+            hasIntersection(
+                List.of(ClassicalCard.ACE_SPADE, ClassicalCard.TEN_HEART),
+                List.of(ClassicalCard.ACE_HEART, ClassicalCard.TEN_SPADE)
+            )
+        ).isFalse();
 
-        assertTrue(
-                hasIntersection(
-                        List.of(ClassicalCard.ACE_SPADE, ClassicalCard.TEN_HEART, ClassicalCard.NINE_CLUB),
-                        List.of(ClassicalCard.NINE_CLUB, ClassicalCard.ACE_HEART, ClassicalCard.TEN_SPADE)
-                )
-        );
+        assertThat(
+            hasIntersection(
+                    List.of(ClassicalCard.ACE_SPADE, ClassicalCard.TEN_HEART, ClassicalCard.NINE_CLUB),
+                    List.of(ClassicalCard.NINE_CLUB, ClassicalCard.ACE_HEART, ClassicalCard.TEN_SPADE)
+            )
+        ).isTrue();
 
     }
 
-    boolean hasIntersection(final Collection<ClassicalCard> cards1, Collection<ClassicalCard> cards2) {
+    private boolean hasIntersection(final Collection<ClassicalCard> cards1, Collection<ClassicalCard> cards2) {
         return cards2.stream().anyMatch(cards1::contains);
     }
 

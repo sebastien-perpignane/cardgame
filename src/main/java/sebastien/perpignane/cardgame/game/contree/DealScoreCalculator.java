@@ -1,7 +1,7 @@
 package sebastien.perpignane.cardgame.game.contree;
 
+import sebastien.perpignane.cardgame.card.ValuableCard;
 import sebastien.perpignane.cardgame.card.contree.ContreeCard;
-import sebastien.perpignane.cardgame.card.contree.ValuableCard;
 import sebastien.perpignane.cardgame.player.Team;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 

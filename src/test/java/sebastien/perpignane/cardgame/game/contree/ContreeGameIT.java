@@ -15,7 +15,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Tag("integration-test")
 public class ContreeGameIT {
@@ -33,7 +33,7 @@ public class ContreeGameIT {
         game.joinGame(new ContreePlayerImpl(new ContreeBotPlayerEventHandler()));
         game.joinGame(new ContreePlayerImpl(new ContreeBotPlayerEventHandler()));
         var endOfGame = waitForEndOfGameEvent(game);
-        assertTrue(endOfGame);
+        assertThat(endOfGame).isTrue();
 
     }
 

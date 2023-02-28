@@ -14,7 +14,9 @@ import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /*
  Responsibilities are :
@@ -183,10 +185,7 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
     public void testExceptionIfNoContract() {
 
         ContreeDeal deal = MockDealBuilder.builder().build();
-        assertThrows(
-                RuntimeException.class,
-                () -> dealScoreCalculator.computeDealScores(deal)
-        );
+        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> dealScoreCalculator.computeDealScores(deal));
 
     }
 
@@ -208,10 +207,7 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
                 .withCardsByTeam(cardsByTeam)
                 .build();
 
-        assertThrows(
-                RuntimeException.class,
-                () -> dealScoreCalculator.computeDealScores(deal)
-        );
+        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> dealScoreCalculator.computeDealScores(deal));
 
     }
 
@@ -255,13 +251,13 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
         var result = dealScoreCalculator.computeDealScores(deal);
 
-        assertEquals(72, result.rawScoreByTeam().get(ContreeTeam.TEAM2));
-        assertEquals(90, result.rawScoreByTeam().get(contractPlayer.getTeam().orElseThrow()));
+        assertThat(result.rawScoreByTeam().get(ContreeTeam.TEAM2)).isEqualTo(72);
+        assertThat(result.rawScoreByTeam().get(contractPlayer.getTeam().orElseThrow())).isEqualTo(90);
 
         // 90
-        assertEquals(90, result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow()));
+        assertThat(result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow())).isEqualTo(90);
         // 62 + dix de der, rounded
-        assertEquals(70, result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM2));
+        assertThat(result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM2)).isEqualTo(70);
 
     }
 
@@ -288,8 +284,8 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
         var result = dealScoreCalculator.computeDealScores(deal);
 
-        assertEquals(320, result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow()));
-        assertEquals(0, result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM2));
+        assertThat(result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow())).isEqualTo(320);
+        assertThat(result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM2)).isEqualTo(0);
     }
 
     @DisplayName("Compute score when attack team reached the contract with double and redouble, but no capot announced")
@@ -315,8 +311,8 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
         var result = dealScoreCalculator.computeDealScores(deal);
         // 88 + dix de der, rounded
-        assertEquals(640, result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow()));
-        assertEquals(0, result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM2));
+        assertThat(result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow())).isEqualTo(640);
+        assertThat(result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM2)).isEqualTo(0);
     }
 
     @DisplayName("Compute score when attack team failed to reach the contract")
@@ -345,8 +341,8 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
         var result = dealScoreCalculator.computeDealScores(deal);
 
-        assertEquals(0, result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow()));
-        assertEquals(160, result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM2));
+        assertThat(result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow())).isEqualTo(0);
+        assertThat(result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM2)).isEqualTo(160);
     }
 
     @DisplayName("Compute score when attack team announces capot and reach the contract, without double nor redouble")
@@ -381,12 +377,12 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
 
         // To make sure that buildPlayers() always return different teams for player 1 and player 2
-        assertNotEquals(contractPlayer.getTeam(), firstOpponent.getTeam());
+        assertThat(firstOpponent.getTeam()).isNotEqualTo(contractPlayer.getTeam());
 
         var result = dealScoreCalculator.computeDealScores(deal);
 
-        assertEquals(500, result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow()));
-        assertEquals(0, result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM2));
+        assertThat(result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow())).isEqualTo(500);
+        assertThat(result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM2)).isEqualTo(0);
     }
 
     @DisplayName("A capot made by attack team that was not announced gives 250 points to attack team")
@@ -416,12 +412,12 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
                 .build();
 
         // To make sure that buildPlayers() always return different teams for player 1 and player 2
-        assertNotEquals(contractPlayer.getTeam(), firstOpponent.getTeam());
+        assertThat(firstOpponent.getTeam()).isNotEqualTo(contractPlayer.getTeam());
 
         var result = dealScoreCalculator.computeDealScores(deal);
 
-        assertEquals(250, result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow()));
-        assertEquals(0, result.finalRoundedScoreByTeam().get(firstOpponent.getTeam().orElseThrow()));
+        assertThat(result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow())).isEqualTo(250);
+        assertThat(result.finalRoundedScoreByTeam().get(firstOpponent.getTeam().orElseThrow())).isEqualTo(0);
 
     }
 
@@ -453,8 +449,8 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
         var result = dealScoreCalculator.computeDealScores(deal);
 
-        assertEquals(0, result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow()));
-        assertEquals(250, result.finalRoundedScoreByTeam().get(firstOpponent.getTeam().orElseThrow()));
+        assertThat(result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow())).isEqualTo(0);
+        assertThat(result.finalRoundedScoreByTeam().get(firstOpponent.getTeam().orElseThrow())).isEqualTo(250);
 
     }
 
@@ -483,12 +479,12 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
                 .build();
 
         // To make sure that buildPlayers() always return different teams for player 1 and player 2
-        assertNotEquals(contractPlayer.getTeam(), firstOpponent.getTeam());
+        assertThat(firstOpponent.getTeam()).isNotEqualTo(contractPlayer.getTeam());
 
         var result = dealScoreCalculator.computeDealScores(deal);
 
-        assertEquals(0, result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow()));
-        assertEquals(500, result.finalRoundedScoreByTeam().get(firstOpponent.getTeam().orElseThrow()));
+        assertThat(result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow())).isEqualTo(0);
+        assertThat(result.finalRoundedScoreByTeam().get(firstOpponent.getTeam().orElseThrow())).isEqualTo(500);
     }
 
     @DisplayName("When adding the points from both team, the sum must always be 152")
@@ -532,7 +528,7 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
             () -> dealScoreCalculator.computeDealScores(deal)
         );
 
-        assertTrue(re.getMessage().contains("Cheat"));
+        assertThat( re.getMessage() ).contains("Cheat");
 
     }
 
@@ -576,14 +572,14 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
         var result = dealScoreCalculator.computeDealScores(deal);
 
         // Dix de der
-        assertEquals(96 + 10, result.rawScoreByTeam().get(ContreeTeam.TEAM1) );
-        assertEquals(56, result.rawScoreByTeam().get(ContreeTeam.TEAM2) );
+        assertThat(result.rawScoreByTeam().get(ContreeTeam.TEAM1)).isEqualTo(96 + 10);
+        assertThat(result.rawScoreByTeam().get(ContreeTeam.TEAM2)).isEqualTo(56);
 
-        assertEquals(96 + 10, result.finalNotRoundedScoreByTeam().get(ContreeTeam.TEAM1) );
-        assertEquals(56, result.finalNotRoundedScoreByTeam().get(ContreeTeam.TEAM2) );
+        assertThat(result.finalNotRoundedScoreByTeam().get(ContreeTeam.TEAM1)).isEqualTo(96 + 10);
+        assertThat(result.finalNotRoundedScoreByTeam().get(ContreeTeam.TEAM2)).isEqualTo(56);
 
-        assertEquals(110, result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM1) );
-        assertEquals(60, result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM2) );
+        assertThat(result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM1)).isEqualTo(110);
+        assertThat(result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM2)).isEqualTo(60);
 
     }
 
@@ -627,14 +623,14 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
         var result = dealScoreCalculator.computeDealScores(deal);
 
         // Dix de der
-        assertEquals(96 + 10, result.rawScoreByTeam().get(ContreeTeam.TEAM1) );
-        assertEquals(56, result.rawScoreByTeam().get(ContreeTeam.TEAM2) );
+        assertThat(result.rawScoreByTeam().get(ContreeTeam.TEAM1)).isEqualTo(96 + 10);
+        assertThat(result.rawScoreByTeam().get(ContreeTeam.TEAM2)).isEqualTo(56);
 
-        assertEquals(0, result.finalNotRoundedScoreByTeam().get(ContreeTeam.TEAM1) );
-        assertEquals(160, result.finalNotRoundedScoreByTeam().get(ContreeTeam.TEAM2) );
+        assertThat(result.finalNotRoundedScoreByTeam().get(ContreeTeam.TEAM1)).isEqualTo(0);
+        assertThat(result.finalNotRoundedScoreByTeam().get(ContreeTeam.TEAM2)).isEqualTo(160);
 
-        assertEquals(0, result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM1) );
-        assertEquals(160, result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM2) );
+        assertThat(result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM1)).isEqualTo(0);
+        assertThat(result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM2)).isEqualTo(160);
 
     }
 
@@ -650,7 +646,7 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
         var result = dealScoreCalculator.computeDealScores(onlyPassBidsDeal);
 
-        assertTrue(result.finalRoundedScoreByTeam().values().stream().allMatch(i -> i == 0));
+        assertThat(result.finalRoundedScoreByTeam().values().stream().allMatch(i -> i == 0)).isTrue();
 
     }
 
@@ -661,10 +657,7 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
                 .withDealContractBid(null)
                 .build();
 
-        assertThrows(
-                RuntimeException.class,
-                () -> dealScoreCalculator.computeDealScores(noBidDeal)
-        );
+        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> dealScoreCalculator.computeDealScores(noBidDeal));
     }
 
     private Collection<ContreeCard> buildContreeCards(CardSuit trump, Set<ClassicalCard> cards) {
@@ -687,7 +680,7 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
         var dealPoints = dealScoreCalculator.computeCardPoints(dealCards);
 
-        assertEquals(21, dealPoints);
+        assertThat(dealPoints).isEqualTo(21);
 
     }
 
@@ -707,7 +700,7 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
         var dealPoints = dealScoreCalculator.computeCardPoints(dealCards);
 
-        assertEquals(45, dealPoints);
+        assertThat(dealPoints).isEqualTo(45);
 
     }
 
@@ -722,7 +715,7 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
         var dealPoints = dealScoreCalculator.computeCardPoints(dealCards);
 
-        assertEquals(152, dealPoints);
+        assertThat(dealPoints).isEqualTo(152);
 
     }
 

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 import sebastien.perpignane.cardgame.player.util.GamePlayerSlots;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Tests for PlayerSlots")
 class GamePlayerSlotsTest extends TestCasesManagingPlayers {
@@ -38,13 +38,13 @@ class GamePlayerSlotsTest extends TestCasesManagingPlayers {
 
         var slot0 = emptySlots.getSlot(slotNumber);
 
-        assertTrue( slot0.getPlayer().isEmpty() );
+        assertThat(slot0.getPlayer()).isEmpty();
 
         var replacedPlayer = emptySlots.addPlayerToSlotIndex(slotNumber, player1);
 
-        assertTrue( replacedPlayer.isEmpty() );
-        assertTrue( slot0.getPlayer().isPresent() );
-        assertSame( player1, slot0.getPlayer().get() );
+        assertThat(replacedPlayer).isEmpty();
+        assertThat(slot0.getPlayer()).isPresent();
+        assertThat(slot0.getPlayer().get()).isSameAs(player1);
 
     }
 
@@ -54,15 +54,15 @@ class GamePlayerSlotsTest extends TestCasesManagingPlayers {
         int slotNumber = 2;
 
         var slot2 = fullSlots.getSlot(slotNumber);
-        assertTrue( slot2.getPlayer().isPresent() );
+        assertThat(slot2.getPlayer()).isPresent();
 
         var replacedPlayer = fullSlots.addPlayerToSlotIndex( slotNumber, player1 );
 
-        assertTrue( replacedPlayer.isPresent() );
-        assertTrue( slot2.getPlayer().isPresent() );
+        assertThat(replacedPlayer).isPresent();
+        assertThat(slot2.getPlayer()).isPresent();
 
-        assertSame( player3, replacedPlayer.get() );
-        assertSame( player1, slot2.getPlayer().get() );
+        assertThat(replacedPlayer.get()).isSameAs(player3);
+        assertThat(slot2.getPlayer().get()).isSameAs(player1);
 
     }
 
@@ -70,16 +70,16 @@ class GamePlayerSlotsTest extends TestCasesManagingPlayers {
     void testGetSlotByPlayer() {
 
         var player1Slot = fullSlots.getSlot(player1);
-        assertEquals(0, player1Slot.getSlotNumber());
+        assertThat(player1Slot.getSlotNumber()).isEqualTo(0);
 
         var player2Slot = fullSlots.getSlot(player2);
-        assertEquals(1, player2Slot.getSlotNumber());
+        assertThat(player2Slot.getSlotNumber()).isEqualTo(1);
 
         var player3Slot = fullSlots.getSlot(player3);
-        assertEquals(2, player3Slot.getSlotNumber());
+        assertThat(player3Slot.getSlotNumber()).isEqualTo(2);
 
         var player4Slot = fullSlots.getSlot(player4);
-        assertEquals(3, player4Slot.getSlotNumber());
+        assertThat(player4Slot.getSlotNumber()).isEqualTo(3);
 
     }
 

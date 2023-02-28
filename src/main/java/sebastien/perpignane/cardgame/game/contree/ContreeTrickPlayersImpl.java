@@ -26,6 +26,7 @@ public class ContreeTrickPlayersImpl implements ContreeTrickPlayers {
         else {
             currentPlayerIndex = dealPlayers.indexOf(this.currentTrick.getWinner().orElseThrow());
         }
+        updatePlayerStates();
         this.currentTrick = currentTrick;
     }
 
@@ -42,7 +43,12 @@ public class ContreeTrickPlayersImpl implements ContreeTrickPlayers {
         else {
             currentPlayerIndex++;
         }
+        updatePlayerStates();
+    }
 
+    private void updatePlayerStates() {
+        var currentPlayer = dealPlayers.getCurrentDealPlayers().get(currentPlayerIndex);
+        dealPlayers.setPlayingPlayer(currentPlayer);
     }
 
     @Override

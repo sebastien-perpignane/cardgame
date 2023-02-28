@@ -1,6 +1,5 @@
 package sebastien.perpignane.cardgame.game.war;
 
-import org.apache.commons.collections4.iterators.LoopingListIterator;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.*;
 import sebastien.perpignane.cardgame.player.Player;
@@ -20,14 +19,17 @@ import java.util.function.Predicate;
 public class WarGame extends AbstractGame<WarPlayer> {
 
     private final List<WarPlayer> players = new CopyOnWriteArrayList<>();
+
     private WarPlayer currentPlayer = null;
-    private LoopingListIterator<WarPlayer> playerIterator = new LoopingListIterator<>(players);
+
     private WarPlayer winner = null;
 
     private final WarGameEventSender warGameEventSender;
 
     private WarTrick currentTrick = null;
     private final List<WarTrick> tricks = new ArrayList<>();
+
+    private int currentPlayerIndex = 0;
 
     public WarGame(CardGameObserver... observers) {
         super();
@@ -45,7 +47,7 @@ public class WarGame extends AbstractGame<WarPlayer> {
         updateState(GameStatus.STARTING);
 
         distributeCardsToPlayers(shuffledCards);
-        currentPlayer = playerIterator.next();
+        currentPlayer = players.get(currentPlayerIndex);
 
         currentTrick = new WarTrick(trickId(), players, warGameEventSender);
 
@@ -90,7 +92,6 @@ public class WarGame extends AbstractGame<WarPlayer> {
 
     private void addPlayer(WarPlayer p) {
         players.add(p);
-        this.playerIterator = new LoopingListIterator<>(players);
     }
 
     boolean hasBotPlayer() {
@@ -171,9 +172,21 @@ public class WarGame extends AbstractGame<WarPlayer> {
     }
 
     private void updateToNextPlayer() {
-        currentPlayer = playerIterator.next();
+        currentPlayer = getNextPlayer();
         warGameEventSender.sendNextPlayerEvent(currentPlayer);
         letKnowPlayers();
+    }
+
+    private WarPlayer getNextPlayer() {
+        if (currentPlayerIndex == 1) {
+            currentPlayerIndex = 0;
+        }
+        else {
+            currentPlayerIndex = 1;
+        }
+
+        return players.get(currentPlayerIndex);
+
     }
 
     public WarPlayer getCurrentPlayer() {

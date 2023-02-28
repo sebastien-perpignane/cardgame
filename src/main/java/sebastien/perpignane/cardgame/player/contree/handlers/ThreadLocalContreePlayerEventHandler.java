@@ -2,10 +2,7 @@ package sebastien.perpignane.cardgame.player.contree.handlers;
 
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.contree.ContreeBidValue;
-import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
-import sebastien.perpignane.cardgame.player.contree.ContreePlayerEventHandler;
-import sebastien.perpignane.cardgame.player.contree.MessageType;
-import sebastien.perpignane.cardgame.player.contree.PlayerMessage;
+import sebastien.perpignane.cardgame.player.contree.*;
 
 import java.util.Set;
 
@@ -37,17 +34,22 @@ public abstract class ThreadLocalContreePlayerEventHandler extends AbstractThrea
 
     @Override
     public void onPlayerTurnToBid(Set<ContreeBidValue> allowedBidValues) {
-        receiveNewMessage(new PlayerMessage(MessageType.BID, null, allowedBidValues));
+        receiveNewMessage(new PlayerMessage(MessageType.BID, null, allowedBidValues, null));
     }
 
     @Override
     public void onPlayerTurn(Set<ClassicalCard> allowedCards) {
-        receiveNewMessage(new PlayerMessage(MessageType.PLAY, allowedCards, null));
+        receiveNewMessage(new PlayerMessage(MessageType.PLAY, allowedCards, null, null));
     }
 
     @Override
     public void onEjection() {
         receiveNewMessage(new PlayerMessage(MessageType.EJECTED));
+    }
+
+    @Override
+    public void onStatusUpdate(ContreePlayerStatus oldStatus, ContreePlayerStatus newStatus) {
+        receiveNewMessage(new PlayerMessage(MessageType.STATUS_UPDATE, null, null, newStatus));
     }
 
     @Override
@@ -57,6 +59,7 @@ public abstract class ThreadLocalContreePlayerEventHandler extends AbstractThrea
         switch (playerMessage.messageType()) {
             case PLAY -> managePlayMessage(playerMessage);
             case BID -> manageBidMessage(playerMessage);
+            case STATUS_UPDATE -> System.out.printf("You're now %s%n", playerMessage.newStatus());
             case GAME_OVER, EJECTED ->  mustExit = true;
             case GAME_STARTED -> {
                 // Directly managed by the onGameStarted method, to start the thread

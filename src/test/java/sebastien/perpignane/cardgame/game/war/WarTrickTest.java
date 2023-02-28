@@ -9,7 +9,8 @@ import sebastien.perpignane.cardgame.player.war.WarPlayer;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -42,8 +43,8 @@ public class WarTrickTest {
     public void testPlayCardOnEmptyTrick() {
         trick.playerPlay(player1, ClassicalCard.SIX_CLUB);
 
-        assertFalse(trick.isOver());
-        assertTrue(trick.getWinner().isEmpty());
+        assertThat(trick.isOver()).isFalse();
+        assertThat(trick.getWinner().isEmpty()).isTrue();
 
     }
 
@@ -53,7 +54,7 @@ public class WarTrickTest {
         trick.playerPlay(player1, ClassicalCard.JACK_CLUB);
         trick.playerPlay(player2, ClassicalCard.ACE_CLUB);
 
-        assertTrue(trick.isOver());
+        assertThat(trick.isOver()).isTrue();
     }
 
     @Test
@@ -63,10 +64,10 @@ public class WarTrickTest {
         trick.playerPlay(player1, ClassicalCard.SIX_CLUB);
         trick.playerPlay(player2, ClassicalCard.TEN_DIAMOND);
 
-        assertTrue(trick.isOver());
+        assertThat(trick.isOver()).isTrue();
 
-        assertTrue(trick.getWinner().isPresent());
-        assertSame(player2, trick.getWinner().get());
+        assertThat(trick.getWinner()).isPresent();
+        assertThat(trick.getWinner().get()).isSameAs(player2);
 
     }
 
@@ -83,9 +84,9 @@ public class WarTrickTest {
         trick.playerPlay(player1, ClassicalCard.ACE_SPADE);
         trick.playerPlay(player2, ClassicalCard.TEN_SPADE);
 
-        assertTrue(trick.isOver());
-        assertTrue(trick.getWinner().isPresent());
-        assertSame(player1, trick.getWinner().get());
+        assertThat(trick.isOver()).isTrue();
+        assertThat(trick.getWinner()).isPresent();
+        assertThat(trick.getWinner().get()).isSameAs(player1);
 
     }
 
@@ -108,9 +109,9 @@ public class WarTrickTest {
         trick.playerPlay(player1, ClassicalCard.NINE_CLUB);
         trick.playerPlay(player2, ClassicalCard.TEN_HEART);
 
-        assertTrue(trick.isOver());
-        assertTrue(trick.getWinner().isPresent());
-        assertSame(player2, trick.getWinner().get());
+        assertThat(trick.isOver()).isTrue();
+        assertThat(trick.getWinner()).isPresent();
+        assertThat(trick.getWinner().get()).isSameAs(player2);
 
     }
 
@@ -121,7 +122,7 @@ public class WarTrickTest {
         trick.playerPlay(player1, ClassicalCard.SIX_CLUB);
         trick.playerPlay(player2, ClassicalCard.TEN_DIAMOND);
 
-        assertTrue(trick.isOver());
+        assertThat(trick.isOver()).isTrue();
 
         IllegalStateException ise =
                 assertThrows(
@@ -129,8 +130,8 @@ public class WarTrickTest {
                         () -> trick.playerPlay(player1, ClassicalCard.TEN_CLUB)
                 );
 
-        assertNotNull(ise);
-        assertEquals("This trick is over", ise.getMessage());
+        assertThat(ise).isNotNull();
+        assertThat(ise.getMessage()).isEqualTo("This trick is over");
 
     }
 
@@ -146,10 +147,10 @@ public class WarTrickTest {
         trick.playerPlay(player2, ClassicalCard.FIVE_SPADE);
         // Player 2 has no more card to play
 
-        assertTrue(player2.hasNoMoreCard());
-        assertTrue(trick.isOver());
-        assertTrue(trick.getWinner().isPresent());
-        assertSame(player1, trick.getWinner().get());
+        assertThat(player2.hasNoMoreCard()).isTrue();
+        assertThat(trick.isOver()).isTrue();
+        assertThat(trick.getWinner()).isPresent();
+        assertThat(trick.getWinner().get()).isSameAs(player1);
 
     }
 

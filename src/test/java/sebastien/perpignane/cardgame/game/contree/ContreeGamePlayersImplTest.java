@@ -9,7 +9,8 @@ import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -47,10 +48,10 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
         JoinGameResult joinGameResult = gamePlayers.joinGame(newPlayer);
 
-        assertEquals(0, joinGameResult.playerIndex());
-        assertTrue(joinGameResult.replacedPlayer().isEmpty());
-        assertFalse(gamePlayers.isFull());
-        assertTrue(gamePlayers.isJoinableByHumanPlayers());
+        assertThat(joinGameResult.playerIndex()).isEqualTo(0);
+        assertThat(joinGameResult.replacedPlayer()).isEmpty();
+        assertThat(gamePlayers.isFull()).isFalse();
+        assertThat(gamePlayers.isJoinableByHumanPlayers()).isTrue();
     }
 
     @DisplayName("Join team 1 in a game that no player joined yet")
@@ -61,10 +62,10 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
         JoinGameResult joinGameResult = gamePlayers.joinGame(newPlayer, ContreeTeam.TEAM1);
 
-        assertEquals(0, joinGameResult.playerIndex());
-        assertTrue(joinGameResult.replacedPlayer().isEmpty());
-        assertFalse(gamePlayers.isFull());
-        assertTrue(gamePlayers.isJoinableByHumanPlayers());
+        assertThat(joinGameResult.playerIndex()).isEqualTo(0);
+        assertThat(joinGameResult.replacedPlayer()).isEmpty();
+        assertThat(gamePlayers.isFull()).isFalse();
+        assertThat(gamePlayers.isJoinableByHumanPlayers()).isTrue();
     }
 
     @DisplayName("Join team 2 in a game that no player joined yet")
@@ -75,10 +76,10 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
         JoinGameResult joinGameResult = gamePlayers.joinGame(newPlayer, ContreeTeam.TEAM2);
 
-        assertEquals(1, joinGameResult.playerIndex());
-        assertTrue(joinGameResult.replacedPlayer().isEmpty());
-        assertFalse(gamePlayers.isFull());
-        assertTrue(gamePlayers.isJoinableByHumanPlayers());
+        assertThat(joinGameResult.playerIndex()).isEqualTo(1);
+        assertThat(joinGameResult.replacedPlayer()).isEmpty();
+        assertThat(gamePlayers.isFull()).isFalse();
+        assertThat(gamePlayers.isJoinableByHumanPlayers()).isTrue();
     }
 
     @DisplayName("A player cannot join the game twice")
@@ -89,15 +90,9 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
         gamePlayers.joinGame(newPlayer);
 
-        assertThrows(
-                RuntimeException.class,
-                () -> gamePlayers.joinGame(newPlayer)
-        );
+        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> gamePlayers.joinGame(newPlayer));
 
-        assertThrows(
-                RuntimeException.class,
-                () -> gamePlayers.joinGame(newPlayer, ContreeTeam.TEAM2)
-        );
+        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> gamePlayers.joinGame(newPlayer, ContreeTeam.TEAM2));
     }
 
     @DisplayName("Join a team already full of human players must fail")
@@ -112,10 +107,7 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
         ContreePlayer newPlayer = humanPlayer();
 
-        assertThrows(
-                RuntimeException.class,
-                () -> gamePlayers.joinGame(newPlayer, ContreeTeam.TEAM2)
-        );
+        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> gamePlayers.joinGame(newPlayer, ContreeTeam.TEAM2));
     }
 
     @DisplayName("Joining a full game without bot players must fail")
@@ -127,18 +119,15 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
             gamePlayers.joinGame(player);
         }
 
-        assertTrue(gamePlayers.isFull());
-        assertFalse(gamePlayers.isJoinableByHumanPlayers());
+        assertThat(gamePlayers.isFull()).isTrue();
+        assertThat(gamePlayers.isJoinableByHumanPlayers()).isFalse();
 
         ContreePlayer newPlayer = humanPlayer();
 
-        assertTrue(gamePlayers.isFull());
-        assertFalse(gamePlayers.isJoinableByHumanPlayers());
+        assertThat(gamePlayers.isFull()).isTrue();
+        assertThat(gamePlayers.isJoinableByHumanPlayers()).isFalse();
 
-        assertThrows(
-                RuntimeException.class,
-                () -> gamePlayers.joinGame(newPlayer)
-        );
+        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> gamePlayers.joinGame(newPlayer));
 
     }
 
@@ -152,19 +141,19 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
             ContreePlayer player = botPlayer();
             gamePlayers.joinGame(player);
         }
-        assertTrue(gamePlayers.isFull());
-        assertTrue(gamePlayers.isJoinableByHumanPlayers());
+        assertThat(gamePlayers.isFull()).isTrue();
+        assertThat(gamePlayers.isJoinableByHumanPlayers()).isTrue();
 
         ContreePlayer newPlayer = humanPlayer();
         JoinGameResult joinGameResult = gamePlayers.joinGame(newPlayer);
 
         // player with index 0 is a human
-        assertEquals(1, joinGameResult.playerIndex());
-        assertTrue(joinGameResult.replacedPlayer().isPresent());
-        assertNotSame(newPlayer, joinGameResult.replacedPlayer().get());
-        assertTrue(gamePlayers.isFull());
-        assertTrue(gamePlayers.isJoinableByHumanPlayers());
-        assertSame(newPlayer, gamePlayers.getGamePlayers().get(1));
+        assertThat(joinGameResult.playerIndex()).isEqualTo(1);
+        assertThat(joinGameResult.replacedPlayer()).isPresent();
+        assertThat(joinGameResult.replacedPlayer().get()).isNotSameAs(newPlayer);
+        assertThat(gamePlayers.isFull()).isTrue();
+        assertThat(gamePlayers.isJoinableByHumanPlayers()).isTrue();
+        assertThat(gamePlayers.getGamePlayers().get(1)).isSameAs(newPlayer);
 
     }
 
@@ -177,11 +166,11 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
         JoinGameResult joinGameResult = gamePlayers.joinGame(player, ContreeTeam.TEAM2);
 
         // first team 2 slot is index 1
-        assertEquals(1, joinGameResult.playerIndex());
-        assertTrue(joinGameResult.replacedPlayer().isEmpty());
-        assertEquals(1, gamePlayers.getNbPlayers());
-        assertSame(player, gamePlayers.getGamePlayers().get(1));
-        assertNull(gamePlayers.getGamePlayers().get(0));
+        assertThat(joinGameResult.playerIndex()).isEqualTo(1);
+        assertThat(joinGameResult.replacedPlayer()).isEmpty();
+        assertThat(gamePlayers.getNbPlayers()).isEqualTo(1);
+        assertThat(gamePlayers.getGamePlayers().get(1)).isSameAs(player);
+        assertThat(gamePlayers.getGamePlayers().get(0)).isNull();
 
     }
 
@@ -195,7 +184,7 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
         gamePlayers.joinGame(humanPlayer());
 
-        assertTrue(gamePlayers.isFull());
+        assertThat(gamePlayers.isFull()).isTrue();
 
     }
 
@@ -216,13 +205,13 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
         JoinGameResult joinGameResult = gamePlayers.joinGame(humanPlayer, ContreeTeam.TEAM1);
 
-        assertEquals(0, joinGameResult.playerIndex());
-        assertTrue(joinGameResult.replacedPlayer().isPresent());
-        assertSame(botPlayer1, joinGameResult.replacedPlayer().get());
-        assertEquals(2, gamePlayers.getNbPlayers());
-        assertSame(humanPlayer, gamePlayers.getGamePlayers().get(0));
-        assertNull(gamePlayers.getGamePlayers().get(1));
-        assertNull(gamePlayers.getGamePlayers().get(3));
+        assertThat(joinGameResult.playerIndex()).isEqualTo(0);
+        assertThat(joinGameResult.replacedPlayer()).isPresent();
+        assertThat(joinGameResult.replacedPlayer().get()).isSameAs(botPlayer1);
+        assertThat(gamePlayers.getNbPlayers()).isEqualTo(2);
+        assertThat(gamePlayers.getGamePlayers().get(0)).isSameAs(humanPlayer);
+        assertThat(gamePlayers.getGamePlayers().get(1)).isNull();
+        assertThat(gamePlayers.getGamePlayers().get(3)).isNull();
 
     }
 
@@ -235,10 +224,10 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
         players.forEach(gamePlayers::joinGame);
 
         var dealPlayers = gamePlayers.buildDealPlayers();
-        assertNotNull(dealPlayers);
-        assertEquals(ContreePlayers.NB_PLAYERS, dealPlayers.getNumberOfPlayers());
-        assertEquals(gamePlayers.getGamePlayers(), dealPlayers.getCurrentDealPlayers());
-        assertSame(dealPlayers.getCurrentDealPlayers().get(0), gamePlayers.getGamePlayers().get(0));
+        assertThat(dealPlayers).isNotNull();
+        assertThat(dealPlayers.getNumberOfPlayers()).isEqualTo(ContreePlayers.NB_PLAYERS);
+        assertThat(dealPlayers.getCurrentDealPlayers()).isEqualTo(gamePlayers.getGamePlayers());
+        assertThat(gamePlayers.getGamePlayers().get(0)).isSameAs(dealPlayers.getCurrentDealPlayers().get(0));
 
     }
 
@@ -248,10 +237,7 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
         gamePlayers.joinGame(botPlayer());
 
-        assertThrows(
-            RuntimeException.class,
-                gamePlayers::buildDealPlayers
-        );
+        assertThatExceptionOfType(RuntimeException.class).isThrownBy(gamePlayers::buildDealPlayers);
 
     }
 
@@ -268,10 +254,10 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
         var newPlayer = gamePlayers.leaveGameAndReplaceWithBotPlayer(leaver);
 
-        assertNotSame(gamePlayers.getGamePlayers().get(0), leaver);
-        assertNotSame(newPlayer, leaver);
-        assertFalse(leaver.isBot());
-        assertTrue(gamePlayers.getGamePlayers().get(0).isBot());
+        assertThat(leaver).isNotSameAs(gamePlayers.getGamePlayers().get(0));
+        assertThat(leaver).isNotSameAs(newPlayer);
+        assertThat(leaver.isBot()).isFalse();
+        assertThat(gamePlayers.getGamePlayers().get(0).isBot()).isTrue();
 
     }
 
@@ -288,10 +274,7 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
         gamePlayers.joinGame(botPlayer());
         gamePlayers.joinGame(botPlayer());
 
-        assertThrows(
-            RuntimeException.class,
-            () -> gamePlayers.leaveGameAndReplaceWithBotPlayer(leaver)
-        );
+        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> gamePlayers.leaveGameAndReplaceWithBotPlayer(leaver));
 
     }
 
@@ -306,10 +289,7 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
         gamePlayers.joinGame(botPlayer());
         gamePlayers.joinGame(botPlayer());
 
-        assertThrows(
-            RuntimeException.class,
-            () -> gamePlayers.leaveGameAndReplaceWithBotPlayer(leaver)
-        );
+        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> gamePlayers.leaveGameAndReplaceWithBotPlayer(leaver));
 
     }
 
@@ -327,17 +307,17 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
         var bidPlayers = dealPlayers.buildBidPlayers();
 
-        assertTrue(bidPlayers.getCurrentBidderSlot().getPlayer().isPresent());
-        assertSame(botPlayer1, bidPlayers.getCurrentBidderSlot().getPlayer().get());
+        assertThat(bidPlayers.getCurrentBidderSlot().getPlayer()).isPresent();
+        assertThat(bidPlayers.getCurrentBidderSlot().getPlayer().get()).isSameAs(botPlayer1);
 
         var humanPlayer = humanPlayer();
         var joinResult = gamePlayers.joinGame(humanPlayer);
         var replacedPlayer = joinResult.replacedPlayer();
 
-        assertNotNull(replacedPlayer);
+        assertThat(replacedPlayer).isNotNull();
 
-        assertTrue(bidPlayers.getCurrentBidderSlot().getPlayer().isPresent());
-        assertSame(humanPlayer, bidPlayers.getCurrentBidderSlot().getPlayer().get());
+        assertThat(bidPlayers.getCurrentBidderSlot().getPlayer()).isPresent();
+        assertThat(bidPlayers.getCurrentBidderSlot().getPlayer().get()).isSameAs(humanPlayer);
     }
 
 }

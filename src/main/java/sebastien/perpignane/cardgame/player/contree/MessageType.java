@@ -6,7 +6,8 @@ public enum MessageType {
     BID(false, true),
     EJECTED,
     GAME_STARTED,
-    GAME_OVER;
+    GAME_OVER,
+    STATUS_UPDATE;
 
     private final boolean requiresAllowedCards;
 

@@ -26,6 +26,18 @@ public interface ContreePlayer extends Player<ContreeGame, ContreeTeam> {
 
     String getName();
 
+    void setWaiting();
+
+    void setBidding();
+
+    void setPlaying();
+
+    boolean isWaiting();
+
+    boolean isBidding();
+
+    boolean isPlaying();
+
     /**
      * Provide minimal state data about the player state useful for client app. Can be sent to other players of the game.
      * @return minimal player state
