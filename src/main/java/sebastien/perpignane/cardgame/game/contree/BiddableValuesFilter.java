@@ -6,13 +6,53 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+/**
+ * Compute allowed bids depending on the current deal state
+ */
 class BiddableValuesFilter {
 
-    public record BidFilterResult(Set<ContreeBidValue> biddableValues, Map<ContreeBidValue, String> exclusionCauseByBidValue) {
-        public BidFilterResult {
-            Objects.requireNonNull(biddableValues, "biddableValues cannot be null. It can be empty.");
-            Objects.requireNonNull(exclusionCauseByBidValue, "exclusionCauseByBidValue cannot be null. It can be empty.");
+    /**
+     * Contains the biddable values and the cause of exclusion for the not biddable ones.
+     */
+    public static class BidFilterResult {
+
+        private final Set<ContreeBidValue> biddableValues;
+
+        private final Map<ContreeBidValue, String> exclusionCauseByBidValue;
+
+        public BidFilterResult() {
+            biddableValues = new HashSet<>();
+            exclusionCauseByBidValue = new HashMap<>();
         }
+
+        public Set<ContreeBidValue> biddableValues() {
+            return biddableValues;
+        }
+
+        public Map<ContreeBidValue, String> exclusionCauseByBidValue() {
+            return exclusionCauseByBidValue;
+        }
+
+        private void addBiddableValues(Set<ContreeBidValue> biddableValues) {
+            this.biddableValues.addAll(biddableValues);
+        }
+
+        private void addBiddableValue(ContreeBidValue biddableValue) {
+            biddableValues.add(biddableValue);
+        }
+
+        private void addExclusionCauseForBidValue(String exclusionCause, ContreeBidValue bidValue) {
+            exclusionCauseByBidValue.put(bidValue, exclusionCause);
+        }
+
+        private void addExclusionCausesForBidValues(Map<ContreeBidValue, String> newExclusionCausesByBidValue) {
+            exclusionCauseByBidValue.putAll(newExclusionCausesByBidValue);
+        }
+
+        private void removeExclusionCauseForBidValue(ContreeBidValue bidValue) {
+            exclusionCauseByBidValue.remove(bidValue);
+        }
+
     }
 
     private final static Set<ContreeBidValue> allBidValuesExceptDoubleAndRedouble;
@@ -24,67 +64,102 @@ class BiddableValuesFilter {
                         .collect(Collectors.toSet());
     }
 
+    /**
+     *
+     * @param currentPlayer biddable values are computed for this player
+     * @param bids The bids of the current deal
+     * @return see {@link BidFilterResult} description
+     */
     public BidFilterResult biddableValues(ContreePlayer currentPlayer, ContreeDealBids bids) {
 
-        // TODO refactoring required, this method is hard to read
+        Objects.requireNonNull(currentPlayer);
+        Objects.requireNonNull(bids);
 
-        Set<ContreeBidValue> biddableValues = new HashSet<>();
-        Map<ContreeBidValue, String> exclusionCauseByBidValue = new HashMap<>();
+        BidFilterResult bidFilterResult = new BidFilterResult();
 
-        biddableValues.add(ContreeBidValue.PASS);
+        setInitialResultAsPassAllowedAndDoubleRedoubleNotAllowed(bidFilterResult);
 
-        exclusionCauseByBidValue.put(ContreeBidValue.DOUBLE, "Double is only possible if an opponent bade before and this opponent made the highest bid");
-        exclusionCauseByBidValue.put(ContreeBidValue.REDOUBLE, "Redouble is only possible if an opponent doubled before");
-
-        biddableValues.add(ContreeBidValue.PASS);
-
-        if (bids.highestBid().isEmpty() || bids.hasOnlyPassBids()) {
-            biddableValues.addAll(allBidValuesExceptDoubleAndRedouble);
+        if (bids.noBidsExceptPass()) {
+            bidFilterResult.addBiddableValues(allBidValuesExceptDoubleAndRedouble);
         }
         else {
             var highestBid = bids.highestBid().get();
 
-            Predicate<ContreeBidValue> exclusionCausePredicate;
-
-            if (!bids.isDoubleBidExists() && !bids.isRedoubleBidExists()) {
-                biddableValues.addAll(
-                        allBidValuesExceptDoubleAndRedouble.stream()
-                                .filter(bv -> bv.compareTo(highestBid.bidValue()) > 0)
-                                .collect(Collectors.toSet())
+            if (bids.noDoubleNorRedoubleBid()) {
+                bidFilterResult.addBiddableValues(
+                    getBidValuesHigherThan(highestBid.bidValue())
                 );
-
-                exclusionCausePredicate = bv -> bv.compareTo(highestBid.bidValue()) <= 0 && bv != ContreeBidValue.PASS;
-
             }
 
-            else {
-                exclusionCausePredicate = bv -> true;
+            setExclusionCauseForNotBiddableValues(bidFilterResult, highestBid.bidValue());
+
+            if (opponentHasHighestNotDoubledBid(bids, currentPlayer)) {
+                setDoubleBidAsAllowed(bidFilterResult);
             }
 
-            exclusionCauseByBidValue.putAll(
-                    allBidValuesExceptDoubleAndRedouble.stream()
-                            .filter(exclusionCausePredicate)
-                            .collect(Collectors.toMap(
-                                    bv -> bv,
-                                    bv -> String.format("Illegal bid as last bid value %s is higher or equals to your bid value", highestBid.bidValue())
-                            ))
-            );
-
-            boolean isHighestBidMadeByTeamMate = highestBid.player().sameTeam(currentPlayer);
-
-            if (isHighestBidMadeByTeamMate && bids.isDoubleBidExists()) {
-                biddableValues.add(ContreeBidValue.REDOUBLE);
-                exclusionCauseByBidValue.remove(ContreeBidValue.REDOUBLE);
+            if (teamMateIsDoubled(bids, currentPlayer)) {
+                setRedoubleBidAsAllowed(bidFilterResult);
             }
 
-            if (!isHighestBidMadeByTeamMate && !bids.isDoubleBidExists()) {
-                exclusionCauseByBidValue.remove(ContreeBidValue.DOUBLE);
-                biddableValues.add(ContreeBidValue.DOUBLE);
-            }
         }
 
-        return new BidFilterResult(biddableValues, exclusionCauseByBidValue);
+        return bidFilterResult;
 
+    }
+
+    private void setInitialResultAsPassAllowedAndDoubleRedoubleNotAllowed(BidFilterResult bidFilterResult) {
+
+        bidFilterResult.addBiddableValue(ContreeBidValue.PASS);
+
+        bidFilterResult.addExclusionCauseForBidValue("Double is only possible if an opponent bade before and this opponent made the highest bid", ContreeBidValue.DOUBLE);
+        bidFilterResult.addExclusionCauseForBidValue("Redouble is only possible if an opponent doubled before", ContreeBidValue.REDOUBLE);
+
+    }
+
+    private Set<ContreeBidValue> getBidValuesHigherThan(ContreeBidValue bidValue) {
+        return allBidValuesExceptDoubleAndRedouble.stream()
+                .filter(bv -> bv.compareTo(bidValue) > 0)
+                .collect(Collectors.toSet());
+    }
+
+    private void setExclusionCauseForNotBiddableValues(BidFilterResult bidFilterResult, ContreeBidValue highestBidValue) {
+        bidFilterResult.addExclusionCausesForBidValues(
+            allBidValuesExceptDoubleAndRedouble.stream()
+                .filter(Predicate.not(bidFilterResult.biddableValues::contains))
+                .collect(
+                    Collectors.toMap(
+                        bv -> bv,
+                        bv -> String.format("Illegal bid as last bid value %s is higher or equals to your bid value %s", highestBidValue, bv)
+                    )
+                )
+        );
+    }
+
+    private boolean opponentHasHighestNotDoubledBid(ContreeDealBids bids, ContreePlayer currentPlayer) {
+        return isHighestBidMadeByOpponent(bids.highestBid().orElseThrow(), currentPlayer) && !bids.isDoubleBidExists();
+    }
+
+    private boolean teamMateIsDoubled(ContreeDealBids bids, ContreePlayer currentPlayer) {
+        var highestBid = bids.highestBid().orElseThrow();
+        return isHighestBidMadeByTeamMate(highestBid, currentPlayer) && bids.isDoubleBidExists();
+    }
+
+    boolean isHighestBidMadeByTeamMate(ContreeBid highestBid, ContreePlayer currentPlayer) {
+        return highestBid.player().sameTeam(currentPlayer);
+    }
+
+    boolean isHighestBidMadeByOpponent(ContreeBid highestBid, ContreePlayer currentPlayer) {
+        return !isHighestBidMadeByTeamMate(highestBid, currentPlayer);
+    }
+
+    private void setRedoubleBidAsAllowed(BidFilterResult bidFilterResult) {
+        bidFilterResult.addBiddableValue(ContreeBidValue.REDOUBLE);
+        bidFilterResult.removeExclusionCauseForBidValue(ContreeBidValue.REDOUBLE);
+    }
+
+    private void setDoubleBidAsAllowed(BidFilterResult bidFilterResult) {
+        bidFilterResult.addBiddableValue(ContreeBidValue.DOUBLE);
+        bidFilterResult.removeExclusionCauseForBidValue(ContreeBidValue.DOUBLE);
     }
 
 }
