@@ -15,6 +15,11 @@ War game was just a warm-up. The final objective of the project is a try to prov
 
 Java 17 is required. I suggest to install the JDK with [SdkMan](https://sdkman.io/).
 
+```bash
+cd cardgame
+./mvnw clean package
+```
+
 ## How to run contree games
 
 ### You can play a contree game in text mode with 3 (stupid) bots who never bid by running this command :

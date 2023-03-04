@@ -13,7 +13,11 @@ import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 import sebastien.perpignane.cardgame.player.util.PlayerSlot;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -61,10 +65,11 @@ class ContreeDealsTest extends TestCasesManagingPlayers {
 
         CardDealer cardDealer = mock(CardDealer.class);
 
-        when(biddableValuesFilter.biddableValues(any(), any())).thenReturn(new BiddableValuesFilter.BidFilterResult(
-                new HashSet<>(Arrays.stream(ContreeBidValue.values()).toList()),
-                Collections.emptyMap()
-        ));
+        BiddableValuesFilter.BidFilterResult bidFilterResult = mock(BiddableValuesFilter.BidFilterResult.class);
+        when(bidFilterResult.biddableValues()).thenReturn(Arrays.stream(ContreeBidValue.values()).collect(Collectors.toSet()));
+        when(bidFilterResult.exclusionCauseByBidValue()).thenReturn(Collections.emptyMap());
+
+        when(biddableValuesFilter.biddableValues(any(), any())).thenReturn(bidFilterResult);
 
         deals = new ContreeDeals(gameScore, dealScoreCalculator, biddableValuesFilter, filter, cardDealer, eventSender);
 

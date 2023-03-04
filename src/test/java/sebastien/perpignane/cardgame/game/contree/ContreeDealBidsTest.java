@@ -12,7 +12,6 @@ import sebastien.perpignane.cardgame.player.util.PlayerSlot;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
@@ -36,7 +35,7 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
     @BeforeEach
     public void setUp() {
         biddableValuesFilter = mock(BiddableValuesFilter.class);
-        when(biddableValuesFilter.biddableValues(any(), any())).thenReturn(new BiddableValuesFilter.BidFilterResult(Collections.emptySet(), Collections.emptyMap()));
+        when(biddableValuesFilter.biddableValues(any(), any())).thenReturn(new BiddableValuesFilter.BidFilterResult());
         ContreeBidPlayers bidPlayers = mock(ContreeBidPlayers.class);
         dealBids = new ContreeDealBids(biddableValuesFilter);
 
@@ -287,19 +286,18 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
     public void testNoOverBidWhenExpected() {
         dealBids.placeBid(new ContreeBid( player1, ContreeBidValue.HUNDRED, CardSuit.DIAMONDS ));
 
-        when(biddableValuesFilter.biddableValues(any(), any())).thenReturn(
-                new BiddableValuesFilter.BidFilterResult(
-                        Set.of(
-                        ),
-                        Map.of(ContreeBidValue.NINETY, "Why do you bid shit, player 2 ????")
-                )
-        );
+
+        BiddableValuesFilter.BidFilterResult bidFilterResult = mock(BiddableValuesFilter.BidFilterResult.class);
+        when(bidFilterResult.biddableValues()).thenReturn(Collections.emptySet());
+        when(bidFilterResult.exclusionCauseByBidValue()).thenReturn(Map.of(ContreeBidValue.NINETY, "Why do you bid shit, player 2 ????"));
+
+        when(biddableValuesFilter.biddableValues(any(), any())).thenReturn(bidFilterResult);
 
         dealBids.placeBid(new ContreeBid( player2 ));
 
         var e = assertThrows(
-                ContreeDealBids.BidNotAllowedException.class,
-                () -> dealBids.placeBid(new ContreeBid(player3, ContreeBidValue.NINETY, CardSuit.DIAMONDS))
+            ContreeDealBids.BidNotAllowedException.class,
+            () -> dealBids.placeBid(new ContreeBid(player3, ContreeBidValue.NINETY, CardSuit.DIAMONDS))
         );
 
         assertThat(e.isSuspectedCheat()).isFalse();
@@ -311,8 +309,8 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
     void testBidFromUnexpectedPlayer_3rdPlayerPlacesSecondBid() {
         dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.DIAMONDS));
         var e = assertThrows(
-                ContreeDealBids.BidNotAllowedException.class,
-                () -> dealBids.placeBid(new ContreeBid(player3, ContreeBidValue.PASS))
+            ContreeDealBids.BidNotAllowedException.class,
+            () -> dealBids.placeBid(new ContreeBid(player3, ContreeBidValue.PASS))
         );
 
         assertThat(e.isSuspectedCheat()).isTrue();

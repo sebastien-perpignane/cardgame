@@ -84,8 +84,6 @@ class ContreeDealBids {
 
     private void throwsExceptionIfBidIsInvalid(ContreeBid bid) {
 
-        Map<ContreeBidValue, String> exclusionCauseByBidValue = currentBidderFilterResult.exclusionCauseByBidValue();
-
         if (bidsAreOver()) {
             throw new BidNotAllowedException("Bids are over", true);
         }
@@ -94,6 +92,7 @@ class ContreeDealBids {
             throw new BidNotAllowedException(String.format("Cheater detected : player %s is not the current bidder. Current bidder is: %s", bid.player(), currentBidderSlot.getPlayer().orElseThrow() ), true);
         }
 
+        Map<ContreeBidValue, String> exclusionCauseByBidValue = currentBidderFilterResult.exclusionCauseByBidValue();
         if (exclusionCauseByBidValue.containsKey(bid.bidValue())) {
             throw new BidNotAllowedException(exclusionCauseByBidValue.get(bid.bidValue()));
         }
@@ -110,6 +109,14 @@ class ContreeDealBids {
                 .filter(Predicate.not(bv -> List.of(ContreeBidValue.DOUBLE, ContreeBidValue.REDOUBLE)
                         .contains(bv.bidValue())))
                 .max(Comparator.comparingInt(a -> a.bidValue().ordinal()));
+    }
+
+    boolean noBidsExceptPass() {
+        return highestBid().isEmpty() || hasOnlyPassBids();
+    }
+
+    boolean noDoubleNorRedoubleBid() {
+        return !isDoubleBidExists() && !isRedoubleBidExists();
     }
 
     public boolean isAnnouncedCapot() {

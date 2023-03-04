@@ -55,9 +55,12 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
 
         filter = new BiddableValuesFilter();
 
+        expectedAllowedBidValues = null;
+
     }
 
     private void runTestWithCurrentPlayerAndCheckAssertions() {
+        assertThat(expectedAllowedBidValues).describedAs("expectedAllowedBidValues cannot be null, each test must define its content").isNotNull();
         BiddableValuesFilter.BidFilterResult filterResult = filter.biddableValues(currentPlayer, bids);
         Map<ContreeBidValue, String> exclusionCauseByBidValue = filterResult.exclusionCauseByBidValue();
         Set<ContreeBidValue> allowedBidValues = filterResult.biddableValues();
@@ -78,10 +81,9 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
     @Test
     public void testNoBid() {
 
-        when(bids.highestBid()).thenReturn(Optional.empty());
         when(bids.isDoubleBidExists()).thenReturn(false);
         when(bids.isRedoubleBidExists()).thenReturn(false);
-        when(bids.hasOnlyPassBids()).thenReturn(false);
+        when(bids.noBidsExceptPass()).thenReturn(true);
 
         expectedAllowedBidValues = allBidValuesExceptDoubleRedouble;
 
@@ -98,6 +100,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
         ));
         when(bids.isDoubleBidExists()).thenReturn(false);
         when(bids.isRedoubleBidExists()).thenReturn(false);
+        when(bids.noDoubleNorRedoubleBid()).thenReturn(true);
         when(bids.hasOnlyPassBids()).thenReturn(true);
 
         expectedAllowedBidValues = allBidValuesExceptDoubleRedouble;
@@ -113,6 +116,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(opponent, ContreeBidValue.EIGHTY, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(false);
         when(bids.isRedoubleBidExists()).thenReturn(false);
+        when(bids.noDoubleNorRedoubleBid()).thenReturn(true);
         when(bids.hasOnlyPassBids()).thenReturn(false);
 
         expectedAllowedBidValues = new HashSet<>(allBidValuesExceptDoubleRedouble);
@@ -145,6 +149,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(opponent, ContreeBidValue.HUNDRED_TEN, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(false);
         when(bids.isRedoubleBidExists()).thenReturn(false);
+        when(bids.noDoubleNorRedoubleBid()).thenReturn(true);
         when(bids.hasOnlyPassBids()).thenReturn(false);
 
         expectedAllowedBidValues = new HashSet<>(allBidValuesExceptDoubleRedouble);
@@ -178,7 +183,9 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(teamMate, EIGHTY, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(false);
         when(bids.isRedoubleBidExists()).thenReturn(false);
+        when(bids.noDoubleNorRedoubleBid()).thenReturn(true);
         when(bids.hasOnlyPassBids()).thenReturn(false);
+
 
         expectedAllowedBidValues = new HashSet<>(allBidValuesExceptDoubleRedouble);
         expectedAllowedBidValues.remove(ContreeBidValue.EIGHTY);
@@ -209,6 +216,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(teamMate, HUNDRED_TEN, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(false);
         when(bids.isRedoubleBidExists()).thenReturn(false);
+        when(bids.noDoubleNorRedoubleBid()).thenReturn(true);
         when(bids.hasOnlyPassBids()).thenReturn(false);
 
         expectedAllowedBidValues = new HashSet<>(allBidValuesExceptDoubleRedouble);
@@ -300,6 +308,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(opponent, ContreeBidValue.HUNDRED_SIXTY, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(false);
         when(bids.isRedoubleBidExists()).thenReturn(false);
+        when(bids.noDoubleNorRedoubleBid()).thenReturn(true);
         when(bids.isAnnouncedCapot()).thenReturn(false);
         when(bids.hasOnlyPassBids()).thenReturn(false);
 
@@ -330,6 +339,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(teamMate, ContreeBidValue.HUNDRED_SIXTY, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(false);
         when(bids.isRedoubleBidExists()).thenReturn(false);
+        when(bids.noDoubleNorRedoubleBid()).thenReturn(true);
         when(bids.isAnnouncedCapot()).thenReturn(false);
         when(bids.hasOnlyPassBids()).thenReturn(false);
 
@@ -354,6 +364,4 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
 
     }
 
-
-    
 }
