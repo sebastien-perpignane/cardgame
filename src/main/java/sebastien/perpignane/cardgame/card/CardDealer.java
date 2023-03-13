@@ -6,38 +6,59 @@ import java.util.stream.IntStream;
 
 public class CardDealer {
 
-    private final List<Integer> distribConfiguration;
+    private final List<Integer> distributeConfiguration;
+    private final int nbDistributedCardsPerPlayer;
 
-    public CardDealer(List<Integer> distribConfiguration) {
-        this.distribConfiguration = distribConfiguration;
+    public CardDealer(List<Integer> distributeConfiguration) {
+        this.distributeConfiguration = distributeConfiguration;
+        nbDistributedCardsPerPlayer = nbDistributedCardsPerPlayer();
     }
 
     public List<List<ClassicalCard>> dealCards(List<ClassicalCard> cards, int nbPlayers) {
 
-        int nbDistributedCardsPerPlayer = distribConfiguration.stream().mapToInt(Integer::intValue).sum();
+        throwExceptionIfCardsCannotBeEquallyDistributed(cards.size(), nbPlayers);
 
-        if (cards.size() % nbPlayers != 0) {
-            throw new IllegalArgumentException(String.format("%d cards cannot be equally distributed to %d players", nbDistributedCardsPerPlayer, nbPlayers));
+        throwExceptionIfNbDistributedCardsDoesNotMatchNbCardsAndNbPlayers(cards.size(), nbPlayers);
+
+        return buildPlayerHands(cards, nbPlayers);
+
+    }
+
+    private int nbDistributedCardsPerPlayer() {
+        return distributeConfiguration.stream().mapToInt(Integer::intValue).sum();
+    }
+
+    private void throwExceptionIfCardsCannotBeEquallyDistributed(int nbCards, int nbPlayers) {
+        if (nbCards % nbPlayers != 0) {
+            throw new IllegalArgumentException(String.format("%d cards cannot be equally distributed to %d players", nbCards, nbPlayers));
         }
+    }
 
-        if (nbDistributedCardsPerPlayer * nbPlayers != cards.size()) {
+    private void throwExceptionIfNbDistributedCardsDoesNotMatchNbCardsAndNbPlayers(int nbCards, int nbPlayers) {
+        if (nbDistributedCardsPerPlayer * nbPlayers != nbCards) {
             throw new IllegalArgumentException("All cards will not be distributed to players");
         }
+    }
 
-        final List<List<ClassicalCard>> dealCardsByPlayer = new ArrayList<>(nbPlayers);
-        IntStream.range(0, nbPlayers).forEach(playerIdx ->  dealCardsByPlayer.add(new ArrayList<>(nbDistributedCardsPerPlayer)));
+    private List<List<ClassicalCard>> buildPlayerHands(List<ClassicalCard> cards, int nbPlayers) {
+        final List<List<ClassicalCard>> handByPlayer = initHandByPlayer(nbPlayers);
 
         int alreadyDealtCards = 0;
-        for(Integer nbCards : distribConfiguration) {
+        for(Integer nbCards : distributeConfiguration) {
             for (int playerIdx = 0 ; playerIdx < nbPlayers ; playerIdx++ ) {
                 int offset = alreadyDealtCards + (playerIdx * nbCards);
-                dealCardsByPlayer.get(playerIdx).addAll(cards.subList(offset, offset + nbCards));
+                handByPlayer.get(playerIdx).addAll(cards.subList(offset, offset + nbCards));
             }
             alreadyDealtCards += nbPlayers * nbCards;
         }
 
-        return dealCardsByPlayer;
+        return handByPlayer;
+    }
 
+    private List<List<ClassicalCard>> initHandByPlayer(int nbPlayers) {
+        final List<List<ClassicalCard>> handByPlayer = new ArrayList<>(nbPlayers);
+        IntStream.range(0, nbPlayers).forEach(playerIdx ->  handByPlayer.add(new ArrayList<>(nbDistributedCardsPerPlayer)));
+        return handByPlayer;
     }
 
 }
