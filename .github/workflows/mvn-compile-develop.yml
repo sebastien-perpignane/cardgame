@@ -22,4 +22,8 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Build with Maven
-        run: mvn -B compile test --file pom.xml
+        run: mvn -B compile --file pom.xml -DskipTests=true
+      - name: Unit tests
+        run: mvn -B test --file pom.xml
+      - name: Integration test
+        run: mvn -B failsafe:integration-test --file pom.xml
