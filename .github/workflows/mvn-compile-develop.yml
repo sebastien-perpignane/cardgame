@@ -21,9 +21,31 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
+
       - name: Build with Maven
         run: mvn -B compile --file pom.xml -DskipTests=true
+
       - name: Unit tests
         run: mvn -B test --file pom.xml
+
       - name: Integration test
         run: mvn -B failsafe:integration-test --file pom.xml
+
+      - name: Save artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: cardgame-jars
+          path: | 
+            target/*.jar
+
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get artifacts from build
+        uses: actions/download-artifact@v3
+        with:
+          name: cardgame-jars
+
+      - name: Display structure of downloaded files
+        run: ls -R
