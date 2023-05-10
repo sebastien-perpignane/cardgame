@@ -31,6 +31,11 @@ jobs:
       - name: Integration test
         run: mvn -B failsafe:integration-test --file pom.xml
 
+      - name: Show structure of current dir
+        run: |
+          pwd
+          ls -R
+
       - name: Save artifacts
         uses: actions/upload-artifact@v3
         with:
