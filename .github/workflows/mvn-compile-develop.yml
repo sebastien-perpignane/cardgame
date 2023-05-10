@@ -31,6 +31,9 @@ jobs:
       - name: Integration test
         run: mvn -B failsafe:integration-test --file pom.xml
 
+      - name: Package
+        run: mvn -B compile --file pom.xml -DskipTests=true
+
       - name: Show structure of current dir
         run: |
           pwd
