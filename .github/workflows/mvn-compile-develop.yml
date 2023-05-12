@@ -34,6 +34,9 @@ jobs:
       - name: Package
         run: mvn -B package --file pom.xml -DskipTests=true
 
+      - name: build tar container
+        run: mvn -B -fail-never jib:buildTar --file pom.xml
+
       - name: Show structure of current dir
         run: |
           pwd
