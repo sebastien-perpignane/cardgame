@@ -196,8 +196,8 @@
                 <version>3.3.2</version>
                 <configuration>
                     <from>
-                        <!-- <image>eclipse-temurin:17.0.7_7-jdk@sha256:9dd6a19e4819b066aa2bd8e54d5988a49cca29736fe5447cb0a57daa975f8935</image> -->
-                        <image>eclipse-temurin:17.0.7_7-jdkk</image>
+                        <image>eclipse-temurin:17.0.7_7-jdk@sha256:9dd6a19e4819b066aa2bd8e54d5988a49cca29736fe5447cb0a57daa975f8935</image>
+                        <!-- <image>eclipse-temurin:17.0.7_7-jdkk</image> -->
                     </from>
                     <container>
                         <mainClass>sebastien.perpignane.cardgame.game.contree.ContreeGameMain</mainClass>
