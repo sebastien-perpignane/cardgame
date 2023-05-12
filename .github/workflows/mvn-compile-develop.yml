@@ -35,14 +35,16 @@ jobs:
         run: mvn -B package --file pom.xml -DskipTests=true
 
       - name: build tar container
-        run: mvn -B -fail-never jib:buildTar --file pom.xml
+        run: mvn -B jib:buildTar --file pom.xml
 
       - name: Show structure of current dir
+        if: success() || failure()
         run: |
           pwd
           ls -R
 
       - name: Save artifacts
+        if: success() || failure()
         uses: actions/upload-artifact@v3
         with:
           name: cardgame-jars
