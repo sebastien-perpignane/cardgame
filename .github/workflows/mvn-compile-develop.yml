@@ -84,4 +84,4 @@ jobs:
         shell: bash
         run: |
           echo "Publish on ${{ matrix.harbor-target }}"
-          mvn -B jib:buildTar --file pom.xml
+          mvn -B jib:buildTar --file pom.xml -Dimage=cardgame-${{ matrix.harbor-target }}".tar
