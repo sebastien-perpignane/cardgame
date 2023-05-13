@@ -66,7 +66,7 @@ jobs:
       - name: Get artifacts from build
         uses: actions/download-artifact@v3
         with:
-          name: cardgame-jars
+          name: build-result
 
       - name: Display structure of downloaded files
         run: ls -R
