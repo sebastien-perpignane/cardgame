@@ -57,6 +57,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build-result
+          retention-days: 1
           path: |
             ./
             !./**/*.git*
