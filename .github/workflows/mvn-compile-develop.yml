@@ -60,7 +60,8 @@ jobs:
           retention-days: 1
           path: |
             ./
-            !./**/*.git*
+            !./src/
+            
 
   publish-on-harbor:
     runs-on: ubuntu-latest
