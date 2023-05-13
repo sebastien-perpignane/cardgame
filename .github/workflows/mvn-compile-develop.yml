@@ -61,6 +61,7 @@ jobs:
           path: |
             ./
             !./src/
+            !./.*
             
 
   publish-on-harbor:
