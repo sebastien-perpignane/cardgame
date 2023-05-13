@@ -23,7 +23,7 @@ jobs:
           cache: maven
 
       - name: Force all maven dependencies download
-        run: mvn -B org.apache.maven.plugins:maven-dependency-plugin:3.5.0:go-offline
+        run: mvn -B maven-dependency-plugin:go-offline
 
       - name: Build with Maven
         run: mvn -B compile --file pom.xml -Dmaven.test.skip=true
