@@ -22,6 +22,9 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Force all maven dependencies download
+        run: mvn -B dependency:go-offline
+
       - name: Build with Maven
         run: mvn -B compile --file pom.xml -Dmaven.test.skip=true
 
