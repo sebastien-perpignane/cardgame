@@ -23,7 +23,7 @@ jobs:
           cache: maven
 
       - name: Build with Maven
-        run: mvn -B compile --file pom.xml -DskipTests=true
+        run: mvn -B compile --file pom.xml -Dmaven.test.skip=true
 
       - name: Unit tests
         run: mvn -B test --file pom.xml
@@ -35,21 +35,28 @@ jobs:
         run: mvn -B package --file pom.xml -DskipTests=true
 
       - name: build tar container
-        run: mvn -B jib:buildTar --file pom.xml
+        id: build_tar_container
+        shell: bash
+        run: |
+          mvn -B jib:buildTar --file pom.xml
+          export result=$?
+          echo "mvn_result=result" >> $GITHUB_OUTPUT
+          exit 0
 
       - name: Show structure of current dir
         if: success() || failure()
         run: |
+          echo "mvn result $ {{ steps.build_tar_container.outputs.mvn_result}}"
           pwd
           ls -R
 
-      - name: Save artifacts
-        if: success() || failure()
+      - name: Upload build result artifact
         uses: actions/upload-artifact@v3
         with:
-          name: cardgame-jars
-          path: | 
-            target/*.jar
+          name: build-result
+          path: |
+            ./
+            !./**/*.git*
 
   publish:
     runs-on: ubuntu-latest
