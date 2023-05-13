@@ -34,14 +34,14 @@ jobs:
       - name: Package
         run: mvn -B package --file pom.xml -DskipTests=true
 
-      - name: build tar container
-        id: build_tar_container
-        shell: bash
-        run: |
-          mvn -B jib:buildTar --file pom.xml
-          export result=$?
-          echo "mvn_result=result" >> $GITHUB_OUTPUT
-          exit 0
+#      - name: build tar container
+#        id: build_tar_container
+#        shell: bash
+#        run: |
+#          mvn -B jib:buildTar --file pom.xml
+#          export result=$?
+#          echo "mvn_result=result" >> $GITHUB_OUTPUT
+#          exit 0
 
       - name: Show structure of current dir
         if: success() || failure()
