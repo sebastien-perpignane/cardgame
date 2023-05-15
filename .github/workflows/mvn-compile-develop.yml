@@ -1,4 +1,4 @@
-name: Java compile with Maven
+name: Java compile with Maven ${{ github.ref_name }}
 
 on:
   push:
