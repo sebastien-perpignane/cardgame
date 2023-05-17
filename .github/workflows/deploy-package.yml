@@ -1,5 +1,6 @@
 
-name: Java compile with Maven
+name: Deploy in Github Package
+
 
 on:
 
