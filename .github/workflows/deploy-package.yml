@@ -14,8 +14,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Build cardgame
-        uses: sebastien-perpignane/cardgame/.github/workflows/mvn-compile-develop.yml@master
 
       - name: Publish to GitHub Packages Apache Maven
         run: mvn deploy
