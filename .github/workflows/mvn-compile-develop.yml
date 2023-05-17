@@ -7,6 +7,12 @@ on:
     branches: [ "master" ]
 
   workflow_dispatch:
+    inputs:
+      deploy-package:
+        type: boolean
+        default: false
+        required: false
+        description: 'Deploy or not ?'
 
 jobs:
 
@@ -16,7 +22,7 @@ jobs:
     with:
       java-version: '17'
       distribution: 'temurin'
-
+      deploy-package: ${{ inputs.deploy-package }}
 
 #    steps:
 #      - name: Set up JDK 17
