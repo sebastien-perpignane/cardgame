@@ -1,0 +1,22 @@
+
+name: Java compile with Maven
+
+on:
+
+  workflow_dispatch:
+
+
+jobs:
+
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Build cardgame
+        uses: ./.github/workflows/mvn-compile-develop.yml
+
+      - name: Publish to GitHub Packages Apache Maven
+        run: mvn deploy
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
