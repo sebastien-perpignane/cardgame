@@ -26,8 +26,8 @@ public class WarGameIT {
     @DisplayName("Player 1 has only superior cards and must win the game")
     public void testPlayer1HasBestCardsAndWins() throws InterruptedException {
 
-        AbstracLocalThreadWarPlayer player1 = new WarBotPlayer();
-        AbstracLocalThreadWarPlayer player2 = new WarBotPlayer();
+        AbstracLocalThreadWarPlayer player1 = new WarBotPlayer("Player 1");
+        AbstracLocalThreadWarPlayer player2 = new WarBotPlayer("Player 2");
 
         WarGame warGame = new WarGame();
         warGame.joinGame(player1);
@@ -50,8 +50,8 @@ public class WarGameIT {
     @DisplayName("Player 1 wins 1st trick but loses the game")
     public void testPlayer1Win1TrickButLoses() throws InterruptedException {
 
-        AbstracLocalThreadWarPlayer player1 = new WarBotPlayer();
-        AbstracLocalThreadWarPlayer player2 = new WarBotPlayer();
+        AbstracLocalThreadWarPlayer player1 = new WarBotPlayer("Player 1");
+        AbstracLocalThreadWarPlayer player2 = new WarBotPlayer("Player 2");
 
         WarGame warGame = new WarGame();
         warGame.joinGame(player1);

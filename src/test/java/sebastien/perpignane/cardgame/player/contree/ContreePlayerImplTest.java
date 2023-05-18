@@ -192,10 +192,11 @@ class ContreePlayerImplTest {
 
         contreePlayer.setTeam(ContreeTeam.TEAM1);
 
-        var otherPlayer = new ContreePlayerImpl(eventHandler);
+        var otherPlayer = buildOtherPlayer();
         otherPlayer.setTeam(ContreeTeam.TEAM1);
 
         assertThat(contreePlayer.sameTeam(otherPlayer)).isTrue();
+        assertThat(otherPlayer.sameTeam(contreePlayer)).isTrue();
 
     }
 
@@ -205,7 +206,7 @@ class ContreePlayerImplTest {
 
         contreePlayer.setTeam(ContreeTeam.TEAM1);
 
-        var otherPlayer = new ContreePlayerImpl(eventHandler);
+        var otherPlayer = buildOtherPlayer();
         otherPlayer.setTeam(ContreeTeam.TEAM2);
 
         assertThat(contreePlayer.sameTeam(otherPlayer)).isFalse();
@@ -217,7 +218,7 @@ class ContreePlayerImplTest {
     public void testSameTeam_noTeamDefinedOnOther() {
 
         contreePlayer.setTeam(ContreeTeam.TEAM1);
-        var otherPlayer = new ContreePlayerImpl(eventHandler);
+        var otherPlayer = buildOtherPlayer();
 
         assertThat(contreePlayer.sameTeam(otherPlayer)).isFalse();
 
@@ -227,7 +228,7 @@ class ContreePlayerImplTest {
     @Test
     public void testSameTeam_noTeamDefinedOnCurrentPlayer() {
 
-        var otherPlayer = new ContreePlayerImpl(eventHandler);
+        var otherPlayer = buildOtherPlayer();
         otherPlayer.setTeam(ContreeTeam.TEAM1);
 
         assertThat(contreePlayer.sameTeam(otherPlayer)).isFalse();
@@ -237,7 +238,7 @@ class ContreePlayerImplTest {
     @DisplayName("When both players have no team, sameTeam() returns false")
     @Test
     public void testSameTeam_noTeamOnBothPlayers_false() {
-        var otherPlayer = new ContreePlayerImpl(eventHandler);
+        var otherPlayer = buildOtherPlayer();
 
         assertThat(contreePlayer.sameTeam(otherPlayer)).isFalse();
     }
@@ -350,7 +351,8 @@ class ContreePlayerImplTest {
 
         ContreePlayer player;
         for (int i = 0; i < 10000; i++) {
-            player = new ContreePlayerImpl(mock(ContreePlayerEventHandler.class));
+            var playerNumber = i + 1;
+            player = new ContreePlayerImpl("Player " + playerNumber, mock(ContreePlayerEventHandler.class));
             playerIds.add(player.getId());
         }
 
@@ -379,7 +381,7 @@ class ContreePlayerImplTest {
         var eventHandler = mock(ContreePlayerEventHandler.class);
         when(eventHandler.isBot()).thenReturn(true);
 
-        var botPlayer = new ContreePlayerImpl(eventHandler);
+        var botPlayer = new ContreePlayerImpl("bot player", eventHandler);
 
         assertThat(botPlayer.toString().contains("Bot")).isTrue();
 
@@ -392,10 +394,14 @@ class ContreePlayerImplTest {
         var eventHandler = mock(ContreePlayerEventHandler.class);
         when(eventHandler.isBot()).thenReturn(false);
 
-        var botPlayer = new ContreePlayerImpl(eventHandler);
+        var botPlayer = new ContreePlayerImpl("bot player", eventHandler);
 
         assertThat(botPlayer.toString().startsWith("*")).isTrue();
 
+    }
+
+    private ContreePlayer buildOtherPlayer() {
+        return new ContreePlayerImpl("other player", eventHandler);
     }
 
 }

@@ -30,7 +30,7 @@ public class ContreeGameMain {
 
             int i = 0;
             while (i < 3) {
-                game.joinGame(createBotPlayer());
+                game.joinGame(createBotPlayer(i));
                 i++;
             }
 
@@ -38,7 +38,7 @@ public class ContreeGameMain {
 
             sebastien.perpignane.cardgame.player.contree.ContreePlayer lastPlayer;
             if (onlyBots) {
-                lastPlayer = new ContreePlayerImpl(new BiddingBotEventHandler());
+                lastPlayer = new ContreePlayerImpl("*Player 4*", new BiddingBotEventHandler());
             }
             else {
                 lastPlayer = manageHumanPlayer();
@@ -52,8 +52,9 @@ public class ContreeGameMain {
 
     }
 
-    private static ContreePlayer createBotPlayer() {
-        return new ContreePlayerImpl(new ContreeBotPlayerEventHandler());
+    private static ContreePlayer createBotPlayer(int playerIdx) {
+        String playerName = String.format("Player %d", playerIdx);
+        return new ContreePlayerImpl(playerName, new ContreeBotPlayerEventHandler());
     }
 
     private static ContreePlayer manageHumanPlayer() {
