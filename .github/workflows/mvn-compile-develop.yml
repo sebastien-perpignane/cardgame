@@ -6,6 +6,7 @@ on:
   pull_request:
     branches: [ "master" ]
 
+  workflow_dispatch:
 
 jobs:
 
@@ -17,4 +18,3 @@ jobs:
     with:
       java-version: '17'
       distribution: 'temurin'
-      deploy-package: ${{ inputs.deploy-package }}
