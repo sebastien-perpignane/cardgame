@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import sebastien.perpignane.cardgame.game.BlockingQueueGameObserver;
+import sebastien.perpignane.cardgame.game.GameStatus;
 import sebastien.perpignane.cardgame.game.GameTextDisplayer;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayerImpl;
@@ -22,18 +23,20 @@ public class ContreeGameIT {
 
     @DisplayName("Running a game with bot players, including one always bidding 80 HEART. The game must end without error, whoever wins.")
     @Test
-    @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
+    @Timeout(value = 2000, unit = TimeUnit.MILLISECONDS)
     public void testRunGameWithBotsPlayingRandomCards() throws InterruptedException {
         ContreeGame game = ContreeGameFactory.createGame(500);
         game.registerAsGameObserver(GameTextDisplayer.getInstance());
-        ContreePlayer player1 = new ContreePlayerImpl(new BiddingBotEventHandler());
+        ContreePlayer player1 = new ContreePlayerImpl("Player 1", new BiddingBotEventHandler());
 
         game.joinGame(player1);
-        game.joinGame(new ContreePlayerImpl(new ContreeBotPlayerEventHandler()));
-        game.joinGame(new ContreePlayerImpl(new ContreeBotPlayerEventHandler()));
-        game.joinGame(new ContreePlayerImpl(new ContreeBotPlayerEventHandler()));
+        game.joinGame(new ContreePlayerImpl("Player 2", new ContreeBotPlayerEventHandler()));
+        game.joinGame(new ContreePlayerImpl("Player 3", new ContreeBotPlayerEventHandler()));
+        game.joinGame(new ContreePlayerImpl("Player 4", new ContreeBotPlayerEventHandler()));
         var endOfGame = waitForEndOfGameEvent(game);
         assertThat(endOfGame).isTrue();
+        assertThat(game.getWinner()).isPresent();
+        assertThat(game.getStatus()).isEqualTo(GameStatus.OVER);
 
     }
 

@@ -92,7 +92,7 @@ class ContreeGamePlayersImpl implements ContreeGamePlayers {
             throw new IllegalArgumentException("WTF ? A bot wants to leave the game ?");
         }
         // TODO #45 : find a way to not instantiate the bot player there, so that this class is not aware of ContreePlayer implementation
-        ContreePlayer newBotPlayer = new ContreePlayerImpl(new ContreeBotPlayerEventHandler());
+        ContreePlayer newBotPlayer = new ContreePlayerImpl("Bot " + player.getName(), new ContreeBotPlayerEventHandler());
         replacePlayer(player, newBotPlayer);
         return newBotPlayer;
     }

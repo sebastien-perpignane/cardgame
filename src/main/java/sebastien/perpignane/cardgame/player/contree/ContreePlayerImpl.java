@@ -1,6 +1,5 @@
 package sebastien.perpignane.cardgame.player.contree;
 
-import com.github.javafaker.Faker;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.contree.ContreeBidValue;
@@ -9,8 +8,6 @@ import sebastien.perpignane.cardgame.game.contree.ContreeGame;
 import java.util.*;
 
 public class ContreePlayerImpl implements ContreePlayer {
-
-    private final static Faker faker = new Faker();
 
     private final String id;
 
@@ -32,10 +29,6 @@ public class ContreePlayerImpl implements ContreePlayer {
         this.playerEventHandler = playerEventHandler;
         this.playerEventHandler.setPlayer(this);
         this.status = ContreePlayerStatus.WAITING;
-    }
-
-    public ContreePlayerImpl(ContreePlayerEventHandler playerEventHandler) {
-        this(faker.name().firstName(), playerEventHandler);
     }
 
     @Override

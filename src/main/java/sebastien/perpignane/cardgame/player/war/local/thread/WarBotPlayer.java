@@ -1,6 +1,5 @@
 package sebastien.perpignane.cardgame.player.war.local.thread;
 
-import com.github.javafaker.Faker;
 import sebastien.perpignane.cardgame.player.war.MessageType;
 
 import java.util.Objects;
@@ -9,13 +8,11 @@ import java.util.Objects;
 
 public class WarBotPlayer extends AbstracLocalThreadWarPlayer {
 
-    private final static Faker faker = new Faker();
-
     private final String name;
 
-    public WarBotPlayer() {
+    public WarBotPlayer(String name) {
         super();
-        this.name = faker.name().firstName();
+        this.name = name;
     }
 
     public String getName() {
