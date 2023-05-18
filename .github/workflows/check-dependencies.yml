@@ -1,0 +1,14 @@
+name: "Check dependencies"
+
+on:
+  schedule:
+    - cron: '35 1 * * *'
+
+  workflow_dispatch:
+
+jobs:
+  check-dependencies:
+    uses: sebastien-perpignane/my-workflows/.github/workflows/check-dependencies.yml@main
+    with:
+      java-version: '17'
+      distribution: 'temurin'
