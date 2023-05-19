@@ -7,7 +7,7 @@ on:
 
 jobs:
 
-  deploy:
+  jpackage:
 
     runs-on: ubuntu-latest
 
