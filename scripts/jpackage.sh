@@ -23,6 +23,7 @@ mkdir target/jpackage
 echo "::endgroup::"
 ##################
 
+
 ##################
 echo "::group::Checking jar"
 nb_jars="$(find target -type f -name 'cardgame-*-standalone.jar' | wc -l)"
