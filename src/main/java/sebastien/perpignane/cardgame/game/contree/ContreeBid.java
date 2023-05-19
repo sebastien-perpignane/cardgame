@@ -3,15 +3,17 @@ package sebastien.perpignane.cardgame.game.contree;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 
+import java.util.Arrays;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-record ContreeBid(ContreePlayer player, ContreeBidValue bidValue, CardSuit cardSuit) {
+public record ContreeBid(ContreePlayer player, ContreeBidValue bidValue, CardSuit cardSuit) {
 
     public ContreeBid {
-        if (cardSuit == null && bidValue.isCardSuitRequired()) {
+        if ((cardSuit == null || cardSuit == CardSuit.NONE) && bidValue.isCardSuitRequired()) {
             throw new IllegalArgumentException(
                 String.format(
-                    "null cardSuit is not allowed for bid with value %s. Allowed bid values with null cardSuit are : %s",
+                    "null and NONE cardSuits are not allowed for bid with value %s. Allowed bid values with null cardSuit are : %s",
                     bidValue.name(),
                     ContreeBidValue.bidValuesNotRequiringCardSuit().stream()
                         .map(Enum::name)
@@ -19,6 +21,12 @@ record ContreeBid(ContreePlayer player, ContreeBidValue bidValue, CardSuit cardS
                 )
             );
         }
+    }
+
+    public static Set<CardSuit> allowedCardSuitsWhenCardSuiteRequired() {
+        return Arrays.stream(CardSuit.values())
+                .filter(cs -> cs != CardSuit.NONE)
+                .collect(Collectors.toSet());
     }
 
     /**
