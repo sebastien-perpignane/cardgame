@@ -49,7 +49,7 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
                 bv -> bv
         ));
 
-        cardSuitByLabel =  ContreeBid.allowedCardSuitsWhenCardSuiteRequired().stream()
+        cardSuitByLabel =  ContreeBid.allowedCardSuitsForValuedBids().stream()
                 .collect(
                     Collectors.toMap(
                         CardSuit::toString,

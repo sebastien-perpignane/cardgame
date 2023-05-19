@@ -23,7 +23,7 @@ public record ContreeBid(ContreePlayer player, ContreeBidValue bidValue, CardSui
         }
     }
 
-    public static Set<CardSuit> allowedCardSuitsWhenCardSuiteRequired() {
+    public static Set<CardSuit> allowedCardSuitsForValuedBids() {
         return Arrays.stream(CardSuit.values())
                 .filter(cs -> cs != CardSuit.NONE)
                 .collect(Collectors.toSet());
