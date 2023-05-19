@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 
@@ -30,6 +31,30 @@ public class ContreeBidTest {
                 () -> new ContreeBid(biddingPlayer, ContreeBidValue.EIGHTY, CardSuit.NONE)
         );
 
+    }
+
+    @Test
+    void testIsDouble_true() {
+        ContreePlayer player = mock(ContreePlayer.class);
+        ContreeBid bid = new ContreeBid(player, ContreeBidValue.DOUBLE, null);
+
+        assertThat(bid.isDouble()).isTrue();
+        assertThat(bid.isRedouble()).isFalse();
+    }
+
+    @Test
+    void testIsDouble_false() {
+        ContreePlayer player = mock(ContreePlayer.class);
+        ContreeBid bid = new ContreeBid(player, ContreeBidValue.REDOUBLE, null);
+
+        assertThat(bid.isDouble()).isFalse();
+        assertThat(bid.isRedouble()).isTrue();
+    }
+
+    @Test
+    void testAllowedSuitsForValuedBids() {
+        var allowedSuits = ContreeBid.allowedCardSuitsForValuedBids();
+        assertThat(allowedSuits).doesNotContain(CardSuit.NONE);
     }
 
 }
