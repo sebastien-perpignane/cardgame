@@ -4,6 +4,7 @@ import sebastien.perpignane.cardgame.card.CardRank;
 import sebastien.perpignane.cardgame.card.CardSet;
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
+import sebastien.perpignane.cardgame.game.contree.ContreeBid;
 import sebastien.perpignane.cardgame.game.contree.ContreeBidValue;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayerStatus;
 import sebastien.perpignane.cardgame.player.contree.PlayerMessage;
@@ -48,10 +49,14 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
                 bv -> bv
         ));
 
-        cardSuitByLabel =  Arrays.stream(CardSuit.values()).collect(Collectors.toMap(
-                CardSuit::toString,
-                cs -> cs
-        ));
+        cardSuitByLabel =  ContreeBid.allowedCardSuitsWhenCardSuiteRequired().stream()
+                .collect(
+                    Collectors.toMap(
+                        CardSuit::toString,
+                        cs -> cs
+                    )
+                );
+
 
     }
 
