@@ -1,0 +1,30 @@
+
+name: Package standalone jar with jpackage
+
+on:
+
+  workflow_dispatch:
+
+jobs:
+
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        id: setup-java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Build standalone jar
+        run: mvn -Pstandalone clean package
+
+      - name: Run jpackage script
+        run: |
+          chmod +x scripts/jpackage.sh
+          scripts/jpackage.sh
