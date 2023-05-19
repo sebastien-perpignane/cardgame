@@ -28,3 +28,9 @@ jobs:
         run: |
           chmod +x scripts/jpackage.sh
           scripts/jpackage.sh
+
+      - name: Upload standalone-cardgame artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: standalone-cardgame
+          path: target/cardgame.tgz
