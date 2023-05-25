@@ -5,6 +5,7 @@ import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayerImpl;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 import sebastien.perpignane.cardgame.player.contree.handlers.ContreeBotPlayerEventHandler;
+import sebastien.perpignane.cardgame.player.util.PlayerSlot;
 
 import java.util.List;
 import java.util.Objects;
@@ -16,56 +17,50 @@ class ContreeGamePlayersImpl implements ContreeGamePlayers {
 
     private volatile int nbPlayers = 0;
 
-    public synchronized JoinGameResult joinGame(ContreePlayer joiningPlayer, ContreeTeam wantedTeam) {
+    public synchronized JoinGameResult joinGame(final ContreePlayer joiningPlayer, final ContreeTeam wantedTeam) {
 
         Objects.requireNonNull(joiningPlayer, "joiningPlayer cannot be null");
 
-        if (playerSlots.contains(joiningPlayer)) {
-            throw new IllegalArgumentException( String.format("Player %s already joined the game", joiningPlayer) );
-        }
+        throwsExceptionIfPlayerAlreadyJoined(joiningPlayer);
 
         Optional<ContreePlayer> replacedPlayer = Optional.empty();
 
-        boolean wantedTeamIsFull = wantedTeam == null ? isFull() : wantedTeamIsFull(wantedTeam);
+        boolean wantedTeamIsFull = wantedTeamIsFull(wantedTeam);
 
-        boolean joined = false;
+        var eligibleSlots = playerSlots.stream()
+                .filter(ps -> wantedTeam == null || teamByPlayerIndex(ps.getSlotNumber()) == wantedTeam)
+                .toList();
+
+        boolean successfulJoin = false;
         int playerIndex = -1;
-        for (int i = 0 ; i < NB_PLAYERS ; i++) {
 
-            boolean isExpectedTeam = wantedTeam == null || teamByPlayerIndex(i) == wantedTeam;
+        for (PlayerSlot<ContreePlayer> currentSlot : eligibleSlots) {
 
-            if (!isExpectedTeam) {
-                continue;
-            }
-
-            var currentSlot = playerSlots.getSlot(i);
-
-            boolean currentIndexIsJoinable;
+            boolean currentSlotIsJoinable;
 
             if (wantedTeamIsFull && !joiningPlayer.isBot()) {
-                currentIndexIsJoinable = currentSlot.getPlayer().orElseThrow().isBot();
+                currentSlotIsJoinable = currentSlot.getPlayer().orElseThrow().isBot();
             }
             else {
-                currentIndexIsJoinable = currentSlot.getPlayer().isEmpty();
+                currentSlotIsJoinable = currentSlot.isEmpty();
             }
 
-            //boolean noPresentPlayer = players.get(i) == null;
-            boolean noPresentPlayer = currentSlot.getPlayer().isEmpty();
+            boolean currentSlotIsEmpty = currentSlot.isEmpty();
 
-            if ( currentIndexIsJoinable) {
-                playerIndex = i;
+            if ( currentSlotIsJoinable) {
+                playerIndex = currentSlot.getSlotNumber();
                 replacedPlayer = currentSlot.getPlayer();
                 assignPlayerToIndex(playerIndex, joiningPlayer);
-                joined = true;
+                successfulJoin = true;
 
-                if (noPresentPlayer) {
+                if (currentSlotIsEmpty) {
                     nbPlayers++;
                 }
                 break;
             }
         }
 
-        if (!joined) {
+        if (!successfulJoin) {
             String exceptionMessage;
             if (wantedTeam == null) {
                 exceptionMessage = "No slot available in the game";
@@ -80,7 +75,18 @@ class ContreeGamePlayersImpl implements ContreeGamePlayers {
 
     }
 
-    public boolean wantedTeamIsFull(ContreeTeam wantedTeam) {
+    private void throwsExceptionIfPlayerAlreadyJoined(ContreePlayer joiningPlayer) {
+        if (playerSlots.contains(joiningPlayer)) {
+            throw new IllegalArgumentException( String.format("Player %s already joined the game", joiningPlayer) );
+        }
+    }
+
+    private boolean wantedTeamIsFull(ContreeTeam wantedTeam) {
+
+        if (wantedTeam == null) {
+            return isFull();
+        }
+
         return playerSlots.stream().filter(ps -> ps.getPlayer().isPresent()
                 && ps.getPlayer().get().getTeam().isPresent()
                 && ps.getPlayer().get().getTeam().get() == wantedTeam).toList().size() == 2;

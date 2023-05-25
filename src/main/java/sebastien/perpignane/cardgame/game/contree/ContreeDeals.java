@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import static java.lang.System.out;
+
 class ContreeDeals {
 
     private String gameId;
@@ -96,8 +98,8 @@ class ContreeDeals {
         if (currentDeal.isOver()) {
             gameScore.addDealScore(currentDeal);
             // TODO Send updated score event
-            System.out.println("Game score:");
-            ContreeTeam.getTeams().stream().sorted().forEach(t -> System.out.printf("\t%s: %d / %d%n", t, gameScore.getTeamScore(t), gameScore.getMaxScore()));
+            out.println("Game score:");
+            ContreeTeam.getTeams().stream().sorted().forEach(t -> out.printf("\t%s: %d / %d%n", t, gameScore.getTeamScore(t), gameScore.getMaxScore()));
 
             if (!isMaximumScoreReached()) {
                 createAndStartNewDeal();

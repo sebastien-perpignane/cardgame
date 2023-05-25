@@ -121,7 +121,7 @@ class ContreeGameScoreTest extends TestCasesManagingPlayers {
 
     @DisplayName("Adding the score of a not over deal throws exception")
     @Test
-    public void testExceptionIfAddingScoreOfNotOverDeal() {
+    void testExceptionIfAddingScoreOfNotOverDeal() {
 
         ContreeDeal deal = MockDealBuilder.builder().withIsOver(false).build();
 

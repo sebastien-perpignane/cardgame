@@ -9,11 +9,11 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class CardDealerTest {
+class CardDealerTest {
 
     @DisplayName("Standard card dealing, according to Fédération Française de Belote")
     @Test
-    public void testDealBy3then3then2() {
+    void testDealBy3then3then2() {
 
         final List<Integer> distributeConfig = List.of(3,3,2);
         final int nbPlayers = 4;
@@ -40,7 +40,7 @@ public class CardDealerTest {
 
     @DisplayName("Invalid arguments -> cannot equally deal 9 cards to 4 players with a 32 card set")
     @Test
-    public void testInvalidDistributionConfig() {
+    void testInvalidDistributionConfig() {
 
         // 9 (3 then 3 then 3) cards per player x 4 players != 32 cards -> invalid config
         final List<Integer> distributionConfig = List.of(3,3,3);
@@ -48,23 +48,27 @@ public class CardDealerTest {
 
         CardDealer cardDealer = new CardDealer(distributionConfig);
 
+        var cards = CardSet.GAME_32.getGameCards().stream().toList();
+
         assertThatExceptionOfType(RuntimeException.class).isThrownBy(
-            () -> cardDealer.dealCards(CardSet.GAME_32.getGameCards().stream().toList(), nbPlayers)
+            () -> cardDealer.dealCards(cards, nbPlayers)
         );
 
     }
 
     @DisplayName("32 cards cannot equally be dealt to 3 players -> exception")
     @Test
-    public void testInvalidNbPlayersForNumberOfCards() {
+    void testInvalidNbPlayersForNumberOfCards() {
 
         final List<Integer> distributeConfig = List.of(3,3,2);
         final int nbPlayers = 3;
 
         CardDealer cardDealer = new CardDealer(distributeConfig);
 
+        var cards = CardSet.GAME_32.getGameCards().stream().toList();
+
         assertThatExceptionOfType(RuntimeException.class).isThrownBy(
-            () -> cardDealer.dealCards(CardSet.GAME_32.getGameCards().stream().toList(), nbPlayers)
+            () -> cardDealer.dealCards(cards, nbPlayers)
         );
     }
 
@@ -97,7 +101,7 @@ public class CardDealerTest {
 
     @DisplayName("Testing a method only used for testing :D")
     @Test
-    public void testIntersection() {
+    void testIntersection() {
 
         assertThat(
             hasIntersection(

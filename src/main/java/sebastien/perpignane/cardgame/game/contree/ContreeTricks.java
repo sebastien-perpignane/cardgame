@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class ContreeTricks {
 
-    final static int NB_TRICKS_PER_DEAL = 8;
+    static final int NB_TRICKS_PER_DEAL = 8;
 
     private final List<ContreeTrick> tricks;
 
@@ -121,7 +121,8 @@ public class ContreeTricks {
     }
 
     public boolean isCapotMadeByAttackTeam() {
-        return teamWhoDidCapot().isPresent() && teamWhoDidCapot().get() == deal.getAttackTeam().orElseThrow();
+        var attackTeam = deal.getAttackTeam().orElseThrow(); // When managing tricks, an attack team *must* be defined.
+        return teamWhoDidCapot().map(teamCapot -> teamCapot == attackTeam).orElse(false);
     }
 
     public int nbOverTricks() {

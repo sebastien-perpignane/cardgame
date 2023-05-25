@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
     * throw exception if the deal on which score is calculated is not consistent
       (no contract, no attack team, no defense team, bad total card score etc.) *
  */
-public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
+class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
     private static Map<CardSuit, CardSuitTypicalTricks>  typicalTricksBySuit;
 
@@ -40,7 +40,7 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
     ) {}
 
     @BeforeAll
-    public static void globalSetUp() {
+    static void globalSetUp() {
         initPlayers();
 
         typicalTricksBySuit = new HashMap<>();
@@ -176,13 +176,13 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
     }
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         dealScoreCalculator = new DealScoreCalculator();
     }
 
     @DisplayName("Score cannot be calculated on a deal with no contract (no valued bids)")
     @Test
-    public void testExceptionIfNoContract() {
+    void testExceptionIfNoContract() {
 
         ContreeDeal deal = MockDealBuilder.builder().build();
         assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> dealScoreCalculator.computeDealScores(deal));
@@ -191,7 +191,7 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
     @DisplayName("Score cannot be calculated on a deal with no contract (no valued bids)")
     @Test
-    public void testExceptionIfNoAttackTeam() {
+    void testExceptionIfNoAttackTeam() {
 
         Map<Team, Set<ContreeCard>> cardsByTeam = buildCardsByTeamWithTeam1_89AndTeam2_63_trump_is_heart();
 
@@ -234,8 +234,9 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
     @DisplayName("Compute score when attack team reached the contract, without double or redouble or capot")
     @Test
-    public void testStandardContractIsReached() {
+    void testStandardContractIsReached() {
         var contractPlayer = player1;
+        var opponentPlayer = player2;
 
         var cardsByTeam = buildCardsByTeamWithTeam1_89AndTeam2_63_trump_is_heart();
 
@@ -249,22 +250,28 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
                 .withCardsByTeam(cardsByTeam)
                 .build();
 
-        var result = dealScoreCalculator.computeDealScores(deal);
+        var scores = dealScoreCalculator.computeDealScores(deal);
 
-        assertThat(result.rawScoreByTeam().get(ContreeTeam.TEAM2)).isEqualTo(72);
-        assertThat(result.rawScoreByTeam().get(contractPlayer.getTeam().orElseThrow())).isEqualTo(90);
+        var contractPlayerTeam = contractPlayer.getTeam().orElseThrow();
+        var opponentTeam = opponentPlayer.getTeam().orElseThrow();
 
-        // 90
-        assertThat(result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow())).isEqualTo(90);
-        // 62 + dix de der, rounded
-        assertThat(result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM2)).isEqualTo(70);
+
+        assertThat( scores.rawScoreByTeam() )
+                .containsEntry(contractPlayerTeam, 90)
+                .containsEntry(opponentTeam, 72);
+
+        assertThat(scores.finalRoundedScoreByTeam())
+                .containsEntry(contractPlayerTeam, 90)
+                .containsEntry(opponentTeam, 70); // 62 + dix de der, rounded
+
 
     }
 
     @DisplayName("Compute score when attack team reached the contract, with double but no redouble or capot")
     @Test
-    public void testContractIsReached_doubled() {
+    void testContractIsReached_doubled() {
         var contractPlayer = player1;
+        var opponentPlayer = player2;
 
         var cardsByTeam = buildCardsByTeamWithTeam1_89AndTeam2_63_trump_is_heart();
 
@@ -282,16 +289,21 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
                 .withCardsByTeam(cardsByTeam)
                 .build();
 
-        var result = dealScoreCalculator.computeDealScores(deal);
+        var dealScores = dealScoreCalculator.computeDealScores(deal);
 
-        assertThat(result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow())).isEqualTo(320);
-        assertThat(result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM2)).isEqualTo(0);
+        var contractPlayerTeam = contractPlayer.getTeam().orElseThrow();
+        var opponentTeam = opponentPlayer.getTeam().orElseThrow();
+
+        assertThat(dealScores.finalRoundedScoreByTeam())
+                .containsEntry(contractPlayerTeam, 320)
+                .containsEntry(opponentTeam, 0);
     }
 
     @DisplayName("Compute score when attack team reached the contract with double and redouble, but no capot announced")
     @Test
-    public void testContractIsReached_redoubled() {
+    void testContractIsReached_redoubled() {
         var contractPlayer = player1;
+        var opponentPlayer = player2;
 
         var cardsByTeam = buildCardsByTeamWithTeam1_89AndTeam2_63_trump_is_heart();
 
@@ -309,17 +321,23 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
                 .withCardsByTeam(cardsByTeam)
                 .build();
 
-        var result = dealScoreCalculator.computeDealScores(deal);
+        var dealScores = dealScoreCalculator.computeDealScores(deal);
+
+        var contractPlayerTeam = contractPlayer.getTeam().orElseThrow();
+        var opponentTeam = opponentPlayer.getTeam().orElseThrow();
+
         // 88 + dix de der, rounded
-        assertThat(result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow())).isEqualTo(640);
-        assertThat(result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM2)).isEqualTo(0);
+        assertThat( dealScores.finalRoundedScoreByTeam() )
+                .containsEntry(contractPlayerTeam, 640)
+                .containsEntry(opponentTeam, 0);
     }
 
     @DisplayName("Compute score when attack team failed to reach the contract")
     @Test
-    public void testStandardContractIsNotReached() {
+    void testStandardContractIsNotReached() {
 
         var contractPlayer = player1;
+        var opponentPlayer = player2;
 
         Map<Team, Set<ContreeCard>> cardsByTeam = buildCardsByTeamWithTeam1_89AndTeam2_63_trump_is_heart();
 
@@ -339,15 +357,19 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
                 .withCardsByTeam(cardsByTeam)
                 .build();
 
-        var result = dealScoreCalculator.computeDealScores(deal);
+        var dealScores = dealScoreCalculator.computeDealScores(deal);
 
-        assertThat(result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow())).isEqualTo(0);
-        assertThat(result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM2)).isEqualTo(160);
+        var contractPlayerTeam = contractPlayer.getTeam().orElseThrow();
+        var opponentTeam = opponentPlayer.getTeam().orElseThrow();
+
+        assertThat(dealScores.finalRoundedScoreByTeam() )
+                .containsEntry(contractPlayerTeam, 0)
+                .containsEntry(opponentTeam, 160);
     }
 
     @DisplayName("Compute score when attack team announces capot and reach the contract, without double nor redouble")
     @Test
-    public void testIsAnnouncedCapotReached() {
+    void testIsAnnouncedCapotReached() {
 
         var contractPlayer = player1;
         var firstOpponent = player2;
@@ -379,15 +401,19 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
         // To make sure that buildPlayers() always return different teams for player 1 and player 2
         assertThat(firstOpponent.getTeam()).isNotEqualTo(contractPlayer.getTeam());
 
-        var result = dealScoreCalculator.computeDealScores(deal);
+        var dealScores = dealScoreCalculator.computeDealScores(deal);
 
-        assertThat(result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow())).isEqualTo(500);
-        assertThat(result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM2)).isEqualTo(0);
+        var contractPlayerTeam = contractPlayer.getTeam().orElseThrow();
+        var opponentPlayerTeam = firstOpponent.getTeam().orElseThrow();
+
+        assertThat(dealScores.finalRoundedScoreByTeam() )
+                .containsEntry(contractPlayerTeam, 500)
+                .containsEntry(opponentPlayerTeam, 0);
     }
 
     @DisplayName("A capot made by attack team that was not announced gives 250 points to attack team")
     @Test
-    public void testNotAnnouncedCapotMadeByAttackTeam() {
+    void testNotAnnouncedCapotMadeByAttackTeam() {
 
         var contractPlayer = player1;
         var firstOpponent = player2;
@@ -414,16 +440,20 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
         // To make sure that buildPlayers() always return different teams for player 1 and player 2
         assertThat(firstOpponent.getTeam()).isNotEqualTo(contractPlayer.getTeam());
 
-        var result = dealScoreCalculator.computeDealScores(deal);
+        var dealScore = dealScoreCalculator.computeDealScores(deal);
 
-        assertThat(result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow())).isEqualTo(250);
-        assertThat(result.finalRoundedScoreByTeam().get(firstOpponent.getTeam().orElseThrow())).isEqualTo(0);
+        var contractPlayerTeam = contractPlayer.getTeam().orElseThrow();
+        var opponentPlayerTeam = firstOpponent.getTeam().orElseThrow();
+
+        assertThat( dealScore.finalRoundedScoreByTeam() )
+                .containsEntry(contractPlayerTeam, 250)
+                .containsEntry(opponentPlayerTeam, 0);
 
     }
 
     @DisplayName("A capot made by defense team gives 250 points to defense team")
     @Test
-    public void testNotAnnouncedCapotMadeByDefenseTeam() {
+    void testNotAnnouncedCapotMadeByDefenseTeam() {
 
         var contractPlayer = player1;
         var firstOpponent = player2;
@@ -447,16 +477,20 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
                 .withCardsByTeam(cardsByTeam)
                 .build();
 
-        var result = dealScoreCalculator.computeDealScores(deal);
+        var dealScore = dealScoreCalculator.computeDealScores(deal);
 
-        assertThat(result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow())).isEqualTo(0);
-        assertThat(result.finalRoundedScoreByTeam().get(firstOpponent.getTeam().orElseThrow())).isEqualTo(250);
+        var contractPlayerTeam = contractPlayer.getTeam().orElseThrow();
+        var opponentPlayerTeam = firstOpponent.getTeam().orElseThrow();
+
+        assertThat( dealScore.finalRoundedScoreByTeam() )
+                .containsEntry(contractPlayerTeam, 0)
+                .containsEntry(opponentPlayerTeam, 250);
 
     }
 
     @DisplayName("Compute score when attack team announces capot and does not reach the contract, without double nor redouble")
     @Test
-    public void testAnnouncedCapotNotReached() {
+    void testAnnouncedCapotNotReached() {
 
         var contractPlayer = player1;
         var firstOpponent = player2;
@@ -481,15 +515,19 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
         // To make sure that buildPlayers() always return different teams for player 1 and player 2
         assertThat(firstOpponent.getTeam()).isNotEqualTo(contractPlayer.getTeam());
 
-        var result = dealScoreCalculator.computeDealScores(deal);
+        var dealScore = dealScoreCalculator.computeDealScores(deal);
 
-        assertThat(result.finalRoundedScoreByTeam().get(contractPlayer.getTeam().orElseThrow())).isEqualTo(0);
-        assertThat(result.finalRoundedScoreByTeam().get(firstOpponent.getTeam().orElseThrow())).isEqualTo(500);
+        var contractPlayerTeam = contractPlayer.getTeam().orElseThrow();
+        var opponentPlayerTeam = firstOpponent.getTeam().orElseThrow();
+
+        assertThat(dealScore.finalRoundedScoreByTeam() )
+                .containsEntry(contractPlayerTeam, 0)
+                .containsEntry(opponentPlayerTeam, 500);
     }
 
     @DisplayName("When adding the points from both team, the sum must always be 152")
     @Test
-    public void testExceptionIfCardScoreSumIsNot162() {
+    void testExceptionIfCardScoreSumIsNot162() {
 
         var contractPlayer = player1;
 
@@ -534,7 +572,7 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
     @DisplayName("Test all intermediate scores when attack team reaches his contract, without double nor redouble")
     @Test
-    public void testAllScoreTypesWhenContractIsReached() {
+    void testAllScoreTypesWhenContractIsReached() {
 
         var contractPlayer = player1;
 
@@ -569,23 +607,26 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
                 .withCardsByTeam(cardsByTeam)
                 .build();
 
-        var result = dealScoreCalculator.computeDealScores(deal);
+        var dealScore = dealScoreCalculator.computeDealScores(deal);
 
         // Dix de der
-        assertThat(result.rawScoreByTeam().get(ContreeTeam.TEAM1)).isEqualTo(96 + 10);
-        assertThat(result.rawScoreByTeam().get(ContreeTeam.TEAM2)).isEqualTo(56);
+        assertThat( dealScore.rawScoreByTeam() )
+                .containsEntry(ContreeTeam.TEAM1, 96 + 10) // Dix de der
+                .containsEntry(ContreeTeam.TEAM2, 56);
 
-        assertThat(result.finalNotRoundedScoreByTeam().get(ContreeTeam.TEAM1)).isEqualTo(96 + 10);
-        assertThat(result.finalNotRoundedScoreByTeam().get(ContreeTeam.TEAM2)).isEqualTo(56);
+        assertThat( dealScore.finalNotRoundedScoreByTeam() )
+                .containsEntry(ContreeTeam.TEAM1, 96 + 10) // Dix de der
+                .containsEntry(ContreeTeam.TEAM2, 56);
 
-        assertThat(result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM1)).isEqualTo(110);
-        assertThat(result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM2)).isEqualTo(60);
+        assertThat( dealScore.finalRoundedScoreByTeam() )
+                .containsEntry(ContreeTeam.TEAM1, 110)
+                .containsEntry(ContreeTeam.TEAM2, 60);
 
     }
 
     @DisplayName("Test all intermediate scores when attack team does not reach his contract, even if the contract seems reached once score is rounded")
     @Test
-    public void testAllScoreTypesWhenContractIsNotReached() {
+    void testAllScoreTypesWhenContractIsNotReached() {
 
         var contractPlayer = player1;
 
@@ -623,20 +664,24 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
         var result = dealScoreCalculator.computeDealScores(deal);
 
         // Dix de der
-        assertThat(result.rawScoreByTeam().get(ContreeTeam.TEAM1)).isEqualTo(96 + 10);
-        assertThat(result.rawScoreByTeam().get(ContreeTeam.TEAM2)).isEqualTo(56);
+        assertThat(result.rawScoreByTeam())
+                .containsEntry(ContreeTeam.TEAM1, 96 + 10)
+                .containsEntry(ContreeTeam.TEAM2, 56);
 
-        assertThat(result.finalNotRoundedScoreByTeam().get(ContreeTeam.TEAM1)).isEqualTo(0);
-        assertThat(result.finalNotRoundedScoreByTeam().get(ContreeTeam.TEAM2)).isEqualTo(160);
+        assertThat(result.finalNotRoundedScoreByTeam())
+                .containsEntry(ContreeTeam.TEAM1, 0)
+                .containsEntry(ContreeTeam.TEAM2, 160);
 
-        assertThat(result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM1)).isEqualTo(0);
-        assertThat(result.finalRoundedScoreByTeam().get(ContreeTeam.TEAM2)).isEqualTo(160);
+
+        assertThat(result.finalRoundedScoreByTeam())
+                .containsEntry(ContreeTeam.TEAM1, 0)
+                .containsEntry(ContreeTeam.TEAM2, 160);
 
     }
 
     @DisplayName("When only PASS bids are placed on a deal, expected scores are 0")
     @Test
-    public void testComputeScoreOnDealWithOnlyPassBids() {
+    void testComputeScoreOnDealWithOnlyPassBids() {
 
         ContreeDeal onlyPassBidsDeal = MockDealBuilder.builder()
                 .withDealContractBid(new ContreeBid(player1))
@@ -652,7 +697,7 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
     @DisplayName("When no bids are placed on a deal, trying to compute scores throws exception")
     @Test
-    public void testComputeScoreOnDealWithNoBidsThrowsException() {
+    void testComputeScoreOnDealWithNoBidsThrowsException() {
         ContreeDeal noBidDeal = MockDealBuilder.builder()
                 .withDealContractBid(null)
                 .build();
@@ -666,7 +711,7 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
     @DisplayName("Count points for standard and trump cards")
     @Test
-    public void testCountStandardAndTrumpCards() {
+    void testCountStandardAndTrumpCards() {
 
         Collection<ContreeCard> dealCards = buildContreeCards(
                 CardSuit.HEARTS,
@@ -686,7 +731,7 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
     @DisplayName("Count points for trump cards only")
     @Test
-    public void testCountTrumpCards() {
+    void testCountTrumpCards() {
 
         Collection<ContreeCard> dealCards = buildContreeCards(
                 CardSuit.DIAMONDS,
@@ -706,7 +751,7 @@ public class DealScoreCalculatorTest extends TestCasesManagingPlayers {
 
     @DisplayName("A full card set contains 152 points (162 when we count the 10 bonus points for the last trick)")
     @Test
-    public void testCountPointsForAllCards() {
+    void testCountPointsForAllCards() {
 
         Collection<ContreeCard> dealCards = buildContreeCards(
                 CardSuit.CLUBS,

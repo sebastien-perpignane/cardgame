@@ -12,17 +12,17 @@ import sebastien.perpignane.cardgame.card.ClassicalCard;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class ContreeTrickWinnerTest extends TestCasesManagingPlayers {
+class ContreeTrickWinnerTest extends TestCasesManagingPlayers {
 
     private ContreeTrick startedTrickWithClubAsTrump;
 
     @BeforeAll
-    public static void globalSetUp() {
+    static void globalSetUp() {
         initPlayers();
     }
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         ContreeTrickPlayers trickPlayers = mock(ContreeTrickPlayers.class);
         when(trickPlayers.getCurrentPlayerSlot()).thenAnswer(AdditionalAnswers.returnsElementsOf(playerSlots));
 
@@ -39,7 +39,7 @@ public class ContreeTrickWinnerTest extends TestCasesManagingPlayers {
 
     @DisplayName("non trump trick where player playing ACE must win")
     @Test
-    public void testExpectedWinner_noTrump_ace() {
+    void testExpectedWinner_noTrump_ace() {
 
         startedTrickWithClubAsTrump.playerPlays(player1, ClassicalCard.ACE_DIAMOND);
         startedTrickWithClubAsTrump.playerPlays(player2, ClassicalCard.SEVEN_DIAMOND);
@@ -48,13 +48,13 @@ public class ContreeTrickWinnerTest extends TestCasesManagingPlayers {
 
         assertThat(startedTrickWithClubAsTrump.isOver()).isTrue();
         assertThat(startedTrickWithClubAsTrump.getWinner()).isPresent();
-        assertThat(startedTrickWithClubAsTrump.getWinner().get()).isSameAs(player1);
+        assertThat(startedTrickWithClubAsTrump.getWinner()).containsSame(player1);
 
     }
 
     @DisplayName("non trump trick where player playing TEN must win")
     @Test
-    public void testExpectedWinner_noTrump_ten() {
+    void testExpectedWinner_noTrump_ten() {
 
         startedTrickWithClubAsTrump.playerPlays(player1, ClassicalCard.TEN_DIAMOND);
         startedTrickWithClubAsTrump.playerPlays(player2, ClassicalCard.SEVEN_DIAMOND);
@@ -63,13 +63,13 @@ public class ContreeTrickWinnerTest extends TestCasesManagingPlayers {
 
         assertThat(startedTrickWithClubAsTrump.isOver()).isTrue();
         assertThat(startedTrickWithClubAsTrump.getWinner()).isPresent();
-        assertThat(startedTrickWithClubAsTrump.getWinner().get()).isSameAs(player1);
+        assertThat(startedTrickWithClubAsTrump.getWinner()).containsSame(player1);
 
     }
 
     @DisplayName("Trump trick where player playing JACK must win")
     @Test
-    public void testExpectedWinner_trump_jack() {
+    void testExpectedWinner_trump_jack() {
 
         startedTrickWithClubAsTrump.playerPlays(player1, ClassicalCard.ACE_CLUB);
         startedTrickWithClubAsTrump.playerPlays(player2, ClassicalCard.SEVEN_CLUB);
@@ -79,13 +79,13 @@ public class ContreeTrickWinnerTest extends TestCasesManagingPlayers {
         assertThat(startedTrickWithClubAsTrump.isOver()).isTrue();
 
         assertThat(startedTrickWithClubAsTrump.getWinner()).isPresent();
-        assertThat(startedTrickWithClubAsTrump.getWinner().get()).isSameAs(player4);
+        assertThat(startedTrickWithClubAsTrump.getWinner()).containsSame(player4);
 
     }
 
     @DisplayName("Trump trick where player playing NINE must win")
     @Test
-    public void testExpectedWinner_trump_nine() {
+    void testExpectedWinner_trump_nine() {
 
         startedTrickWithClubAsTrump.playerPlays(player1, ClassicalCard.ACE_CLUB);
         startedTrickWithClubAsTrump.playerPlays(player2, ClassicalCard.SEVEN_CLUB);
@@ -94,13 +94,13 @@ public class ContreeTrickWinnerTest extends TestCasesManagingPlayers {
 
         assertThat(startedTrickWithClubAsTrump.isOver()).isTrue();
         assertThat(startedTrickWithClubAsTrump.getWinner()).isPresent();
-        assertThat(startedTrickWithClubAsTrump.getWinner().get()).isSameAs(player4);
+        assertThat(startedTrickWithClubAsTrump.getWinner()).containsSame(player4);
 
     }
 
     @DisplayName("Trump trick where player playing ACE must win")
     @Test
-    public void testExpectedWinner_trump_ace() {
+    void testExpectedWinner_trump_ace() {
 
         startedTrickWithClubAsTrump.playerPlays(player1, ClassicalCard.ACE_CLUB);
         startedTrickWithClubAsTrump.playerPlays(player2, ClassicalCard.SEVEN_CLUB);
@@ -109,13 +109,13 @@ public class ContreeTrickWinnerTest extends TestCasesManagingPlayers {
 
         assertThat(startedTrickWithClubAsTrump.isOver()).isTrue();
         assertThat(startedTrickWithClubAsTrump.getWinner()).isPresent();
-        assertThat(startedTrickWithClubAsTrump.getWinner().get()).isSameAs(player1);
+        assertThat(startedTrickWithClubAsTrump.getWinner()).containsSame(player1);
 
     }
 
     @DisplayName("Trump trick where player playing TEN must win")
     @Test
-    public void testExpectedWinner_trump_ten() {
+    void testExpectedWinner_trump_ten() {
 
         startedTrickWithClubAsTrump.playerPlays(player1, ClassicalCard.QUEEN_CLUB);
         startedTrickWithClubAsTrump.playerPlays(player2, ClassicalCard.SEVEN_CLUB);
@@ -124,13 +124,13 @@ public class ContreeTrickWinnerTest extends TestCasesManagingPlayers {
 
         assertThat(startedTrickWithClubAsTrump.isOver()).isTrue();
         assertThat(startedTrickWithClubAsTrump.getWinner()).isPresent();
-        assertThat(startedTrickWithClubAsTrump.getWinner().get()).isSameAs(player3);
+        assertThat(startedTrickWithClubAsTrump.getWinner()).containsSame(player3);
 
     }
 
     @DisplayName("Trump trick where player playing KING must win")
     @Test
-    public void testExpectedWinner_trump_king() {
+    void testExpectedWinner_trump_king() {
 
         startedTrickWithClubAsTrump.playerPlays(player1, ClassicalCard.QUEEN_CLUB);
         startedTrickWithClubAsTrump.playerPlays(player2, ClassicalCard.SEVEN_CLUB);
@@ -139,13 +139,13 @@ public class ContreeTrickWinnerTest extends TestCasesManagingPlayers {
 
         assertThat(startedTrickWithClubAsTrump.isOver()).isTrue();
         assertThat(startedTrickWithClubAsTrump.getWinner()).isPresent();
-        assertThat(startedTrickWithClubAsTrump.getWinner().get()).isSameAs(player3);
+        assertThat(startedTrickWithClubAsTrump.getWinner()).containsSame(player3);
 
     }
 
     @DisplayName("Trumped trick where trumping player must win")
     @Test
-    public void testExpectedWinner_trumpedTrick() {
+    void testExpectedWinner_trumpedTrick() {
 
         startedTrickWithClubAsTrump.playerPlays(player1, ClassicalCard.ACE_DIAMOND);
         startedTrickWithClubAsTrump.playerPlays(player2, ClassicalCard.SEVEN_DIAMOND);
@@ -154,13 +154,13 @@ public class ContreeTrickWinnerTest extends TestCasesManagingPlayers {
 
         assertThat(startedTrickWithClubAsTrump.isOver()).isTrue();
         assertThat(startedTrickWithClubAsTrump.getWinner()).isPresent();
-        assertThat(startedTrickWithClubAsTrump.getWinner().get()).isSameAs(player3);
+        assertThat(startedTrickWithClubAsTrump.getWinner()).containsSame(player3);
 
     }
 
     @DisplayName("Trump trick where player playing highest trump must win")
     @Test
-    public void testExpectedWinner_multiTrumpedTrick() {
+    void testExpectedWinner_multiTrumpedTrick() {
 
         startedTrickWithClubAsTrump.playerPlays(player1, ClassicalCard.ACE_DIAMOND);
         startedTrickWithClubAsTrump.playerPlays(player2, ClassicalCard.SEVEN_CLUB);
@@ -169,7 +169,7 @@ public class ContreeTrickWinnerTest extends TestCasesManagingPlayers {
 
         assertThat(startedTrickWithClubAsTrump.isOver()).isTrue();
         assertThat(startedTrickWithClubAsTrump.getWinner()).isPresent();
-        assertThat(startedTrickWithClubAsTrump.getWinner().get()).isSameAs(player4);
+        assertThat(startedTrickWithClubAsTrump.getWinner()).containsSame(player4);
 
     }
 
@@ -178,7 +178,7 @@ If a player plays a card with the highest rank of the trick
 but the suit of his card is not the wanted suit of the trick, he does not win
     """)
     @Test
-    public void testExpectedWinner_highestCardOnNotWantedSuit() {
+    void testExpectedWinner_highestCardOnNotWantedSuit() {
 
         startedTrickWithClubAsTrump.playerPlays(player1, ClassicalCard.JACK_DIAMOND);
         startedTrickWithClubAsTrump.playerPlays(player2, ClassicalCard.TEN_HEART);
@@ -187,12 +187,12 @@ but the suit of his card is not the wanted suit of the trick, he does not win
 
         assertThat(startedTrickWithClubAsTrump.isOver()).isTrue();
         assertThat(startedTrickWithClubAsTrump.getWinner()).isPresent();
-        assertThat(startedTrickWithClubAsTrump.getWinner().get()).isSameAs(player1);
+        assertThat(startedTrickWithClubAsTrump.getWinner()).containsSame(player1);
     }
 
     @DisplayName("A low rank trump card will win a trick, even if higher wanted suit card has a higher rank than the trump card")
     @Test
-    public void testExpectedWinner_trumpedTrick_trumpIsLowerRankThanHighestWantedSuitCard() {
+    void testExpectedWinner_trumpedTrick_trumpIsLowerRankThanHighestWantedSuitCard() {
 
         startedTrickWithClubAsTrump.playerPlays(player1, ClassicalCard.ACE_DIAMOND);
         startedTrickWithClubAsTrump.playerPlays(player2, ClassicalCard.SEVEN_DIAMOND);
@@ -201,7 +201,7 @@ but the suit of his card is not the wanted suit of the trick, he does not win
 
         assertThat(startedTrickWithClubAsTrump.isOver()).isTrue();
         assertThat(startedTrickWithClubAsTrump.getWinner()).isPresent();
-        assertThat(startedTrickWithClubAsTrump.getWinner().get()).isSameAs(player3);
+        assertThat(startedTrickWithClubAsTrump.getWinner()).containsSame(player3);
     }
 
 }

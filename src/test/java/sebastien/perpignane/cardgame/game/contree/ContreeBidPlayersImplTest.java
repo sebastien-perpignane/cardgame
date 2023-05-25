@@ -36,27 +36,31 @@ class ContreeBidPlayersImplTest extends TestCasesManagingPlayers {
 
         bidPlayers.goToNextBidder();
         assertThat(bidPlayers.getCurrentBidderSlot().getPlayer()).isPresent();
-        assertThat(bidPlayers.getCurrentBidderSlot().getPlayer().get()).isSameAs(player2);
+        assertThat(bidPlayers.getCurrentBidderSlot().getPlayer()).containsSame(player2);
 
         bidPlayers.goToNextBidder();
-        assertThat(bidPlayers.getCurrentBidderSlot().getPlayer()).isPresent();
-        assertThat(bidPlayers.getCurrentBidderSlot().getPlayer().get()).isSameAs(player3);
+        assertThat(bidPlayers.getCurrentBidderSlot().getPlayer())
+                .isPresent()
+                .contains(player3);
 
         bidPlayers.goToNextBidder();
-        assertThat(bidPlayers.getCurrentBidderSlot().getPlayer()).isPresent();
-        assertThat(bidPlayers.getCurrentBidderSlot().getPlayer().get()).isSameAs(player4);
+        assertThat(bidPlayers.getCurrentBidderSlot().getPlayer())
+                .isPresent()
+                .containsSame(player4);
 
         bidPlayers.goToNextBidder();
-        assertThat(bidPlayers.getCurrentBidderSlot().getPlayer()).isPresent();
-        assertThat(bidPlayers.getCurrentBidderSlot().getPlayer().get()).isSameAs(player1);
+        assertThat(bidPlayers.getCurrentBidderSlot().getPlayer())
+                .isPresent()
+                .containsSame(player1);
 
     }
 
     @DisplayName("After construction, current bidder is the player1 in the player list")
     @Test
     void testGetInitialCurrentBidder() {
-        assertThat(bidPlayers.getCurrentBidderSlot().getPlayer()).isPresent();
-        assertThat(bidPlayers.getCurrentBidderSlot().getPlayer().get()).isSameAs(player1);
+        assertThat(bidPlayers.getCurrentBidderSlot().getPlayer())
+                .isPresent()
+                .containsSame(player1);
     }
 
     @DisplayName("When currentBidderTurnToBid is called and currentBidder is player1, onPlayerTurnToBid is called on player1")

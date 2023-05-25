@@ -14,17 +14,17 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
+class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
     private ContreeGamePlayers gamePlayers;
 
     @BeforeAll
-    public static void globalSetUp() {
+    static void globalSetUp() {
         initPlayers();
     }
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         gamePlayers = new ContreeGamePlayersImpl();
     }
 
@@ -42,13 +42,13 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
     @DisplayName("Join a specific team in a game that no player joined yet")
     @Test
-    public void testJoinAnyTeamEmptyGame() {
+    void testJoinAnyTeamEmptyGame() {
 
         ContreePlayer newPlayer = humanPlayer();
 
         JoinGameResult joinGameResult = gamePlayers.joinGame(newPlayer);
 
-        assertThat(joinGameResult.playerIndex()).isEqualTo(0);
+        assertThat(joinGameResult.playerIndex()).isZero();
         assertThat(joinGameResult.replacedPlayer()).isEmpty();
         assertThat(gamePlayers.isFull()).isFalse();
         assertThat(gamePlayers.isJoinableByHumanPlayers()).isTrue();
@@ -56,13 +56,13 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
     @DisplayName("Join team 1 in a game that no player joined yet")
     @Test
-    public void testJoinTeam1EmptyGame() {
+    void testJoinTeam1EmptyGame() {
 
         ContreePlayer newPlayer = humanPlayer();
 
         JoinGameResult joinGameResult = gamePlayers.joinGame(newPlayer, ContreeTeam.TEAM1);
 
-        assertThat(joinGameResult.playerIndex()).isEqualTo(0);
+        assertThat(joinGameResult.playerIndex()).isZero();
         assertThat(joinGameResult.replacedPlayer()).isEmpty();
         assertThat(gamePlayers.isFull()).isFalse();
         assertThat(gamePlayers.isJoinableByHumanPlayers()).isTrue();
@@ -70,7 +70,7 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
     @DisplayName("Join team 2 in a game that no player joined yet")
     @Test
-    public void testJoinTeam2EmptyGame() {
+    void testJoinTeam2EmptyGame() {
 
         ContreePlayer newPlayer = humanPlayer();
 
@@ -84,7 +84,7 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
     @DisplayName("A player cannot join the game twice")
     @Test
-    public void testJoinTwiceMustFail() {
+    void testJoinTwiceMustFail() {
 
         ContreePlayer newPlayer = humanPlayer();
 
@@ -97,7 +97,7 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
     @DisplayName("Join a team already full of human players must fail")
     @Test
-    public void testJoinTeamFullOfHumanPlayers() {
+    void testJoinTeamFullOfHumanPlayers() {
 
         ContreePlayer humanPlayer1 = humanPlayer();
         ContreePlayer humanPlayer2 = humanPlayer();
@@ -112,7 +112,7 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
     @DisplayName("Joining a full game without bot players must fail")
     @Test
-    public void testJoinGameNotJoinableEvenByHumanPlayersMustFail() {
+    void testJoinGameNotJoinableEvenByHumanPlayersMustFail() {
 
         for (int i = 0 ; i < 4 ; i++ ) {
             ContreePlayer player = humanPlayer();
@@ -133,7 +133,7 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
     @DisplayName("Joining a full game with multiple bots must succeed")
     @Test
-    public void testJoinFullGameWithMultipleBots() {
+    void testJoinFullGameWithMultipleBots() {
 
         ContreePlayer humanPlayer = humanPlayer();
         gamePlayers.joinGame(humanPlayer);
@@ -159,7 +159,7 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
     @DisplayName("Joining an empty game in a specific team must succeed")
     @Test
-    public void testJoinTeam2onEmptyPlayerList() {
+    void testJoinTeam2onEmptyPlayerList() {
 
         ContreePlayer player = humanPlayer();
 
@@ -176,7 +176,7 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
     @DisplayName("When a human joins 3 bots waiting, the game is full")
     @Test
-    public void testHumanJoinGameWithOnlyOneMissingPlayer_onlyBotAlreadyJoined() {
+    void testHumanJoinGameWithOnlyOneMissingPlayer_onlyBotAlreadyJoined() {
 
         for (int i = 0 ; i < 3 ; i++ ) {
             gamePlayers.joinGame(botPlayer());
@@ -190,7 +190,7 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
     @DisplayName("Joining a team with only bots must succeed")
     @Test
-    public void testJoinTeamWhenTeamFullOfBotPlayers() {
+    void testJoinTeamWhenTeamFullOfBotPlayers() {
 
         ContreePlayer botPlayer1 = botPlayer();
         ContreePlayer botPlayer2 = botPlayer();
@@ -205,9 +205,9 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
         JoinGameResult joinGameResult = gamePlayers.joinGame(humanPlayer, ContreeTeam.TEAM1);
 
-        assertThat(joinGameResult.playerIndex()).isEqualTo(0);
+        assertThat(joinGameResult.playerIndex()).isZero();
         assertThat(joinGameResult.replacedPlayer()).isPresent();
-        assertThat(joinGameResult.replacedPlayer().get()).isSameAs(botPlayer1);
+        assertThat(joinGameResult.replacedPlayer()).containsSame(botPlayer1);
         assertThat(gamePlayers.getNbPlayers()).isEqualTo(2);
         assertThat(gamePlayers.getGamePlayers().get(0)).isSameAs(humanPlayer);
         assertThat(gamePlayers.getGamePlayers().get(1)).isNull();
@@ -219,7 +219,7 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
     @Test
     @DisplayName("Building a ContreeDealPlayers on a valid ContreeGamePlayers must succeed and build a consistent object")
-    public void testBuildDealPlayersOnFullGame() {
+    void testBuildDealPlayersOnFullGame() {
 
         players.forEach(gamePlayers::joinGame);
 
@@ -233,7 +233,7 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
     @DisplayName("Building a ContreeDealPlayers on an invalid ContreeGamePlayers must fail")
     @Test
-    public void testBuildDealPlayersOnNonFullGameMustFail() {
+    void testBuildDealPlayersOnNonFullGameMustFail() {
 
         gamePlayers.joinGame(botPlayer());
 
@@ -243,7 +243,7 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
     @DisplayName("A human player who previously joined the game leaves it")
     @Test
-    public void testLeaveGame_playerExists() {
+    void testLeaveGame_playerExists() {
 
         var leaver = humanPlayer();
 
@@ -254,8 +254,9 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
         var newPlayer = gamePlayers.leaveGameAndReplaceWithBotPlayer(leaver);
 
-        assertThat(leaver).isNotSameAs(gamePlayers.getGamePlayers().get(0));
-        assertThat(leaver).isNotSameAs(newPlayer);
+        assertThat(leaver)
+                .isNotSameAs(gamePlayers.getGamePlayers().get(0))
+                .isNotSameAs(newPlayer);
         assertThat(leaver.isBot()).isFalse();
         assertThat(gamePlayers.getGamePlayers().get(0).isBot()).isTrue();
 
@@ -263,7 +264,7 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
     @DisplayName("Exception if a human player who didn't joined the game try to leave it")
     @Test
-    public void testLeaveGame_playerDoesNotExist() {
+    void testLeaveGame_playerDoesNotExist() {
 
         var leaver = humanPlayer();
 
@@ -280,7 +281,7 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
 
     @DisplayName("Exception if a bot player who joined the game try to leave it")
     @Test
-    public void testLeaveGame_leavingPlayerIsBot() {
+    void testLeaveGame_leavingPlayerIsBot() {
 
         var leaver = botPlayer();
 
@@ -294,7 +295,7 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
     }
 
     @Test
-    public void testJoinGame_replacedPlayer_propagatedToBidPlayers() {
+    void testJoinGame_replacedPlayer_propagatedToBidPlayers() {
 
         var botPlayer1 = botPlayer();
 
@@ -308,7 +309,7 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
         var bidPlayers = dealPlayers.buildBidPlayers();
 
         assertThat(bidPlayers.getCurrentBidderSlot().getPlayer()).isPresent();
-        assertThat(bidPlayers.getCurrentBidderSlot().getPlayer().get()).isSameAs(botPlayer1);
+        assertThat(bidPlayers.getCurrentBidderSlot().getPlayer()).containsSame(botPlayer1);
 
         var humanPlayer = humanPlayer();
         var joinResult = gamePlayers.joinGame(humanPlayer);
@@ -317,7 +318,7 @@ public class ContreeGamePlayersImplTest extends TestCasesManagingPlayers {
         assertThat(replacedPlayer).isNotNull();
 
         assertThat(bidPlayers.getCurrentBidderSlot().getPlayer()).isPresent();
-        assertThat(bidPlayers.getCurrentBidderSlot().getPlayer().get()).isSameAs(humanPlayer);
+        assertThat(bidPlayers.getCurrentBidderSlot().getPlayer()).containsSame(humanPlayer);
     }
 
 }

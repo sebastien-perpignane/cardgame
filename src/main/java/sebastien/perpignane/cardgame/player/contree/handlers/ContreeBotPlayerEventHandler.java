@@ -11,13 +11,15 @@ import java.util.Random;
 
 public class ContreeBotPlayerEventHandler extends ThreadLocalContreePlayerEventHandler {
 
+    private final Random random = new Random();
+
     public ContreeBotPlayerEventHandler() {
         super();
     }
 
     @Override
     void managePlayMessage(PlayerMessage playerMessage) {
-        int cardIndex = new Random().nextInt(playerMessage.allowedCards().size());
+        int cardIndex = random.nextInt(playerMessage.allowedCards().size());
         Iterator<ClassicalCard> cardIterator = playerMessage.allowedCards().iterator();
         ClassicalCard playedCard = null;
         int i = 0;

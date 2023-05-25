@@ -27,7 +27,7 @@ class ContreeGameEventSenderTest extends TestCasesManagingPlayers {
     private ContreeGameEventSender gameEventSender;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
 
         calledFlag[0] = false;
 
@@ -44,7 +44,7 @@ class ContreeGameEventSenderTest extends TestCasesManagingPlayers {
     }
 
     @Test
-    public void testSendEndOfGameEvent() {
+    void testSendEndOfGameEvent() {
 
         doAnswer(invocationOnMock -> {
             calledFlag[0] = true;
@@ -60,7 +60,7 @@ class ContreeGameEventSenderTest extends TestCasesManagingPlayers {
     }
 
     @Test
-    public void testSendPlayedCardEvent() {
+    void testSendPlayedCardEvent() {
 
         doAnswer(invocationOnMock -> {
             calledFlag[0] = true;
@@ -75,7 +75,7 @@ class ContreeGameEventSenderTest extends TestCasesManagingPlayers {
     }
 
     @Test
-    public void testSendStartOfDealEvent() {
+    void testSendStartOfDealEvent() {
 
         doAnswer(invocationOnMock -> {
             calledFlag[0] = true;
@@ -90,7 +90,7 @@ class ContreeGameEventSenderTest extends TestCasesManagingPlayers {
     }
 
     @Test
-    public void testSendEndOfDealEvent() {
+    void testSendEndOfDealEvent() {
 
         doAnswer(invocationOnMock -> {
             calledFlag[0] = true;
@@ -122,7 +122,7 @@ class ContreeGameEventSenderTest extends TestCasesManagingPlayers {
     }
 
     @Test
-    public void testSendBidStepStartedEvent() {
+    void testSendBidStepStartedEvent() {
 
         doAnswer(invocationOnMock -> {
             calledFlag[0] = true;
@@ -137,7 +137,7 @@ class ContreeGameEventSenderTest extends TestCasesManagingPlayers {
     }
 
     @Test
-    public void testSendBidStepEndedEvent() {
+    void testSendBidStepEndedEvent() {
 
         doAnswer(invocationOnMock -> {
             calledFlag[0] = true;
@@ -152,7 +152,7 @@ class ContreeGameEventSenderTest extends TestCasesManagingPlayers {
     }
 
     @Test
-    public void testSendPlayStepStartedEvent() {
+    void testSendPlayStepStartedEvent() {
 
         doAnswer(invocationOnMock -> {
             calledFlag[0] = true;
@@ -167,7 +167,7 @@ class ContreeGameEventSenderTest extends TestCasesManagingPlayers {
     }
 
     @Test
-    public void testSendPlayStepEndedEvent() {
+    void testSendPlayStepEndedEvent() {
 
         doAnswer(invocationOnMock -> {
             calledFlag[0] = true;
@@ -182,7 +182,7 @@ class ContreeGameEventSenderTest extends TestCasesManagingPlayers {
     }
 
     @Test
-    public void testSendTrumpedTrickEvent() {
+    void testSendTrumpedTrickEvent() {
 
         doAnswer(invocationOnMock -> {
             calledFlag[0] = true;
@@ -197,7 +197,7 @@ class ContreeGameEventSenderTest extends TestCasesManagingPlayers {
     }
 
     @Test
-    public void testSendNewTrickEvent() {
+    void testSendNewTrickEvent() {
 
         doAnswer(invocationOnMock -> {
             calledFlag[0] = true;
@@ -213,7 +213,7 @@ class ContreeGameEventSenderTest extends TestCasesManagingPlayers {
 
     @DisplayName("A registered game observer received game state update events")
     @Test
-    public void testUpdatedStateIsReceivedByRegisteredGameObserver() {
+    void testUpdatedStateIsReceivedByRegisteredGameObserver() {
 
         doAnswer(invocationOnMock -> {
             calledFlag[0] = true;

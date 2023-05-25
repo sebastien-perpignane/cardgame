@@ -114,10 +114,12 @@ public class ContreePlayerImpl implements ContreePlayer {
 
     @Override
     public boolean sameTeam(sebastien.perpignane.cardgame.player.contree.ContreePlayer otherPlayer) {
-        if (team == null || otherPlayer.getTeam().isEmpty()) {
+        if (team == null) {
             return false;
         }
-        return team == otherPlayer.getTeam().get();
+        return otherPlayer.getTeam()
+                .map(otherPlayerTeam -> otherPlayerTeam == team)
+                .orElse(false);
     }
 
     @Override

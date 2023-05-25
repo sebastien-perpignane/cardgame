@@ -35,7 +35,7 @@ public enum ContreeRankValueAndPoints {
     private final int standardPoints;
     private final int trumpPoints;
 
-    private final static Map<CardRank, ContreeRankValueAndPoints> contreeCardEnumByValue;
+    private static final Map<CardRank, ContreeRankValueAndPoints> contreeCardEnumByValue;
 
     static {
         contreeCardEnumByValue = Arrays.stream(ContreeRankValueAndPoints.values()).collect(Collectors.toMap(

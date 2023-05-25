@@ -26,4 +26,11 @@ public record PlayerMessage(
     public PlayerMessage(MessageType messageType) {
         this(messageType, null, null, null);
     }
+
+    public boolean onlyOneAllowedCard() {
+        if (allowedCards == null) {
+            return false;
+        }
+        return allowedCards.size() == 1;
+    }
 }

@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.*;
 
-public class ContreeTrickTest extends TestCasesManagingPlayers {
+class ContreeTrickTest extends TestCasesManagingPlayers {
 
     private PlayableCardsFilter playableCardsFilter;
 
@@ -23,12 +23,12 @@ public class ContreeTrickTest extends TestCasesManagingPlayers {
 
 
     @BeforeAll
-    public static void globalSetUp() {
+    static void globalSetUp() {
         initPlayers();
     }
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         ContreeTrickPlayers trickPlayers = mock(ContreeTrickPlayers.class);
         when(trickPlayers.getCurrentPlayerSlot()).thenAnswer(AdditionalAnswers.returnsElementsOf(playerSlots));
 
@@ -44,7 +44,7 @@ public class ContreeTrickTest extends TestCasesManagingPlayers {
 
     @DisplayName("When other player than current player plays, an exception is thrown")
     @Test
-    public void testThrowsExceptionWhenNotExpectedPlayerPlays() {
+    void testThrowsExceptionWhenNotExpectedPlayerPlays() {
         trickWithHeartAsTrump.startTrick();
 
         assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> trickWithHeartAsTrump.playerPlays(player2, ClassicalCard.JACK_HEART));
@@ -52,13 +52,13 @@ public class ContreeTrickTest extends TestCasesManagingPlayers {
 
     @DisplayName("winning player on a trick without played card is null")
     @Test
-    public void testWinningPlayerWhenNoPlayedCardThrowsException() {
+    void testWinningPlayerWhenNoPlayedCardThrowsException() {
         assertThat(trickWithHeartAsTrump.winningPlayer()).isNull();
     }
 
     @DisplayName("winning player on a trick with played card is consistent")
     @Test
-    public void testWinningPlayerWhenCardsWerePlayed() {
+    void testWinningPlayerWhenCardsWerePlayed() {
         trickWithHeartAsTrump.startTrick();
 
         trickWithHeartAsTrump.playerPlays(player1, ClassicalCard.JACK_CLUB);
@@ -77,7 +77,7 @@ public class ContreeTrickTest extends TestCasesManagingPlayers {
 
     @DisplayName("winning player on a trick with played card is consistent")
     @Test
-    public void testPlayCardWhenTrickIsOver() {
+    void testPlayCardWhenTrickIsOver() {
         trickWithHeartAsTrump.startTrick();
 
         trickWithHeartAsTrump.playerPlays(player1, ClassicalCard.JACK_CLUB);
@@ -91,7 +91,7 @@ public class ContreeTrickTest extends TestCasesManagingPlayers {
 
     @DisplayName("getAllCards reflects cards played during the trick")
     @Test
-    public void testGetPlayedCards() {
+    void testGetPlayedCards() {
 
         trickWithHeartAsTrump.startTrick();
 
@@ -109,7 +109,7 @@ public class ContreeTrickTest extends TestCasesManagingPlayers {
 
     @DisplayName("Exception when a player plays a not allowed card")
     @Test
-    public void testPlayNotAllowedCard() {
+    void testPlayNotAllowedCard() {
 
         trickWithHeartAsTrump.startTrick();
 
@@ -120,7 +120,7 @@ public class ContreeTrickTest extends TestCasesManagingPlayers {
 
     @DisplayName("A not started trick has no current player")
     @Test
-    public void testGetCurrentPlayer_notStartedTrick() {
+    void testGetCurrentPlayer_notStartedTrick() {
 
         assertThat(trickWithHeartAsTrump.getCurrentPlayer()).isEmpty();
 

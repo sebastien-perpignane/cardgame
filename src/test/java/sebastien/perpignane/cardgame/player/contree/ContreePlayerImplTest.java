@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import sebastien.perpignane.cardgame.card.CardSuit;
+import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.contree.ContreeBidValue;
 import sebastien.perpignane.cardgame.game.contree.ContreeGame;
 
@@ -25,7 +26,7 @@ class ContreePlayerImplTest {
     private ContreePlayerImpl contreePlayer;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         eventHandler = mock(ContreePlayerEventHandler.class);
         game = mock(ContreeGame.class);
         contreePlayer = new ContreePlayerImpl(TEST_PLAYER_NAME, eventHandler);
@@ -33,7 +34,7 @@ class ContreePlayerImplTest {
 
     @DisplayName("When player receives hand, eventHandler is called, player has cards")
     @Test
-    public void testReceiveHand() {
+    void testReceiveHand() {
 
         boolean[] flag = new boolean[1];
 
@@ -55,13 +56,13 @@ class ContreePlayerImplTest {
 
     @DisplayName("After instantiation, a player has no cards")
     @Test
-    public void testHasNoMoreCard_initialState() {
+    void testHasNoMoreCard_initialState() {
         assertThat(contreePlayer.hasNoMoreCard()).isTrue();
     }
 
     @DisplayName("After hand is received, player has cards")
     @Test
-    public void testHasNoMoreCard_afterHandReceived() {
+    void testHasNoMoreCard_afterHandReceived() {
         contreePlayer.receiveHand(List.of(JACK_SPADE, ACE_HEART));
 
         assertThat(contreePlayer.hasNoMoreCard()).isFalse();
@@ -69,13 +70,14 @@ class ContreePlayerImplTest {
 
     @DisplayName("receiveNewCards is not supported")
     @Test
-    public void testReceiveNewCardsFails() {
-        assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> contreePlayer.receiveNewCards(Collections.emptyList()));
+    void testReceiveNewCardsFails() {
+        Collection<ClassicalCard> emptyList = Collections.emptyList();
+        assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> contreePlayer.receiveNewCards(emptyList));
     }
 
     @DisplayName("Event handler is called when game started event is triggered")
     @Test
-    public void testOnGameStarted() {
+    void testOnGameStarted() {
 
         boolean[] flag = new boolean[1];
 
@@ -145,9 +147,9 @@ class ContreePlayerImplTest {
 
     @DisplayName("nbAvailableCards is consistent with the hand of the player")
     @Test
-    public void testNbAvailableCards() {
+    void testNbAvailableCards() {
 
-        assertThat(contreePlayer.nbAvailableCards()).isEqualTo(0);
+        assertThat(contreePlayer.nbAvailableCards()).isZero();
 
         contreePlayer.receiveHand(List.of(TEN_SPADE, NINE_DIAMOND));
         assertThat(contreePlayer.nbAvailableCards()).isEqualTo(2);
@@ -156,20 +158,20 @@ class ContreePlayerImplTest {
 
     @DisplayName("removeCardFromHand works as expected")
     @Test
-    public void testRemoveCardFromHand() {
+    void testRemoveCardFromHand() {
 
         contreePlayer.receiveHand(new ArrayList<>(List.of(JACK_SPADE, ACE_HEART, NINE_HEART)));
-        assertThat(contreePlayer.getHand().contains(ACE_HEART)).isTrue();
+        assertThat(contreePlayer.getHand()).contains(ACE_HEART);
 
         contreePlayer.removeCardFromHand(ACE_HEART);
 
-        assertThat(contreePlayer.getHand().contains(ACE_HEART)).isFalse();
+        assertThat(contreePlayer.getHand()).doesNotContain(ACE_HEART);
 
     }
 
     @DisplayName("event handler is called when player turn to bid event is triggered")
     @Test
-    public void testOnPlayerTurnToBid() {
+    void testOnPlayerTurnToBid() {
 
         Set<ContreeBidValue> allowedBids = Set.of(ContreeBidValue.HUNDRED, ContreeBidValue.CAPOT);
 
@@ -215,7 +217,7 @@ class ContreePlayerImplTest {
 
     @DisplayName("When team is not defined on other player, sameTeam() returns false")
     @Test
-    public void testSameTeam_noTeamDefinedOnOther() {
+    void testSameTeam_noTeamDefinedOnOther() {
 
         contreePlayer.setTeam(ContreeTeam.TEAM1);
         var otherPlayer = buildOtherPlayer();
@@ -226,7 +228,7 @@ class ContreePlayerImplTest {
 
     @DisplayName("When team is not defined on current player but defined on other player , sameTeam() returns false")
     @Test
-    public void testSameTeam_noTeamDefinedOnCurrentPlayer() {
+    void testSameTeam_noTeamDefinedOnCurrentPlayer() {
 
         var otherPlayer = buildOtherPlayer();
         otherPlayer.setTeam(ContreeTeam.TEAM1);
@@ -237,7 +239,7 @@ class ContreePlayerImplTest {
 
     @DisplayName("When both players have no team, sameTeam() returns false")
     @Test
-    public void testSameTeam_noTeamOnBothPlayers_false() {
+    void testSameTeam_noTeamOnBothPlayers_false() {
         var otherPlayer = buildOtherPlayer();
 
         assertThat(contreePlayer.sameTeam(otherPlayer)).isFalse();
@@ -332,7 +334,7 @@ class ContreePlayerImplTest {
 
     @DisplayName("toState method returns the expected data")
     @Test
-    public void testToState() {
+    void testToState() {
 
         var state = contreePlayer.toState();
 
@@ -345,7 +347,7 @@ class ContreePlayerImplTest {
 
     @DisplayName("getId returns a unique ID, on 10000 instantiated players")
     @Test
-    public void testGetId() {
+    void testGetId() {
 
         Set<String> playerIds = new HashSet<>();
 
@@ -356,13 +358,13 @@ class ContreePlayerImplTest {
             playerIds.add(player.getId());
         }
 
-        assertThat(playerIds.size()).isEqualTo(10000);
+        assertThat(playerIds).hasSize(10000);
 
     }
 
     @DisplayName("toFullState method returns the expected data")
     @Test
-    public void testToFullState() {
+    void testToFullState() {
 
         var fullState = contreePlayer.toFullState();
 
@@ -376,27 +378,27 @@ class ContreePlayerImplTest {
 
     @DisplayName("toString formatting on bot player")
     @Test
-    public void testToString_botPlayer() {
+    void testToString_botPlayer() {
 
         var eventHandler = mock(ContreePlayerEventHandler.class);
         when(eventHandler.isBot()).thenReturn(true);
 
         var botPlayer = new ContreePlayerImpl("bot player", eventHandler);
 
-        assertThat(botPlayer.toString().contains("Bot")).isTrue();
+        assertThat(botPlayer.toString()).contains("Bot");
 
     }
 
     @DisplayName("toString formatting on bot player")
     @Test
-    public void testToString_humanPlayer() {
+    void testToString_humanPlayer() {
 
         var eventHandler = mock(ContreePlayerEventHandler.class);
         when(eventHandler.isBot()).thenReturn(false);
 
         var botPlayer = new ContreePlayerImpl("bot player", eventHandler);
 
-        assertThat(botPlayer.toString().startsWith("*")).isTrue();
+        assertThat(botPlayer.toString()).startsWith("*");
 
     }
 

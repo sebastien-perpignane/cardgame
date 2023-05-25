@@ -6,7 +6,7 @@ import sebastien.perpignane.cardgame.player.util.GamePlayerSlots;
 public class ContreeGamePlayerSlots extends GamePlayerSlots<ContreePlayer> {
 
     public ContreeGamePlayerSlots() {
-        super(ContreeGamePlayers.NB_PLAYERS);
+        super(ContreePlayers.NB_PLAYERS);
     }
 
 }

@@ -28,12 +28,12 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
     private ContreeDealBids dealBids;
 
     @BeforeAll
-    public static void globalSetUp() {
+    static void globalSetUp() {
         initPlayers();
     }
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         biddableValuesFilter = mock(BiddableValuesFilter.class);
         when(biddableValuesFilter.biddableValues(any(), any())).thenReturn(new BiddableValuesFilter.BidFilterResult());
         ContreeBidPlayers bidPlayers = mock(ContreeBidPlayers.class);
@@ -102,21 +102,11 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
             dealBids.highestBid()
         ).isPresent();
 
-        assertThat(
-            dealBids
-        ).hasHighestBidValueAs(ContreeBidValue.EIGHTY);
-
-        assertThat(
-            dealBids
-        ).hasHighestBidSuitAs(CardSuit.DIAMONDS);
-
-        assertThat(
-            dealBids
-        ).bidsAreNotOver();
-
-        assertThat(
-            dealBids
-        ).hasNoDealContractBidFound();
+        assertThat(dealBids)
+                .hasHighestBidValueAs(ContreeBidValue.EIGHTY)
+                .hasHighestBidSuitAs(CardSuit.DIAMONDS)
+                .bidsAreNotOver()
+                .hasNoDealContractBidFound();
 
         assertThat(
             dealBids.isDoubleBidExists()
@@ -228,7 +218,7 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
 
     @DisplayName("First bid is capot, next player double, bidding step is over after three next players passed")
     @Test
-    public void testFirstBidCapotThenDoubleAndPasses() {
+    void testFirstBidCapotThenDoubleAndPasses() {
 
         dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.CAPOT, CardSuit.HEARTS));
         dealBids.placeBid(new ContreeBid(player2, ContreeBidValue.DOUBLE));
@@ -256,12 +246,12 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
         dealBids.placeBid(new ContreeBid(player3, ContreeBidValue.REDOUBLE));
 
         assertThat(dealBids.highestBid()).isPresent();
-        assertThat(ContreeBidValue.EIGHTY).isSameAs(dealBids.highestBid().get().bidValue());
-        assertThat(CardSuit.DIAMONDS).isSameAs(dealBids.highestBid().get().cardSuit());
+        assertThat(dealBids.highestBid().get().bidValue()).isSameAs(ContreeBidValue.EIGHTY);
+        assertThat(dealBids.highestBid().get().cardSuit()).isSameAs(CardSuit.DIAMONDS);
         assertThat(dealBids.bidsAreOver()).isTrue();
         assertThat(dealBids.findDealContractBid()).isPresent();
-        assertThat(ContreeBidValue.EIGHTY).isSameAs(dealBids.findDealContractBid().get().bidValue());
-        assertThat(CardSuit.DIAMONDS).isSameAs(dealBids.findDealContractBid().get().cardSuit());
+        assertThat(dealBids.findDealContractBid().get().bidValue()).isSameAs(ContreeBidValue.EIGHTY);
+        assertThat(dealBids.findDealContractBid().get().cardSuit()).isSameAs(CardSuit.DIAMONDS);
         assertThat(dealBids.isDoubleBidExists()).isTrue();
         assertThat(dealBids.isRedoubleBidExists()).isTrue();
 
@@ -272,7 +262,7 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
 
     @DisplayName("Announced capot is true when a player bids 'capot' ")
     @Test
-    public void testAnnouncedCapot() {
+    void testAnnouncedCapot() {
         dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.DIAMONDS));
         dealBids.placeBid(new ContreeBid(player2, ContreeBidValue.PASS));
         dealBids.placeBid(new ContreeBid(player3, ContreeBidValue.CAPOT, CardSuit.DIAMONDS));
@@ -283,7 +273,7 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
 
     @DisplayName("Exception if current bid value is present in the exclusion cause map returned by the biddable values filter")
     @Test
-    public void testNoOverBidWhenExpected() {
+    void testNoOverBidWhenExpected() {
         dealBids.placeBid(new ContreeBid( player1, ContreeBidValue.HUNDRED, CardSuit.DIAMONDS ));
 
 
@@ -319,7 +309,7 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
 
     @DisplayName("if no double or redouble bid is placed correctly, deal wont be considered doubled nor redoubled")
     @Test
-    public void testDealIsNotDoubleNorRedouble() {
+    void testDealIsNotDoubleNorRedouble() {
         dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.HEARTS));
 
         assertThat(dealBids.isDoubleBidExists()).isFalse();

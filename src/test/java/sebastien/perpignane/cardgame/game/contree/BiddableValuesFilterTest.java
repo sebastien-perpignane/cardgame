@@ -28,7 +28,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
     private static ContreePlayer opponent;
 
     @BeforeAll
-    public static void globalSetUp() {
+    static void globalSetUp() {
         initPlayers();
 
         currentPlayer = player1;
@@ -49,7 +49,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
     private Set<ContreeBidValue> expectedAllowedBidValues;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
 
         bids = mock(ContreeDealBids.class);
 
@@ -79,7 +79,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
 
     @DisplayName("When no bid placed, any bid value except double and redouble is allowed")
     @Test
-    public void testNoBid() {
+    void testNoBid() {
 
         when(bids.isDoubleBidExists()).thenReturn(false);
         when(bids.isRedoubleBidExists()).thenReturn(false);
@@ -94,7 +94,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
 
     @DisplayName("When only PASS bid were placed, any bid value except double and redouble is allowed")
     @Test
-    public void testOnlyPassBids() {
+    void testOnlyPassBids() {
         when(bids.highestBid()).thenReturn(Optional.of(
                 new ContreeBid(teamMate, ContreeBidValue.PASS)
         ));
@@ -111,7 +111,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
 
     @DisplayName("When a EIGHTY bid was placed by an opponent and no double bid exists, any bid except eighty and redouble are allowed")
     @Test
-    public void testEightyBidByOpponent_noDouble() {
+    void testEightyBidByOpponent_noDouble() {
 
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(opponent, ContreeBidValue.EIGHTY, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(false);
@@ -129,7 +129,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
 
     @DisplayName("When a EIGHTY bid was placed by an opponent and the team mate doubled, only PASS bid is allowed")
     @Test
-    public void testEightyBidByOpponent_alreadyDouble() {
+    void testEightyBidByOpponent_alreadyDouble() {
 
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(opponent, ContreeBidValue.EIGHTY, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(true);
@@ -144,7 +144,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
 
     @DisplayName("When a HUNDRED_TEN bid was placed by an opponent and no double bid exists, any bid except eighty and redouble are allowed")
     @Test
-    public void testHundredTenBidByOpponent_noDouble() {
+    void testHundredTenBidByOpponent_noDouble() {
 
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(opponent, ContreeBidValue.HUNDRED_TEN, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(false);
@@ -163,7 +163,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
 
     @DisplayName("When a HUNDRED_TEN bid was placed by an opponent and the teeam mate doubled, only PASS bid is allowed")
     @Test
-    public void testHundredTenBidByOpponent_alreadyDouble() {
+    void testHundredTenBidByOpponent_alreadyDouble() {
 
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(opponent, EIGHTY, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(true);
@@ -178,7 +178,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
 
     @DisplayName("When a EIGHTY bid was placed by the team mate and the opponents did not double, the player can pass or bid higher")
     @Test
-    public void testEightyBidByMate_noDouble() {
+    void testEightyBidByMate_noDouble() {
 
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(teamMate, EIGHTY, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(false);
@@ -196,7 +196,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
 
     @DisplayName("When a EIGHTY bid was placed by the team mate and the opponents doubled, the player can only bid PASS or REDOUBLE")
     @Test
-    public void testEightyBidByMate_withDouble() {
+    void testEightyBidByMate_withDouble() {
 
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(teamMate, EIGHTY, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(true);
@@ -211,7 +211,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
 
     @DisplayName("When a HUNDRED_TEN bid was placed by the team mate and the opponents did not double, the player can pass or bid higher")
     @Test
-    public void testHundredTenBidByMate_noDouble() {
+    void testHundredTenBidByMate_noDouble() {
 
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(teamMate, HUNDRED_TEN, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(false);
@@ -229,7 +229,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
 
     @DisplayName("When a HUNDRED_TEN bid is placed by the teammate and the opponents double, the player can only bid PASS or REDOUBLE")
     @Test
-    public void testHundredTenBidByMate_withDouble() {
+    void testHundredTenBidByMate_withDouble() {
 
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(teamMate, ContreeBidValue.EIGHTY, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(true);
@@ -244,7 +244,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
 
     @DisplayName("When an opponent bids CAPOT and the team mate does not double, the current player can double or not bid")
     @Test
-    public void testCapotByOpponent_noDouble() {
+    void testCapotByOpponent_noDouble() {
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(opponent, ContreeBidValue.CAPOT, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(false);
         when(bids.isRedoubleBidExists()).thenReturn(false);
@@ -259,7 +259,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
 
     @DisplayName("When an opponent bids CAPOT and the team mate double, the current player can only bid PASS")
     @Test
-    public void testCapotByOpponent_withDouble() {
+    void testCapotByOpponent_withDouble() {
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(opponent, ContreeBidValue.CAPOT, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(true);
         when(bids.isRedoubleBidExists()).thenReturn(false);
@@ -274,7 +274,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
 
     @DisplayName("When the teammate bids CAPOT and the opponents do not double, the current player can only bid PASS")
     @Test
-    public void testCapotByTeammate_noDouble() {
+    void testCapotByTeammate_noDouble() {
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(teamMate, ContreeBidValue.CAPOT, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(false);
         when(bids.isRedoubleBidExists()).thenReturn(false);
@@ -289,7 +289,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
 
     @DisplayName("When the teammate bids CAPOT and the opponents do not double, the current player can redouble or bid PASS")
     @Test
-    public void testCapotByTeammate_withDouble() {
+    void testCapotByTeammate_withDouble() {
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(teamMate, ContreeBidValue.CAPOT, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(true);
         when(bids.isRedoubleBidExists()).thenReturn(false);
@@ -304,7 +304,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
 
     @DisplayName("When an opponent bids 160 and the teammate does not double, the current player can bid PASS, double or bid CAPOT")
     @Test
-    public void testHundredSixtyByOpponent_noDouble() {
+    void testHundredSixtyByOpponent_noDouble() {
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(opponent, ContreeBidValue.HUNDRED_SIXTY, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(false);
         when(bids.isRedoubleBidExists()).thenReturn(false);
@@ -320,7 +320,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
 
     @DisplayName("When an opponent bids 160 and the teammate double, the current player can only bid PASS")
     @Test
-    public void testHundredSixtyByOpponent_withDouble() {
+    void testHundredSixtyByOpponent_withDouble() {
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(opponent, ContreeBidValue.HUNDRED_SIXTY, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(true);
         when(bids.isRedoubleBidExists()).thenReturn(false);
@@ -335,7 +335,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
 
     @DisplayName("When the teammate bids 160 and the opponent does not double, the current player can bid PASS or CAPOT")
     @Test
-    public void testHundredSixtyByTeammate_noDouble() {
+    void testHundredSixtyByTeammate_noDouble() {
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(teamMate, ContreeBidValue.HUNDRED_SIXTY, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(false);
         when(bids.isRedoubleBidExists()).thenReturn(false);
@@ -351,7 +351,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
 
     @DisplayName("When the teammate bids 160 and the opponents double, the current player can bid PASS or redouble")
     @Test
-    public void testHundredSixtyByTeammate_withDouble() {
+    void testHundredSixtyByTeammate_withDouble() {
         when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(teamMate, ContreeBidValue.HUNDRED_SIXTY, CardSuit.HEARTS)));
         when(bids.isDoubleBidExists()).thenReturn(true);
         when(bids.isRedoubleBidExists()).thenReturn(false);

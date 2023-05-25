@@ -14,30 +14,32 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ContreePlayedCardTest {
+class ContreePlayedCardTest {
 
     @DisplayName("contree PlayedCard cannot be built with null player")
     @Test
-    public void testInvalidConstructorArgument_nullPlayer() {
+    void testInvalidConstructorArgument_nullPlayer() {
 
-        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> new ContreePlayedCard(null, new ContreeCard(ClassicalCard.JACK_DIAMOND, CardSuit.HEARTS)));
+        var card = new ContreeCard(ClassicalCard.JACK_DIAMOND, CardSuit.HEARTS);
+        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> new ContreePlayedCard(null, card));
 
     }
 
     @DisplayName("contree PlayedCard cannot be built if the player is not part of a team")
     @Test
-    public void testInvalidConstructorArgument_noTeamPlayer() {
+    void testInvalidConstructorArgument_noTeamPlayer() {
 
         var noTeamPlayer = mock(ContreePlayer.class);
         when(noTeamPlayer.getTeam()).thenReturn(Optional.empty());
 
-        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> new ContreePlayedCard(noTeamPlayer, new ContreeCard(ClassicalCard.JACK_DIAMOND, CardSuit.HEARTS)));
+        var card = new ContreeCard(ClassicalCard.JACK_DIAMOND, CardSuit.HEARTS);
+        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> new ContreePlayedCard(noTeamPlayer, card));
 
     }
 
     @DisplayName("contree PlayedCard cannot be built with null card")
     @Test
-    public void testInvalidConstructorArgument_nullCard() {
+    void testInvalidConstructorArgument_nullCard() {
 
         var player = mock(ContreePlayer.class);
         when(player.getTeam()).thenReturn(Optional.of(ContreeTeam.TEAM1));

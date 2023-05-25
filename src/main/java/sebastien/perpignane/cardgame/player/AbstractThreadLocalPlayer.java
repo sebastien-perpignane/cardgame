@@ -5,6 +5,8 @@ import sebastien.perpignane.cardgame.game.AbstractGame;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+import static java.lang.System.err;
+
 public abstract class AbstractThreadLocalPlayer<M, G extends AbstractGame<?>, T extends Team> implements Runnable, Player<G, T> {
 
     private final BlockingQueue<M> gameMsgQueue = new ArrayBlockingQueue<>(54);
@@ -20,7 +22,8 @@ public abstract class AbstractThreadLocalPlayer<M, G extends AbstractGame<?>, T 
             }
             catch (InterruptedException ie) {
                 // TODO review good practices to manage InterruptedException
-                System.err.println("I'm interrupted");
+                err.println("I'm interrupted");
+                Thread.currentThread().interrupt();
                 return;
             }
         }

@@ -37,7 +37,7 @@ public enum CardSet {
         this.gameCards = selectCards();
     }
 
-    abstract protected SortedSet<ClassicalCard> selectCards();
+    protected abstract SortedSet<ClassicalCard> selectCards();
 
     public SortedSet<ClassicalCard> getGameCards() {
         return gameCards;

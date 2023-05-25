@@ -6,6 +6,8 @@ import sebastien.perpignane.cardgame.player.contree.PlayerEventHandler;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+import static java.lang.System.err;
+
 public abstract class AbstractThreadPlayerEventHandler<P extends Player<?, ?>, M> implements PlayerEventHandler<P>, Runnable {
 
     private final BlockingQueue<M> gameMsgQueue = new ArrayBlockingQueue<>(54);
@@ -21,7 +23,8 @@ public abstract class AbstractThreadPlayerEventHandler<P extends Player<?, ?>, M
             }
             catch (InterruptedException ie) {
                 // TODO review good practices to manage InterruptedException
-                System.err.println("I'm interrupted");
+                err.println("I'm interrupted");
+                Thread.currentThread().interrupt();
                 return;
             }
         }

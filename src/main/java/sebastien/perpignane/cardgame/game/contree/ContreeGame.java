@@ -5,6 +5,7 @@ import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.AbstractGame;
 import sebastien.perpignane.cardgame.game.GameObserver;
 import sebastien.perpignane.cardgame.game.GameStatus;
+import sebastien.perpignane.cardgame.player.Player;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
@@ -43,16 +44,14 @@ public class ContreeGame extends AbstractGame<ContreePlayer> {
         }
         JoinGameResult joinGameResult = gamePlayers.joinGame(p);
         p.setGame(this);
-        if (joinGameResult.replacedPlayer().isPresent()) {
-            p.receiveHand(joinGameResult.replacedPlayer().get().getHand());
-        }
+        joinGameResult.replacedPlayer().ifPresent(contreePlayer -> p.receiveHand(contreePlayer.getHand()));
         gameEventSender.sendJoinedGameEvent(this, joinGameResult.playerIndex(), p);
         if (isStarted()) {
 
             if ( joinGameResult.replacedPlayer().isEmpty() ) {
                 throw new IllegalStateException("When game is already started, if a new player joins the game, joinGameResult.replacedPlayer must not be null");
             }
-            joinGameResult.replacedPlayer().get().onGameEjection();
+            joinGameResult.replacedPlayer().ifPresent(Player::onGameEjection);
             p.onGameStarted();
         }
         if (gamePlayers.isFull() && !isStarted()) {
@@ -122,7 +121,7 @@ public class ContreeGame extends AbstractGame<ContreePlayer> {
     public String toString() {
         return "ContreeGame{" +
                 "id=" + getGameId() +
-                ",winner=" + (gameDeals.getWinner().isEmpty() ? "(game not over)" : gameDeals.getWinner().get()) +
+                ",winner=" + (gameDeals.getWinner().map(Enum::toString).orElse("(game not over)")) +
                 '}';
     }
 
@@ -139,6 +138,10 @@ public class ContreeGame extends AbstractGame<ContreePlayer> {
                 gameDeals.getGameScore().getTeamScore(ContreeTeam.TEAM2),
                 gameDeals.getGameScore().getMaxScore()
         );
+    }
+
+    public void forceEndOfGame() {
+        getEventSender().sendEndOfGameEvent(this);
     }
 
 }
