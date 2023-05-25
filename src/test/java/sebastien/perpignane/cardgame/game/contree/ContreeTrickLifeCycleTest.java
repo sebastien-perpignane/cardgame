@@ -12,12 +12,12 @@ import sebastien.perpignane.cardgame.card.ClassicalCard;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class ContreeTrickLifeCycleTest extends TestCasesManagingPlayers {
+class ContreeTrickLifeCycleTest extends TestCasesManagingPlayers {
 
     private ContreeTrick trickWithHeartTrump;
 
     @BeforeAll
-    public static void globalSetUp() {
+    static void globalSetUp() {
         initPlayers();
     }
 
@@ -38,7 +38,7 @@ public class ContreeTrickLifeCycleTest extends TestCasesManagingPlayers {
 
     @DisplayName("After the first played card, game is not over and winner is not available")
     @Test
-    public void testTrickIsNotOverAfterOnePlayedCard() {
+    void testTrickIsNotOverAfterOnePlayedCard() {
 
         trickWithHeartTrump.startTrick();
 
@@ -51,7 +51,7 @@ public class ContreeTrickLifeCycleTest extends TestCasesManagingPlayers {
 
     @DisplayName("After two played cards, game is not over and winner is not available")
     @Test
-    public void testTrickIsNotOverAfterTwoPlayedCards() {
+    void testTrickIsNotOverAfterTwoPlayedCards() {
 
         trickWithHeartTrump.startTrick();
 
@@ -65,7 +65,7 @@ public class ContreeTrickLifeCycleTest extends TestCasesManagingPlayers {
 
     @DisplayName("After three played cards, game is not over and winner is not available")
     @Test
-    public void testTrickIsNotOverAfterThreePlayedCards() {
+    void testTrickIsNotOverAfterThreePlayedCards() {
         trickWithHeartTrump.startTrick();
 
         trickWithHeartTrump.playerPlays(player1, ClassicalCard.ACE_CLUB);
@@ -79,7 +79,7 @@ public class ContreeTrickLifeCycleTest extends TestCasesManagingPlayers {
 
     @DisplayName("After four played cards, game is  over and trick winner is available")
     @Test
-    public void testTrickIsOverAfterFourPlayedCards() {
+    void testTrickIsOverAfterFourPlayedCards() {
 
         trickWithHeartTrump.startTrick();
 

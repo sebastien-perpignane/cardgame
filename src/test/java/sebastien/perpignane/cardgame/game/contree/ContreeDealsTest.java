@@ -32,7 +32,7 @@ class ContreeDealsTest extends TestCasesManagingPlayers {
     private ContreeDeals deals;
 
     @BeforeAll
-    public static void globalSetUp() {
+    static void globalSetUp() {
         initPlayers();
     }
 
@@ -82,7 +82,7 @@ class ContreeDealsTest extends TestCasesManagingPlayers {
         deals.startDeals("TEST", dealPlayers);
 
         assertThat(deals.getNbDeals()).isEqualTo(1);
-        assertThat(deals.nbOverDeals()).isEqualTo(0);
+        assertThat(deals.nbOverDeals()).isZero();
         assertThat(deals.nbOngoingDeals()).isEqualTo(1);
 
     }
@@ -106,7 +106,7 @@ class ContreeDealsTest extends TestCasesManagingPlayers {
 
     @DisplayName("When maximum score is reached, cards cannot be played anymore")
     @Test
-    public void testCannotPlayWhenMaxScoreReached() {
+    void testCannotPlayWhenMaxScoreReached() {
 
         when( gameScore.isMaximumScoreReached() ).thenReturn(true);
         when( gameScore.getWinner() ).thenReturn(Optional.of(ContreeTeam.TEAM1));
@@ -124,7 +124,7 @@ class ContreeDealsTest extends TestCasesManagingPlayers {
 
     @DisplayName("When a deal is over, the score of the deal is added to the score of the game")
     @Test
-    public void testScoreIsUpdatedAtEndOfDeal() {
+    void testScoreIsUpdatedAtEndOfDeal() {
 
         boolean[] calledFlag = {false};
         doAnswer(invocationOnMock -> {

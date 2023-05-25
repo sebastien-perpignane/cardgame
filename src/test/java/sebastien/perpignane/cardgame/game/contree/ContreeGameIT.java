@@ -19,13 +19,13 @@ import java.util.concurrent.TimeUnit;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Tag("integration-test")
-public class ContreeGameIT {
+class ContreeGameIT {
 
     @DisplayName("Running a game with bot players, including one always bidding 80 HEART. The game must end without error, whoever wins.")
     @Test
     @Timeout(value = 2000, unit = TimeUnit.MILLISECONDS)
-    public void testRunGameWithBotsPlayingRandomCards() throws InterruptedException {
-        ContreeGame game = ContreeGameFactory.createGame(500);
+    void testRunGameWithBotsPlayingRandomCards() throws InterruptedException {
+        ContreeGame game = ContreeGameFactory.createGame(new ContreeGameConfig() { });
         game.registerAsGameObserver(GameTextDisplayer.getInstance());
         ContreePlayer player1 = new ContreePlayerImpl("Player 1", new BiddingBotEventHandler());
 

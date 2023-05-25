@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
         * nbOverTricks *
         * nbOngoingTricks *
  */
-public class ContreeTricksTest extends TestCasesManagingPlayers {
+class ContreeTricksTest extends TestCasesManagingPlayers {
 
     private ContreeTrickPlayers trickPlayers;
 
@@ -43,7 +43,7 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
     private ContreeTricks tricksWithHeartAsTrumpSuit;
 
     @BeforeAll
-    public static void globalSetUp() {
+    static void globalSetUp() {
         initPlayers();
     }
 
@@ -52,7 +52,7 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
      * Mocked PlayableCardsFilter allows any card to simplify tests
      */
     @BeforeEach
-    public void setUp() {
+    void setUp() {
 
         trickPlayers = mock(ContreeTrickPlayers.class);
 
@@ -84,22 +84,22 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
 
     @DisplayName("Test state of not started tricks")
     @Test
-    public void testNotStartedTricks() {
+    void testNotStartedTricks() {
 
         assertThat(tricksWithHeartAsTrumpSuit.lastTrick()).isEmpty();
-        assertThat(tricksWithHeartAsTrumpSuit.nbOverTricks()).isEqualTo(0);
-        assertThat(tricksWithHeartAsTrumpSuit.nbOngoingTricks()).isEqualTo(0);
+        assertThat(tricksWithHeartAsTrumpSuit.nbOverTricks()).isZero();
+        assertThat(tricksWithHeartAsTrumpSuit.nbOngoingTricks()).isZero();
         assertThat(tricksWithHeartAsTrumpSuit.tricksAreOver()).isFalse();
 
     }
 
     @DisplayName("When tricks are started, there is one ongoing trick and none over")
     @Test
-    public void testStartTricks() {
+    void testStartTricks() {
 
         tricksWithHeartAsTrumpSuit.startTricks(deal, trickPlayers);
 
-        assertThat(tricksWithHeartAsTrumpSuit.nbOverTricks()).isEqualTo(0);
+        assertThat(tricksWithHeartAsTrumpSuit.nbOverTricks()).isZero();
         assertThat(tricksWithHeartAsTrumpSuit.nbOngoingTricks()).isEqualTo(1);
 
         tricksWithHeartAsTrumpSuit.playerPlays(player1, ClassicalCard.JACK_CLUB);
@@ -109,7 +109,7 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
 
     @DisplayName("When 4 cards are played on the current trick, the current trick is over and a new one is started")
     @Test
-    public void testWhen4CardsArePlayed() {
+    void testWhen4CardsArePlayed() {
 
         configureTrickPlayersForNumberOfTricks(2);
 
@@ -139,7 +139,7 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
 
     @DisplayName("All tricks are won by team 1, team 1 makes capot")
     @Test
-    public void testTeamWhoDidCapotWhenCapotHappens() {
+    void testTeamWhoDidCapotWhenCapotHappens() {
         configureTrickPlayersForNumberOfTricks(8);
 
         tricksWithHeartAsTrumpSuit.startTricks(deal, trickPlayers);
@@ -157,16 +157,16 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
         assertThat(tricksWithHeartAsTrumpSuit.tricksAreOver()).isTrue();
         assertThat(tricksWithHeartAsTrumpSuit.isCapot()).isTrue();
         assertThat(tricksWithHeartAsTrumpSuit.teamWhoDidCapot()).isPresent();
-        assertThat(tricksWithHeartAsTrumpSuit.teamWhoDidCapot().get()).isSameAs(ContreeTeam.TEAM1);
+        assertThat(tricksWithHeartAsTrumpSuit.teamWhoDidCapot()).containsSame(ContreeTeam.TEAM1);
 
         assertThat(tricksWithHeartAsTrumpSuit.nbOverTricks()).isEqualTo(8);
-        assertThat(tricksWithHeartAsTrumpSuit.nbOngoingTricks()).isEqualTo(0);
+        assertThat(tricksWithHeartAsTrumpSuit.nbOngoingTricks()).isZero();
 
     }
 
     @DisplayName("Not all tricks are won by the same team, no team doing capot")
     @Test
-    public void testTeamWhoDidCapotWhenNoCapot() {
+    void testTeamWhoDidCapotWhenNoCapot() {
 
         configureTrickPlayersForNumberOfTricks(8);
 
@@ -194,7 +194,7 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
         assertThat(tricksWithHeartAsTrumpSuit.teamWhoDidCapot()).isEmpty();
 
         assertThat(tricksWithHeartAsTrumpSuit.nbOverTricks()).isEqualTo(8);
-        assertThat(tricksWithHeartAsTrumpSuit.nbOngoingTricks()).isEqualTo(0);
+        assertThat(tricksWithHeartAsTrumpSuit.nbOngoingTricks()).isZero();
 
         Map<Team, Set<ContreeCard>> wonCardsByTeam = tricksWithHeartAsTrumpSuit.wonCardsByTeam();
 
@@ -207,7 +207,7 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
 
     @DisplayName("Tricks cannot be started multiple times")
     @Test
-    public void testStartTricksMultipleTimesFails() {
+    void testStartTricksMultipleTimesFails() {
         tricksWithHeartAsTrumpSuit.startTricks(deal, trickPlayers);
 
         assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> tricksWithHeartAsTrumpSuit.startTricks(deal, trickPlayers));
@@ -216,7 +216,7 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
 
     @DisplayName("teamWhoDidCapot return Optional.empty if all tricks were not played yet")
     @Test
-    public void testComputeTeamWhoDidCapotReturnsEmptyIfTricksAreNotOver() {
+    void testComputeTeamWhoDidCapotReturnsEmptyIfTricksAreNotOver() {
 
         configureTrickPlayersForNumberOfTricks(2);
 
@@ -234,18 +234,18 @@ public class ContreeTricksTest extends TestCasesManagingPlayers {
 
     @DisplayName("When tricks are not started, there is no current player")
     @Test
-    public void testCurrentPlayer_notStartedTrick() {
+    void testCurrentPlayer_notStartedTrick() {
         assertThat(tricksWithHeartAsTrumpSuit.getCurrentPlayer()).isEmpty();
     }
 
     @Test
-    public void testCurrentPlayer_notOver() {
+    void testCurrentPlayer_notOver() {
 
         tricksWithHeartAsTrumpSuit.startTricks(deal, trickPlayers);
 
         assertThat(tricksWithHeartAsTrumpSuit.tricksAreOver()).isFalse();
         assertThat(tricksWithHeartAsTrumpSuit.getCurrentPlayer()).isPresent();
-        assertThat(tricksWithHeartAsTrumpSuit.getCurrentPlayer().get()).isSameAs(player1);
+        assertThat(tricksWithHeartAsTrumpSuit.getCurrentPlayer()).containsSame(player1);
 
     }
 

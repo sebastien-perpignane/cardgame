@@ -36,7 +36,19 @@ public class CardDealer {
 
     private void throwExceptionIfNbDistributedCardsDoesNotMatchNbCardsAndNbPlayers(int nbCards, int nbPlayers) {
         if (nbDistributedCardsPerPlayer * nbPlayers != nbCards) {
-            throw new IllegalArgumentException("All cards will not be distributed to players");
+            String exceptionMessage = String.format("""
+                    Inconsistent number of cards to be distributed to each player.
+                    Total number of cards: %d
+                    Number of players: %d
+                    Number of cards per player: %d
+                    Check distribution configuration: %s
+                """.stripIndent(),
+                nbCards,
+                nbPlayers,
+                nbDistributedCardsPerPlayer,
+                distributeConfiguration
+            );
+            throw new IllegalArgumentException(exceptionMessage);
         }
     }
 

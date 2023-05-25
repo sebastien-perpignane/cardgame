@@ -10,11 +10,11 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ContreeRankValueAndPointsTest {
+class ContreeRankValueAndPointsTest {
 
     @DisplayName("Sorting non trump cards by game value in descending order")
     @Test
-    public void testStandardDescOrderingByValue() {
+    void testStandardDescOrderingByValue() {
         List<ContreeRankValueAndPoints> standardCards  = Arrays.stream(ContreeRankValueAndPoints.values())
                 .sorted(
                     Comparator.comparingInt(
@@ -36,7 +36,7 @@ public class ContreeRankValueAndPointsTest {
 
     @DisplayName("Sorting trump cards by game value in descending order")
     @Test
-    public void testTrumpDescOrderingByValue() {
+    void testTrumpDescOrderingByValue() {
         List<ContreeRankValueAndPoints> trumpCards  = Arrays.stream(ContreeRankValueAndPoints.values()).
                 sorted(
                     Comparator.comparingInt(
@@ -58,7 +58,7 @@ public class ContreeRankValueAndPointsTest {
 
     @DisplayName("Sorting non trump cards by game points in descending order")
     @Test
-    public void testStandardDescOrderingByPoint() {
+    void testStandardDescOrderingByPoint() {
         var standardCards  = Arrays.stream(ContreeRankValueAndPoints.values())
                 .sorted(
                         Comparator.comparingInt(
@@ -80,7 +80,7 @@ public class ContreeRankValueAndPointsTest {
 
     @DisplayName("Sorting trump cards by game points in descending order")
     @Test
-    public void testTrumpDescOrderingByPoint() {
+    void testTrumpDescOrderingByPoint() {
         var trumpCards  = Arrays.stream(ContreeRankValueAndPoints.values())
                 .sorted(
                     Comparator.comparingInt(

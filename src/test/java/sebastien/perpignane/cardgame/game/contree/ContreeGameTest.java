@@ -24,12 +24,12 @@ class ContreeGameTest extends TestCasesManagingPlayers {
     private ContreeGame game;
 
     @BeforeAll
-    public static void globalSetUp() {
+    static void globalSetUp() {
         initPlayers();
     }
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
 
         ContreeGameScore score = mock(ContreeGameScore.class);
         gamePlayers = mock(ContreeGamePlayers.class);
@@ -64,7 +64,7 @@ class ContreeGameTest extends TestCasesManagingPlayers {
 
     @DisplayName("A game can be started when 4 players joined the game")
     @Test
-    public void testStartGameWith4PlayersSucceeds() {
+    void testStartGameWith4PlayersSucceeds() {
         makeTheGameStart();
         assertThat(game.isWaitingForPlayers()).isFalse();
         assertThat(game.isStarted()).isTrue();
@@ -72,7 +72,7 @@ class ContreeGameTest extends TestCasesManagingPlayers {
 
     @DisplayName("A game is waiting for players until gamePlayers is full")
     @Test
-    public void testGameWithoutPlayersHasExpectedState() {
+    void testGameWithoutPlayersHasExpectedState() {
 
         game.joinGame(player1);
         assertThat(game.isWaitingForPlayers()).isTrue();
@@ -91,7 +91,7 @@ class ContreeGameTest extends TestCasesManagingPlayers {
 
     @DisplayName("Winner is not available if a game is not over")
     @Test
-    public void testGetWinnerOnNotOverGame() {
+    void testGetWinnerOnNotOverGame() {
 
         assertThat(game.isOver()).isFalse();
         assertThat(game.getWinner()).isEmpty();
@@ -105,7 +105,7 @@ class ContreeGameTest extends TestCasesManagingPlayers {
 
     @DisplayName("Exception if a player tries to play a card on an over game")
     @Test
-    public void testCannotPlayCardIfGameIsOver() {
+    void testCannotPlayCardIfGameIsOver() {
         makeTheGameOver();
         assertThat(game.isOver()).isTrue();
 
@@ -114,7 +114,7 @@ class ContreeGameTest extends TestCasesManagingPlayers {
 
     @DisplayName("Exception if a player tries to bid on an over game")
     @Test
-    public void testCannotBidIfGameIsOver() {
+    void testCannotBidIfGameIsOver() {
         makeTheGameOver();
         assertThat(game.isOver()).isTrue();
 
@@ -123,14 +123,14 @@ class ContreeGameTest extends TestCasesManagingPlayers {
 
     @DisplayName("No exception if a player tries to bid on ongoing game")
     @Test
-    public void testCanBidIfGameIsOver() {
+    void testCanBidIfGameIsOver() {
         assertThat(game.isOver()).isFalse();
         game.placeBid(player2, ContreeBidValue.PASS, null);
     }
 
     @DisplayName("Exception if a player tries to join an over game")
     @Test
-    public void testCannotJoinIfGameIsOver() {
+    void testCannotJoinIfGameIsOver() {
         makeTheGameOver();
         assertThat(game.isOver()).isTrue();
 
@@ -140,7 +140,7 @@ class ContreeGameTest extends TestCasesManagingPlayers {
 
     @DisplayName("Exception if a player tries to join an over game")
     @Test
-    public void testCannotRegisterObserverIfGameIsOver() {
+    void testCannotRegisterObserverIfGameIsOver() {
         makeTheGameOver();
         assertThat(game.isOver()).isTrue();
 
@@ -157,7 +157,7 @@ class ContreeGameTest extends TestCasesManagingPlayers {
 
     @DisplayName("Leaving a not started game does not trigger currentBidder and currentPlayer replacement but newPlayer get the leaver hand")
     @Test
-    public void testLeaveNotStartedGame() {
+    void testLeaveNotStartedGame() {
 
         LeaveGameFlags flags = new LeaveGameFlags();
 
@@ -194,7 +194,7 @@ class ContreeGameTest extends TestCasesManagingPlayers {
 
     @DisplayName("Leaving a started game does trigger currentBidder and currentPlayer replacement, newPlayer get the leaver hand")
     @Test
-    public void testLeaveStartedGame() {
+    void testLeaveStartedGame() {
 
         LeaveGameFlags flags = new LeaveGameFlags();
 
@@ -231,7 +231,7 @@ class ContreeGameTest extends TestCasesManagingPlayers {
 
     @DisplayName("Leaving an over game does not trigger anything")
     @Test
-    public void testLeaveOverGame() {
+    void testLeaveOverGame() {
 
         LeaveGameFlags flags = new LeaveGameFlags();
 
@@ -268,7 +268,7 @@ class ContreeGameTest extends TestCasesManagingPlayers {
 
     @Test
     @DisplayName("on a just initialized game, toState() returns a ContreeGameState object with expected data")
-    public void testGameToState_game_initialized() {
+    void testGameToState_game_initialized() {
         ContreeGameState gameState = game.toState();
         assertThat(gameState).isNotNull();
         assertThat(gameState.gameId()).isNotNull();
@@ -278,7 +278,7 @@ class ContreeGameTest extends TestCasesManagingPlayers {
 
     @Test
     @DisplayName("on a started game, toState() returns a ContreeGameState object with expected data")
-    public void testGameToState_game_started() {
+    void testGameToState_game_started() {
         makeTheGameStart();
 
         ContreeGameState gameState = game.toState();
@@ -290,7 +290,7 @@ class ContreeGameTest extends TestCasesManagingPlayers {
 
     @Test
     @DisplayName("on a over game, toState() returns a ContreeGameState object with expected data")
-    public void testGameToState_game_over() {
+    void testGameToState_game_over() {
         makeTheGameOver();
 
         ContreeGameState gameState = game.toState();
@@ -304,10 +304,10 @@ class ContreeGameTest extends TestCasesManagingPlayers {
 
 class LeaveGameFlags {
 
-    public boolean playerGameStartedEvent;
+    boolean playerGameStartedEvent;
 
-    public Set<ClassicalCard> hand;
+    Set<ClassicalCard> hand;
 
-    public ContreeGame updatedGame;
+    ContreeGame updatedGame;
 
 }

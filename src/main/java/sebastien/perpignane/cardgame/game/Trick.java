@@ -1,16 +1,17 @@
 package sebastien.perpignane.cardgame.game;
 
 import sebastien.perpignane.cardgame.player.Player;
+import sebastien.perpignane.cardgame.player.Team;
 
 import java.util.Collection;
 import java.util.Optional;
 
-public interface Trick {
+public interface Trick<P extends Player<G, T>, G extends AbstractGame<P>, T extends Team> {
 
     boolean isOver();
 
-    Optional<? extends Player<?, ?>> getWinner();
+    Optional<P> getWinner();
 
-    Collection<? extends PlayedCard<?, ?>> getPlayedCards();
+    Collection<P> getPlayedCards();
 
 }

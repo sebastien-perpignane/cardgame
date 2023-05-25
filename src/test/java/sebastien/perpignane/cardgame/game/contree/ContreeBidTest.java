@@ -9,11 +9,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 
-public class ContreeBidTest {
+class ContreeBidTest {
 
     @DisplayName("Invalid bid if the bid is valued and no card suit is provided")
     @Test
-    public void testInvalidBidWhenValuedBidWithNullCardSuit() {
+    void testInvalidBidWhenValuedBidWithNullCardSuit() {
 
         ContreePlayer biddingPlayer = mock(ContreePlayer.class);
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(
@@ -24,7 +24,7 @@ public class ContreeBidTest {
 
     @DisplayName("Invalid bid if the bid is valued and NONE card suit is provided")
     @Test
-    public void testInvalidBidWhenValuedBidWithNONECardSuit() {
+    void testInvalidBidWhenValuedBidWithNONECardSuit() {
 
         ContreePlayer biddingPlayer = mock(ContreePlayer.class);
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(
@@ -54,7 +54,9 @@ public class ContreeBidTest {
     @Test
     void testAllowedSuitsForValuedBids() {
         var allowedSuits = ContreeBid.allowedCardSuitsForValuedBids();
-        assertThat(allowedSuits).doesNotContain(CardSuit.NONE);
+        assertThat(allowedSuits)
+                .isNotEmpty()
+                .doesNotContain(CardSuit.NONE);
     }
 
 }

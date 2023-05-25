@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class WarTrickTest {
+class WarTrickTest {
 
     private static WarPlayer player1;
     private static WarPlayer player2;
@@ -26,7 +26,7 @@ public class WarTrickTest {
     private WarTrick trick;
 
     @BeforeAll
-    public static void globalSetUp() {
+    static void globalSetUp() {
         player1 = mock(WarPlayer.class);
         player2 = mock(WarPlayer.class);
         players = List.of(player1, player2);
@@ -34,23 +34,23 @@ public class WarTrickTest {
     }
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         trick = new WarTrick("TEST", players, eventSender);
     }
 
     @Test
     @DisplayName("Trick is not over when one player plays one card at the beginning of a trick")
-    public void testPlayCardOnEmptyTrick() {
+    void testPlayCardOnEmptyTrick() {
         trick.playerPlay(player1, ClassicalCard.SIX_CLUB);
 
         assertThat(trick.isOver()).isFalse();
-        assertThat(trick.getWinner().isEmpty()).isTrue();
+        assertThat(trick.getWinner()).isEmpty();
 
     }
 
     @Test
     @DisplayName("End of trick when two players play 1 card, if no war situation")
-    public void testPlayEndOfTrick_no_war_condition_mock() {
+    void testPlayEndOfTrick_no_war_condition_mock() {
         trick.playerPlay(player1, ClassicalCard.JACK_CLUB);
         trick.playerPlay(player2, ClassicalCard.ACE_CLUB);
 
@@ -59,7 +59,7 @@ public class WarTrickTest {
 
     @Test
     @DisplayName("End of trick when two players play 1 card, if no war situation")
-    public void testPlayEndOfTrick_no_war_condition() {
+    void testPlayEndOfTrick_no_war_condition() {
 
         trick.playerPlay(player1, ClassicalCard.SIX_CLUB);
         trick.playerPlay(player2, ClassicalCard.TEN_DIAMOND);
@@ -67,13 +67,13 @@ public class WarTrickTest {
         assertThat(trick.isOver()).isTrue();
 
         assertThat(trick.getWinner()).isPresent();
-        assertThat(trick.getWinner().get()).isSameAs(player2);
+        assertThat(trick.getWinner()).containsSame(player2);
 
     }
 
     @Test
     @DisplayName("End of trick when 2 players play 3 cards in simple war condition")
-    public void testPlayEndOfTrick_war_condition() {
+    void testPlayEndOfTrick_war_condition() {
 
         trick.playerPlay(player1, ClassicalCard.SIX_CLUB);
         trick.playerPlay(player2, ClassicalCard.SIX_DIAMOND);
@@ -86,13 +86,13 @@ public class WarTrickTest {
 
         assertThat(trick.isOver()).isTrue();
         assertThat(trick.getWinner()).isPresent();
-        assertThat(trick.getWinner().get()).isSameAs(player1);
+        assertThat(trick.getWinner()).containsSame(player1);
 
     }
 
     @Test
     @DisplayName("End of trick when 2 players play 5 cards in 2 successive war conditions")
-    public void testPlayEndOfTrick_successive_war_conditions() {
+    void testPlayEndOfTrick_successive_war_conditions() {
 
         trick.playerPlay(player1, ClassicalCard.SIX_CLUB);
         trick.playerPlay(player2, ClassicalCard.SIX_DIAMOND);
@@ -111,13 +111,13 @@ public class WarTrickTest {
 
         assertThat(trick.isOver()).isTrue();
         assertThat(trick.getWinner()).isPresent();
-        assertThat(trick.getWinner().get()).isSameAs(player2);
+        assertThat(trick.getWinner()).containsSame(player2);
 
     }
 
     @Test
     @DisplayName("Error if a player plays a card on a ended trick")
-    public void testPlayAfterEndOfTrick() {
+    void testPlayAfterEndOfTrick() {
 
         trick.playerPlay(player1, ClassicalCard.SIX_CLUB);
         trick.playerPlay(player2, ClassicalCard.TEN_DIAMOND);
@@ -137,7 +137,7 @@ public class WarTrickTest {
 
     @Test
     @DisplayName("Trick stops if one player is out of cards during war")
-    public void testPrematureEndOfTrickDuringWar() {
+    void testPrematureEndOfTrickDuringWar() {
         trick.playerPlay(player1, ClassicalCard.SIX_CLUB);
         trick.playerPlay(player2, ClassicalCard.SIX_DIAMOND);
         // WAR
@@ -150,7 +150,7 @@ public class WarTrickTest {
         assertThat(player2.hasNoMoreCard()).isTrue();
         assertThat(trick.isOver()).isTrue();
         assertThat(trick.getWinner()).isPresent();
-        assertThat(trick.getWinner().get()).isSameAs(player1);
+        assertThat(trick.getWinner()).containsSame(player1);
 
     }
 

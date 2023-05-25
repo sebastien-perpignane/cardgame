@@ -33,7 +33,7 @@ import static org.mockito.Mockito.when;
   (!) Method coverage % will be low as a lot of methods are "delegate" methods in ContreeDeal
 
  */
-public class ContreeDealTest extends TestCasesManagingPlayers {
+class ContreeDealTest extends TestCasesManagingPlayers {
 
     private ContreeDealPlayers dealPlayers;
 
@@ -46,12 +46,12 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
 
 
     @BeforeAll
-    public static void globalSetUp() {
+    static void globalSetUp() {
         initPlayers();
     }
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
 
         ContreeBidPlayers bidPlayers = mock(ContreeBidPlayers.class);
         ContreeTrickPlayers trickPlayers = mock(ContreeTrickPlayers.class);
@@ -84,7 +84,7 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
 
     @DisplayName("When a deal is started without players, starting the deal fails")
     @Test
-    public void testStartDealFailsWhenNoPlayers() {
+    void testStartDealFailsWhenNoPlayers() {
         when(dealPlayers.getNumberOfPlayers()).thenReturn(0);
         when(dealPlayers.getCurrentDealPlayers()).thenReturn(Collections.emptyList());
 
@@ -96,7 +96,7 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
 
     @DisplayName("When a deal is started with a number of players not allowing fair card distribution, starting the deal fails")
     @Test
-    public void testStartDealFailsWhenBadNumberOfPlayers() {
+    void testStartDealFailsWhenBadNumberOfPlayers() {
         when(dealPlayers.getNumberOfPlayers()).thenReturn(3);
         when(dealPlayers.getCurrentDealPlayers()).thenReturn(List.of(player1, player2, player3));
 
@@ -108,7 +108,7 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
 
     @DisplayName("After deal.startDeal(), the deal is in bid step")
     @Test
-    public void testDealIsInBidStepAfterStart() {
+    void testDealIsInBidStepAfterStart() {
         deal.startDeal(-1,"TEST", dealPlayers);
 
         assertThat( deal.isBidStep() ).isTrue();
@@ -117,7 +117,7 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
 
     @DisplayName("When bids are over, the deal is in play step. Trump suit is defined.")
     @Test
-    public void testDealIsInPlayStepWhenBidsAreOver() {
+    void testDealIsInPlayStepWhenBidsAreOver() {
         deal.startDeal(-1,"TEST", dealPlayers);
         ContreeBid bid = new ContreeBid(player1, ContreeBidValue.EIGHTY, CardSuit.DIAMONDS);
         when(bids.bidsAreOver()).thenReturn(true);
@@ -134,7 +134,7 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
 
     @DisplayName("Players cannot play a card in BID step ")
     @Test
-    public void testExceptionWhenPlayingWhileBidStep() {
+    void testExceptionWhenPlayingWhileBidStep() {
         deal.startDeal(-1,"TEST", dealPlayers);
 
         assertThat( deal.isBidStep() ).isTrue();
@@ -147,7 +147,7 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
 
     @DisplayName("Players cannot place a bid in PLAY step")
     @Test
-    public void testExceptionWhenPlacingBidDuringPlayStep() {
+    void testExceptionWhenPlacingBidDuringPlayStep() {
 
         // Given
 
@@ -169,7 +169,7 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
 
     @DisplayName("One play step reached, deal is over when tricks are over")
     @Test
-    public void testPlayerPlaysWhenTricksAreOver() {
+    void testPlayerPlaysWhenTricksAreOver() {
 
         goToPlayStep();
 
@@ -183,7 +183,7 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
 
     @DisplayName("One play step reached, deal is not over when tricks are not over")
     @Test
-    public void testPlayerPlaysWhenTricksAreNotOver() {
+    void testPlayerPlaysWhenTricksAreNotOver() {
 
         goToPlayStep();
 
@@ -208,7 +208,7 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
 
     @DisplayName("When only bid is 180 HEART, the deal is not doubled nor redoubled")
     @Test
-    public void testDealIsNotDoubleNorRedouble() {
+    void testDealIsNotDoubleNorRedouble() {
 
         deal.startDeal(-1,"TEST", dealPlayers);
 
@@ -221,7 +221,7 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
 
     @DisplayName("getCurrentPlayer behavior is consistent with values returned by tricks")
     @Test
-    public void testGetCurrentPlayer_isConsistentWithTricks() {
+    void testGetCurrentPlayer_isConsistentWithTricks() {
 
         when(tricks.getCurrentPlayer()).thenReturn(Optional.empty());
 
@@ -240,7 +240,7 @@ public class ContreeDealTest extends TestCasesManagingPlayers {
 
     @DisplayName("getCurrentBidder behavior is consistent with values returned by bids")
     @Test
-    public void testGetCurrentBidder_isConsistentWithBids() {
+    void testGetCurrentBidder_isConsistentWithBids() {
 
         when(bids.getCurrentBidder()).thenReturn(Optional.empty());
 

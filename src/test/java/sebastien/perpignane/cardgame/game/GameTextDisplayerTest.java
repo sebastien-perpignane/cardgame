@@ -24,23 +24,26 @@ public class GameTextDisplayerTest extends TestCasesManagingPlayers {
 
     private static PrintStream fakeStdOut;
 
-
     @BeforeAll
-    public static void setUp() {
-        stdout = System.out;
+    public static void globalSetUp() {
+        overrideStdOut();
+    }
 
+    private static void overrideStdOut() {
+        stdout = System.out;
         bout = new ByteArrayOutputStream();
         fakeStdOut = new PrintStream(bout);
         System.setOut(fakeStdOut);
-
     }
 
     @AfterAll
-    public static void cleanUp() {
+    public static void globalCleanUp() {
+        restoreStdOut();
+    }
 
+    private static void restoreStdOut() {
         System.setOut(stdout);
         fakeStdOut.close();
-
     }
 
     @DisplayName("A special text is displayed when the deal ends with a capot")
@@ -56,8 +59,7 @@ public class GameTextDisplayerTest extends TestCasesManagingPlayers {
 
         System.err.println(output);
 
-        assertThat(output.isBlank()).isFalse();
-        assertThat(output.contains("###      ###      ###              # ###                                                ###      ###      ###")).isTrue();
+        assertThat(output).isNotBlank().contains(GameTextDisplayer.CAPOT_ASCII);
 
     }
 
@@ -73,9 +75,7 @@ public class GameTextDisplayerTest extends TestCasesManagingPlayers {
         var output = bout.toString(StandardCharsets.UTF_8);
 
         System.err.println(output);
-
-        assertThat(output.isBlank()).isFalse();
-        assertThat(output.contains("###      ###      ###              # ###                                                ###      ###      ###")).isFalse();
+        assertThat(output).isNotBlank().doesNotContain(GameTextDisplayer.CAPOT_ASCII);
 
     }
 

@@ -12,7 +12,7 @@ public abstract class AbstractGameEventSender {
     //We use a concurrent set (provided by concurrent hash map) to allow safe addition of observers while the game is running.
     protected final Set<GameObserver> gameObservers = ConcurrentHashMap.newKeySet();
 
-    public AbstractGameEventSender(GameObserver... observers) {
+    protected AbstractGameEventSender(GameObserver... observers) {
         gameObservers.addAll(Arrays.asList(observers));
     }
 

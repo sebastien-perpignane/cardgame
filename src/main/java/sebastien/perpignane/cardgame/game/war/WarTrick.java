@@ -162,7 +162,7 @@ public class WarTrick implements Trick {
                 .map(cards -> {
                     int lastCardIdx = cards.size() - 1;
                     return cards.get(lastCardIdx);
-                }).collect(Collectors.toList());
+                }).toList();
     }
 
     private boolean onePlayerHasNoMoreCardsAndCardsToPlay() {

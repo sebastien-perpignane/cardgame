@@ -144,16 +144,12 @@ public class WarGame extends AbstractGame<WarPlayer> {
 
         boolean invalidPlay = !isInPlayableState();
 
-        //System.err.printf("Cheater detected : %s tries to play on a game not in a playable state.", pc.player());
-
         if (!players.contains(player)) {
             invalidPlay = true;
-            //System.err.printf("Cheater detected : %s does not play in the game %s.", pc.player(), this);
         }
 
         if (player != getCurrentPlayer()) {
             invalidPlay = true;
-            //System.err.printf("Cheater detected : %s is not the current player.", pc.player());
         }
         return invalidPlay;
     }

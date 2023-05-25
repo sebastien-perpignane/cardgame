@@ -22,7 +22,7 @@ class BiddableValuesFilter {
 
         public BidFilterResult() {
             biddableValues = new HashSet<>();
-            exclusionCauseByBidValue = new HashMap<>();
+            exclusionCauseByBidValue = new EnumMap<>(ContreeBidValue.class);
         }
 
         public Set<ContreeBidValue> biddableValues() {
@@ -55,7 +55,7 @@ class BiddableValuesFilter {
 
     }
 
-    private final static Set<ContreeBidValue> allBidValuesExceptDoubleAndRedouble;
+    private static final Set<ContreeBidValue> allBidValuesExceptDoubleAndRedouble;
 
     static {
         allBidValuesExceptDoubleAndRedouble =
@@ -83,7 +83,7 @@ class BiddableValuesFilter {
             bidFilterResult.addBiddableValues(allBidValuesExceptDoubleAndRedouble);
         }
         else {
-            var highestBid = bids.highestBid().get();
+            var highestBid = bids.highestBid().orElseThrow();
 
             if (bids.noDoubleNorRedoubleBid()) {
                 bidFilterResult.addBiddableValues(

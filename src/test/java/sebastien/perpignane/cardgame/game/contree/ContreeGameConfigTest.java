@@ -4,54 +4,34 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ContreeGameConfigTest  {
+class ContreeGameConfigTest {
 
-    private ContreeGameConfig config;
+    private ContreeGameConfig contreeGameConfig;
 
     @BeforeEach
-    public void setUp() {
-        config = new ContreeGameConfig();
+    void setUp() {
+        contreeGameConfig = new ContreeGameConfig() {
+            @Override
+            public int getMaxScore() {
+                return ContreeGameConfig.super.getMaxScore();
+            }
+        };
     }
 
-    @DisplayName("Loaded config values match values of the test config file")
+    @DisplayName("Default max score")
     @Test
-    void testConfigParametersValuesSameAsTestConfigFile() {
-
-        assertThat( config.isFileNotFound() ).isFalse();
-
-        assertThat( config.maxScore() ).isEqualTo(1_000_000);
-        assertThat( config.distributionConfiguration() ).isEqualTo(List.of(3, 3, 2));
-
+    void testDefaultMaxScore() {
+        assertThat(contreeGameConfig.getMaxScore())
+                .isEqualTo(ContreeGameConfig.DEFAULT_MAX_SCORE);
     }
 
-    @DisplayName("Comma separated strings without spaces are correctly converted to list of Integer")
+    @DisplayName("Default distribution config")
     @Test
-    void testComaSeparatedToIntegerList_noSpaces() {
-
-        assertThat( config.isFileNotFound() ).isFalse();
-
-        List<Integer> mappedIntegerList = config.mapComaSeparatedStringToIntegerList("12,6,22");
-        assertThat( mappedIntegerList ).isEqualTo( List.of(12, 6, 22) );
-    }
-
-    @DisplayName("Comma separated strings with spaces are correctly converted to list of Integer")
-    @Test
-    void testComaSeparatedToIntegerList_withSpaces() {
-        List<Integer> mappedIntegerList = config.mapComaSeparatedStringToIntegerList("12, 6, 22");
-
-        assertThat( config.isFileNotFound() ).isFalse();
-        assertThat(mappedIntegerList).isEqualTo( List.of(12, 6, 22) );
-    }
-
-    @DisplayName("If a contree game config cannot load the config file, fileNotFound flag is true")
-    @Test
-    void testCreateConfigWithBadFileName() {
-        ContreeGameConfig gameConfig = new ContreeGameConfig("non-existing-file");
-        assertThat( gameConfig.isFileNotFound() ).isTrue();
+    void testDefaultDistributionConfig()  {
+        assertThat(contreeGameConfig.getDistributionConfiguration())
+                .isEqualTo(ContreeGameConfig.DEFAULT_DISTRIBUTION_CONFIG);
     }
 
 }

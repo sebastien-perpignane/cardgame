@@ -8,7 +8,7 @@ import java.util.function.Predicate;
 
 class ContreeDealBids {
 
-    private final static int INITIAL_MAX_BIDS = 4;
+    private static final int INITIAL_MAX_BIDS = 4;
 
     private int maxBids = INITIAL_MAX_BIDS;
 

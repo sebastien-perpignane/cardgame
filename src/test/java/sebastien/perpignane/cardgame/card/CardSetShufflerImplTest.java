@@ -9,13 +9,13 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CardSetShufflerImplTest {
+class CardSetShufflerImplTest {
 
     private final CardSetShufflerImpl cardSetShuffler = new CardSetShufflerImpl();
-
+    
     @Test
     @DisplayName("Shuffle of a 32 card set")
-    public void testShuffle_32cards() {
+    void testShuffle_32cards() {
         List<ClassicalCard> shuffledCards = cardSetShuffler.shuffle(CardSet.GAME_32);
         Set<ClassicalCard> shuffledCardSet = new HashSet<>(shuffledCards);
 
@@ -25,7 +25,7 @@ public class CardSetShufflerImplTest {
 
     @Test
     @DisplayName("Shuffle of a 52 card set")
-    public void testShuffle_52cards() {
+    void testShuffle_52cards() {
         List<ClassicalCard> shuffledCards = cardSetShuffler.shuffle(CardSet.GAME_52);
         Set<ClassicalCard> shuffledCardSet = new HashSet<>(shuffledCards);
 
@@ -35,7 +35,7 @@ public class CardSetShufflerImplTest {
 
     @Test
     @DisplayName("Shuffle of a 54 card set")
-    public void testShuffle_54cards() {
+    void testShuffle_54cards() {
         List<ClassicalCard> shuffledCards = cardSetShuffler.shuffle(CardSet.GAME_54);
         Set<ClassicalCard> shuffledCardSet = new HashSet<>(shuffledCards);
 

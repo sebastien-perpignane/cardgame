@@ -10,7 +10,7 @@ public abstract class AbstractGame<P extends Player<?, ?>> {
     private final String gameId;
     private GameStatus status;
 
-    public AbstractGame() {
+    protected AbstractGame() {
         gameId = UUID.randomUUID().toString();
     }
 

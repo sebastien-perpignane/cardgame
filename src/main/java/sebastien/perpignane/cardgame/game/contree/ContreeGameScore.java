@@ -2,7 +2,7 @@ package sebastien.perpignane.cardgame.game.contree;
 
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -10,7 +10,7 @@ public class ContreeGameScore {
 
     private final int maxScore;
 
-    private final Map<ContreeTeam, Integer> scoreByTeam = new HashMap<>();
+    private final Map<ContreeTeam, Integer> scoreByTeam = new EnumMap<>(ContreeTeam.class);
 
     public ContreeGameScore(int maxScore) {
         this.maxScore = maxScore;

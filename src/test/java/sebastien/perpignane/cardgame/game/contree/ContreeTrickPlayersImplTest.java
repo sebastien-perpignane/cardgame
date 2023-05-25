@@ -17,12 +17,12 @@ class ContreeTrickPlayersImplTest extends TestCasesManagingPlayers {
     private ContreeTrickPlayers trickPlayers;
 
     @BeforeAll
-    public static void globalSetUp() {
+    static void globalSetUp() {
         initPlayers();
     }
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
 
         ContreeDealPlayers dealPlayers = mock(ContreeDealPlayers.class);
         when(dealPlayers.getCurrentDealPlayers()).thenReturn(players);
@@ -39,43 +39,46 @@ class ContreeTrickPlayersImplTest extends TestCasesManagingPlayers {
 
     @DisplayName("After construction, current player must be player1")
     @Test
-    public void testCurrentPlayerAfterConstruction() {
+    void testCurrentPlayerAfterConstruction() {
 
-        assertThat(trickPlayers.getCurrentPlayerSlot().getPlayer()).isPresent();
-        assertThat(trickPlayers.getCurrentPlayerSlot().getPlayer().get()).isSameAs(player1);
+        assertThat(trickPlayers.getCurrentPlayerSlot().getPlayer())
+                .isPresent()
+                .containsSame(player1);
 
     }
 
     @DisplayName("After call to goToNextPlayer, current player must be player2")
     @Test
-    public void testCurrentPlayerAfterCallToNext() {
+    void testCurrentPlayerAfterCallToNext() {
         trickPlayers.gotToNextPlayer();
-        assertThat(trickPlayers.getCurrentPlayerSlot().getPlayer()).isPresent();
-        assertThat(trickPlayers.getCurrentPlayerSlot().getPlayer().get()).isSameAs(player2);
+        assertThat(trickPlayers.getCurrentPlayerSlot().getPlayer())
+                .isPresent()
+                .containsSame(player2);
     }
 
     @DisplayName("After four calls to next, current player is player1")
     @Test
-    public void testCurrentPlayerAfterFourCallsToNext() {
+    void testCurrentPlayerAfterFourCallsToNext() {
         trickPlayers.gotToNextPlayer();
         trickPlayers.gotToNextPlayer();
         trickPlayers.gotToNextPlayer();
         trickPlayers.gotToNextPlayer();
 
-        assertThat(trickPlayers.getCurrentPlayerSlot().getPlayer()).isPresent();
-        assertThat(trickPlayers.getCurrentPlayerSlot().getPlayer().get()).isSameAs(player1);
+        assertThat(trickPlayers.getCurrentPlayerSlot().getPlayer())
+                .isPresent()
+                .containsSame(player1);
     }
 
     @DisplayName("The expected current player is notified when notifyCurrentPlayerTurn is called")
     @Test
-    public void testNotifyCurrentPlayer() {
+    void testNotifyCurrentPlayer() {
 
         boolean[] calledPlayers = {false, false, false, false};
 
         boolean[] expectedCalledPlayers = {false, false, false, false};
 
         assertThat(trickPlayers.getCurrentPlayerSlot().getPlayer()).isPresent();
-        assertThat(trickPlayers.getCurrentPlayerSlot().getPlayer().get()).isSameAs(player1);
+        assertThat(trickPlayers.getCurrentPlayerSlot().getPlayer()).containsSame(player1);
 
         for (int testedPlayerIndex = 0 ; testedPlayerIndex < 4 ; testedPlayerIndex++) {
             expectedCalledPlayers[testedPlayerIndex] = true;
@@ -97,18 +100,18 @@ class ContreeTrickPlayersImplTest extends TestCasesManagingPlayers {
 
     @DisplayName("When setting first current trick, currentPlayer is player 1")
     @Test
-    public void testGetCurrentPlayerWhenFirstCurrentTrickSet() {
+    void testGetCurrentPlayerWhenFirstCurrentTrickSet() {
         ContreeTrick firstTrick = mock(ContreeTrick.class);
 
         trickPlayers.setCurrentTrick(firstTrick);
 
         assertThat(trickPlayers.getCurrentPlayerSlot().getPlayer()).isPresent();
-        assertThat(trickPlayers.getCurrentPlayerSlot().getPlayer().get()).isEqualTo(player1);
+        assertThat(trickPlayers.getCurrentPlayerSlot().getPlayer()).containsSame(player1);
     }
 
     @DisplayName("When setting second current trick, currentPlayer is the winner of the first trick")
     @Test
-    public void testGetCurrentPlayerWhenSecondCurrentTrickSet() {
+    void testGetCurrentPlayerWhenSecondCurrentTrickSet() {
 
         ContreeTrick firstTrick = mock(ContreeTrick.class);
         when(firstTrick.getWinner()).thenReturn(Optional.ofNullable(player4));

@@ -35,12 +35,12 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
     private PlayableCardsFilter playableCardsFilter;
 
     @BeforeAll
-    public static void globalSetUp() {
+    static void globalSetUp() {
         initPlayers();
     }
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         trickWinningPlayer = null;
         trickTrumpSuit = null;
         isTrumpTrick = false;
@@ -62,7 +62,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
     @Test
     @DisplayName("The first played card can be any card")
-    public void testFirstPlayedCard() {
+    void testFirstPlayedCard() {
 
         trickTrumpSuit = CardSuit.HEARTS;
         trickPlayedCards = Collections.emptyList();
@@ -79,7 +79,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
     @Test
     @DisplayName("When a fist card was played and the user has cards with same suit, he must play a card with same suit")
-    public void testFirstCardAlreadyPlayed_compatibleCardAvailable_noTrump() {
+    void testFirstCardAlreadyPlayed_compatibleCardAvailable_noTrump() {
 
         trickTrumpSuit = CardSuit.HEARTS;
 
@@ -100,7 +100,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
     @Test
     @DisplayName("When a first card was played by opponent and the user does not have cards with same suit nor trumps, he can play any card")
-    public void testFirstCardIsPlayed_noCompatibleCardAvailable_noTrump() {
+    void testFirstCardIsPlayed_noCompatibleCardAvailable_noTrump() {
 
         trickTrumpSuit = CardSuit.HEARTS;
 
@@ -120,7 +120,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
     @Test
     @DisplayName("When a fist card was played and the user does not have cards with same suit but has trump, he must trump")
-    public void testFirstCardIsPlayed_noCompatibleCardAvailable_hasTrump() {
+    void testFirstCardIsPlayed_noCompatibleCardAvailable_hasTrump() {
 
         trickTrumpSuit = CardSuit.HEARTS;
 
@@ -141,7 +141,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
     @DisplayName("An opponent played trump against the player teammate, player must over trump when he has trump cards")
     @Test
-    public void testFirstCardPlayed_notTrumpTrick_trumpCardPlayed_playerHasHigherCard() {
+    void testFirstCardPlayed_notTrumpTrick_trumpCardPlayed_playerHasHigherCard() {
         trickTrumpSuit = CardSuit.HEARTS;
 
         ContreePlayer teammate = player1;
@@ -166,7 +166,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
     @DisplayName("An opponent played trump against the player teammate, player must under trump as he has trump")
     @Test
-    public void testFirstCardPlayed_notTrumpTrick_trumpCardPlayed_playerHasNotHigherCard() {
+    void testFirstCardPlayed_notTrumpTrick_trumpCardPlayed_playerHasNotHigherCard() {
         trickTrumpSuit = CardSuit.HEARTS;
 
         ContreePlayer teammate = player1;
@@ -190,7 +190,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
     @DisplayName("An opponent played trump against the player teammate, player has no trump, he can play any card in his hand")
     @Test
-    public void testNotTrumpTrick_trumpCardPlayed_playerHasNotTrump() {
+    void testNotTrumpTrick_trumpCardPlayed_playerHasNotTrump() {
 
         trickTrumpSuit = CardSuit.HEARTS;
 
@@ -216,7 +216,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
     @DisplayName("The teammate is winning the trick, player has no card in the suit, any card can be played")
     @Test
-    public void testNotTrumpTrick_teamMateIsWinningWithoutTrump() {
+    void testNotTrumpTrick_teamMateIsWinningWithoutTrump() {
 
         trickTrumpSuit = CardSuit.HEARTS;
 
@@ -244,7 +244,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
     @DisplayName("The teammate trumped and is winning the trick, wanted suit not available, any card can be played")
     @Test
-    public void testFirstCardPlayed_notTrumpTrick_teamMateIsWinning() {
+    void testFirstCardPlayed_notTrumpTrick_teamMateIsWinning() {
         trickTrumpSuit = CardSuit.HEARTS;
 
         ContreePlayer opponent1 = player1;
@@ -273,7 +273,7 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
 
     @DisplayName("The teammate trumped and is winning the trick, the tested player has the wanted color, he must play the wanted color")
     @Test
-    public void testFirstCardPlayed_trumpedTrick_teamMateIsWinning_playerHasWantedColor() {
+    void testFirstCardPlayed_trumpedTrick_teamMateIsWinning_playerHasWantedColor() {
         trickTrumpSuit = CardSuit.HEARTS;
 
         ContreePlayer opponent1 = player1;

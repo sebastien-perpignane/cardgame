@@ -20,7 +20,7 @@ public abstract class AbstracLocalThreadWarPlayer extends AbstractThreadLocalPla
 
     private final List<ClassicalCard> cardStock = new CopyOnWriteArrayList<>();
 
-    public AbstracLocalThreadWarPlayer() {
+    protected AbstracLocalThreadWarPlayer() {
         state = PlayerState.WAITING;
     }
 

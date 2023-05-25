@@ -90,13 +90,13 @@ class ContreeDealPlayersImpl implements ContreeDealPlayers {
 
     List<ContreePlayer> rollPlayerFromIndex(int playerIndex) {
 
-        if (playerIndex + 1 > ContreeGamePlayers.NB_PLAYERS) {
+        if (playerIndex + 1 > ContreePlayers.NB_PLAYERS) {
             throw new IllegalArgumentException(String.format("Player index %d is not valid", playerIndex));
         }
 
         List<ContreePlayer> newPlayerList = new ArrayList<>();
 
-        for (int i = playerIndex ; newPlayerList.size() < ContreeGamePlayers.NB_PLAYERS ; ) {
+        for (int i = playerIndex ; newPlayerList.size() < ContreePlayers.NB_PLAYERS ; ) {
             newPlayerList.add(gamePlayers.getGamePlayers().get(i));
             i = nextPlayerIndex(i);
         }
@@ -107,13 +107,13 @@ class ContreeDealPlayersImpl implements ContreeDealPlayers {
 
     List<PlayerSlot<ContreePlayer>> rollPlayerSlotsFromIndex(int playerIndex) {
 
-        if (playerIndex + 1 > ContreeGamePlayers.NB_PLAYERS) {
+        if (playerIndex + 1 > ContreePlayers.NB_PLAYERS) {
             throw new IllegalArgumentException(String.format("Player index %d is not valid", playerIndex));
         }
 
         List<PlayerSlot<ContreePlayer>> newPlayerList = new ArrayList<>();
 
-        for (int i = playerIndex ; newPlayerList.size() < ContreeGamePlayers.NB_PLAYERS ; ) {
+        for (int i = playerIndex ; newPlayerList.size() < ContreePlayers.NB_PLAYERS ; ) {
             newPlayerList.add(gamePlayers.getPlayerSlots().getSlot(i));
             i = nextPlayerIndex(i);
         }

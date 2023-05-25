@@ -13,6 +13,4 @@ public record ContreeGameState(
         int team2Score,
         int maxScore) {
 
-
-
 }

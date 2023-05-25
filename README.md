@@ -11,18 +11,17 @@ It allows me to practice multiple programming skills :
 
 War game was just a warm-up. The final objective of the project is a try to provide a contree game with a modern dynamic GUI.
 
-## How to build playable
+## How to build a playable jar
 
 Java 17 is required. I suggest to install the JDK with [SdkMan](https://sdkman.io/).
 
 ```bash
-cd cardgame
 ./mvnw -Pstandalone clean package
 ```
 
 Activating the "standalone" profile is needed if you want to play the game in console mode.
 
-If you want to use cardgame as a jar lib, "standalone" profile is not required.
+If you want to use cardgame as a jar lib, do not use "standalone" profile.
 
 ## How to run contree games
 
@@ -32,14 +31,14 @@ If you want to use cardgame as a jar lib, "standalone" profile is not required.
 java -jar target/cardgame-*-standalone.jar
 ```
 
-### You can run a "4 bots" game by adding the "only-bots" property :
+### You can run a "4 bots" game by activating the "--only-bots" option :
 ```bash
-java -Donly-bots=true -jar target/cardgame-*-standalone.jar
+java -jar target/cardgame-*-standalone.jar --only-bots=true
 ```
 
-### Default score to reach to end a game is 1000. You can change the max score with the "max-score" property : 
+### Default score to reach to end a game is 1500. You can change the max score with the "--max-score" option : 
 ```bash
-java -Dmax-score=500 -jar target/cardgame-*-standalone.jar
+java -jar target/cardgame-*-standalone.jar --max-score=500
 ```
 
 ### Reference Documentation

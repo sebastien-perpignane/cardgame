@@ -16,19 +16,17 @@ record DealScoreResult(
 
 class DealScoreCalculator {
 
-    final int EXPECTED_CARD_SCORE_SUM = 162;
+    static final int EXPECTED_CARD_SCORE_SUM = 162;
 
-    final int DIX_DE_DER_BONUS = 10;
-
-    private Team dixDeDerTeam;
-
-    private Map<Team, ? extends Collection<ContreeCard>> cardsByTeam = new HashMap<>();
+    static final int DIX_DE_DER_BONUS = 10;
 
     public DealScoreResult computeDealScores(ContreeDeal deal) {
+        Map<Team, ? extends Collection<ContreeCard>> cardsByTeam;
+        Team dixDeDerTeam;
 
         Objects.requireNonNull(deal);
 
-        Map<ContreeTeam, Integer> scoreByTeam = new HashMap<>();
+        Map<ContreeTeam, Integer> scoreByTeam = new EnumMap<>(ContreeTeam.class);
 
         Set<ContreeTeam> allTeams = ContreeTeam.getTeams();
 
@@ -74,10 +72,10 @@ class DealScoreCalculator {
             scoreByTeam.put(deal.getDefenseTeam().orElseThrow(), winnerScore);
         }
         else {
-            scoreByTeam = new HashMap<>(cardScoreByTeam);
+            scoreByTeam = new EnumMap<>(cardScoreByTeam);
         }
 
-        Map<ContreeTeam, Integer> finalScoreBeforeRound = new HashMap<>(scoreByTeam);
+        Map<ContreeTeam, Integer> finalScoreBeforeRound = new EnumMap<>(scoreByTeam);
 
         roundScores(scoreByTeam);
 
@@ -117,7 +115,7 @@ class DealScoreCalculator {
             winnerBaseScore = ContreeBidValue.CAPOT.getExpectedScore() * 2;
         }
 
-        Map<ContreeTeam, Integer> scoreByTeam = new HashMap<>();
+        Map<ContreeTeam, Integer> scoreByTeam = new EnumMap<>(ContreeTeam.class);
 
         scoreByTeam.put(winnerTeam, winnerBaseScore * multiplier);
         scoreByTeam.put(loserTeam, 0);
@@ -127,22 +125,28 @@ class DealScoreCalculator {
     }
 
     private boolean contractIsReached(ContreeDeal deal, Map<ContreeTeam, Integer> cardScoreByTeam) {
-        var attackTeam = deal.getAttackTeam().orElseThrow();
-        if (deal.getContractBid().isEmpty()) {
-            throw new IllegalStateException("Computing score for a no bid deal does not make sense");
-        }
+
         if (deal.isAnnouncedCapot()) {
             return deal.isCapotMadeByAttackTeam();
         }
-        return cardScoreByTeam.get(attackTeam) >= deal.getContractBid().get().bidValue().getExpectedScore();
+
+        var attackTeam = deal.getAttackTeam().orElseThrow();
+        var contractBid = deal.getContractBid().orElseThrow(
+                () -> new IllegalStateException("Computing score for a no bid deal does not make sense")
+        );
+
+        int attackTeamScore = cardScoreByTeam.get(attackTeam);
+        int expectedScore = contractBid.bidValue().getExpectedScore();
+
+        return attackTeamScore >= expectedScore;
     }
 
     private void roundScores(Map<ContreeTeam, Integer> scoreByTeam) {
-        for (ContreeTeam t : scoreByTeam.keySet()) {
-            int score = scoreByTeam.get(t);
+        for (Map.Entry<ContreeTeam, Integer> teamScore : scoreByTeam.entrySet()) {
+            int score = teamScore.getValue();
             // round to the ten
             var roundScore = ((score+5)/10)*10;
-            scoreByTeam.put(t, roundScore);
+            scoreByTeam.put(teamScore.getKey(), roundScore);
         }
     }
 

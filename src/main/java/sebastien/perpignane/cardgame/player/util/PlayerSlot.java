@@ -34,4 +34,12 @@ public class PlayerSlot<P extends Player<?, ?>> {
         this.player = player;
     }
 
+    public boolean isEmpty() {
+        return player == null;
+    }
+
+    public boolean isPresent() {
+        return !isEmpty();
+    }
+
 }

@@ -4,23 +4,19 @@ import sebastien.perpignane.cardgame.card.CardDealer;
 
 public class ContreeGameFactory {
 
-    public static ContreeGame createGame(Integer maxScore) {
+    private ContreeGameFactory() {
+    }
 
-        ContreeGameConfig config = new ContreeGameConfig();
+    public static ContreeGame createGame(ContreeGameConfig gameConfig) {
         ContreeGameEventSender eventSender = new ContreeGameEventSender();
         ContreeGamePlayers players = new ContreeGamePlayersImpl();
-        ContreeGameScore gameScore = new ContreeGameScore(maxScore == null ? config.maxScore() : maxScore);
+        ContreeGameScore gameScore = new ContreeGameScore(gameConfig.getMaxScore());
         PlayableCardsFilter playableCardsFilter = new PlayableCardsFilter();
         BiddableValuesFilter biddableValuesFilter = new BiddableValuesFilter();
         DealScoreCalculator scoreCalculator = new DealScoreCalculator();
-        CardDealer cardDealer = new CardDealer(config.distributionConfiguration());
+        CardDealer cardDealer = new CardDealer(gameConfig.getDistributionConfiguration());
         ContreeDeals deals = new ContreeDeals(gameScore, scoreCalculator, biddableValuesFilter, playableCardsFilter, cardDealer, eventSender);
         return new ContreeGame(players, deals, eventSender);
-
-    }
-
-    public static ContreeGame createGame() {
-        return createGame(null);
     }
 
 }

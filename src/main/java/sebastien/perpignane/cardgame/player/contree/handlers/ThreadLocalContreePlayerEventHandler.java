@@ -6,6 +6,8 @@ import sebastien.perpignane.cardgame.player.contree.*;
 
 import java.util.Set;
 
+import static java.lang.System.out;
+
 public abstract class ThreadLocalContreePlayerEventHandler extends AbstractThreadPlayerEventHandler<ContreePlayer, PlayerMessage> implements ContreePlayerEventHandler {
 
     private ContreePlayer player;
@@ -19,7 +21,7 @@ public abstract class ThreadLocalContreePlayerEventHandler extends AbstractThrea
         this.player = player;
     }
 
-    public ThreadLocalContreePlayerEventHandler() {
+    protected ThreadLocalContreePlayerEventHandler() {
     }
 
     @Override
@@ -59,7 +61,7 @@ public abstract class ThreadLocalContreePlayerEventHandler extends AbstractThrea
         switch (playerMessage.messageType()) {
             case PLAY -> managePlayMessage(playerMessage);
             case BID -> manageBidMessage(playerMessage);
-            case STATUS_UPDATE -> System.out.printf("You're now %s%n", playerMessage.newStatus());
+            case STATUS_UPDATE -> out.printf("You're now %s%n", playerMessage.newStatus());
             case GAME_OVER, EJECTED ->  mustExit = true;
             case GAME_STARTED -> {
                 // Directly managed by the onGameStarted method, to start the thread

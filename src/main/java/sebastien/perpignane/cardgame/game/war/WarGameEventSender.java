@@ -19,12 +19,12 @@ class WarGameEventSender extends AbstractGameEventSender {
     WarGameEventSender(Collection<CardGameObserver> observers) {
 
         observers.forEach(o -> {
-            if (o instanceof WarTrickObserver) {
+            if (o instanceof WarTrickObserver warTrickObserver) {
 
-                trickObservers.add((WarTrickObserver) o);
+                trickObservers.add(warTrickObserver);
             }
-            if (o instanceof GameObserver) {
-                gameObservers.add((GameObserver) o);
+            if (o instanceof GameObserver gameObserver) {
+                gameObservers.add(gameObserver);
             }
         });
 

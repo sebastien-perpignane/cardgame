@@ -44,7 +44,7 @@ class GamePlayerSlotsTest extends TestCasesManagingPlayers {
 
         assertThat(replacedPlayer).isEmpty();
         assertThat(slot0.getPlayer()).isPresent();
-        assertThat(slot0.getPlayer().get()).isSameAs(player1);
+        assertThat(slot0.getPlayer()).containsSame(player1);
 
     }
 
@@ -61,8 +61,8 @@ class GamePlayerSlotsTest extends TestCasesManagingPlayers {
         assertThat(replacedPlayer).isPresent();
         assertThat(slot2.getPlayer()).isPresent();
 
-        assertThat(replacedPlayer.get()).isSameAs(player3);
-        assertThat(slot2.getPlayer().get()).isSameAs(player1);
+        assertThat(replacedPlayer).containsSame(player3);
+        assertThat(slot2.getPlayer()).containsSame(player1);
 
     }
 
@@ -70,7 +70,7 @@ class GamePlayerSlotsTest extends TestCasesManagingPlayers {
     void testGetSlotByPlayer() {
 
         var player1Slot = fullSlots.getSlot(player1);
-        assertThat(player1Slot.getSlotNumber()).isEqualTo(0);
+        assertThat(player1Slot.getSlotNumber()).isZero();
 
         var player2Slot = fullSlots.getSlot(player2);
         assertThat(player2Slot.getSlotNumber()).isEqualTo(1);
