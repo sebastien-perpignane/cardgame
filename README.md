@@ -41,6 +41,18 @@ java -jar target/cardgame-*-standalone.jar --only-bots=true
 java -jar target/cardgame-*-standalone.jar --max-score=500
 ```
 
+## How to "install" contree game
+
+You can "install" contree-game on your linux system by running these commands (with the hypothesis that your HOME contains a
+bin directory that's in your PATH) :
+
+```bash
+rm -f $HOME/bin/contree-game
+mvn -Pstandalone package
+./scripts/jpackage.sh
+ln -s $(pwd)/target/jpackage/contree-game/bin/contree-game $HOME/bin/contree-game
+```
+
 ### Reference Documentation
 For further reference, please consider the following sections:
 

@@ -1,5 +1,10 @@
 #!/bin/bash
 
+#######################################
+# package cardgame as an installable
+# command for linux
+#######################################
+
 ##################
 echo "::group::Preparing directories"
 cd "$(dirname "$0")"/.. || exit 1
