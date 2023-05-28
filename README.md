@@ -48,7 +48,7 @@ bin directory that's in your PATH) :
 
 ```bash
 rm -f $HOME/bin/contree-game
-mvn -Pstandalone package
+./mvnw -Pstandalone package
 ./scripts/jpackage.sh
 ln -s $(pwd)/target/jpackage/contree-game/bin/contree-game $HOME/bin/contree-game
 ```
@@ -56,8 +56,13 @@ ln -s $(pwd)/target/jpackage/contree-game/bin/contree-game $HOME/bin/contree-gam
 ### Reference Documentation
 For further reference, please consider the following sections:
 
+#### Technical doc
+
 * [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
-* [Belote contrée rules (french)](http://www.ffbelote.org/belote-contree/#6)
-* [What is a trick-taking game](https://en.wikipedia.org/wiki/Trick-taking_game)
 * [Official JUnit5 documentation](https://junit.org/junit5/docs/current/user-guide/)
 * [Official Mockito documentation](https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html)
+
+#### Card game doc
+
+* [Belote contrée rules (french)](http://www.ffbelote.org/belote-contree/#6)
+* [What is a trick-taking game](https://en.wikipedia.org/wiki/Trick-taking_game)
