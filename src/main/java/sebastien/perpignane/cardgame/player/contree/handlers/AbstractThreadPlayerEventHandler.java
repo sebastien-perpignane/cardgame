@@ -10,6 +10,8 @@ import static java.lang.System.err;
 
 public abstract class AbstractThreadPlayerEventHandler<P extends Player<?, ?>, M> implements PlayerEventHandler<P>, Runnable {
 
+    Thread handlerThread;
+
     private final BlockingQueue<M> gameMsgQueue = new ArrayBlockingQueue<>(54);
 
     @Override
@@ -24,7 +26,7 @@ public abstract class AbstractThreadPlayerEventHandler<P extends Player<?, ?>, M
             catch (InterruptedException ie) {
                 // TODO review good practices to manage InterruptedException
                 err.println("I'm interrupted");
-                Thread.currentThread().interrupt();
+                handlerThread.interrupt();
                 return;
             }
         }
@@ -39,7 +41,7 @@ public abstract class AbstractThreadPlayerEventHandler<P extends Player<?, ?>, M
     }
 
     protected void startPlayerEventHandlerThread() {
-        var thread = new Thread(this, "PlayerThread-" + getName());
-        thread.start();
+        handlerThread = new Thread(this, "PlayerThread-" + getName());
+        handlerThread.start();
     }
 }

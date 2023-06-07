@@ -3,12 +3,13 @@ package sebastien.perpignane.cardgame.game.war;
 import sebastien.perpignane.cardgame.card.CardRank;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.game.Trick;
+import sebastien.perpignane.cardgame.player.Team;
 import sebastien.perpignane.cardgame.player.war.WarPlayer;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class WarTrick implements Trick {
+public class WarTrick implements Trick<WarPlayer, WarPlayedCard, Team> {
 
     private boolean endOfTrick = false;
 
@@ -147,6 +148,11 @@ public class WarTrick implements Trick {
     @Override
     public Optional<WarPlayer> getWinner() {
         return Optional.ofNullable(winner);
+    }
+
+    @Override
+    public Optional<Team> getWinnerTeam() {
+        return Optional.empty();
     }
 
     public Set<ClassicalCard> getAllCards() {

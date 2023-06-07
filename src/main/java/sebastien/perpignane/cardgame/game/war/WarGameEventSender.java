@@ -49,7 +49,7 @@ class WarGameEventSender extends AbstractGameEventSender {
         gameObservers.forEach(go -> go.onEndOfGame(warGame));
     }
 
-    void sendWonTrickEvent(Trick trick) {
+    void sendWonTrickEvent(Trick<?, ?, ?> trick) {
         for (GameObserver observer : gameObservers) {
             observer.onWonTrick(trick);
         }

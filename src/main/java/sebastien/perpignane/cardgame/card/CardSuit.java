@@ -5,19 +5,19 @@ public enum CardSuit {
     /**
      * Carreau
      */
-    DIAMONDS("\u2666"),
+    DIAMONDS("♦"),
     /**
      * Trèfle
      */
-    CLUBS("\u2663"),
+    CLUBS("♣"),
     /**
      * Coeur
      */
-    HEARTS("\u2665"),
+    HEARTS("♥"),
     /**
      * Pique
      */
-    SPADES("\u2660"),
+    SPADES("♠"),
     NONE("");
 
     CardSuit(String label) {

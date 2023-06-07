@@ -12,6 +12,8 @@ public interface ContreePlayer extends Player<ContreeGame, ContreeTeam> {
 
     String getId();
 
+    String getName();
+
     void onPlayerTurnToBid(Set<ContreeBidValue> allowedBidValues);
 
     void onPlayerTurn(Set<ClassicalCard> allowedCards);
@@ -23,8 +25,6 @@ public interface ContreePlayer extends Player<ContreeGame, ContreeTeam> {
     void placeBid(ContreeBidValue bidValue, CardSuit cardSuit);
 
     void leaveGame();
-
-    String getName();
 
     void setWaiting();
 

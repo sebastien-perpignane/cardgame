@@ -40,7 +40,7 @@ class DealScoreCalculator {
             );
         }
 
-        dixDeDerTeam = deal.lastTrick().orElseThrow().getWinnerTeam();
+        dixDeDerTeam = deal.lastTrick().orElseThrow().getWinnerTeam().orElseThrow();
 
         Optional<ContreeBid> contractBid = deal.getContractBid();
         if (contractBid.isEmpty()) {

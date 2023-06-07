@@ -39,7 +39,7 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_WHITE = "\u001B[37m";
 
-    private static final String LEAVE_MSG = "leave";
+    static final String LEAVE_MSG = "leave";
 
     private static final Map<String, ClassicalCard> CARD_BY_LABEL;
 
@@ -184,13 +184,11 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
     @Override
     void manageBidMessage(PlayerMessage bidMessage) {
 
-        final String allowedBiValues = streamToJoinedStr(bidMessage.allowedBidValues().stream().sorted());
-
         out.printf("Your turn to bid, %s.%n", getName());
         out.printf("Here is your hand: %s%n", playerHandAsSortedJoinedStr());
 
         try {
-            ContreeBidValue bidValue = manageBidValueUserInput(allowedBiValues);
+            ContreeBidValue bidValue = manageBidValueUserInput(bidMessage.allowedBidValues());
 
             CardSuit bidSuit = null;
             if (bidValue.isCardSuitRequired()) {
@@ -216,20 +214,26 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
 
     }
 
-    private ContreeBidValue manageBidValueUserInput(String allowedBiValues) throws MaxRetryException, LeaverException  {
+    private ContreeBidValue manageBidValueUserInput(Collection<ContreeBidValue> allowedBidValues) throws MaxRetryException, LeaverException  {
+
+        String allowedBidValuesDisplay = streamToJoinedStr(allowedBidValues.stream().sorted());
 
         ContreeBidValue bidValue = null;
 
         int nbTries = 0;
         while (bidValue == null && nbTries < 3) {
             out.printf("All bid values are: %s%n", ALL_BID_VALUES_AS_STRING);
-            out.printf("Select a bid value. Allowed values are : %s%n : ", allowedBiValues);
+            out.printf("Select a bid value. Allowed values are : %s%n : ", allowedBidValuesDisplay);
+
             String selectedBid = scanner.nextLine();
             if (LEAVE_MSG.equalsIgnoreCase(selectedBid)) {
                 throw new LeaverException();
             }
 
             bidValue = BID_VALUE_BY_LABEL.get(selectedBid);
+            if (!allowedBidValues.contains(bidValue)) {
+                bidValue = null;
+            }
             nbTries++;
         }
 
@@ -302,6 +306,30 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
 
     private static String streamToJoinedStr(Stream<?> stream) {
         return stream.map(Object::toString).collect(Collectors.joining(", "));
+    }
+
+    // For testing
+    void addCardSuitsByNameInCardSuitByLabelMap() {
+        CARD_SUIT_BY_LABEL.putAll(
+
+                ContreeBid.allowedCardSuitsForValuedBids().stream()
+                        .collect(
+                                Collectors.toMap(
+                                        CardSuit::name,
+                                        cs -> cs
+                                )
+                        )
+        );
+    }
+
+    // For testing
+    void addCardsByEnumName() {
+        CARD_BY_LABEL.putAll(
+                CardSet.GAME_32.getGameCards().stream().collect(Collectors.toMap(
+                        Enum::name,
+                        c -> c
+                ))
+        );
     }
 
 }

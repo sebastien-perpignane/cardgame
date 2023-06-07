@@ -101,7 +101,11 @@ public class ContreeTricks {
     public Map<Team, Set<ContreeCard>> wonCardsByTeam() {
 
         Map<Team, List<ContreeTrick>> tricksByWinnerTeam =
-                tricks.stream().collect(Collectors.groupingBy(ContreeTrick::getWinnerTeam));
+                tricks.stream()
+                    .filter(t -> t.getWinnerTeam().isPresent())
+                    .collect(
+                        Collectors.groupingBy( t -> t.getWinnerTeam().get() )
+                    );
 
         return ContreeTeam.getTeams().stream().collect(Collectors.toMap(
                 team -> team,
