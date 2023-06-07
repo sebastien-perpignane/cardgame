@@ -72,7 +72,9 @@ class ContreePlayerImplTest {
     @Test
     void testReceiveNewCardsFails() {
         Collection<ClassicalCard> emptyList = Collections.emptyList();
-        assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> contreePlayer.receiveNewCards(emptyList));
+        assertThatExceptionOfType(
+            UnsupportedOperationException.class
+        ).isThrownBy(() -> contreePlayer.receiveNewCards(emptyList));
     }
 
     @DisplayName("Event handler is called when game started event is triggered")

@@ -72,10 +72,31 @@
         </dependency>
 
         <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>2.17.0</version>
+            <scope>test</scope>
+        </dependency>
+
+
+        <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>3.24.2</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>4.2.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.stefanbirkner</groupId>
+            <artifactId>system-lambda</artifactId>
+            <version>1.2.1</version>
         </dependency>
 
     </dependencies>
@@ -237,10 +258,8 @@
                                         <!-- TODO improve war game coverage ratio -->
                                         <exclude>sebastien/perpignane/cardgame/*/war/**/*.class</exclude>
                                         <exclude>*GameMain*</exclude>
-                                        <exclude>*Thread*</exclude>
-                                        <exclude>*EventHandler*</exclude>
+                                        <exclude>*AbstractThreadLocalPlayer*</exclude>
                                         <exclude>*Test</exclude>
-                                        <exclude>*Exception</exclude>
                                         <exclude>*Cli*</exclude>
                                     </excludes>
                                     <limits>

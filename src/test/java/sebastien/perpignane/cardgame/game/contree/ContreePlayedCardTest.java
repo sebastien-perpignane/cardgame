@@ -21,7 +21,10 @@ class ContreePlayedCardTest {
     void testInvalidConstructorArgument_nullPlayer() {
 
         var card = new ContreeCard(ClassicalCard.JACK_DIAMOND, CardSuit.HEARTS);
-        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> new ContreePlayedCard(null, card));
+        assertThatExceptionOfType(NullPointerException.class)
+            .isThrownBy(
+                () -> new ContreePlayedCard(null, card)
+            );
 
     }
 
@@ -33,7 +36,10 @@ class ContreePlayedCardTest {
         when(noTeamPlayer.getTeam()).thenReturn(Optional.empty());
 
         var card = new ContreeCard(ClassicalCard.JACK_DIAMOND, CardSuit.HEARTS);
-        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> new ContreePlayedCard(noTeamPlayer, card));
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(
+                () -> new ContreePlayedCard(noTeamPlayer, card)
+            );
 
     }
 
@@ -44,7 +50,10 @@ class ContreePlayedCardTest {
         var player = mock(ContreePlayer.class);
         when(player.getTeam()).thenReturn(Optional.of(ContreeTeam.TEAM1));
 
-        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> new ContreePlayedCard(player, null));
+        assertThatExceptionOfType(NullPointerException.class)
+                .isThrownBy(
+                    () -> new ContreePlayedCard(player, null)
+                );
 
     }
 

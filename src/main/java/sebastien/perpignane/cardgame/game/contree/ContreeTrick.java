@@ -11,7 +11,7 @@ import sebastien.perpignane.cardgame.player.util.PlayerSlot;
 import java.util.*;
 import java.util.stream.Collectors;
 
-class ContreeTrick implements Trick {
+class ContreeTrick implements Trick<ContreePlayer, ContreePlayedCard, ContreeTeam> {
 
     private final String trickId;
 
@@ -39,7 +39,7 @@ class ContreeTrick implements Trick {
         this.playableCardsFilter = playableCardsFilter;
     }
 
-    public void startTrick() {
+    void startTrick() {
         trickPlayers.setCurrentTrick(this);
         configureCurrentPlayer();
     }
@@ -56,11 +56,11 @@ class ContreeTrick implements Trick {
         );
     }
 
-    public boolean isTrumpTrick() {
+    boolean isTrumpTrick() {
         return this.firstPlayedCard.isTrump();
     }
 
-    public void playerPlays(ContreePlayer player, ClassicalCard card) {
+    void playerPlays(ContreePlayer player, ClassicalCard card) {
 
         throwExceptionIfInvalidPlayedCard(player, card);
 
@@ -115,8 +115,9 @@ class ContreeTrick implements Trick {
         return Optional.ofNullable(winner);
     }
 
-    public ContreeTeam getWinnerTeam() {
-        return winner.getTeam().orElseThrow();
+    @Override
+    public Optional<ContreeTeam> getWinnerTeam() {
+        return winner.getTeam();
     }
 
     public Set<ClassicalCard> getAllCards() {

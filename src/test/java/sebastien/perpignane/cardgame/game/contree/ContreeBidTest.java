@@ -16,9 +16,10 @@ class ContreeBidTest {
     void testInvalidBidWhenValuedBidWithNullCardSuit() {
 
         ContreePlayer biddingPlayer = mock(ContreePlayer.class);
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(
-            () -> new ContreeBid(biddingPlayer, ContreeBidValue.EIGHTY, null)
-        );
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(
+                () -> new ContreeBid(biddingPlayer, ContreeBidValue.EIGHTY, null)
+            );
 
     }
 
@@ -27,12 +28,14 @@ class ContreeBidTest {
     void testInvalidBidWhenValuedBidWithNONECardSuit() {
 
         ContreePlayer biddingPlayer = mock(ContreePlayer.class);
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(
                 () -> new ContreeBid(biddingPlayer, ContreeBidValue.EIGHTY, CardSuit.NONE)
-        );
+            );
 
     }
 
+    @DisplayName("ContreeBid#isDouble returns true when bid value is DOUBLE")
     @Test
     void testIsDouble_true() {
         ContreePlayer player = mock(ContreePlayer.class);
@@ -42,6 +45,7 @@ class ContreeBidTest {
         assertThat(bid.isRedouble()).isFalse();
     }
 
+    @DisplayName("ContreeBid#isRedouble returns true when bid value is not REDOUBLE")
     @Test
     void testIsDouble_false() {
         ContreePlayer player = mock(ContreePlayer.class);

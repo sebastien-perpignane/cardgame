@@ -127,7 +127,11 @@ class ContreeDealPlayersImplTest extends TestCasesManagingPlayers {
     @DisplayName("Calculation a player list from an invalid index (>3) throw an exception")
     @Test
     void testRollPlayerFromInvalidIndexThrowsException() {
-        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> dealPlayers.rollPlayerFromIndex(4));
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(
+                () -> dealPlayers.rollPlayerFromIndex(4
+            )
+        );
     }
 
 

@@ -60,7 +60,11 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
     }
 
     private void runTestWithCurrentPlayerAndCheckAssertions() {
-        assertThat(expectedAllowedBidValues).describedAs("expectedAllowedBidValues cannot be null, each test must define its content").isNotNull();
+
+        assertThat(expectedAllowedBidValues)
+                .describedAs("expectedAllowedBidValues cannot be null, each test must define its content")
+                .isNotNull();
+
         BiddableValuesFilter.BidFilterResult filterResult = filter.biddableValues(currentPlayer, bids);
         Map<ContreeBidValue, String> exclusionCauseByBidValue = filterResult.exclusionCauseByBidValue();
         Set<ContreeBidValue> allowedBidValues = filterResult.biddableValues();
@@ -83,6 +87,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
 
         when(bids.isDoubleBidExists()).thenReturn(false);
         when(bids.isRedoubleBidExists()).thenReturn(false);
+        when(bids.isAnnouncedCapot()).thenReturn(false);
         when(bids.noBidsExceptPass()).thenReturn(true);
 
         expectedAllowedBidValues = allBidValuesExceptDoubleRedouble;
@@ -95,9 +100,11 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
     @DisplayName("When only PASS bid were placed, any bid value except double and redouble is allowed")
     @Test
     void testOnlyPassBids() {
-        when(bids.highestBid()).thenReturn(Optional.of(
+        when(bids.highestBid()).thenReturn(
+            Optional.of(
                 new ContreeBid(teamMate, ContreeBidValue.PASS)
-        ));
+            )
+        );
         when(bids.isDoubleBidExists()).thenReturn(false);
         when(bids.isRedoubleBidExists()).thenReturn(false);
         when(bids.noDoubleNorRedoubleBid()).thenReturn(true);
@@ -113,7 +120,11 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
     @Test
     void testEightyBidByOpponent_noDouble() {
 
-        when(bids.highestBid()).thenReturn(Optional.of(new ContreeBid(opponent, ContreeBidValue.EIGHTY, CardSuit.HEARTS)));
+        when(bids.highestBid()).thenReturn(
+            Optional.of(
+                new ContreeBid(opponent, ContreeBidValue.EIGHTY, CardSuit.HEARTS)
+            )
+        );
         when(bids.isDoubleBidExists()).thenReturn(false);
         when(bids.isRedoubleBidExists()).thenReturn(false);
         when(bids.noDoubleNorRedoubleBid()).thenReturn(true);
@@ -142,7 +153,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
 
     }
 
-    @DisplayName("When a HUNDRED_TEN bid was placed by an opponent and no double bid exists, any bid except eighty and redouble are allowed")
+    @DisplayName("When a HUNDRED_TEN bid was placed by an opponent and no double bid exists, any bid above 110 and redouble are allowed")
     @Test
     void testHundredTenBidByOpponent_noDouble() {
 
@@ -161,7 +172,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
 
     }
 
-    @DisplayName("When a HUNDRED_TEN bid was placed by an opponent and the teeam mate doubled, only PASS bid is allowed")
+    @DisplayName("When a HUNDRED_TEN bid was placed by an opponent and the team mate doubled, only PASS bid is allowed")
     @Test
     void testHundredTenBidByOpponent_alreadyDouble() {
 

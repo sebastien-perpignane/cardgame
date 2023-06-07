@@ -35,8 +35,9 @@ class ContreeBidPlayersImplTest extends TestCasesManagingPlayers {
     void testGoToNextBidder() {
 
         bidPlayers.goToNextBidder();
-        assertThat(bidPlayers.getCurrentBidderSlot().getPlayer()).isPresent();
-        assertThat(bidPlayers.getCurrentBidderSlot().getPlayer()).containsSame(player2);
+        assertThat(bidPlayers.getCurrentBidderSlot().getPlayer())
+                .isPresent()
+                .containsSame(player2);
 
         bidPlayers.goToNextBidder();
         assertThat(bidPlayers.getCurrentBidderSlot().getPlayer())
@@ -67,16 +68,9 @@ class ContreeBidPlayersImplTest extends TestCasesManagingPlayers {
     @Test
     void testOnCurrentBidderTurnToBid_player1() {
 
-        boolean[] called = {false};
-
-        doAnswer(invocationOnMock -> {
-            called[0] = true;
-            return null;
-        }).when(player1).onPlayerTurnToBid(anySet());
-
         bidPlayers.onCurrentBidderTurnToBid(Set.of(ContreeBidValue.PASS));
 
-        assertThat(called[0]).isTrue();
+        verify(player1, times(1)).onPlayerTurnToBid(anySet());
 
     }
 
@@ -84,17 +78,10 @@ class ContreeBidPlayersImplTest extends TestCasesManagingPlayers {
     @Test
     void testOnCurrentBidderTurnToBid_player2() {
 
-        boolean[] called = {false};
-
-        doAnswer(invocationOnMock -> {
-            called[0] = true;
-            return null;
-        }).when(player2).onPlayerTurnToBid(anySet());
-
         bidPlayers.goToNextBidder();
         bidPlayers.onCurrentBidderTurnToBid(Set.of(ContreeBidValue.PASS));
 
-        assertThat(called[0]).isTrue();
+        verify(player2, times(1)).onPlayerTurnToBid(anySet());
 
     }
 

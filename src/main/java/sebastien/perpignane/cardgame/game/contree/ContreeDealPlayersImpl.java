@@ -96,7 +96,8 @@ class ContreeDealPlayersImpl implements ContreeDealPlayers {
 
         List<ContreePlayer> newPlayerList = new ArrayList<>();
 
-        for (int i = playerIndex ; newPlayerList.size() < ContreePlayers.NB_PLAYERS ; ) {
+        int i = playerIndex;
+        while (newPlayerList.size() < ContreePlayers.NB_PLAYERS) {
             newPlayerList.add(gamePlayers.getGamePlayers().get(i));
             i = nextPlayerIndex(i);
         }
@@ -113,7 +114,8 @@ class ContreeDealPlayersImpl implements ContreeDealPlayers {
 
         List<PlayerSlot<ContreePlayer>> newPlayerList = new ArrayList<>();
 
-        for (int i = playerIndex ; newPlayerList.size() < ContreePlayers.NB_PLAYERS ; ) {
+        int i = playerIndex;
+        while (newPlayerList.size() < ContreePlayers.NB_PLAYERS) {
             newPlayerList.add(gamePlayers.getPlayerSlots().getSlot(i));
             i = nextPlayerIndex(i);
         }

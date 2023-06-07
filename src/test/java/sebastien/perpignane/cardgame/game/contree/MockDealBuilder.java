@@ -71,7 +71,7 @@ public class MockDealBuilder {
     }
 
     public MockDealBuilder withLastTrickWinnerTeam(ContreeTeam team) {
-        when(lastTrick.getWinnerTeam()).thenReturn(team); return this;
+        when(lastTrick.getWinnerTeam()).thenReturn(Optional.of(team)); return this;
     }
 
     public MockDealBuilder withAttackTeam(ContreeTeam team) {

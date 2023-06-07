@@ -177,18 +177,15 @@ class ContreeGameTest extends TestCasesManagingPlayers {
             return null;
         })).when(newPlayer).setGame(any());
 
-        doAnswer((invocationOnMock -> {
-            flags.playerGameStartedEvent = true;
-            return null;
-        })).when(newPlayer).onGameStarted();
-
         game.joinGame(leaver);
 
         game.leaveGame(leaver);
 
+
+
         assertThat(flags.hand).isEqualTo(leaver.getHand());
         assertThat(flags.updatedGame).isSameAs(game);
-        assertThat(flags.playerGameStartedEvent).isFalse();
+        verify(newPlayer, times(0)).onGameStarted();
 
     }
 
@@ -216,16 +213,11 @@ class ContreeGameTest extends TestCasesManagingPlayers {
             return null;
         })).when(newPlayer).setGame(any());
 
-        doAnswer((invocationOnMock -> {
-            flags.playerGameStartedEvent = true;
-            return null;
-        })).when(newPlayer).onGameStarted();
-
         game.leaveGame(leaver);
 
         assertThat(flags.hand).isEqualTo(leaver.getHand());
         assertThat(flags.updatedGame).isSameAs(game);
-        assertThat(flags.playerGameStartedEvent).isTrue();
+        verify(newPlayer, times(1)).onGameStarted();
 
     }
 
@@ -253,16 +245,11 @@ class ContreeGameTest extends TestCasesManagingPlayers {
             return null;
         })).when(newPlayer).setGame(any());
 
-        doAnswer((invocationOnMock -> {
-            flags.playerGameStartedEvent = true;
-            return null;
-        })).when(newPlayer).onGameStarted();
-
         game.leaveGame(leaver);
 
         assertThat(flags.hand).isNotEqualTo(leaver.getHand());
         assertThat(flags.updatedGame).isNull();
-        assertThat(flags.playerGameStartedEvent).isFalse();
+        verify(newPlayer, times(0)).onGameStarted();
 
     }
 
@@ -303,8 +290,6 @@ class ContreeGameTest extends TestCasesManagingPlayers {
 }
 
 class LeaveGameFlags {
-
-    boolean playerGameStartedEvent;
 
     Set<ClassicalCard> hand;
 

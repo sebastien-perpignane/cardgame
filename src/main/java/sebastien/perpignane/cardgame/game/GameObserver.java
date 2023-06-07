@@ -14,7 +14,7 @@ public interface GameObserver extends CardGameObserver {
 
     void onNextPlayer(Player<?, ?> p);
 
-    void onWonTrick(Trick trick);
+    void onWonTrick(Trick<?, ?, ?> trick);
 
     // FIXME must work with abstract classes
 
