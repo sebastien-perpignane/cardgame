@@ -33,3 +33,7 @@ build/
 
 ### private ###
 /src/old/
+/jpackage-in/
+/jpackage-out/
+/.run/
+/.fleet/
