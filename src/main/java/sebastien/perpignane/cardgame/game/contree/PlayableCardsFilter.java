@@ -6,7 +6,6 @@ import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 
 import java.util.HashSet;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -46,22 +45,17 @@ public class PlayableCardsFilter {
 
         Set<ClassicalCard> allHand = new HashSet<>(player.getHand());
 
-        var optionalHighestTrump = findHighestPlayedTrumpCard(trick);
-        if (optionalHighestTrump.isEmpty()) {
-            throw new IllegalStateException("This method is supposed to be called when at least one trump card was played");
-        }
-
-        var highestTrump = optionalHighestTrump.get();
-
         // If the trick was not started by a trump card but trumps were played,
         // the player does not have to play a trump if his teammate is winning the trick.
         if (!trick.isTrumpTrick() && trick.winningPlayer().sameTeam(player)) {
             return allHand;
         }
 
-        var playerTrumps = ContreeCard.of(trick.getTrumpSuit(), new HashSet<>(player.getHand())).stream()
-                .filter(ContreeCard::isTrump).toList();
+        var playerTrumps = trick.getPlayerHand(player)
+                            .stream()
+                            .filter(ContreeCard::isTrump).toList();
 
+        var highestTrump = findHighestPlayedTrumpCard(trick);
         var higherPlayerTrumps = playerTrumps.stream().filter(c -> c.getGameValue() > highestTrump.card().getGameValue()).toList();
 
         if (higherPlayerTrumps.isEmpty()) {
@@ -72,7 +66,7 @@ public class PlayableCardsFilter {
     }
 
     private Set<ClassicalCard> playerTrumpCards(ContreeTrick trick, ContreePlayer player) {
-        return ContreeCard.of(trick.getTrumpSuit(), new HashSet<>(player.getHand())).stream()
+        return trick.getPlayerHand(player).stream()
                 .filter(ContreeCard::isTrump)
                 .map(ContreeCard::getCard).collect(Collectors.toSet());
     }
@@ -82,22 +76,21 @@ public class PlayableCardsFilter {
         Set<ClassicalCard> allHand = new HashSet<>(player.getHand());
 
         var winningPlayer = trick.winningPlayer();
-        if (winningPlayer != null && winningPlayer.getTeam().orElseThrow() == player.getTeam().orElseThrow()) {
+        if (winningPlayer != null && winningPlayer.sameTeam(player)) {
             return allHand;
         }
 
         var trumpCards = playerTrumpCards(trick, player);
-        if (!trumpCards.isEmpty()) {
-            return trumpCards;
-        }
-        else {
-            return allHand;
-        }
+
+        return trumpCards.isEmpty() ? allHand : trumpCards;
+
     }
 
-    private Optional<ContreePlayedCard> findHighestPlayedTrumpCard(ContreeTrick trick) {
+    private ContreePlayedCard findHighestPlayedTrumpCard(ContreeTrick trick) {
         return trick.getPlayedCards().stream()
-                .filter(pc -> pc.card().isTrump()).min((a, b) -> Integer.compare(b.card().getGameValue(), a.card().getGameValue()));
+                .filter(pc -> pc.card().isTrump())
+                .min((a, b) -> Integer.compare(b.card().getGameValue(), a.card().getGameValue()))
+                .orElseThrow(() -> new IllegalStateException("Don't call me if no trump card played"));
     }
 
 }

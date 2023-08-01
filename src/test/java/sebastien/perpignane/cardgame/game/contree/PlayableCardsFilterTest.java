@@ -48,14 +48,18 @@ class PlayableCardsFilterTest extends TestCasesManagingPlayers {
     }
 
     private Collection<ClassicalCard> buildMocksAndRunTestOnTestedPlayer() {
+
+        when(testedPlayer.getHand()).thenReturn(testedPlayerHand);
+
         ContreeTrick trick = MockTrickBuilder.builder()
                 .withTrumpSuit(trickTrumpSuit)
                 .withPlayedCards(trickPlayedCards)
                 .withWinningPlayer(trickWinningPlayer)
                 .withIsTrumpTrick(isTrumpTrick)
+                .withPlayerHand(testedPlayer, trickTrumpSuit)
                 .build();
 
-        when(testedPlayer.getHand()).thenReturn(testedPlayerHand);
+
 
         return playableCardsFilter.playableCards(trick, testedPlayer);
     }

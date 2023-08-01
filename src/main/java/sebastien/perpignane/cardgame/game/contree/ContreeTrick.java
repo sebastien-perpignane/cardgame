@@ -153,6 +153,10 @@ class ContreeTrick implements Trick<ContreePlayer, ContreePlayedCard, ContreeTea
         return currentPlayerSlot.getPlayer();
     }
 
+    public Collection<ContreeCard> getPlayerHand(ContreePlayer player) {
+        return ContreeCard.of( trumpSuit, new HashSet<>(player.getHand()) );
+    }
+
     @Override
     public String toString() {
         return "ContreeTrick{" +
