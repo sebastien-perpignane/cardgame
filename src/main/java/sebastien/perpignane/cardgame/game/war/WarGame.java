@@ -155,7 +155,7 @@ public class WarGame extends AbstractGame<WarPlayer> {
     }
 
     private void computeWinner() {
-        winner = players.stream().filter(Predicate.not(Player::hasNoMoreCard)).findFirst().orElseThrow(() -> {throw new IllegalStateException("No player with remaining cards");});
+        winner = players.stream().filter(Predicate.not(Player::hasNoMoreCard)).findFirst().orElseThrow(() -> new IllegalStateException("No player with remaining cards"));
     }
 
     private boolean endOfGameCondition() {
