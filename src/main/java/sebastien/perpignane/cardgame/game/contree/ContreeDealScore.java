@@ -18,11 +18,11 @@ public class ContreeDealScore {
 
     private final DealScoreCalculator scoreCalculator;
 
-    public ContreeDealScore(DealScoreCalculator scoreCalculator) {
+    ContreeDealScore(DealScoreCalculator scoreCalculator) {
         this.scoreCalculator = scoreCalculator;
     }
 
-    public void computeScore(ContreeDeal deal) {
+    void computeScore(ContreeDeal deal) {
 
         var scoreCalculationResult = scoreCalculator.computeDealScores(deal);
 
