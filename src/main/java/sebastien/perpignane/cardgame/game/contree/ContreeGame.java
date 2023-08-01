@@ -48,11 +48,13 @@ public class ContreeGame extends AbstractGame<ContreePlayer> {
         gameEventSender.sendJoinedGameEvent(this, joinGameResult.playerIndex(), p);
         if (isStarted()) {
 
-            if ( joinGameResult.replacedPlayer().isEmpty() ) {
-                throw new IllegalStateException("When game is already started, if a new player joins the game, joinGameResult.replacedPlayer must not be null");
-            }
-            joinGameResult.replacedPlayer().ifPresent(Player::onGameEjection);
-            p.onGameStarted();
+            joinGameResult.replacedPlayer().ifPresentOrElse(
+                    rp -> {
+                        joinGameResult.replacedPlayer().ifPresent(Player::onGameEjection);
+                        p.onGameStarted();
+                    },
+                    () -> {throw new IllegalStateException("When game is already started, if a new player joins the game, joinGameResult.replacedPlayer must not be null");}
+            );
         }
         if (gamePlayers.isFull() && !isStarted()) {
             updateState(GameStatus.STARTED);

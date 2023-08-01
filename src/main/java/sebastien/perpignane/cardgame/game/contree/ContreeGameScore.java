@@ -21,7 +21,7 @@ public class ContreeGameScore {
         return scoreByTeam.get(team);
     }
 
-    public void addDealScore(ContreeDeal deal) {
+    void addDealScore(ContreeDeal deal) {
         if (!deal.isOver()) {
             throw new IllegalStateException("Deal is not over, score cannot be added");
         }

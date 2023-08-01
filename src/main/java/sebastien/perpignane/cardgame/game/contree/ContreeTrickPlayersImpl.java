@@ -6,7 +6,7 @@ import sebastien.perpignane.cardgame.player.util.PlayerSlot;
 
 import java.util.Set;
 
-public class ContreeTrickPlayersImpl implements ContreeTrickPlayers {
+class ContreeTrickPlayersImpl implements ContreeTrickPlayers {
 
     private final ContreeDealPlayers dealPlayers;
 

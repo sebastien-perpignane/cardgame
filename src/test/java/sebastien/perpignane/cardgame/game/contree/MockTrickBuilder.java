@@ -1,14 +1,16 @@
 package sebastien.perpignane.cardgame.game.contree;
 
 import sebastien.perpignane.cardgame.card.CardSuit;
+import sebastien.perpignane.cardgame.card.contree.ContreeCard;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
 
+import java.util.HashSet;
 import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class MockTrickBuilder {
+class MockTrickBuilder {
 
     private final ContreeTrick trick;
 
@@ -34,6 +36,11 @@ public class MockTrickBuilder {
 
     public MockTrickBuilder withIsTrumpTrick(boolean isTrumpTrick) {
         when(trick.isTrumpTrick()).thenReturn(isTrumpTrick); return this;
+    }
+
+    public MockTrickBuilder withPlayerHand(ContreePlayer player, CardSuit trickSuit) {
+        var playerHandAsSet = new HashSet<>(player.getHand());
+        when(trick.getPlayerHand(player)).thenReturn(ContreeCard.of(trickSuit, playerHandAsSet)); return this;
     }
 
     public ContreeTrick build() {

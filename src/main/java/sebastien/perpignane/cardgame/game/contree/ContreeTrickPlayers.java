@@ -6,7 +6,7 @@ import sebastien.perpignane.cardgame.player.util.PlayerSlot;
 
 import java.util.Set;
 
-public interface ContreeTrickPlayers extends ContreePlayers {
+interface ContreeTrickPlayers extends ContreePlayers {
 
     void setCurrentTrick(ContreeTrick currentTrick);
 

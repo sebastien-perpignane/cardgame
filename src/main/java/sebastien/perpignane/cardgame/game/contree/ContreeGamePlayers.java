@@ -9,7 +9,7 @@ import java.util.Optional;
 
 record JoinGameResult(int playerIndex, Optional<ContreePlayer> replacedPlayer) {}
 
-public interface ContreeGamePlayers extends ContreePlayers {
+interface ContreeGamePlayers extends ContreePlayers {
 
     /**
      * @param joiningPlayer the player who joins the game

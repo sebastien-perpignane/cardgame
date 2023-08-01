@@ -9,13 +9,13 @@ import sebastien.perpignane.cardgame.player.war.WarPlayer;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class WarTrick implements Trick<WarPlayer, WarPlayedCard, Team> {
+class WarTrick implements Trick<WarPlayer, WarPlayedCard, Team> {
 
     private boolean endOfTrick = false;
 
     private boolean prematureEndOfTrick = false;
 
-    private int cardLimit = 1;
+    private int cardLimitPerPlayer = 1;
 
     private final List<WarPlayer> players;
 
@@ -53,7 +53,7 @@ public class WarTrick implements Trick<WarPlayer, WarPlayedCard, Team> {
 
         if (isWarCondition()) {
             warGameEventSender.sendWarEvent(collectLastPlayedCards());
-            cardLimit += 2;
+            cardLimitPerPlayer += 2;
         }
 
         computeEndOfTrick();
@@ -68,7 +68,7 @@ public class WarTrick implements Trick<WarPlayer, WarPlayedCard, Team> {
     }
 
     public boolean isWarInProgress() {
-        return cardLimit > 1;
+        return cardLimitPerPlayer > 1;
     }
 
     public int getTrickTurn() {
@@ -123,7 +123,7 @@ public class WarTrick implements Trick<WarPlayer, WarPlayedCard, Team> {
     }
 
     private boolean allPlayerReachedCardLimit() {
-        return players.stream().allMatch(player -> nbPlayedCardsByPlayer.get(player) == cardLimit);
+        return players.stream().allMatch(player -> nbPlayedCardsByPlayer.get(player) == cardLimitPerPlayer);
     }
 
     private boolean isWarCondition() {
@@ -174,7 +174,7 @@ public class WarTrick implements Trick<WarPlayer, WarPlayedCard, Team> {
     private boolean onePlayerHasNoMoreCardsAndCardsToPlay() {
         for (WarPlayer player : players) {
             int nbPlayedCards = nbPlayedCardsByPlayer.get(player);
-            if (player.hasNoMoreCard() && nbPlayedCards < cardLimit) {
+            if (player.hasNoMoreCard() && nbPlayedCards < cardLimitPerPlayer) {
                 return true;
             }
         }
