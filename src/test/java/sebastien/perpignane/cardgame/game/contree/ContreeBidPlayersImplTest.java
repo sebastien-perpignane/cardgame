@@ -70,7 +70,7 @@ class ContreeBidPlayersImplTest extends TestCasesManagingPlayers {
 
         bidPlayers.onCurrentBidderTurnToBid(Set.of(ContreeBidValue.PASS));
 
-        verify(player1, times(1)).onPlayerTurnToBid(anySet());
+        verify(player1).onPlayerTurnToBid(anySet());
 
     }
 
@@ -81,7 +81,7 @@ class ContreeBidPlayersImplTest extends TestCasesManagingPlayers {
         bidPlayers.goToNextBidder();
         bidPlayers.onCurrentBidderTurnToBid(Set.of(ContreeBidValue.PASS));
 
-        verify(player2, times(1)).onPlayerTurnToBid(anySet());
+        verify(player2).onPlayerTurnToBid(anySet());
 
     }
 

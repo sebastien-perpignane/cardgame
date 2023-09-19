@@ -52,9 +52,6 @@ class ContreeGameTest extends TestCasesManagingPlayers {
             )
         );
 
-
-
-
         game = new ContreeGame(gamePlayers, deals, eventSender);
     }
 
@@ -109,7 +106,10 @@ class ContreeGameTest extends TestCasesManagingPlayers {
         makeTheGameOver();
         assertThat(game.isOver()).isTrue();
 
-        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> game.playCard(player2, ClassicalCard.ACE_SPADE));
+        assertThatExceptionOfType( RuntimeException.class )
+            .isThrownBy(
+                () -> game.playCard(player2, ClassicalCard.ACE_SPADE)
+            );
     }
 
     @DisplayName("Exception if a player tries to bid on an over game")
@@ -217,7 +217,7 @@ class ContreeGameTest extends TestCasesManagingPlayers {
 
         assertThat(flags.hand).isEqualTo(leaver.getHand());
         assertThat(flags.updatedGame).isSameAs(game);
-        verify(newPlayer, times(1)).onGameStarted();
+        verify(newPlayer).onGameStarted();
 
     }
 

@@ -35,7 +35,7 @@ class ContreeBotPlayerEventHandlerTest {
         handler.onPlayerTurn(Set.of(ClassicalCard.ACE_SPADE, ClassicalCard.JACK_SPADE));
         await().atMost(500, MILLISECONDS)
                 .untilAsserted(
-                    () -> verify(mockPlayer, times(1)).playCard(any())
+                    () -> verify(mockPlayer).playCard(any())
                 );
     }
 
@@ -65,7 +65,7 @@ class ContreeBotPlayerEventHandlerTest {
         handler.onPlayerTurnToBid(Set.of(ContreeBidValue.PASS));
         await().atMost(500, MILLISECONDS)
                 .untilAsserted(
-                    () -> verify(mockPlayer, times(1)).placeBid(any(), any())
+                    () -> verify(mockPlayer).placeBid(any(), any())
                 );
     }
 
