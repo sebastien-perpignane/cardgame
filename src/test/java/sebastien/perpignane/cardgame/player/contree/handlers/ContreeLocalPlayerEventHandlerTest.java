@@ -42,7 +42,7 @@ class ContreeLocalPlayerEventHandlerTest {
                     handler.onPlayerTurnToBid(Set.of(ContreeBidValue.EIGHTY, ContreeBidValue.NINETY, ContreeBidValue.HUNDRED));
 
                     await().atMost(2, TimeUnit.SECONDS).untilAsserted(
-                            () -> verify(mockPlayer, times(1)).placeBid(ContreeBidValue.EIGHTY, CardSuit.HEARTS)
+                            () -> verify(mockPlayer).placeBid(ContreeBidValue.EIGHTY, CardSuit.HEARTS)
                     );
                 }
         );
@@ -61,7 +61,7 @@ class ContreeLocalPlayerEventHandlerTest {
                     handler.onPlayerTurnToBid(Set.of(ContreeBidValue.PASS, ContreeBidValue.EIGHTY, ContreeBidValue.NINETY, ContreeBidValue.HUNDRED));
 
                     await().atMost(2, TimeUnit.SECONDS).untilAsserted(
-                            () -> verify(mockPlayer, times(1)).placeBid(ContreeBidValue.PASS, null)
+                            () -> verify(mockPlayer).placeBid(ContreeBidValue.PASS, null)
                     );
                 }
         );
@@ -77,10 +77,11 @@ class ContreeLocalPlayerEventHandlerTest {
 
                     initHandler();
                     handler.onGameStarted();
-                    handler.onPlayerTurnToBid(Set.of(ContreeBidValue.PASS, ContreeBidValue.NINETY, ContreeBidValue.HUNDRED));
+                    var allowedBidValues = Set.of(ContreeBidValue.PASS, ContreeBidValue.NINETY, ContreeBidValue.HUNDRED);
+                    handler.onPlayerTurnToBid(allowedBidValues);
 
                     await().atMost(2, TimeUnit.SECONDS).untilAsserted(
-                            () -> verify(mockPlayer, times(1)).placeBid(ContreeBidValue.NINETY, CardSuit.HEARTS)
+                            () -> verify(mockPlayer).placeBid(ContreeBidValue.NINETY, CardSuit.HEARTS)
                     );
                 }
         );
@@ -150,7 +151,7 @@ class ContreeLocalPlayerEventHandlerTest {
                     handler.onPlayerTurn(Set.of(ClassicalCard.ACE_SPADE, ClassicalCard.JACK_HEART, ClassicalCard.SEVEN_HEART));
 
                     await().atMost(2, TimeUnit.SECONDS).untilAsserted(
-                            () -> verify(mockPlayer, times(1)).playCard(ClassicalCard.JACK_HEART)
+                            () -> verify(mockPlayer).playCard(ClassicalCard.JACK_HEART)
                     );
                 }
         );
@@ -168,7 +169,7 @@ class ContreeLocalPlayerEventHandlerTest {
                     handler.onPlayerTurn(Set.of(ClassicalCard.ACE_SPADE, ClassicalCard.JACK_HEART));
 
                     await().atMost(2, TimeUnit.SECONDS).untilAsserted(
-                            () -> verify(mockPlayer, times(1)).playCard(ClassicalCard.JACK_HEART)
+                            () -> verify(mockPlayer).playCard(ClassicalCard.JACK_HEART)
                     );
                 }
         );

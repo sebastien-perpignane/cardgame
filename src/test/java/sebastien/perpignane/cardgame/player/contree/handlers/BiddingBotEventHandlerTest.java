@@ -26,7 +26,7 @@ class BiddingBotEventHandlerTest {
         handler.onPlayerTurnToBid(Set.of(ContreeBidValue.PASS));
         await().atMost(500, MILLISECONDS)
                 .untilAsserted(
-                        () -> verify(mockPlayer, times(1)).placeBid(ContreeBidValue.EIGHTY, CardSuit.HEARTS)
+                        () -> verify(mockPlayer).placeBid(ContreeBidValue.EIGHTY, CardSuit.HEARTS)
                 );
 
     }

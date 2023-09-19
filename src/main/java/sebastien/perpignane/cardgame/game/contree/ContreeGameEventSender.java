@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ContreeGameEventSender extends AbstractGameEventSender {
+class ContreeGameEventSender extends AbstractGameEventSender {
 
     private final Set<ContreeDealObserver> dealObservers = ConcurrentHashMap.newKeySet();
     private final Set<ContreeTrickObserver> trickObservers = ConcurrentHashMap.newKeySet();

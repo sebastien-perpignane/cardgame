@@ -9,7 +9,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class PlayableCardsFilter {
+class PlayableCardsFilter {
 
     Set<ClassicalCard> playableCards(ContreeTrick trick, ContreePlayer player) {
 
