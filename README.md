@@ -41,7 +41,21 @@ java -jar target/cardgame-*-standalone.jar --only-bots=true
 java -jar target/cardgame-*-standalone.jar --max-score=500
 ```
 
-## How to "install" contree game
+## How to "install" contree game with a native image
+It is possible to generate a native image of cardgame. The pom.xml file contains all needed configuration.
+You need to install GraalVM. I suggest installing a 'Liberica NIK' java 17 graalvm using sdkman. Example:
+```bash
+sdk install java 22.3.3.r17-nik
+```
+
+Then, build the project with this command:
+```bash
+./mvnw -DskipTests -Pstandalone,native package
+ln -s $(pwd)/target/cardgame $HOME/bin/cardgame
+```
+Tests need to be skipped because Mockito seems to have some troubles with GraalVM. I'm looking for a solution.
+
+## How to "install" contree game using jpackage
 
 You can "install" contree-game on your linux system by running these commands (with the hypothesis that your HOME contains a
 bin directory that's in your PATH) :
