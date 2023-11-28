@@ -28,8 +28,6 @@
 
         <!-- test management -->
 
-        <argLine>-Djdk.lang.Process.launchMechanism=vfork</argLine>
-
         <skipTests>false</skipTests>
         <skip.UT>${skipTests}</skip.UT>
         <skip.IT>${skipTests}</skip.IT>
@@ -56,13 +54,13 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-            <version>1.4.11</version>
+            <version>1.4.12</version>
         </dependency>
 
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.4.11</version>
+            <version>1.4.12</version>
         </dependency>
 
         <!-- ***************************************************************** -->
@@ -226,9 +224,6 @@
                                 <version>4.7.5</version>
                             </path>
                         </annotationProcessorPaths>
-                        <compilerArgs>
-                            <arg>-Aproject=${project.groupId}/${project.artifactId}</arg>
-                        </compilerArgs>
                     </configuration>
                 </plugin>
                 <plugin>
