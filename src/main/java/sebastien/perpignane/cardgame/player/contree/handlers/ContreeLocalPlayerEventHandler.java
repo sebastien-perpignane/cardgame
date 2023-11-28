@@ -9,12 +9,9 @@ import sebastien.perpignane.cardgame.game.contree.ContreeBidValue;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayerStatus;
 import sebastien.perpignane.cardgame.player.contree.PlayerMessage;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.function.Predicate;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static java.lang.System.*;
@@ -52,10 +49,10 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
     );
 
     private static final String CARD_SUIT_VALUES_AS_STRING =
-            streamToJoinedStr(
+            listToIndexedJoinedStr(
                     Arrays.stream(CardSuit.values())
-                            .filter(Predicate.not(cs -> cs == CardSuit.NONE))
-                            .sorted()
+                        .filter(cs -> cs != CardSuit.NONE)
+                        .toList()
             );
 
     static {
@@ -132,7 +129,7 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
                 exit(0);
             }
             catch(Exception e) {
-                err.printf("Unexpected error occurred when placing your bid: %s. Please create an issue at https://github.com/sebastien-perpignane/cardgame/%n", e.getMessage());
+                err.printf("Unexpected error occurred when playing your card: %s. Please create an issue at https://github.com/sebastien-perpignane/cardgame/%n", e.getMessage());
                 e.printStackTrace(err);
                 exit(1);
             }
@@ -143,9 +140,10 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
 
     private ClassicalCard managePlayCardUserInput(Collection<ClassicalCard> allowedCards) throws MaxRetryException, LeaverException {
 
-        final String allowedCardsAsString = collectionToJoinedStr(
-                ClassicalCard.sort(allowedCards)
-        );
+        var sortedAllowedCards = ClassicalCard.sort(allowedCards);
+
+        final String allowedCardsAsString =
+            listToIndexedJoinedStr(sortedAllowedCards);
 
         ClassicalCard playedCard = null;
 
@@ -158,7 +156,13 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
                 throw new LeaverException();
             }
 
-            playedCard = CARD_BY_LABEL.get(selectedCard);
+            try {
+                int cardIndex = Integer.parseInt(selectedCard) - 1;
+                playedCard = sortedAllowedCards.get(cardIndex);
+            }
+            catch(NumberFormatException nfe) {
+                playedCard = CARD_BY_LABEL.get(selectedCard);
+            }
 
             if (notAllowedCard(playedCard, allowedCards)) {
                 out.printf("%s is not an allowed card. Please play one of these cards : %s", playedCard, allowedCardsAsString);
@@ -216,7 +220,10 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
 
     private ContreeBidValue manageBidValueUserInput(Collection<ContreeBidValue> allowedBidValues) throws MaxRetryException, LeaverException  {
 
-        String allowedBidValuesDisplay = streamToJoinedStr(allowedBidValues.stream().sorted());
+        var sortedAllowedBidValues = allowedBidValues.stream().sorted().toList();
+
+        String allowedBidValuesDisplay =
+                listToIndexedJoinedStr(sortedAllowedBidValues);
 
         ContreeBidValue bidValue = null;
 
@@ -230,7 +237,14 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
                 throw new LeaverException();
             }
 
-            bidValue = BID_VALUE_BY_LABEL.get(selectedBid);
+            try {
+                var bidIndex = Integer.parseInt(selectedBid) - 1;
+                bidValue = sortedAllowedBidValues.get(bidIndex);
+            }
+            catch(NumberFormatException nfe) {
+                bidValue = BID_VALUE_BY_LABEL.get(selectedBid);
+            }
+
             if (!allowedBidValues.contains(bidValue)) {
                 bidValue = null;
             }
@@ -254,7 +268,14 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
             if (LEAVE_MSG.equalsIgnoreCase(selectedSuit)) {
                 throw new LeaverException();
             }
-            bidSuit = CARD_SUIT_BY_LABEL.get(selectedSuit);
+            try {
+                var suitIndex = Integer.parseInt(selectedSuit) - 1;
+                bidSuit = CardSuit.values()[suitIndex];
+            }
+            catch(NumberFormatException nfe) {
+                bidSuit = CARD_SUIT_BY_LABEL.get(selectedSuit);
+            }
+
             nbTries++;
         }
 
@@ -304,6 +325,12 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
         return streamToJoinedStr(collection.stream());
     }
 
+    private static String listToIndexedJoinedStr(List<?> list) {
+        return IntStream.range(0, list.size())
+                .mapToObj(i -> String.format("%s (%d)", list.get(i), i + 1))
+                .collect(Collectors.joining(", "));
+    }
+
     private static String streamToJoinedStr(Stream<?> stream) {
         return stream.map(Object::toString).collect(Collectors.joining(", "));
     }
@@ -311,14 +338,13 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
     // For testing
     void addCardSuitsByNameInCardSuitByLabelMap() {
         CARD_SUIT_BY_LABEL.putAll(
-
-                ContreeBid.allowedCardSuitsForValuedBids().stream()
-                        .collect(
-                                Collectors.toMap(
-                                        CardSuit::name,
-                                        cs -> cs
-                                )
+            ContreeBid.allowedCardSuitsForValuedBids().stream()
+                .collect(
+                        Collectors.toMap(
+                                CardSuit::name,
+                                cs -> cs
                         )
+                )
         );
     }
 

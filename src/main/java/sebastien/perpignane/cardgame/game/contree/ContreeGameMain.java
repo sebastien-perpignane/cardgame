@@ -55,7 +55,7 @@ public class ContreeGameMain {
 
             out.printf("Game will start. Max score is %d%n", maxScore);
 
-            game = ContreeGameFactory.createGame(cliContreeGameConfig);
+            game = ContreeGameBuilder.createGame(cliContreeGameConfig);
 
             game.registerAsGameObserver(GameTextDisplayer.getInstance());
 

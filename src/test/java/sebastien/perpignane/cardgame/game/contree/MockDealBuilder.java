@@ -18,14 +18,13 @@ import static org.mockito.Mockito.when;
  *  * methods returning objects default to null
  *  * methods returning collection default to empty collection
  */
-public class MockDealBuilder {
+class MockDealBuilder {
     private final ContreeDeal deal;
     private final ContreeTrick lastTrick;
 
     private MockDealBuilder() {
         deal = mock(ContreeDeal.class);
         lastTrick = mock(ContreeTrick.class);
-
     }
 
     static MockDealBuilder builder() {

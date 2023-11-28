@@ -44,7 +44,7 @@ public class ContreeGame extends AbstractGame<ContreePlayer> {
         }
         JoinGameResult joinGameResult = gamePlayers.joinGame(p);
         p.setGame(this);
-        joinGameResult.replacedPlayer().ifPresent(contreePlayer -> p.receiveHand(contreePlayer.getHand()));
+        joinGameResult.replacedPlayer().ifPresent(replacedPlayer -> p.receiveHand(replacedPlayer.getHand()));
         gameEventSender.sendJoinedGameEvent(this, joinGameResult.playerIndex(), p);
         if (isStarted()) {
 
