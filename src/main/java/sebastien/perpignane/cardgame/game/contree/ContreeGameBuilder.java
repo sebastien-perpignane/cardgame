@@ -2,9 +2,9 @@ package sebastien.perpignane.cardgame.game.contree;
 
 import sebastien.perpignane.cardgame.card.CardDealer;
 
-public class ContreeGameFactory {
+public class ContreeGameBuilder {
 
-    private ContreeGameFactory() {
+    private ContreeGameBuilder() {
     }
 
     public static ContreeGame createGame(ContreeGameConfig gameConfig) {

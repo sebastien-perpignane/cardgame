@@ -25,7 +25,7 @@ class ContreeGameIT {
     @Test
     @Timeout(value = 2000, unit = TimeUnit.MILLISECONDS)
     void testRunGameWithBotsPlayingRandomCards() throws InterruptedException {
-        ContreeGame game = ContreeGameFactory.createGame(new ContreeGameConfig() { });
+        ContreeGame game = ContreeGameBuilder.createGame(new ContreeGameConfig() { });
         game.registerAsGameObserver(GameTextDisplayer.getInstance());
         ContreePlayer player1 = new ContreePlayerImpl("Player 1", new BiddingBotEventHandler());
 
