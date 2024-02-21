@@ -26,6 +26,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <mockito.version>5.10.0</mockito.version>
+        <logback.version>1.5.0</logback.version>
 
         <!-- test management -->
 
@@ -55,13 +56,13 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-            <version>1.4.14</version>
+            <version>${logback.version}</version>
         </dependency>
 
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.4.14</version>
+            <version>${logback.version}</version>
         </dependency>
 
         <!-- ***************************************************************** -->
