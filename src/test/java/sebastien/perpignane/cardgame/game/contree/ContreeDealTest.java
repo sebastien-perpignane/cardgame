@@ -167,7 +167,7 @@ class ContreeDealTest extends TestCasesManagingPlayers {
         assertThat(ise.getMessage()).contains("A bid cannot be placed during PLAY step");
     }
 
-    @DisplayName("One play step reached, deal is over when tricks are over")
+    @DisplayName("Once play step reached, deal is over when tricks are over")
     @Test
     void testPlayerPlaysWhenTricksAreOver() {
 

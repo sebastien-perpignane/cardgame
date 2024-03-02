@@ -21,7 +21,7 @@ class PlayerMessageTest {
 
     }
 
-    @DisplayName("If message type requires not provided allowed cards, exception is thrown")
+    @DisplayName("If message type requires allowed bids but they're not provided, exception is thrown")
     @Test
     void testWhenTypeRequiresNotProvidedAllowedBids() {
 

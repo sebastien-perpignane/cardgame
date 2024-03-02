@@ -153,7 +153,7 @@ class BiddableValuesFilterTest extends TestCasesManagingPlayers {
 
     }
 
-    @DisplayName("When a HUNDRED_TEN bid was placed by an opponent and no double bid exists, any bid above 110 and redouble are allowed")
+    @DisplayName("When a HUNDRED_TEN bid was placed by an opponent and no double bid exists, any bid above 110 and double are allowed")
     @Test
     void testHundredTenBidByOpponent_noDouble() {
 
