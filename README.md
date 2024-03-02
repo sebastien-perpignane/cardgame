@@ -45,15 +45,15 @@ java -jar target/cardgame-*-standalone.jar --max-score=500
 It is possible to generate a native image of cardgame. The pom.xml file contains all needed configuration.
 You need to install GraalVM. I suggest installing a 'Liberica NIK' java 17 graalvm using sdkman. Example:
 ```bash
-sdk install java 22.3.3.r17-nik
+sdk install java 22.3.5.r17-nik # latest version while updating the README
 ```
 
 Then, build the project with this command:
 ```bash
-./mvnw -DskipTests -Pstandalone,native package
-ln -s $(pwd)/target/cardgame $HOME/bin/cardgame
+./mvnw -Pstandalone,native package
 ```
-Tests need to be skipped because Mockito seems to have some troubles with GraalVM. I'm looking for a solution.
+
+You'll find the native image at target/cardgame
 
 ## How to "install" contree game using jpackage
 
