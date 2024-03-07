@@ -26,7 +26,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <mockito.version>5.11.0</mockito.version>
-        <logback.version>1.5.2</logback.version>
+        <logback.version>1.5.3</logback.version>
 
         <!-- test management -->
 
@@ -257,7 +257,6 @@
                     </consoleOutputReporter>
                     <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter"/>
                     <parallel>methods</parallel>
-                    <excludedGroups>integration-test</excludedGroups>
                 </configuration>
             </plugin>
 
@@ -276,7 +275,6 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <groups>integration-test</groups>
                     <reportFormat>plain</reportFormat>
                     <consoleOutputReporter>
                         <disable>true</disable>
