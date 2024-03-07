@@ -1,7 +1,6 @@
 package sebastien.perpignane.cardgame.game.war;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import sebastien.perpignane.cardgame.card.CardSet;
 import sebastien.perpignane.cardgame.card.CardSetShuffler;
@@ -19,7 +18,6 @@ import java.util.concurrent.BlockingQueue;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Tag(("integration-test"))
 class WarGameIT {
 
     @Test

@@ -1,7 +1,6 @@
 package sebastien.perpignane.cardgame.game.contree;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import sebastien.perpignane.cardgame.game.BlockingQueueGameObserver;
@@ -18,7 +17,6 @@ import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Tag("integration-test")
 class ContreeGameIT {
 
     @DisplayName("Running a game with bot players, including one always bidding 80 HEART. The game must end without error, whoever wins.")
