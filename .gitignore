@@ -37,3 +37,4 @@ build/
 /jpackage-out/
 /.run/
 /.fleet/
+/.sdkmanrc
