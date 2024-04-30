@@ -10,6 +10,10 @@ public interface Player<G extends AbstractGame<?>, T extends Team> {
 
     void receiveHand(Collection<ClassicalCard> cards);
 
+    /**
+     * @deprecated Finer grain events are available
+     */
+    @Deprecated(forRemoval = true, since = "0.2")
     // FIXME Replace with finer grained event
     void onUpdatedGame();
 
