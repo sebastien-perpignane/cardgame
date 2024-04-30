@@ -77,7 +77,7 @@ class ContreeTrickLifeCycleTest extends TestCasesManagingPlayers {
 
     }
 
-    @DisplayName("After four played cards, game is  over and trick winner is available")
+    @DisplayName("After four played cards, game is over and trick winner is available")
     @Test
     void testTrickIsOverAfterFourPlayedCards() {
 
@@ -89,8 +89,8 @@ class ContreeTrickLifeCycleTest extends TestCasesManagingPlayers {
         trickWithHeartTrump.playerPlays(player4, ClassicalCard.JACK_CLUB);
 
         assertThat(trickWithHeartTrump.isOver()).isTrue();
-        assertThat(trickWithHeartTrump.getWinner()).isPresent();
-        assertThat(trickWithHeartTrump.getWinner().orElseThrow()).isSameAs(player1);
+//        assertThat(trickWithHeartTrump.getWinner()).isPresent();
+        assertThat(trickWithHeartTrump.getWinner()).containsSame(player1);
 
     }
 
