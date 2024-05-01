@@ -89,7 +89,6 @@ class ContreeTrickLifeCycleTest extends TestCasesManagingPlayers {
         trickWithHeartTrump.playerPlays(player4, ClassicalCard.JACK_CLUB);
 
         assertThat(trickWithHeartTrump.isOver()).isTrue();
-//        assertThat(trickWithHeartTrump.getWinner()).isPresent();
         assertThat(trickWithHeartTrump.getWinner()).containsSame(player1);
 
     }
