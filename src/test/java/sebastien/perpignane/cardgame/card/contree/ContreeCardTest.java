@@ -16,12 +16,12 @@ class ContreeCardTest {
 
         var result = ContreeCard.of(trumpSuit, CardSet.GAME_32.getGameCards());
 
-        assertThat(result.stream().filter(ContreeCard::isTrump).toList().size()).isEqualTo(8);
+        assertThat(result.stream().filter(ContreeCard::isTrump).toList()).hasSize(8);
 
     }
 
     @Test
-    void ofAllTrumps() {
+    void testOfAllTrumps() {
 
         var result = ContreeCard.ofAllTrumps(CardSet.GAME_32.getGameCards());
 
@@ -31,7 +31,7 @@ class ContreeCardTest {
     }
 
     @Test
-    void ofNoTrumps() {
+    void testOfNoTrumps() {
 
         var result = ContreeCard.ofNoTrumps(CardSet.GAME_32.getGameCards());
 
