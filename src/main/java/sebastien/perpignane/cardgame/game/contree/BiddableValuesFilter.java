@@ -81,26 +81,25 @@ class BiddableValuesFilter {
 
         if (bids.noBidsExceptPass()) {
             bidFilterResult.addBiddableValues(allBidValuesExceptDoubleAndRedouble);
+            return bidFilterResult;
         }
-        else {
-            var highestBid = bids.highestBid().orElseThrow();
 
-            if (bids.noDoubleNorRedoubleBid()) {
-                bidFilterResult.addBiddableValues(
-                    getBidValuesHigherThan(highestBid.bidValue())
-                );
-            }
+        var highestBid = bids.highestBid().orElseThrow();
 
-            setExclusionCauseForNotBiddableValues(bidFilterResult, highestBid.bidValue());
+        if (bids.noDoubleNorRedoubleBid()) {
+            bidFilterResult.addBiddableValues(
+                getBidValuesHigherThan(highestBid.bidValue())
+            );
+        }
 
-            if (opponentHasHighestNotDoubledBid(bids, currentPlayer)) {
-                setDoubleBidAsAllowed(bidFilterResult);
-            }
+        setExclusionCauseForNotBiddableValues(bidFilterResult, highestBid.bidValue());
 
-            if (teamMateIsDoubled(bids, currentPlayer)) {
-                setRedoubleBidAsAllowed(bidFilterResult);
-            }
+        if (opponentHasHighestNotDoubledBid(bids, currentPlayer)) {
+            setDoubleBidAsAllowed(bidFilterResult);
+        }
 
+        if (teamMateIsDoubled(bids, currentPlayer)) {
+            setRedoubleBidAsAllowed(bidFilterResult);
         }
 
         return bidFilterResult;
@@ -144,11 +143,11 @@ class BiddableValuesFilter {
         return isHighestBidMadeByTeamMate(highestBid, currentPlayer) && bids.isDoubleBidExists();
     }
 
-    boolean isHighestBidMadeByTeamMate(ContreeBid highestBid, ContreePlayer currentPlayer) {
+    private boolean isHighestBidMadeByTeamMate(ContreeBid highestBid, ContreePlayer currentPlayer) {
         return highestBid.player().sameTeam(currentPlayer);
     }
 
-    boolean isHighestBidMadeByOpponent(ContreeBid highestBid, ContreePlayer currentPlayer) {
+    private boolean isHighestBidMadeByOpponent(ContreeBid highestBid, ContreePlayer currentPlayer) {
         return !isHighestBidMadeByTeamMate(highestBid, currentPlayer);
     }
 

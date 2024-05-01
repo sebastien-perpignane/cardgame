@@ -19,11 +19,14 @@ public class ContreeCard implements ValuableCard {
 
     private final int point;
 
-    public ContreeCard(ClassicalCard card, CardSuit trump) {
+    public ContreeCard(ClassicalCard card, CardSuit trumpSuit) {
+        this(card, card.getSuit() == trumpSuit);
+    }
+
+    public ContreeCard(ClassicalCard card, boolean trump) {
         Objects.requireNonNull(card);
-        Objects.requireNonNull(trump);
         this.card = card;
-        this.trump = card.getSuit() == trump;
+        this.trump = trump;
         var contreeRankValueAndPoints = ContreeRankValueAndPoints.getByCardValue(card.getRank());
         this.value = this.trump ? contreeRankValueAndPoints.getTrumpGameValue() : contreeRankValueAndPoints.getStandardGameValue();
         this.point = this.trump ? contreeRankValueAndPoints.getTrumpGamePoints() : contreeRankValueAndPoints.getStandardGamePoints();
@@ -57,6 +60,14 @@ public class ContreeCard implements ValuableCard {
 
     public static Set<ContreeCard> of(final CardSuit trump, Set<ClassicalCard> cards) {
         return cards.stream().map(c -> new ContreeCard(c, trump)).collect(Collectors.toSet());
+    }
+
+    public static Set<ContreeCard> ofAllTrumps(Set<ClassicalCard> cards) {
+        return cards.stream().map(c -> new ContreeCard(c, true)).collect(Collectors.toSet());
+    }
+
+    public static Set<ContreeCard> ofNoTrumps(Set<ClassicalCard> cards) {
+        return cards.stream().map(c -> new ContreeCard(c, false)).collect(Collectors.toSet());
     }
 
 }

@@ -135,11 +135,11 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
         ).isPresent();
 
         assertThat(
-            dealBids.highestBid().get().bidValue()
+            dealBids.highestBid().orElseThrow().bidValue()
         ).isSameAs(ContreeBidValue.EIGHTY);
 
         assertThat(
-            dealBids.highestBid().get().cardSuit()
+            dealBids.highestBid().orElseThrow().cardSuit()
         ).isSameAs(CardSuit.DIAMONDS);
 
         assertThat(
@@ -151,11 +151,11 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
         ).hasDealContractBidFound();
 
         assertThat(
-            dealBids.findDealContractBid().get().bidValue()
+            dealBids.findDealContractBid().orElseThrow().bidValue()
         ).isSameAs(ContreeBidValue.EIGHTY);
 
         assertThat(
-            dealBids.findDealContractBid().get().cardSuit()
+            dealBids.findDealContractBid().orElseThrow().cardSuit()
         ).isSameAs(CardSuit.DIAMONDS);
 
         assertThat(
@@ -246,12 +246,12 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
         dealBids.placeBid(new ContreeBid(player3, ContreeBidValue.REDOUBLE));
 
         assertThat(dealBids.highestBid()).isPresent();
-        assertThat(dealBids.highestBid().get().bidValue()).isSameAs(ContreeBidValue.EIGHTY);
-        assertThat(dealBids.highestBid().get().cardSuit()).isSameAs(CardSuit.DIAMONDS);
+        assertThat(dealBids.highestBid().orElseThrow().bidValue()).isSameAs(ContreeBidValue.EIGHTY);
+        assertThat(dealBids.highestBid().orElseThrow().cardSuit()).isSameAs(CardSuit.DIAMONDS);
         assertThat(dealBids.bidsAreOver()).isTrue();
         assertThat(dealBids.findDealContractBid()).isPresent();
-        assertThat(dealBids.findDealContractBid().get().bidValue()).isSameAs(ContreeBidValue.EIGHTY);
-        assertThat(dealBids.findDealContractBid().get().cardSuit()).isSameAs(CardSuit.DIAMONDS);
+        assertThat(dealBids.findDealContractBid().orElseThrow().bidValue()).isSameAs(ContreeBidValue.EIGHTY);
+        assertThat(dealBids.findDealContractBid().orElseThrow().cardSuit()).isSameAs(CardSuit.DIAMONDS);
         assertThat(dealBids.isDoubleBidExists()).isTrue();
         assertThat(dealBids.isRedoubleBidExists()).isTrue();
 

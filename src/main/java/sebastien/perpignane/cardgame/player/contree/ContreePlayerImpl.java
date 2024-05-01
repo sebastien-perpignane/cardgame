@@ -39,7 +39,7 @@ public class ContreePlayerImpl implements ContreePlayer {
 
     @Override
     public void onUpdatedGame() {
-
+        // finer grain events are used
     }
 
     @Override
@@ -54,7 +54,7 @@ public class ContreePlayerImpl implements ContreePlayer {
 
     @Override
     public void receiveNewCards(Collection<ClassicalCard> cards) {
-        throw new UnsupportedOperationException("ContreePlayer can receive new full hand bot not new cards");
+        throw new UnsupportedOperationException("ContreePlayer can receive new full hand but not new cards");
     }
 
     @Override
