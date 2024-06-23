@@ -2,7 +2,11 @@ package sebastien.perpignane.cardgame.game;
 
 import sebastien.perpignane.cardgame.card.CardSuit;
 import sebastien.perpignane.cardgame.card.ClassicalCard;
-import sebastien.perpignane.cardgame.game.contree.*;
+import sebastien.perpignane.cardgame.game.contree.ContreeBidValue;
+import sebastien.perpignane.cardgame.game.contree.ContreeDealObserver;
+import sebastien.perpignane.cardgame.game.contree.ContreeDealScore;
+import sebastien.perpignane.cardgame.game.contree.ContreeGame;
+import sebastien.perpignane.cardgame.game.contree.ContreeTrickObserver;
 import sebastien.perpignane.cardgame.game.war.WarGame;
 import sebastien.perpignane.cardgame.game.war.WarPlayedCard;
 import sebastien.perpignane.cardgame.game.war.WarTrickObserver;
@@ -21,7 +25,6 @@ public class GameTextDisplayer implements GameObserver, WarTrickObserver, Contre
     private static final GameTextDisplayer INSTANCE;
 
     static final String CAPOT_ASCII = """
-                                                                                                                                     
                     ###      ###      ###              # ###                                                ###      ###      ###
                      ###      ###      ###           /  /###  /                                              ###      ###      ###
                       ##       ##       ##          /  /  ###/                                    #           ##       ##       ##
@@ -42,10 +45,9 @@ public class GameTextDisplayer implements GameObserver, WarTrickObserver, Contre
                                                                           ##
                                                                            ##
 
-                                       """.stripIndent();
+                   """.stripIndent();
 
     static final String TEAM_1_WINNER_ASCII = """
-                                                                                                                                                                                                                                   
      ##### /    ##   ###                                                                                 /###           /                                             # ###
   ######  /  #####    ###     #                                                    #                    /  ############/                                            /  /###
  /#   /  /     #####   ###   ###                                                  ###                  /     #########                                             /  /  ###
@@ -61,11 +63,10 @@ public class GameTextDisplayer implements GameObserver, WarTrickObserver, Contre
       ###      /##      /     ##    ##    ##    ##    ## ####    / ##              ##     /###  ##           ###     /  ####    / ##    /#    ##   ##   ##         ###     /     ##    ## ####    /
        #######/ #######/      ### / ###   ###   ###   ### ######/  ###             ### / / #### /             ######/    ######/   ####/ ##   ###  ###  ###         ######/      ###   ### ######/
          ####     ####         ##/   ###   ###   ###   ### #####    ###             ##/     ###/                ###       #####     ###   ##   ###  ###  ###          ###         ###   ### #####
-                                                
-                """;
+
+""";
 
     static final String TEAM2_WINNER_ASCII = """
-                                                                                                                                                                                                                              
      ##### /    ##   ###                                                                                 /###           /                                         /###           /
   ######  /  #####    ###     #                                                    #                    /  ############/                                         /  ############/
  /#   /  /     #####   ###   ###                                                  ###                  /     #########                                          /     #########
@@ -81,8 +82,7 @@ public class GameTextDisplayer implements GameObserver, WarTrickObserver, Contre
       ###      /##      /     ##    ##    ##    ##    ## ####    / ##              ##     /###  ##           ###     /  ####    / ##    /#    ##   ##   ##            ###     /  ##      /#      /  ##    ##
        #######/ #######/      ### / ###   ###   ###   ### ######/  ###             ### / / #### /             ######/    ######/   ####/ ##   ###  ###  ###            ######/    ######/ ######/    ######
          ####     ####         ##/   ###   ###   ###   ### #####    ###             ##/     ###/                ###       #####     ###   ##   ###  ###  ###             ###       #####   #####      ####
-                                                                                                                                                                                                                                                                                                                                                                                                                       
-                """;
+""";
 
     static final String SKULL_ASCII = """
                               _________-----_____
@@ -140,7 +140,7 @@ public class GameTextDisplayer implements GameObserver, WarTrickObserver, Contre
     }
 
     @Override
-    public void onWonTrick(Trick trick) {
+    public void onWonTrick(Trick<?,?,?> trick) {
         out.println("Player " + trick.getWinner().orElseThrow() + " won trick " + trick + System.lineSeparator());
     }
 
@@ -269,7 +269,7 @@ Final score :
     @Override
     public void onNewTrick(String trickId, CardSuit trumpSuit) {
         out.printf("""
-                                
+
 ***********************************************************************
 * NEW TRICK #%s - Trump is %s
 ***********************************************************************

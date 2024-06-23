@@ -2,9 +2,8 @@ package sebastien.perpignane.cardgame.game.contree;
 
 import sebastien.perpignane.cardgame.card.ClassicalCard;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayer;
-import sebastien.perpignane.cardgame.player.contree.ContreePlayerImpl;
+import sebastien.perpignane.cardgame.player.contree.ContreePlayerFactory;
 import sebastien.perpignane.cardgame.player.contree.ContreeTeam;
-import sebastien.perpignane.cardgame.player.contree.handlers.ContreeBotPlayerEventHandler;
 import sebastien.perpignane.cardgame.player.util.PlayerSlot;
 
 import java.util.List;
@@ -97,8 +96,7 @@ class ContreeGamePlayersImpl implements ContreeGamePlayers {
         if (player.isBot()) {
             throw new IllegalArgumentException("WTF ? A bot wants to leave the game ?");
         }
-        // TODO #45 : find a way to not instantiate the bot player there, so that this class is not aware of ContreePlayer implementation
-        ContreePlayer newBotPlayer = new ContreePlayerImpl("Bot " + player.getName(), new ContreeBotPlayerEventHandler());
+        ContreePlayer newBotPlayer = ContreePlayerFactory.createBotPlayer(player.getName());
         replacePlayer(player, newBotPlayer);
         return newBotPlayer;
     }

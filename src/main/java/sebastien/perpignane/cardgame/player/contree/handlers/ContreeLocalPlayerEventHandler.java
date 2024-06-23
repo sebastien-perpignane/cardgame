@@ -9,31 +9,35 @@ import sebastien.perpignane.cardgame.game.contree.ContreeBidValue;
 import sebastien.perpignane.cardgame.player.contree.ContreePlayerStatus;
 import sebastien.perpignane.cardgame.player.contree.PlayerMessage;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static java.lang.System.*;
-
-class MaxRetryException extends Exception {
-    public MaxRetryException(String message) {
-        super(message);
-    }
-}
-
-class LeaverException extends Exception {}
+import static java.lang.System.err;
+import static java.lang.System.exit;
+import static java.lang.System.out;
 
 public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEventHandler {
 
     public static final String ANSI_RESET = "\u001B[0m";
+    @SuppressWarnings("unused")
     public static final String ANSI_BLACK = "\u001B[30m";
     public static final String ANSI_RED = "\u001B[31m";
+    @SuppressWarnings("unused")
     public static final String ANSI_GREEN = "\u001B[32m";
+    @SuppressWarnings("unused")
     public static final String ANSI_YELLOW = "\u001B[33m";
+    @SuppressWarnings("unused")
     public static final String ANSI_BLUE = "\u001B[34m";
     public static final String ANSI_PURPLE = "\u001B[35m";
+    @SuppressWarnings("unused")
     public static final String ANSI_CYAN = "\u001B[36m";
+    @SuppressWarnings("unused")
     public static final String ANSI_WHITE = "\u001B[37m";
 
     static final String LEAVE_MSG = "leave";
@@ -356,6 +360,14 @@ public class ContreeLocalPlayerEventHandler extends ThreadLocalContreePlayerEven
                         c -> c
                 ))
         );
+    }
+
+    static class LeaverException extends Exception {}
+
+    static class MaxRetryException extends Exception {
+        public MaxRetryException(String message) {
+            super(message);
+        }
     }
 
 }

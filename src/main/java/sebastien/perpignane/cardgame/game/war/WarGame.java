@@ -1,7 +1,11 @@
 package sebastien.perpignane.cardgame.game.war;
 
 import sebastien.perpignane.cardgame.card.ClassicalCard;
-import sebastien.perpignane.cardgame.game.*;
+import sebastien.perpignane.cardgame.game.AbstractGame;
+import sebastien.perpignane.cardgame.game.AbstractGameEventSender;
+import sebastien.perpignane.cardgame.game.CardGameObserver;
+import sebastien.perpignane.cardgame.game.GameObserver;
+import sebastien.perpignane.cardgame.game.GameStatus;
 import sebastien.perpignane.cardgame.player.Player;
 import sebastien.perpignane.cardgame.player.war.WarPlayer;
 import sebastien.perpignane.cardgame.player.war.local.thread.AbstracLocalThreadWarPlayer;
@@ -162,7 +166,6 @@ public class WarGame extends AbstractGame<WarPlayer> {
         return players.stream().filter(p -> !p.hasNoMoreCard()).count() == 1;
     }
 
-    // TODO rename
     private void letKnowPlayers() {
         players.forEach(Player::onUpdatedGame);
     }
