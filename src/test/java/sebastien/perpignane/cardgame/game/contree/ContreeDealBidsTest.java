@@ -82,8 +82,8 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
         assertThat(dealBids).bidsAreOver();
 
         var exception = catchThrowableOfType(
-            () -> dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.PASS)),
-            ContreeDealBids.BidNotAllowedException.class
+            ContreeDealBids.BidNotAllowedException.class,
+            () -> dealBids.placeBid(new ContreeBid(player1, ContreeBidValue.PASS))
         );
         assertThat( exception ).isNotNull();
 
@@ -285,12 +285,11 @@ class ContreeDealBidsTest extends TestCasesManagingPlayers {
 
         dealBids.placeBid(new ContreeBid( player2 ));
 
-        var e = assertThrows(
-            ContreeDealBids.BidNotAllowedException.class,
-            () -> dealBids.placeBid(new ContreeBid(player3, ContreeBidValue.NINETY, CardSuit.DIAMONDS))
+        var exception = catchThrowableOfType(
+                ContreeDealBids.BidNotAllowedException.class,
+                () -> dealBids.placeBid(new ContreeBid(player3, ContreeBidValue.NINETY, CardSuit.DIAMONDS))
         );
-
-        assertThat(e.isSuspectedCheat()).isFalse();
+        assertThat(exception.isSuspectedCheat()).isFalse();
 
     }
 
