@@ -16,5 +16,5 @@ jobs:
 
     uses: sebastien-perpignane/my-workflows/.github/workflows/mvn-java-workflow.yml@main
     with:
-      java-version: '17'
+      java-version: '21'
       distribution: 'temurin'

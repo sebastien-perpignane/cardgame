@@ -10,5 +10,5 @@ jobs:
   check-dependencies:
     uses: sebastien-perpignane/my-workflows/.github/workflows/check-dependencies.yml@main
     with:
-      java-version: '17'
+      java-version: '21'
       distribution: 'temurin'
