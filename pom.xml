@@ -19,9 +19,14 @@
     </distributionManagement>
 
     <properties>
-        <java.version>17</java.version>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <argLine>
+            -Djava.security.manager=allow <!-- Java 21: to use SystemLambda in tests  -->
+            -XX:+EnableDynamicAgentLoading <!-- Java 21: remove dynamic agent warning in IDE, due to mockito -->
+        </argLine>
+        <cardgame.java.version>21</cardgame.java.version>
+        <java.version>${cardgame.java.version}</java.version>
+        <maven.compiler.source>${cardgame.java.version}</maven.compiler.source>
+        <maven.compiler.target>${cardgame.java.version}</maven.compiler.target>
         <native.maven.plugin.version>0.9.12</native.maven.plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -271,7 +276,7 @@
             </plugin>
 
             <!-- *************************************************************************************************** -->
-            <!--                       Integration tests                                                                    -->
+            <!--                                       Integration tests                                             -->
             <!-- *************************************************************************************************** -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
