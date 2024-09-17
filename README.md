@@ -43,7 +43,7 @@ java -jar target/cardgame-*-standalone.jar --max-score=500
 
 ## How to "install" contree game with a native image
 It is possible to generate a native image of cardgame. The pom.xml file contains all needed configuration.
-You need to install GraalVM. I suggest installing a 'Liberica NIK' java 17 graalvm using sdkman. Example:
+You need to install GraalVM. I suggest installing a 'Liberica NIK' java 21 graalvm using sdkman. Example:
 ```bash
 sdk install java 23.1.4.r21-nik # latest version while updating the README
 ```
