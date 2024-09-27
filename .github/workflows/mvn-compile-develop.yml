@@ -8,6 +8,9 @@ on:
 
   workflow_dispatch:
 
+env:
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
 jobs:
 
   build-card-game:
