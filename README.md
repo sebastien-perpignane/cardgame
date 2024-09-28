@@ -1,3 +1,5 @@
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=sebastien-perpignane_cardgame&metric=coverage)](https://sonarcloud.io/summary/new_code?id=sebastien-perpignane_cardgame) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=sebastien-perpignane_cardgame&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=sebastien-perpignane_cardgame) [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=sebastien-perpignane_cardgame&metric=bugs)](https://sonarcloud.io/summary/new_code?id=sebastien-perpignane_cardgame)
+
 # Getting Started
 
 ## What is cardgame ?
