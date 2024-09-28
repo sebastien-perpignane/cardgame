@@ -1,3 +1,5 @@
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=sebastien-perpignane_cardgame&metric=coverage)](https://sonarcloud.io/summary/new_code?id=sebastien-perpignane_cardgame) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=sebastien-perpignane_cardgame&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=sebastien-perpignane_cardgame) [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=sebastien-perpignane_cardgame&metric=bugs)](https://sonarcloud.io/summary/new_code?id=sebastien-perpignane_cardgame)
+
 # Getting Started
 
 ## What is cardgame ?
@@ -13,7 +15,7 @@ War game was just a warm-up. The final objective of the project is a try to prov
 
 ## How to build a playable jar
 
-Java 17 is required. I suggest to install the JDK with [SdkMan](https://sdkman.io/).
+Java 21 is required. I suggest to install the JDK with [SdkMan](https://sdkman.io/).
 
 ```bash
 ./mvnw -Pstandalone clean package
@@ -43,9 +45,9 @@ java -jar target/cardgame-*-standalone.jar --max-score=500
 
 ## How to "install" contree game with a native image
 It is possible to generate a native image of cardgame. The pom.xml file contains all needed configuration.
-You need to install GraalVM. I suggest installing a 'Liberica NIK' java 17 graalvm using sdkman. Example:
+You need to install GraalVM. I suggest installing a 'Liberica NIK' java 21 graalvm using sdkman. Example:
 ```bash
-sdk install java 22.3.5.r17-nik # latest version while updating the README
+sdk install java 23.1.4.r21-nik # latest version while updating the README
 ```
 
 Then, build the project with this command:
