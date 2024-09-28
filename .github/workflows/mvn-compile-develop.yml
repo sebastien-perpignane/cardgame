@@ -25,6 +25,7 @@ jobs:
   sonar-analysis:
 
     name: sonarcloud analysis
+    runs-on: ubuntu-latest
 
     steps:
       - name: 'Build and analyze'
