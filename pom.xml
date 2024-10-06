@@ -30,9 +30,9 @@
         <native.maven.plugin.version>0.9.12</native.maven.plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <mockito.version>5.14.0</mockito.version>
+        <mockito.version>5.14.1</mockito.version>
         <logback.version>1.5.8</logback.version>
-        <junit.version>5.11.1</junit.version>
+        <junit.version>5.11.2</junit.version>
 
         <sonar.organization>sebastien-perpignane</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
