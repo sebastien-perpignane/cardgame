@@ -31,7 +31,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <mockito.version>5.14.1</mockito.version>
-        <logback.version>1.5.8</logback.version>
+        <logback.version>1.5.9</logback.version>
         <junit.version>5.11.2</junit.version>
 
         <sonar.organization>sebastien-perpignane</sonar.organization>
