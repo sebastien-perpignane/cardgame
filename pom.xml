@@ -30,8 +30,8 @@
         <native.maven.plugin.version>0.9.12</native.maven.plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <mockito.version>5.14.1</mockito.version>
-        <logback.version>1.5.9</logback.version>
+        <mockito.version>5.14.2</mockito.version>
+        <logback.version>1.5.11</logback.version>
         <junit.version>5.11.2</junit.version>
 
         <sonar.organization>sebastien-perpignane</sonar.organization>
@@ -215,7 +215,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.5.1</version>
                     <configuration>
                         <skipTests>${skip.UT}</skipTests>
                     </configuration>
@@ -223,7 +223,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.5.1</version>
                     <configuration>
                         <skipITs>${skip.IT}</skipITs>
                     </configuration>
