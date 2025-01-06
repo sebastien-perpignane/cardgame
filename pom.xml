@@ -30,8 +30,8 @@
         <native.maven.plugin.version>0.9.12</native.maven.plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <mockito.version>5.14.2</mockito.version>
-        <logback.version>1.5.14</logback.version>
+        <mockito.version>5.15.2</mockito.version>
+        <logback.version>1.5.15</logback.version>
         <junit.version>5.11.4</junit.version>
 
         <sonar.organization>sebastien-perpignane</sonar.organization>
@@ -110,7 +110,7 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.27.0</version>
+            <version>3.27.2</version>
             <scope>test</scope>
         </dependency>
 
@@ -253,6 +253,18 @@
 
         <plugins>
 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>properties</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!-- *************************************************************************************************** -->
             <!--                       Unit tests                                                                    -->
             <!-- *************************************************************************************************** -->
@@ -276,6 +288,7 @@
                         <theme>UNICODE</theme>
                     </statelessTestsetInfoReporter>
                     <parallel>methods</parallel>
+                    <argLine>@{argLine} -javaagent:${org.mockito:mockito-core:jar}</argLine>
                 </configuration>
             </plugin>
 
