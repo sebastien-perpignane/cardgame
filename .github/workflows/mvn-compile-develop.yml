@@ -53,4 +53,4 @@ jobs:
           mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.projectKey=sebastien-perpignane_cardgame \
             -Dmaven.test.skip=true \
-            -Dsonar.coverage.jacoco.xmlReportPaths=${project.reporting.outputDirectory}/merged-jacoco/jacoco.xml
+            -Dsonar.coverage.jacoco.xmlReportPaths='${project.reporting.outputDirectory}/merged-jacoco/jacoco.xml'
