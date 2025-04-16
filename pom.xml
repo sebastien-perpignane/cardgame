@@ -382,6 +382,17 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>report-merged</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <dataFile>${project.build.directory}/merged-jacoco.exec</dataFile>
+                            <outputDirectory>${project.reporting.outputDirectory}/merged-jacoco</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>jacoco-check</id>
                         <goals>
                             <goal>check</goal>

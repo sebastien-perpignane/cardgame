@@ -21,6 +21,7 @@ jobs:
     with:
       java-version: '21'
       distribution: 'temurin'
+      upload-artifact: true
 
   sonar-analysis:
 
@@ -28,8 +29,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+#      - name: Checkout repository
+#        uses: actions/checkout@v4
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: java_project
+          path: ${{ github.workspace }}
 
       - name: Set up JDK ${{ inputs.java-version }}
         id: setup-java
@@ -41,4 +48,8 @@ jobs:
       - name: 'Build and analyze'
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=sebastien-perpignane_cardgame
+        run: |
+          mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+            -Dsonar.projectKey=sebastien-perpignane_cardgame \
+            -Dmaven.test.skip=true \
+            -Dsonar.coverage.jacoco.xmlReportPaths=${project.reporting.outputDirectory}/merged-jacoco/jacoco.xml
