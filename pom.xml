@@ -30,10 +30,9 @@
         <native.maven.plugin.version>0.9.12</native.maven.plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <mockito.version>5.19.0</mockito.version>
-        <logback.version>1.5.18</logback.version>
-        <junit.version>5.13.4</junit.version>
-
+        <mockito.version>5.20.0</mockito.version>
+        <logback.version>1.5.19</logback.version>
+        <junit.version>6.0.0</junit.version>
         <sonar.organization>sebastien-perpignane</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.projectKey>sebastien-perpignane_cardgame</sonar.projectKey>
@@ -110,7 +109,7 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.27.4</version>
+            <version>3.27.6</version>
             <scope>test</scope>
         </dependency>
 
@@ -275,7 +274,7 @@
                     <dependency>
                         <groupId>me.fabriciorby</groupId>
                         <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
-                        <version>1.4.0</version>
+                        <version>1.5.1</version>
                     </dependency>
                 </dependencies>
                 <configuration>
@@ -303,7 +302,7 @@
                     <dependency>
                         <groupId>me.fabriciorby</groupId>
                         <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
-                        <version>1.4.0</version>
+                        <version>1.5.1</version>
                     </dependency>
                 </dependencies>
                 <configuration>
