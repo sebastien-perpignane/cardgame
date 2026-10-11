@@ -50,7 +50,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+          mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:5.8.0.7211:sonar \
             -Dsonar.projectKey=sebastien-perpignane_cardgame \
             -Dmaven.test.skip=true \
             -Dsonar.coverage.jacoco.xmlReportPaths='${project.reporting.outputDirectory}/merged-jacoco/jacoco.xml'
